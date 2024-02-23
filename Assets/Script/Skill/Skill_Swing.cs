@@ -6,11 +6,16 @@ using DG.Tweening;
 
 public class Skill_Swing : Skill
 {
+
     public GameObject swingObj;
     public float swingDamage;
     public float duration = 0;
     public int spread = 0;
-    public Curve swingCurve;
+    enum Curve
+    {
+        Linear, Quadratic
+    }
+    [SerializeField] Curve swingCurve;
     [SerializeField] UnityEvent<GameObject, Collider2D> swingHitEvent;
 
     public IEnumerator Swing()
@@ -48,7 +53,7 @@ public class Skill_Swing : Skill
         swingObj.SetActive(false);
         pCon.isAttack = false;
     }
-    public void spawnedObjectTriggerEnter(GameObject obj, Collider2D coll)
+    public void SwingObjectTriggerEnter(GameObject obj, Collider2D coll)
     {
         swingHitEvent.Invoke(obj, coll);
     }

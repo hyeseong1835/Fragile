@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WoodenSword : Weapon
+public class Weapon_WoodenSword : Weapon
 {
     [SerializeField] Skill_Swing swing;
     [SerializeField] Skill_Spin spin;
@@ -25,11 +25,6 @@ public class WoodenSword : Weapon
         {
             AddDurability(-1);
             coll.GetComponent<Stat>().OnDamage(swing.swingDamage * damage);
-
-        }
-        else if (coll.gameObject.layer == 22)
-        {
-
         }
     }
     public void SpinHitEvent(GameObject obj, Collider2D coll)
@@ -43,11 +38,6 @@ public class WoodenSword : Weapon
         {
             AddDurability(-1);
             coll.GetComponent<Stat>().OnDamage(swing.swingDamage * damage);
-
-        }
-        else if (coll.gameObject.layer == 22)
-        {
-
         }
     }
 }

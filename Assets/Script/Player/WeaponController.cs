@@ -66,16 +66,16 @@ public class WeaponController : MonoBehaviour
             DropItem(weapon);
             return;
         }
-        if (lastWeaponIndex == 0) lastWeaponIndex = weaponHolder.childCount - 1;
         GameObject weaponObj = Instantiate(weapon.gameObject, weaponHolder); //무기 오브젝트 생성
         weaponObj.GetComponent<Weapon>().durability = durability;
+        if (weaponHolder.childCount > 1) lastWeaponIndex = 1;
         inventoryUI.ResetInventoryUI();
     }
     public void SelectWeapon(int index)
     {
         if (index < 0 || weaponHolder.childCount < index + 1) 
         {
-            Debug.LogError("index가 범위를 초과함" + index+"/"+weaponHolder.childCount);
+            Debug.LogError("index가 범위를 초과함: (" + index + "/" + (weaponHolder.childCount - 1) + " )");
             return;
         } //LogError: "index가 범위를 초과함"
 
@@ -115,6 +115,7 @@ public class WeaponController : MonoBehaviour
             weaponHolder.GetChild(i).GetComponent<Weapon>().index = i;
         }
         curWeaponIndex = curWeapon.index;
+        if(lastWeaponIndex + 1 > weaponHolder.childCount) lastWeaponIndex = weaponHolder.childCount - 1;
     }
     public void DelayDestroy()
     {

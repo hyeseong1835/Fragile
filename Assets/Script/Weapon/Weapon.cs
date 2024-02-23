@@ -26,12 +26,13 @@ public abstract class Weapon : MonoBehaviour
     UnityEngine.Transform pTransform;
     protected Player player;
     protected PlayerController pCon;
-    WeaponController wCon;
+    protected WeaponController wCon;
 
     //직렬화
     public GameObject item;
     public GameObject UI;
     [SerializeField] GameObject breakEffect;
+    public Vector2 breakPos;
 
     void Awake()
     {
@@ -111,8 +112,12 @@ public abstract class Weapon : MonoBehaviour
         wCon.DelayDestroy();
 
         //효과
-        breakEffect.SetActive(true);
-
+        if (breakPos != Vector2.positiveInfinity)
+        {
+            breakEffect.SetActive(true);
+            breakEffect.transform.SetParent(null);
+            breakEffect.transform.position = breakPos;
+        }
         Destroy(gameObject);
     }
     public void AddDurability(int add)

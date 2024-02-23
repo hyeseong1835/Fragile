@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -32,24 +33,8 @@ public class Skill_Spin : Skill
         Destroy(spinObj);
         weapon.DestroyWeapon();
     }
-    public void spawnedObjectTriggerEnter(GameObject obj, Collider2D coll)
+    public void SpinObjectTriggerEnter(GameObject obj, Collider2D coll)
     {
-        if (coll.gameObject.layer == 20)
-        {
-            Debug.Log(coll.gameObject.name + " (Enemey)");
-            weapon.AddDurability(-1);
-            coll.GetComponent<Stat>().OnDamage(spinDamage * weapon.damage);
-        }
-        else if (coll.gameObject.layer == 21)
-        {
-            Debug.Log(coll.gameObject.name + " (Obstacle)");
-            weapon.AddDurability(-1);
-            coll.GetComponent<Stat>().OnDamage(spinDamage * weapon.damage);
-
-        }
-        else if (coll.gameObject.layer == 22)
-        {
-            Debug.Log(coll.gameObject.name + " (UnDestroy)");
-        }
+        spinHitEvent.Invoke(obj, coll);
     }
 }
