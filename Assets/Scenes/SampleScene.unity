@@ -311,6 +311,9 @@ MonoBehaviour:
   grafic: {fileID: 1780597529}
   top: {fileID: 1613293454}
   bottom: {fileID: 1139940012}
+<<<<<<< HEAD
+>>>>>>> parent of 34614b5 (플레이어 애니메이션 시스템 수정)
+=======
 >>>>>>> parent of 34614b5 (플레이어 애니메이션 시스템 수정)
   state: 0
   stayIndex: 0
@@ -499,7 +502,11 @@ Camera:
   serializedVersion: 2
   m_ClearFlags: 2
 <<<<<<< HEAD
+<<<<<<< HEAD
   m_BackGroundColor: {r: 0.30588236, g: 0.30588236, b: 0.3137255, a: 0}
+=======
+  m_BackGroundColor: {r: 0.2264151, g: 0.2264151, b: 0.2264151, a: 0}
+>>>>>>> parent of 34614b5 (플레이어 애니메이션 시스템 수정)
 =======
   m_BackGroundColor: {r: 0.2264151, g: 0.2264151, b: 0.2264151, a: 0}
 >>>>>>> parent of 34614b5 (플레이어 애니메이션 시스템 수정)
