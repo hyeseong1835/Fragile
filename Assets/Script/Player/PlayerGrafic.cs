@@ -91,7 +91,7 @@ public class PlayerGrafic : MonoBehaviour
                 tex.filterMode = FilterMode.Point;  
                 tex.Apply();
 
-                Debug.Log("( " + (x - startPos.x) + ", " + (y - startPos.y) + " )");
+                Debug.Log("X: (" + (x - startPos.x) + ", " + (y - startPos.y) + " )");
                 frames[x - startPos.x, y - startPos.y] = Sprite.Create(tex, new Rect(0, 0, spritePixelWidth, spritePixelHeight), Vector2.one * 0.5f);
             }
         }

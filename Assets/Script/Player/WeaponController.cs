@@ -8,7 +8,7 @@ using UnityEngine;
 public class WeaponController : MonoBehaviour
 {
     PlayerController pCon;
-    public UI_Inventory inventoryUI;
+    [HideInInspector] public UI_Inventory inventoryUI;
     public Transform weaponHolder;
 
     public Weapon curWeapon;
@@ -19,6 +19,7 @@ public class WeaponController : MonoBehaviour
     void Awake()
     {
         pCon = GetComponent<PlayerController>();
+        inventoryUI = pCon. GetComponent<UI_Inventory>();
     }
     void Start()
     {
