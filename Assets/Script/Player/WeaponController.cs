@@ -5,10 +5,9 @@ using Unity.VisualScripting;
 using UnityEditor.Animations;
 using UnityEngine;
 
+[RequireComponent(typeof(Player))]
 public class WeaponController : MonoBehaviour
 {
-    PlayerController pCon;
-    [HideInInspector] public UI_Inventory inventoryUI;
     public Transform weaponHolder;
 
     public Weapon curWeapon;
@@ -18,8 +17,7 @@ public class WeaponController : MonoBehaviour
 
     void Awake()
     {
-        pCon = GetComponent<PlayerController>();
-        inventoryUI = pCon. GetComponent<UI_Inventory>();
+
     }
     void Start()
     {
@@ -31,9 +29,9 @@ public class WeaponController : MonoBehaviour
     }
     void WheelSelect()
     {
-        if (pCon.mouseWheelClickDown) SelectWeapon(0);
+        if (Player.pCon.mouseWheelClickDown) SelectWeapon(0);
         
-        if (pCon.mouseWheelScroll == 0) return;
+        if (Player.pCon.mouseWheelScroll == 0) return;
         
         if(curWeaponIndex == 0)
         {
@@ -41,7 +39,7 @@ public class WeaponController : MonoBehaviour
             if (weaponHolder.childCount == 1) return;
         }
 
-        if (pCon.mouseWheelScroll > 0) //증가
+        if (Player.pCon.mouseWheelScroll > 0) //증가
         {
             if (curWeaponIndex == weaponHolder.childCount - 1) //마지막 순서의 무기일 때
             {
@@ -70,7 +68,7 @@ public class WeaponController : MonoBehaviour
         GameObject weaponObj = Instantiate(weapon.gameObject, weaponHolder); //무기 오브젝트 생성
         weaponObj.GetComponent<Weapon>().durability = durability;
         if (weaponHolder.childCount > 1) lastWeaponIndex = 1;
-        inventoryUI.ResetInventoryUI();
+        Player.inventoryUI.ResetInventoryUI();
     }
     public void SelectWeapon(int index)
     {
@@ -100,7 +98,7 @@ public class WeaponController : MonoBehaviour
         curWeapon.Use(true); //선택한 무기 활성화
 
         if (index != 0) lastWeaponIndex = index;
-        inventoryUI.ResetInventoryUI();
+        Player.inventoryUI.ResetInventoryUI();
     }
     void DropItem(Weapon weapon)//수정 필요---------------------------
     {

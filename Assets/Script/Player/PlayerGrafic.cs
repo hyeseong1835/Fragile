@@ -10,6 +10,7 @@ public enum AnimationState
 {
     STAY, WALK, BATTLE
 }
+[RequireComponent(typeof(Player))]
 public class PlayerGrafic : MonoBehaviour
 {
     [SerializeField] PlayerController pCon;
@@ -35,8 +36,8 @@ public class PlayerGrafic : MonoBehaviour
     
     void Awake()
     {
-        stayFrame = GetSpriteArray2DFromSpriteSheet(pTexture, new Vector2Int(0, 0), new Vector2Int(1, 7), 16, 16);
-        walkFrame = GetSpriteArray2DFromSpriteSheet(pTexture, new Vector2Int(3, 0), new Vector2Int(6, 7), 16, 16);
+        stayFrame = SpriteSheet.GetSpriteArray2DFromSpriteSheet(pTexture, new Vector2Int(0, 0), new Vector2Int(1, 7), 16, 16);
+        walkFrame = SpriteSheet.GetSpriteArray2DFromSpriteSheet(pTexture, new Vector2Int(3, 0), new Vector2Int(6, 7), 16, 16);
     }
     // Start is called before the first frame update
     void Start()
@@ -47,7 +48,11 @@ public class PlayerGrafic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //ªÛ≈¬ ¡ˆ¡§
+        Animation();
+    }
+    void Animation()
+    {
+        //ÏÉÅÌÉú ÏßÄÏ†ï
         if (pCon.curMoveSpeed <= 0.1f) state = AnimationState.STAY;
         else
         {
@@ -55,7 +60,7 @@ public class PlayerGrafic : MonoBehaviour
             else state = AnimationState.WALK;
         }
 
-        //ªÛ≈¬ø° µ˚∏• æ÷¥œ∏ﬁ¿Ãº«
+        //ÏÉÅÌÉúÏóê Îî∞Î•∏ Ïï†ÎãàÎ©îÏù¥ÏÖò
         switch (state)
         {
             case AnimationState.STAY:
@@ -65,36 +70,17 @@ public class PlayerGrafic : MonoBehaviour
                 body.sprite = walkFrame[walkIndex, pCon.moveIntRotate];
                 break;
         }
-
-        stayTime += Time.deltaTime / stayTimeScale;
-        if (stayTime >= 1)
-        {
-            stayTime = 0;
-            if (++stayIndex >= maxStayAnimateIndex) stayIndex = 0;
-        }
-        walkTime += Time.deltaTime / walkTimeScale;
-        if (walkTime >= 1)
-        {
-            walkTime = 0;
-            if (++walkIndex >= maxWalkAnimateIndex) walkIndex = 0;
-        }
+        AnimationUpdate(ref stayIndex, ref stayTime, stayTimeScale, maxStayAnimateIndex);
+        AnimationUpdate(ref walkIndex, ref walkTime, walkTimeScale, maxWalkAnimateIndex);
     }
-    Sprite[,] GetSpriteArray2DFromSpriteSheet(Texture2D spriteSheet, Vector2Int startPos, Vector2Int endPos, int spritePixelWidth, int spritePixelHeight)
+    void AnimationUpdate(ref int index, ref float time, float timeScale, int maxAnimateIndex)
     {
-        Sprite[,] frames = new Sprite[endPos.x - startPos.x + 1, endPos.y - startPos.y + 1];
-        for (int x = startPos.x; x <= endPos.x; x++)
+        time += Time.deltaTime / timeScale;
+        if (time >= 1)
         {
-            for (int y = startPos.y; y <= endPos.y; y++)
-            {
-                Texture2D tex = new Texture2D(spritePixelWidth, spritePixelHeight);
-                tex.SetPixels(spriteSheet.GetPixels(x * spritePixelWidth, y * spritePixelHeight, spritePixelWidth, spritePixelHeight));
-                tex.filterMode = FilterMode.Point;  
-                tex.Apply();
-
-                Debug.Log("X: (" + (x - startPos.x) + ", " + (y - startPos.y) + " )");
-                frames[x - startPos.x, y - startPos.y] = Sprite.Create(tex, new Rect(0, 0, spritePixelWidth, spritePixelHeight), Vector2.one * 0.5f);
-            }
+            time = 0;
+            if (++index >= maxAnimateIndex) index = 0;
         }
-        return frames;
     }
+
 }

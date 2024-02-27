@@ -8,10 +8,9 @@ public enum AnimateState
     Stay, Move, Battle
 }
 
+[RequireComponent(typeof(Player))]
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] Player player;
-    [SerializeField] WeaponController WCon;
     float hMove = 0;
     float vMove = 0;
     [HideInInspector] public Vector3 moveVector = new Vector3(0, 0, 0);
@@ -86,8 +85,8 @@ public class PlayerController : MonoBehaviour
 
         //¸¶¿ì½º
         mousePos = Input.mousePosition;
-        viewRotateZ = Mathf.Atan2(player.cam.ScreenToWorldPoint(mousePos).y - player.transform.position.y,
-            player.cam.ScreenToWorldPoint(mousePos).x - player.transform.position.x) * Mathf.Rad2Deg - 90;
+        viewRotateZ = Mathf.Atan2(Player.cam.ScreenToWorldPoint(mousePos).y - transform.position.y,
+            Player.cam.ScreenToWorldPoint(mousePos).x - transform.position.x) * Mathf.Rad2Deg - 90;
 
         mouseWheelScroll = Input.GetAxis("Mouse ScrollWheel");
         mouseWheelClickDown = Input.GetMouseButtonDown(2);
@@ -107,17 +106,17 @@ public class PlayerController : MonoBehaviour
         //Attack
         if (mouse0Down)
         {
-            if (WCon.curWeapon.attackCool < 0.5f && WCon.curWeapon.attackStack == 0) WCon.curWeapon.attackStack++;
+            if (Player.wCon.curWeapon.attackCool < 0.5f && Player.wCon.curWeapon.attackStack == 0) Player.wCon.curWeapon.attackStack++;
         }
-        if ((mouse0Down || WCon.curWeapon.attackStack > 0) && WCon.curWeapon.attackCool == 0)
+        if ((mouse0Down || Player.wCon.curWeapon.attackStack > 0) && Player.wCon.curWeapon.attackCool == 0)
         {
             StartCoroutine(AttackDown());
         }
     }
     IEnumerator AttackDown()
     {
-        WCon.curWeapon.attackStack--;
-        WCon.curWeapon.attackCool = WCon.curWeapon.attackCooltime;
+        Player.wCon.curWeapon.attackStack--;
+        Player.wCon.curWeapon.attackCool = Player.wCon.curWeapon.attackCooltime;
         
         attackDown = true;
         yield return null;

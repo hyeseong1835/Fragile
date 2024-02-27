@@ -1,20 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+[RequireComponent(typeof(PlayerController))]
+[RequireComponent(typeof(WeaponController))]
+[RequireComponent(typeof(PlayerGrafic))]
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Collider2D))]
+public static class Player
 {
-    public Camera cam;
+    public static PlayerController pCon;
+    public static WeaponController wCon;
+    public static PlayerGrafic grafic;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public static UI_Inventory inventoryUI;
+    public static Camera cam;
 }

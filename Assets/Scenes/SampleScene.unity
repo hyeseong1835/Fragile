@@ -157,8 +157,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f2b5b4f8513afd4da14abac2e5d03be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 5837740}
-  WCon: {fileID: 5837739}
   moveVector: {x: 0, y: 0, z: 0}
   curMoveSpeed: 0
   moveRotate: 0
@@ -210,7 +208,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31a51d22922d3b24a916756f8356843d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventoryUI: {fileID: 1248037449}
   weaponHolder: {fileID: 374465424}
   curWeapon: {fileID: 8645580123791882277}
   lastWeaponIndex: 0
@@ -1742,7 +1739,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d78ff806491665740bd81bb76a245a3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weapon: {fileID: 8645580123791882277}
   swingObj: {fileID: 8003383336245887096}
   swingDamage: 1
   duration: 0.25

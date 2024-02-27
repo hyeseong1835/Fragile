@@ -16,12 +16,12 @@ public class Skill_Spin : Skill
     public IEnumerator Spin()
     {
         if (spinObj.activeInHierarchy == true) yield break;
-        weapon.isUsing = false;
+        Skill.weapon.isUsing = false;
         spinObj.gameObject.SetActive(true);
         transform.SetParent(null);
-        float startAngleZ = Mathf.Atan2(player.cam.ScreenToWorldPoint(pCon.mousePos).y - player.transform.position.y,
-            player.cam.ScreenToWorldPoint(pCon.mousePos).x - player.transform.position.x) * Mathf.Rad2Deg - 90;
-        Vector3 startVector = player.cam.ScreenToWorldPoint(pCon.mousePos) + new Vector3(0, 0, 10) - player.transform.position;
+        float startAngleZ = Mathf.Atan2(Player.cam.ScreenToWorldPoint(Player.pCon.mousePos).y - pTransform.position.y,
+            Player.cam.ScreenToWorldPoint(Player.pCon.mousePos).x - pTransform.position.x) * Mathf.Rad2Deg - 90;
+        Vector3 startVector = Player.cam.ScreenToWorldPoint(Player.pCon.mousePos) + new Vector3(0, 0, 10) - pTransform.position;
         float time = 0;
         while (time <= spinDuration)
         {
@@ -31,7 +31,7 @@ public class Skill_Spin : Skill
             yield return null;
         }
         Destroy(spinObj);
-        weapon.DestroyWeapon();
+        Skill.weapon.DestroyWeapon();
     }
     public void SpinObjectTriggerEnter(GameObject obj, Collider2D coll)
     {

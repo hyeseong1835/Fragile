@@ -24,9 +24,6 @@ public abstract class Weapon : MonoBehaviour
 
     //플레이어 컴포넌트
     UnityEngine.Transform pTransform;
-    protected Player player;
-    protected PlayerController pCon;
-    protected WeaponController wCon;
 
     //직렬화
     public GameObject item;
@@ -38,12 +35,8 @@ public abstract class Weapon : MonoBehaviour
     {
         //변수 세팅
         pTransform = transform.parent.parent;
-        player = pTransform.GetComponent<Player>();
-        pCon = pTransform.GetComponent<PlayerController>();
 
-        wCon = pTransform.GetComponent<WeaponController>();
-        UI = wCon.inventoryUI.AddToInventory(this);
-        index = wCon.weaponHolder.childCount - 1;
+        index = Player.wCon.weaponHolder.childCount - 1;
     }
     void Update()
     {
@@ -53,16 +46,16 @@ public abstract class Weapon : MonoBehaviour
         #region 입력
         if (!isUsing) return;
 
-        if (pCon.mouse0Down) Mouse0Down();
-        if (pCon.mouse0) Mouse0();
-        if (pCon.mouse0Up) Mouse0Up();
-        if (pCon.mouse1Down) Mouse1Down();
-        if (pCon.mouse1) Mouse1();
-        if (pCon.mouse1Up) Mouse1Up();
+        if (Player.pCon.mouse0Down) Mouse0Down();
+        if (Player.pCon.mouse0) Mouse0();
+        if (Player.pCon.mouse0Up) Mouse0Up();
+        if (Player.pCon.mouse1Down) Mouse1Down();
+        if (Player.pCon.mouse1) Mouse1();
+        if (Player.pCon.mouse1Up) Mouse1Up();
 
-        if (pCon.attackDown) AttackDown();
-        if (pCon.attack) Attack();
-        if (pCon.attackUp) AttackUp();
+        if (Player.pCon.attackDown) AttackDown();
+        if (Player.pCon.attack) Attack();
+        if (Player.pCon.attackUp) AttackUp();
         #endregion
     }
 
@@ -98,18 +91,18 @@ public abstract class Weapon : MonoBehaviour
         breakEffect.transform.parent = null;
 
         //Weapon
-        if (index == wCon.weaponHolder.childCount - 1) //마지막 순서의 무기일 때
+        if (index == Player.wCon.weaponHolder.childCount - 1) //마지막 순서의 무기일 때
         {
-            if (wCon.weaponHolder.childCount == 2) //무기가 하나일 때
+            if (Player.wCon.weaponHolder.childCount == 2) //무기가 하나일 때
             {
-                wCon.SelectWeapon(0);
+                Player.wCon.SelectWeapon(0);
             }
-            else wCon.SelectWeapon(index - 1); //무기가 더 있을 때
+            else Player.wCon.SelectWeapon(index - 1); //무기가 더 있을 때
         }
-        else wCon.SelectWeapon(index + 1);
+        else Player.wCon.SelectWeapon(index + 1);
 
-        wCon.inventoryUI.RemoveToInventory(this);
-        wCon.DelayDestroy();
+        Player.inventoryUI.RemoveToInventory(this);
+        Player.wCon.DelayDestroy();
 
         //효과
         if (breakPos != Vector2.positiveInfinity)

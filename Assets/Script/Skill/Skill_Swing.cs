@@ -6,7 +6,6 @@ using DG.Tweening;
 
 public class Skill_Swing : Skill
 {
-
     public GameObject swingObj;
     public float swingDamage;
     public float duration = 0;
@@ -21,7 +20,7 @@ public class Skill_Swing : Skill
     public IEnumerator Swing()
     {
         //초기화
-        pCon.isAttack = true;
+        Player.pCon.isAttack = true;
         swingObj.SetActive(true);
 
         //스킬
@@ -31,7 +30,7 @@ public class Skill_Swing : Skill
             case Curve.Linear:
                 while (time < 1)
                 {
-                    swingObj.transform.rotation = Quaternion.Euler(0, 0, pCon.viewRotateZ + spread * 0.5f - time * spread);
+                    swingObj.transform.rotation = Quaternion.Euler(0, 0, Player.pCon.viewRotateZ + spread * 0.5f - time * spread);
 
                     time += Time.deltaTime / duration;
                     yield return null;
@@ -40,18 +39,18 @@ public class Skill_Swing : Skill
             case Curve.Quadratic:
                 while (time < 1)
                 {
-                    swingObj.transform.rotation = Quaternion.Euler(0, 0, pCon.viewRotateZ + spread * 0.5f - time * time * spread);
+                    swingObj.transform.rotation = Quaternion.Euler(0, 0, Player.pCon.viewRotateZ + spread * 0.5f - time * time * spread);
 
                     time += Time.deltaTime / duration;
                     yield return null;
                 }
                 break;
         }
-        swingObj.transform.rotation = Quaternion.Euler(0, 0, pCon.viewRotateZ - spread * 0.5f);
+        swingObj.transform.rotation = Quaternion.Euler(0, 0, Player.pCon.viewRotateZ - spread * 0.5f);
         yield return null;
         //초기화
         swingObj.SetActive(false);
-        pCon.isAttack = false;
+        Player.pCon.isAttack = false;
     }
     public void SwingObjectTriggerEnter(GameObject obj, Collider2D coll)
     {
