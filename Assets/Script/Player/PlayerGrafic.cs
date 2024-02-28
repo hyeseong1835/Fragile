@@ -5,6 +5,7 @@ using UnityEngine.UIElements;
 using Sirenix.Utilities.Editor;
 using UnityEditor;
 using static UnityEngine.Rendering.DebugUI.Table;
+using System.Collections;
 
 public enum AnimationState
 {
@@ -20,13 +21,13 @@ public class PlayerGrafic : MonoBehaviour
     [SerializeField] Texture2D pTexture;
     [SerializeField] AnimationState state = AnimationState.STAY;
 
-    Sprite[,] stayFrame;
+    [ShowInInspector] Sprite[,] stayFrame;
     [SerializeField] int stayIndex = 0;
     int maxStayAnimateIndex = 2;
     [SerializeField] float stayTimeScale = 0.5f;
     float stayTime = 0;
 
-    Sprite[,] walkFrame;
+    [ShowInInspector] Sprite[,] walkFrame;
     [SerializeField] int walkIndex = 0;
     int maxWalkAnimateIndex = 4;
     [SerializeField] float walkTimeScale = 0.5f;
@@ -82,5 +83,4 @@ public class PlayerGrafic : MonoBehaviour
             if (++index >= maxAnimateIndex) index = 0;
         }
     }
-
 }

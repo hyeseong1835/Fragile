@@ -12,6 +12,7 @@ public class WeaponController : MonoBehaviour
 
     public Weapon curWeapon;
 
+    public UI_Inventory inventoryUI;
     public int lastWeaponIndex = 0;
     public int curWeaponIndex = 0;
 
@@ -58,7 +59,7 @@ public class WeaponController : MonoBehaviour
             else SelectWeapon(curWeaponIndex - 1);
         }
     }
-    public void TakeItem(Weapon weapon, int durability)
+    public void TakeItem(Weapon weapon)
     {
         if (weaponHolder.childCount > 11)
         {
@@ -66,9 +67,11 @@ public class WeaponController : MonoBehaviour
             return;
         }
         GameObject weaponObj = Instantiate(weapon.gameObject, weaponHolder); //무기 오브젝트 생성
-        weaponObj.GetComponent<Weapon>().durability = durability;
+
+        string[] datas = weapon.LoadData().Split(',');
+        weaponObj.GetComponent<Weapon>().durability = int.Parse(datas[0]);
         if (weaponHolder.childCount > 1) lastWeaponIndex = 1;
-        Player.inventoryUI.ResetInventoryUI();
+        inventoryUI.ResetInventoryUI();
     }
     public void SelectWeapon(int index)
     {
@@ -98,14 +101,12 @@ public class WeaponController : MonoBehaviour
         curWeapon.Use(true); //선택한 무기 활성화
 
         if (index != 0) lastWeaponIndex = index;
-        Player.inventoryUI.ResetInventoryUI();
+        inventoryUI.ChangeWeaponUI(index);
     }
     void DropItem(Weapon weapon)//수정 필요---------------------------
     {
         GameObject item = Instantiate(weapon.item);
         weapon.DestroyWeapon();
-        ResetWeaponIndex();
-        SelectWeapon(curWeaponIndex);
     }
     void ResetWeaponIndex()
     {
@@ -116,15 +117,23 @@ public class WeaponController : MonoBehaviour
         curWeaponIndex = curWeapon.index;
         if(lastWeaponIndex + 1 > weaponHolder.childCount) lastWeaponIndex = weaponHolder.childCount - 1;
     }
-    public void DelayDestroy()
+    public void DestroyWeapon(int index)
     {
-        StartCoroutine(DelayDestroyCoroutine());
-    }
-    IEnumerator DelayDestroyCoroutine()
-    {
-        yield return null;
+        //다음 무기 선택
+        if (index == weaponHolder.childCount - 1) //마지막 순서의 무기일 때
+        {
+            if (weaponHolder.childCount == 2) //무기가 하나일 때
+            {
+                SelectWeapon(0);
+            }
+            else SelectWeapon(index - 1); //무기가 더 있을 때
+        }
+        else SelectWeapon(index + 1);
 
+        //제거
+        inventoryUI.RemoveToInventory(index);
         ResetWeaponIndex();
+        SelectWeapon(curWeaponIndex);
         if (weaponHolder.childCount == 1) lastWeaponIndex = 0;
     }
 }

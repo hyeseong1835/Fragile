@@ -22,10 +22,6 @@ public abstract class Weapon : MonoBehaviour
     public int attackStack = 0;
     public float attackCool = 0;
 
-    //플레이어 컴포넌트
-    UnityEngine.Transform pTransform;
-
-    //직렬화
     public GameObject item;
     public GameObject UI;
     [SerializeField] GameObject breakEffect;
@@ -34,8 +30,6 @@ public abstract class Weapon : MonoBehaviour
     void Awake()
     {
         //변수 세팅
-        pTransform = transform.parent.parent;
-
         index = Player.wCon.weaponHolder.childCount - 1;
     }
     void Update()
@@ -73,6 +67,15 @@ public abstract class Weapon : MonoBehaviour
 
 
     #region 무기 관리
+    public virtual void SetData(string[] datas)
+    {
+        durability = int.Parse(datas[0]);
+    }
+    public virtual string LoadData()
+    {
+        return durability.ToString();
+    }
+
     public void Use(bool use)
     {
         if (use)
@@ -88,29 +91,9 @@ public abstract class Weapon : MonoBehaviour
     }
     public void DestroyWeapon()
     {
-        breakEffect.transform.parent = null;
+        OnWeaponDestroy();
 
-        //Weapon
-        if (index == Player.wCon.weaponHolder.childCount - 1) //마지막 순서의 무기일 때
-        {
-            if (Player.wCon.weaponHolder.childCount == 2) //무기가 하나일 때
-            {
-                Player.wCon.SelectWeapon(0);
-            }
-            else Player.wCon.SelectWeapon(index - 1); //무기가 더 있을 때
-        }
-        else Player.wCon.SelectWeapon(index + 1);
-
-        Player.inventoryUI.RemoveToInventory(this);
-        Player.wCon.DelayDestroy();
-
-        //효과
-        if (breakPos != Vector2.positiveInfinity)
-        {
-            breakEffect.SetActive(true);
-            breakEffect.transform.SetParent(null);
-            breakEffect.transform.position = breakPos;
-        }
+        Player.wCon.DestroyWeapon(index);
         Destroy(gameObject);
     }
     public void AddDurability(int add)
@@ -118,12 +101,16 @@ public abstract class Weapon : MonoBehaviour
         durability += add;
         if (durability <= 0)
         {
+            breakEffect.SetActive(true);
+            breakEffect.transform.parent = null;
+            breakEffect.transform.position = breakPos;
             DestroyWeapon();
             return;
         }
-        UI.transform.parent.GetComponent<UI_Inventory>().ResetDurabilityUI();
+        Player.wCon.inventoryUI.ResetDurabilityUI();
     }
     public virtual void OnUse() { }
     public virtual void OnDeUse() { }
+    public virtual void OnWeaponDestroy() { }
     #endregion
 }

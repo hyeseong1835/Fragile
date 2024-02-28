@@ -2,10 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UI_Inventory : MonoBehaviour
 {
-    [SerializeField] WeaponController wCon;
+    [SerializeField] Image durabillity;
+
+    GameObject curUI;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,15 +20,18 @@ public class UI_Inventory : MonoBehaviour
     {
         
     }
+    public void ChangeWeaponUI(int index)
+    {
+        curUI.SetActive(false);
+
+        curUI = transform.GetChild(0).GetChild(index).gameObject;
+        curUI.SetActive(true);
+    }
     public GameObject AddToInventory(Weapon weapon)
     {
-        StartCoroutine(AddToInventoryCoroutine());
-        return Instantiate(weapon.UI, transform);
-    }
-    IEnumerator AddToInventoryCoroutine()
-    {
-        yield return null;
+        GameObject weaponUI = Instantiate(weapon.UI, transform);
         ResetInventoryUI();
+        return weaponUI;
     }
     public void RemoveToInventory(Weapon weapon)
     {
@@ -43,11 +49,11 @@ public class UI_Inventory : MonoBehaviour
         {
             transform.GetChild(i).gameObject.SetActive(false);
         }
-        transform.GetChild(wCon.curWeaponIndex).gameObject.SetActive(true);
+        transform.GetChild(Player.wCon.curWeaponIndex).gameObject.SetActive(true);
         ResetDurabilityUI();
     }
     public void ResetDurabilityUI()
     {
-
+        durabillity.fillAmount = Player.wCon.curWeapon.durability / Player.wCon.curWeapon.maxDurability;
     }
 }

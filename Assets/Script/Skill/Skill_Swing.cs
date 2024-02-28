@@ -22,6 +22,7 @@ public class Skill_Swing : Skill
         //초기화
         Player.pCon.isAttack = true;
         swingObj.SetActive(true);
+        float startRotateZ = Player.pCon.viewRotateZ;
 
         //스킬
         float time = 0;
@@ -30,7 +31,7 @@ public class Skill_Swing : Skill
             case Curve.Linear:
                 while (time < 1)
                 {
-                    swingObj.transform.rotation = Quaternion.Euler(0, 0, Player.pCon.viewRotateZ + spread * 0.5f - time * spread);
+                    swingObj.transform.rotation = Quaternion.Euler(0, 0, startRotateZ + spread * 0.5f - time * spread);
 
                     time += Time.deltaTime / duration;
                     yield return null;
@@ -39,14 +40,14 @@ public class Skill_Swing : Skill
             case Curve.Quadratic:
                 while (time < 1)
                 {
-                    swingObj.transform.rotation = Quaternion.Euler(0, 0, Player.pCon.viewRotateZ + spread * 0.5f - time * time * spread);
+                    swingObj.transform.rotation = Quaternion.Euler(0, 0, startRotateZ + spread * 0.5f - time * time * spread);
 
                     time += Time.deltaTime / duration;
                     yield return null;
                 }
                 break;
         }
-        swingObj.transform.rotation = Quaternion.Euler(0, 0, Player.pCon.viewRotateZ - spread * 0.5f);
+        swingObj.transform.rotation = Quaternion.Euler(0, 0, startRotateZ - spread * 0.5f);
         yield return null;
         //초기화
         swingObj.SetActive(false);
