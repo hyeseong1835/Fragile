@@ -15,7 +15,7 @@ public class Item : MonoBehaviour
             if (weaponCon.weaponHolder.childCount > 10) return;
 
             Debug.Log(weapon.GetComponent<Weapon>());
-            weaponCon.TakeItem(weapon.GetComponent<Weapon>());
+            weaponCon.TakeItem(weapon.GetComponent<Weapon>(), gameObject.name);
 
             Destroy(gameObject);
         }

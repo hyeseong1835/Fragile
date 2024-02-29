@@ -59,19 +59,24 @@ public class WeaponController : MonoBehaviour
             else SelectWeapon(curWeaponIndex - 1);
         }
     }
-    public void TakeItem(Weapon weapon)
+    public void TakeItem(Weapon weapon, string data)
     {
         if (weaponHolder.childCount > 11)
         {
             DropItem(weapon);
             return;
         }
-        GameObject weaponObj = Instantiate(weapon.gameObject, weaponHolder); //무기 오브젝트 생성
+        GameObject weaponObj = Instantiate((GameObject) Resources.Load("Assets/Resources/WeaponObjPrefab/"), weaponHolder); //무기 오브젝트 생성
 
-        string[] datas = weapon.LoadData().Split(',');
-        weaponObj.GetComponent<Weapon>().durability = int.Parse(datas[0]);
+        weapon.index = Player.wCon.weaponHolder.childCount - 1;
+        weapon.SetData(data.Split(','));
+
         if (weaponHolder.childCount > 1) lastWeaponIndex = 1;
         inventoryUI.ResetInventoryUI();
+    }
+    public void TakeItem()
+    {
+
     }
     public void SelectWeapon(int index)
     {
@@ -105,7 +110,7 @@ public class WeaponController : MonoBehaviour
     }
     void DropItem(Weapon weapon)//수정 필요---------------------------
     {
-        GameObject item = Instantiate(weapon.item);
+        GameObject item = ItemManager.SpawnItem(weapon, weapon.LoadData());
         weapon.DestroyWeapon();
     }
     void ResetWeaponIndex()
@@ -120,7 +125,7 @@ public class WeaponController : MonoBehaviour
     public void DestroyWeapon(int index)
     {
         //다음 무기 선택
-        if (index == weaponHolder.childCount - 1) //마지막 순서의 무기일 때
+        if (index + 1 == weaponHolder.childCount) //마지막 순서의 무기일 때
         {
             if (weaponHolder.childCount == 2) //무기가 하나일 때
             {
@@ -131,7 +136,12 @@ public class WeaponController : MonoBehaviour
         else SelectWeapon(index + 1);
 
         //제거
-        inventoryUI.RemoveToInventory(index);
+
+        weaponHolder.GetChild(index).GetComponent<Weapon>().OnWeaponDestroy();
+
+        Player.wCon.DestroyWeapon(index);
+        Destroy(gameObject);
+
         ResetWeaponIndex();
         SelectWeapon(curWeaponIndex);
         if (weaponHolder.childCount == 1) lastWeaponIndex = 0;

@@ -23,15 +23,10 @@ public abstract class Weapon : MonoBehaviour
     public float attackCool = 0;
 
     public GameObject item;
-    public GameObject UI;
+    public Sprite UI;
     [SerializeField] GameObject breakEffect;
     public Vector2 breakPos;
 
-    void Awake()
-    {
-        //函荐 技泼
-        index = Player.wCon.weaponHolder.childCount - 1;
-    }
     void Update()
     {
         if (attackCool > 0) attackCool -= Time.deltaTime;
@@ -69,7 +64,7 @@ public abstract class Weapon : MonoBehaviour
     #region 公扁 包府
     public virtual void SetData(string[] datas)
     {
-        durability = int.Parse(datas[0]);
+        if (0 < datas.Length) durability = int.Parse(datas[0]);
     }
     public virtual string LoadData()
     {
@@ -91,10 +86,7 @@ public abstract class Weapon : MonoBehaviour
     }
     public void DestroyWeapon()
     {
-        OnWeaponDestroy();
 
-        Player.wCon.DestroyWeapon(index);
-        Destroy(gameObject);
     }
     public void AddDurability(int add)
     {

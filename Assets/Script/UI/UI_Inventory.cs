@@ -7,8 +7,9 @@ using UnityEngine.UI;
 public class UI_Inventory : MonoBehaviour
 {
     [SerializeField] Image durabillity;
-
+    
     GameObject curUI;
+    [SerializeField] Sprite[] UISprite = new Sprite[11];
     // Start is called before the first frame update
     void Start()
     {
@@ -22,32 +23,22 @@ public class UI_Inventory : MonoBehaviour
     }
     public void ChangeWeaponUI(int index)
     {
-        curUI.SetActive(false);
+        if (curUI != null) curUI.SetActive(false);
 
         curUI = transform.GetChild(0).GetChild(index).gameObject;
         curUI.SetActive(true);
     }
-    public GameObject AddToInventory(Weapon weapon)
+    public void AddToInventory(Weapon weapon)
     {
-        GameObject weaponUI = Instantiate(weapon.UI, transform);
-        ResetInventoryUI();
-        return weaponUI;
-    }
-    public void RemoveToInventory(Weapon weapon)
-    {
-        Destroy(weapon.UI);
-        ResetInventoryUI();
-    }
-    public void RemoveToInventory(int index)
-    {
-        Destroy(transform.GetChild(index).gameObject);
-        ResetInventoryUI();
+        UISprite[weapon.index] = weapon.UI;
     }
     public void ResetInventoryUI()
     {
+        UISprite = new Sprite[11];
         for (int i = 0; i < transform.childCount; i++) //모두 비활성화
         {
-            transform.GetChild(i).gameObject.SetActive(false);
+            Weapon weapon = Player.wCon.weaponHolder.GetChild(i).GetComponent<Weapon>();
+            UISprite[weapon.index] = weapon.UI;
         }
         transform.GetChild(Player.wCon.curWeaponIndex).gameObject.SetActive(true);
         ResetDurabilityUI();

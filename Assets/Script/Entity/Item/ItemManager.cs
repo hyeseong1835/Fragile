@@ -13,9 +13,9 @@ public class ItemManager : MonoBehaviour
     {
         
     }
-    public GameObject SpawnItem(GameObject weapon, string weaponData)
+    public static GameObject SpawnItem(Weapon weapon, string weaponData)
     {
-        GameObject item = Instantiate(itemPrefab);
+        GameObject item = Instantiate(weapon.item);
         item.name = weaponData;
         return item;
     }

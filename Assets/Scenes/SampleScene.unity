@@ -273,7 +273,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 1
   m_AngularDrag: 1
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -850,7 +850,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f19d7285a108323499b090cdea216d12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  durabillity: {fileID: 0}
+  durabillity: {fileID: 2128805571}
+  UISprite:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!4 &1329881551 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}

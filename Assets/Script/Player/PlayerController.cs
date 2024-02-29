@@ -15,11 +15,11 @@ public class PlayerController : MonoBehaviour
     float vMove = 0;
     [HideInInspector] public Vector3 moveVector = new Vector3(0, 0, 0);
     [HideInInspector] public float curMoveSpeed = 0;
-    public float moveRotate;
+    [HideInInspector] public float moveRotate;
     /// <summary>
     /// 0(90), 1(45), 2(0), 3(315), 4(270), 5(225), 6(180), 7(135)
     /// </summary>
-    public int moveIntRotate;
+    [HideInInspector] public int moveIntRotate;
 
     //¸¶¿ì½º
     [HideInInspector] public Vector3 mousePos = Vector3.zero;
@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Key();
+        Key();                                                                                                                                                                                                                                                                                                         
         Move();
     }
     void Key()
