@@ -5216,7 +5216,7 @@ MonoBehaviour:
   attackStack: 0
   attackCool: 0
   item: {fileID: 568426665767065111, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-  UI: {fileID: 3064606193288967393, guid: e2409be8ab55c424d86c8bf1d1e59331, type: 3}
+  UI: {fileID: 21300000, guid: 4de065b7691eaa64d8d187fce863b3e3, type: 3}
   breakEffect: {fileID: 6871315852018110587}
   breakPos: {x: 0, y: 0}
   swing: {fileID: 3182766494214464233}
@@ -5233,7 +5233,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d78ff806491665740bd81bb76a245a3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weapon: {fileID: 3072198428114002479}
   swingObj: {fileID: 3801472040932104885}
   swingDamage: 1
   duration: 0.25
@@ -5266,7 +5265,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55dfe9d28880c544d9c81d89be519e5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weapon: {fileID: 3072198428114002479}
   spinObj: {fileID: 336016178796249401}
   spinDuration: 5
   throwSpeed: 0.025

@@ -11,11 +11,10 @@ public class Item : MonoBehaviour
     {
         if (collision.gameObject.layer == 6)
         {
-            WeaponController weaponCon = collision.GetComponent<WeaponController>();
-            if (weaponCon.weaponHolder.childCount > 10) return;
+            if (WeaponController.weaponHolder.childCount > 11) return;
 
             Debug.Log(weapon.GetComponent<Weapon>());
-            weaponCon.TakeItem(weapon.GetComponent<Weapon>(), gameObject.name);
+            Player.wCon.TakeItem(weapon.GetComponent<Weapon>(), gameObject.name);
 
             Destroy(gameObject);
         }

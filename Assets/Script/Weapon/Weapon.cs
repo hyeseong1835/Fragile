@@ -84,10 +84,6 @@ public abstract class Weapon : MonoBehaviour
             OnDeUse();
         }
     }
-    public void DestroyWeapon()
-    {
-
-    }
     public void AddDurability(int add)
     {
         durability += add;
@@ -96,13 +92,17 @@ public abstract class Weapon : MonoBehaviour
             breakEffect.SetActive(true);
             breakEffect.transform.parent = null;
             breakEffect.transform.position = breakPos;
-            DestroyWeapon();
+            Player.wCon.RemoveWeapon(index);
             return;
         }
-        Player.wCon.inventoryUI.ResetDurabilityUI();
+        WeaponController.inventoryUI.ResetDurabilityUI();
     }
     public virtual void OnUse() { }
     public virtual void OnDeUse() { }
     public virtual void OnWeaponDestroy() { }
+    public virtual void OnWeaponBreak() 
+    {
+        Player.wCon.RemoveWeapon(index);
+    }
     #endregion
 }

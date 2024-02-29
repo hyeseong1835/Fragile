@@ -7,7 +7,7 @@ public abstract class Skill : MonoBehaviour
 {
     protected Transform pTransform;
 
-    public static Weapon weapon;
+    public Weapon weapon;
 
     void Awake()
     {

@@ -8,7 +8,7 @@ public class UI_Inventory : MonoBehaviour
 {
     [SerializeField] Image durabillity;
     
-    GameObject curUI;
+    [SerializeField] Image UI;
     [SerializeField] Sprite[] UISprite = new Sprite[11];
     // Start is called before the first frame update
     void Start()
@@ -23,10 +23,7 @@ public class UI_Inventory : MonoBehaviour
     }
     public void ChangeWeaponUI(int index)
     {
-        if (curUI != null) curUI.SetActive(false);
-
-        curUI = transform.GetChild(0).GetChild(index).gameObject;
-        curUI.SetActive(true);
+        if (UISprite[index] != null) UI.sprite = UISprite[index];
     }
     public void AddToInventory(Weapon weapon)
     {
@@ -37,14 +34,14 @@ public class UI_Inventory : MonoBehaviour
         UISprite = new Sprite[11];
         for (int i = 0; i < transform.childCount; i++) //모두 비활성화
         {
-            Weapon weapon = Player.wCon.weaponHolder.GetChild(i).GetComponent<Weapon>();
+            Weapon weapon = WeaponController.weaponHolder.GetChild(i).GetComponent<Weapon>();
             UISprite[weapon.index] = weapon.UI;
         }
-        transform.GetChild(Player.wCon.curWeaponIndex).gameObject.SetActive(true);
+        transform.GetChild(WeaponController.curWeaponIndex).gameObject.SetActive(true);
         ResetDurabilityUI();
     }
     public void ResetDurabilityUI()
     {
-        durabillity.fillAmount = Player.wCon.curWeapon.durability / Player.wCon.curWeapon.maxDurability;
+        durabillity.fillAmount = WeaponController.curWeapon.durability / WeaponController.curWeapon.maxDurability;
     }
 }
