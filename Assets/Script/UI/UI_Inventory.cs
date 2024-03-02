@@ -10,17 +10,7 @@ public class UI_Inventory : MonoBehaviour
     
     [SerializeField] Image UI;
     [SerializeField] Sprite[] UISprite = new Sprite[11];
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     public void ChangeWeaponUI(int index)
     {
         if (UISprite[index] != null) UI.sprite = UISprite[index];
@@ -34,14 +24,14 @@ public class UI_Inventory : MonoBehaviour
         UISprite = new Sprite[11];
         for (int i = 0; i < transform.childCount; i++) //모두 비활성화
         {
-            Weapon weapon = WeaponController.weaponHolder.GetChild(i).GetComponent<Weapon>();
+            Weapon weapon = Player.wCon.weapons[i];
             UISprite[weapon.index] = weapon.UI;
         }
-        transform.GetChild(WeaponController.curWeaponIndex).gameObject.SetActive(true);
+        transform.GetChild(Player.wCon.weaponCount).gameObject.SetActive(true);
         ResetDurabilityUI();
     }
     public void ResetDurabilityUI()
     {
-        durabillity.fillAmount = WeaponController.curWeapon.durability / WeaponController.curWeapon.maxDurability;
+        durabillity.fillAmount = Player.wCon.curWeapon.durability / Player.wCon.curWeapon.maxDurability;
     }
 }

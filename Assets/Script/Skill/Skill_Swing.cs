@@ -1,27 +1,21 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using DG.Tweening;
 
 public class Skill_Swing : Skill
 {
-    public GameObject swingObj;
-    public float swingDamage;
-    public float duration = 0;
-    public int spread = 0;
-    enum Curve
+    public enum Curve
     {
         Linear, Quadratic
     }
-    [SerializeField] Curve swingCurve;
-    [SerializeField] UnityEvent<GameObject, Collider2D> swingHitEvent;
-
-    public IEnumerator Swing()
+    public IEnumerator Swing(TriggerObject triggerObj, float spread, float duration, Curve swingCurve, 
+        UnityEvent<Transform, Collider2D> enterEvent, 
+        UnityEvent<Transform, Collider2D> stayEvent = null, 
+        UnityEvent<Transform, Collider2D> exitEvent = null)
     {
         //초기화
-        Player.pCon.isAttack = true;
-        swingObj.SetActive(true);
+        triggerObj.gameObject.SetActive(true);
+        triggerObj.SetEvent(enterEvent, stayEvent, exitEvent);
         float startRotateZ = Player.pCon.viewRotateZ;
 
         //스킬
@@ -31,7 +25,7 @@ public class Skill_Swing : Skill
             case Curve.Linear:
                 while (time < 1)
                 {
-                    swingObj.transform.rotation = Quaternion.Euler(0, 0, startRotateZ + spread * 0.5f - time * spread);
+                    triggerObj.transform.rotation = Quaternion.Euler(0, 0, startRotateZ + spread * 0.5f - time * spread);
 
                     time += Time.deltaTime / duration;
                     yield return null;
@@ -40,21 +34,28 @@ public class Skill_Swing : Skill
             case Curve.Quadratic:
                 while (time < 1)
                 {
-                    swingObj.transform.rotation = Quaternion.Euler(0, 0, startRotateZ + spread * 0.5f - time * time * spread);
+                    triggerObj.transform.rotation = Quaternion.Euler(0, 0, startRotateZ + spread * 0.5f - time * time * spread);
 
                     time += Time.deltaTime / duration;
                     yield return null;
                 }
                 break;
         }
-        swingObj.transform.rotation = Quaternion.Euler(0, 0, startRotateZ - spread * 0.5f);
+        triggerObj.transform.rotation = Quaternion.Euler(0, 0, startRotateZ - spread * 0.5f);
+
         yield return null;
-        //초기화
-        swingObj.SetActive(false);
-        Player.pCon.isAttack = false;
+        triggerObj.gameObject.SetActive(false);
     }
-    public void SwingObjectTriggerEnter(GameObject obj, Collider2D coll)
+    public void SwingObjectTriggerEnter(Transform transform, Collider2D coll, UnityEvent<Transform, Collider2D> enterEvent)
     {
-        swingHitEvent.Invoke(obj, coll);
+        enterEvent.Invoke(transform, coll);
+    }
+    public void SwingObjectTriggerStay(Transform transform, Collider2D coll, UnityEvent<Transform, Collider2D> stayEvent)
+    {
+        stayEvent.Invoke(transform, coll);
+    }
+    public void SwingObjectTriggerExit(Transform transform, Collider2D coll, UnityEvent<Transform, Collider2D> exitEvent)
+    {
+        exitEvent.Invoke(transform, coll);
     }
 }

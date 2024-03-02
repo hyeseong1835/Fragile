@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Xml.Serialization;
 using UnityEngine;
 
 public enum AnimateState
@@ -13,12 +11,13 @@ public class PlayerController : MonoBehaviour
 {
     [HideInInspector] public Vector3 moveVector
     {
-        get { return new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0}; }
+        get { return new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0); }
         set { if (moveVector.magnitude > 0.1f) moveRotate = Mathf.Atan2(moveVector.y, moveVector.x) * Mathf.Rad2Deg; }
     }
     [HideInInspector] public float curMoveSpeed
     {
-        get { moveVector.magnitude * moveSpeed }
+        get { return moveVector.magnitude * moveSpeed; }
+        private set { }
     }
     [HideInInspector] public float moveRotate;
     /// <summary>
@@ -43,13 +42,11 @@ public class PlayerController : MonoBehaviour
     }
 
     //마우스
-    [HideInInspector]
-    public Vector3 mousePos
+    [HideInInspector] public Vector3 mousePos
     {
         get { return Input.mousePosition; }
     }
-    [HideInInspector]
-    public float viewRotateZ
+    [HideInInspector] public float viewRotateZ
     {
         get
         {
@@ -87,44 +84,46 @@ public class PlayerController : MonoBehaviour
     }
 
     //마우스 휠
-    [HideInInspector]
-    public float mouseWheelScroll
+    [HideInInspector] public float mouseWheelScroll
     {
         get { return Input.GetAxis("Mouse ScrollWheel"); }
     }
-    [HideInInspector]
-    public bool mouseWheelClickDown
+    [HideInInspector] public bool mouseWheelClickDown
     {
         get { return Input.GetMouseButtonDown(2); }
     }
-    [HideInInspector]
-    public bool mouseWheelClick
+    [HideInInspector] public bool mouseWheelClick
     {
         get { return Input.GetMouseButtonUp(2); }
     }
-    [HideInInspector]
-    public bool mouseWheelClickUp
+    [HideInInspector] public bool mouseWheelClickUp
     {
         get { return Input.GetMouseButtonDown(2); }
     }
 
     //기타
-    [HideInInspector] 
-    public bool attackDown
+    bool attackInput;
+    public float attackCoolTime 
+    { 
+        get { return Player.wCon.curWeapon.attackCooltime; } 
+    }
+    public float attackCool { private get; set; }
+    [HideInInspector] public bool attackDown
     {
         get
         {
             if (mouse0Down)
             {
-               if (attackStack == 0) attackStack++;
+                StartCoroutine(AttackInput());
             }
-            if ((attackStack > 0) && attackCool == 0)
+            if ((attackInput) && attackCool == 0)
             {
-                attackStack--;
-                attackCool = attackCooltime;
+                attackInput = false;
+                attackCool = attackCoolTime;
         
-                StartCoroutine(AttackDown());
+                return true;
             }
+            else return false;
         }
     }
     public float moveSpeed = 1;
@@ -132,20 +131,21 @@ public class PlayerController : MonoBehaviour
     void Update()
     {                                                                                                                                                                                                                                                                                                       
         Move();
-    }
-    IEnumerator AttackDown()
-    {
-        attackDown = true;
-        yield return null;
-        attackDown = false;
-    }
-    IEnumerator AttackInput
-    {
-        
+        Attack();
     }
     void Move()
     {
         transform.position += moveVector.normalized * Time.deltaTime * moveSpeed;
         curMoveSpeed = moveVector.magnitude * moveSpeed;
+    }
+    void Attack()
+    {
+        if (attackCool > 0) attackCool -= Time.deltaTime;
+        else if (attackCool < 0) attackCool = 0;
+    }
+    IEnumerator AttackInput()
+    {
+        attackInput = true;
+        yield return new WaitForSeconds(1);
     }
 }

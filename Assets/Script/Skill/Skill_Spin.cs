@@ -1,40 +1,42 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class Skill_Spin : Skill
 {
-    public GameObject spinObj;
-    public float spinDuration;
-    public float throwSpeed;
-    public float spinSpeed;
-    public float spinDamage;
-    [SerializeField] UnityEvent<GameObject, Collider2D> spinHitEvent;
-
-    public IEnumerator Spin()
+    public IEnumerator Spin(TriggerObject triggerObj, float spinSpeed, float throwSpeed, float duration,
+        UnityEvent<Transform, Collider2D> enterEvent, 
+        UnityEvent<Transform, Collider2D> stayEvent = null, 
+        UnityEvent<Transform, Collider2D> exitEvent = null)
     {
-        if (spinObj.activeInHierarchy == true) yield break;
         weapon.isUsing = false;
-        spinObj.gameObject.SetActive(true);
+        triggerObj.gameObject.SetActive(true);
+        triggerObj.SetEvent(enterEvent, stayEvent, exitEvent);
         transform.SetParent(null);
-        float startAngleZ = Mathf.Atan2(Player.cam.ScreenToWorldPoint(Player.pCon.mousePos).y - pTransform.position.y,
-            Player.cam.ScreenToWorldPoint(Player.pCon.mousePos).x - pTransform.position.x) * Mathf.Rad2Deg - 90;
-        Vector3 startVector = Player.cam.ScreenToWorldPoint(Player.pCon.mousePos) + new Vector3(0, 0, 10) - pTransform.position;
+        float startAngleZ = Mathf.Atan2(Player.cam.ScreenToWorldPoint(Player.pCon.mousePos).y - Player.transform.position.y,
+            Player.cam.ScreenToWorldPoint(Player.pCon.mousePos).x - Player.transform.position.x) * Mathf.Rad2Deg - 90;
+        Vector3 startVector = Player.cam.ScreenToWorldPoint(Player.pCon.mousePos) + new Vector3(0, 0, 10) - Player.transform.position;
         float time = 0;
-        while (time <= spinDuration)
+        while (time <= duration)
         {
-            spinObj.transform.position += startVector.normalized * throwSpeed;
-            spinObj.transform.rotation = Quaternion.Euler(0, 0, startAngleZ - time * spinSpeed);
+            triggerObj.transform.position += startVector.normalized * throwSpeed;
+            triggerObj.transform.rotation = Quaternion.Euler(0, 0, startAngleZ - time * spinSpeed);
             time += Time.deltaTime;
             yield return null;
         }
-        Destroy(spinObj);
+        Destroy(triggerObj);
         Player.wCon.RemoveWeapon(weapon.index);
     }
-    public void SpinObjectTriggerEnter(GameObject obj, Collider2D coll)
+    public void SpinObjectTriggerEnter(Transform transform, Collider2D coll, UnityEvent<Transform, Collider2D> enterEvent)
     {
-        spinHitEvent.Invoke(obj, coll);
+        enterEvent.Invoke(transform, coll);
+    }
+    public void SpinObjectTriggerStay(Transform transform, Collider2D coll, UnityEvent<Transform, Collider2D> stayEvent)
+    {
+        stayEvent.Invoke(transform, coll);
+    }
+    public void SpinObjectTriggerExit(Transform transform, Collider2D coll, UnityEvent<Transform, Collider2D> exitEvent)
+    {
+        exitEvent.Invoke(transform, coll);
     }
 }

@@ -1,11 +1,5 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
-using Sirenix.OdinInspector.Editor;
-using UnityEngine.UIElements;
-using Sirenix.Utilities.Editor;
-using UnityEditor;
-using static UnityEngine.Rendering.DebugUI.Table;
-using System.Collections;
 
 public enum AnimationState
 {
@@ -40,13 +34,6 @@ public class PlayerGrafic : MonoBehaviour
         stayFrame = SpriteSheet.GetSpriteArray2DFromSpriteSheet(pTexture, new Vector2Int(0, 0), new Vector2Int(1, 7), 16, 16);
         walkFrame = SpriteSheet.GetSpriteArray2DFromSpriteSheet(pTexture, new Vector2Int(3, 0), new Vector2Int(6, 7), 16, 16);
     }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
         Animation();
@@ -82,5 +69,5 @@ public class PlayerGrafic : MonoBehaviour
             time = 0;
             if (++index >= maxAnimateIndex) index = 0;
         }
-    }
+    }   
 }

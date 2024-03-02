@@ -7,6 +7,8 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class Player: MonoBehaviour
 {
+    public static new GameObject gameObject;
+    public static new Transform transform;
     public static PlayerController pCon;
     public static WeaponController wCon;
     public static PlayerGrafic grafic;
@@ -16,6 +18,7 @@ public class Player: MonoBehaviour
 
     void Awake()
     {
+        transform = GetComponent<Transform>();
         pCon = GetComponent<PlayerController>();
         wCon = GetComponent<WeaponController>();
         grafic = GetComponent<PlayerGrafic>();

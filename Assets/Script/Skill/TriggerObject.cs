@@ -1,24 +1,30 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class TriggerObject : MonoBehaviour
 {
-    [SerializeField] UnityEvent<GameObject, Collider2D> OnTriggerEnter;
-    [SerializeField] UnityEvent<GameObject, Collider2D> OnTriggerStay;
-    [SerializeField] UnityEvent<GameObject, Collider2D> OnTriggerExit;
+    UnityEvent<Transform, Collider2D> enterEvent;
+    UnityEvent<Transform, Collider2D> stayEvent;
+    UnityEvent<Transform, Collider2D> exitEvent;
 
+    public void SetEvent(UnityEvent<Transform, Collider2D> _enterEvent, 
+        UnityEvent<Transform, Collider2D> _stayEvent, 
+        UnityEvent<Transform, Collider2D> _exitEvent)
+    {
+        enterEvent = _enterEvent;
+        stayEvent = _stayEvent;
+        exitEvent = _exitEvent;
+    }
     void OnTriggerEnter2D(Collider2D collider)
     {
-        OnTriggerEnter.Invoke(gameObject, collider);
+        enterEvent.Invoke(transform, collider);
     }
     void OnTriggerStay2D(Collider2D collider)
     {
-        OnTriggerStay.Invoke(gameObject, collider);
+        stayEvent.Invoke(transform, collider);
     }
     void OnTriggerExit2D(Collider2D collider)
     {
-        OnTriggerExit.Invoke(gameObject, collider);
+        exitEvent.Invoke(transform, collider);
     }
 }

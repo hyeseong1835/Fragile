@@ -47,27 +47,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a18d6e18c94e5d40a8b1b1bc90228d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnTriggerEnter:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5555053396181352182}
-        m_TargetAssemblyTypeName: Skill_Spin, Assembly-CSharp
-        m_MethodName: SpinObjectTriggerEnter
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  OnTriggerStay:
-    m_PersistentCalls:
-      m_Calls: []
-  OnTriggerExit:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!50 &4497962208037137631
 Rigidbody2D:
   serializedVersion: 4
@@ -5065,27 +5044,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a18d6e18c94e5d40a8b1b1bc90228d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnTriggerEnter:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3182766494214464233}
-        m_TargetAssemblyTypeName: Skill_Swing, Assembly-CSharp
-        m_MethodName: SwingObjectTriggerEnter
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  OnTriggerStay:
-    m_PersistentCalls:
-      m_Calls: []
-  OnTriggerExit:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!61 &3330754001457599390
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5209,18 +5167,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isUsing: 0
   index: 0
-  damage: 1
-  maxDurability: 3
-  durability: 3
-  attackCooltime: 1
-  attackStack: 0
-  attackCool: 0
-  item: {fileID: 568426665767065111, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
+  item: {fileID: 21300000, guid: b933908dc65243a42951c5f8aaf6fc20, type: 3}
   UI: {fileID: 21300000, guid: 4de065b7691eaa64d8d187fce863b3e3, type: 3}
   breakEffect: {fileID: 6871315852018110587}
-  breakPos: {x: 0, y: 0}
-  swing: {fileID: 3182766494214464233}
-  spin: {fileID: 5555053396181352182}
+  damage: 1
+  attackCooltime: 1
+  maxDurability: 3
+  durability: 3
+  swing_obj: {fileID: 1724169375036396350}
+  swing_damage: 1
+  swing_spread: 120
+  swing_duration: 0.25
+  swing_enterEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3072198428114002479}
+        m_TargetAssemblyTypeName: Weapon_WoodenSword, Assembly-CSharp
+        m_MethodName: SwingHitEvent
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  spin_obj: {fileID: 1134626143732526640}
+  spin_damage: 1
+  spin_throwSpeed: 0.1
+  spin_spinSpeed: 180
+  spin_duration: 10
+  spin_enterEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3072198428114002479}
+        m_TargetAssemblyTypeName: Weapon_WoodenSword, Assembly-CSharp
+        m_MethodName: SpinHitEvent
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &3182766494214464233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5233,26 +5225,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d78ff806491665740bd81bb76a245a3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  swingObj: {fileID: 3801472040932104885}
-  swingDamage: 1
-  duration: 0.25
-  spread: 240
-  swingCurve: 0
-  swingHitEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3072198428114002479}
-        m_TargetAssemblyTypeName: WoodenSword, Assembly-CSharp
-        m_MethodName: SwingHitEvent
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &5555053396181352182
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5265,14 +5237,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55dfe9d28880c544d9c81d89be519e5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spinObj: {fileID: 336016178796249401}
-  spinDuration: 5
-  throwSpeed: 0.025
-  spinSpeed: 1440
-  spinDamage: 0
-  spinHitEvent:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &5468265036078441362
 GameObject:
   m_ObjectHideFlags: 0

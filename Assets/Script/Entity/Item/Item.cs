@@ -1,20 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Item : MonoBehaviour
 {
-    public GameObject weapon;
+    Weapon weapon;
 
+    public Item(Weapon _weapon)
+    {
+        weapon = _weapon;
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.layer == 6)
         {
-            if (WeaponController.weaponHolder.childCount > 11) return;
+            if (Player.wCon.weaponCount > 11) return;
 
-            Debug.Log(weapon.GetComponent<Weapon>());
-            Player.wCon.TakeItem(weapon.GetComponent<Weapon>(), gameObject.name);
+            Player.wCon.TakeItem(weapon, gameObject.name);
 
             Destroy(gameObject);
         }

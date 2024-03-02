@@ -7,7 +7,7 @@ public class UI_FPS : MonoBehaviour
 {
     TextMeshProUGUI fpsText;
     public float update = 0.1f;
-    public int display = 0;
+    public int display = 1;
     float time = 0;
     int frame = 0;
 

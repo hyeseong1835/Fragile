@@ -157,13 +157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f2b5b4f8513afd4da14abac2e5d03be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveVector: {x: 0, y: 0, z: 0}
-  curMoveSpeed: 0
   moveRotate: 0
-  isAttack: 0
-  attackDown: 0
-  attack: 0
-  attackUp: 0
   moveSpeed: 5
 --- !u!4 &5837738
 Transform:
@@ -195,6 +189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31a51d22922d3b24a916756f8356843d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  curWeaponIndex: 0
 --- !u!114 &5837740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -321,11 +316,6 @@ Transform:
   - {fileID: 6542580215227244286}
   m_Father: {fileID: 5837738}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &416701341 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-  m_PrefabInstance: {fileID: 1920713259}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &421564355
 GameObject:
   m_ObjectHideFlags: 0
@@ -613,11 +603,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &713212761 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-  m_PrefabInstance: {fileID: 1364284021}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &758728248
 GameObject:
   m_ObjectHideFlags: 0
@@ -629,7 +614,7 @@ GameObject:
   - component: {fileID: 758728249}
   - component: {fileID: 758728250}
   m_Layer: 0
-  m_Name: DroppedItem
+  m_Name: ItemManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -647,12 +632,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1957500331}
-  - {fileID: 416701341}
-  - {fileID: 713212761}
-  - {fileID: 1329881551}
-  - {fileID: 1765849842}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &758728250
@@ -667,7 +647,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dd92c3515b96cc48b81417142becf1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemPrefab: {fileID: 0}
 --- !u!1 &790390310
 GameObject:
   m_ObjectHideFlags: 0
@@ -743,120 +722,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 790390310}
   m_CullTransparentMesh: 1
---- !u!1001 &924494136
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 758728249}
-    m_Modifications:
-    - target: {fileID: 568426665767065111, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_Name
-      value: WoodenSword (3)
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
---- !u!1001 &980766851
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 758728249}
-    m_Modifications:
-    - target: {fileID: 568426665767065111, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_Name
-      value: WoodenSword (4)
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
 --- !u!1 &1248037447
 GameObject:
   m_ObjectHideFlags: 0
@@ -921,68 +786,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
---- !u!4 &1329881551 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-  m_PrefabInstance: {fileID: 924494136}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &1364284021
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 758728249}
-    m_Modifications:
-    - target: {fileID: 568426665767065111, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_Name
-      value: WoodenSword (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
 --- !u!1 &1613293452
 GameObject:
   m_ObjectHideFlags: 0
@@ -1067,11 +870,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!4 &1765849842 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-  m_PrefabInstance: {fileID: 980766851}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1780597528
 GameObject:
   m_ObjectHideFlags: 0
@@ -1207,68 +1005,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1001 &1920713259
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 758728249}
-    m_Modifications:
-    - target: {fileID: 568426665767065111, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_Name
-      value: WoodenSword (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
---- !u!4 &1957500331 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-  m_PrefabInstance: {fileID: 2351416176433643774}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2083267563
 GameObject:
   m_ObjectHideFlags: 0
@@ -1672,63 +1408,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1001 &2351416176433643774
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 758728249}
-    m_Modifications:
-    - target: {fileID: 568426665767065111, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_Name
-      value: WoodenSword
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6534087157116862141, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 09fbbcf68ece4db4eb417ebdec50dd7e, type: 3}
 --- !u!212 &2805099994955805556
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1809,27 +1488,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a18d6e18c94e5d40a8b1b1bc90228d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnTriggerEnter:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8645580123791882276}
-        m_TargetAssemblyTypeName: Skill_Swing, Assembly-CSharp
-        m_MethodName: spawnedObjectTriggerEnter
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  OnTriggerStay:
-    m_PersistentCalls:
-      m_Calls: []
-  OnTriggerExit:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!50 &6352747194271778136
 Rigidbody2D:
   serializedVersion: 4
@@ -1964,27 +1622,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d78ff806491665740bd81bb76a245a3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weapon: {fileID: 0}
-  swingObj: {fileID: 8003383336245887096}
-  swingDamage: 1
-  duration: 0.25
-  spread: 0
-  swingCurve: 0
-  swingHitEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8645580123791882277}
-        m_TargetAssemblyTypeName: Hand, Assembly-CSharp
-        m_MethodName: SwingHitEvent
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &8645580123791882277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1999,17 +1636,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isUsing: 1
   index: 0
-  damage: 1
-  maxDurability: -1
-  durability: -1
-  attackCooltime: 1
-  attackStack: 0
-  attackCool: 0
   item: {fileID: 0}
   UI: {fileID: 3064606193288967393, guid: 0abcac35b2990aa489eaa38402e8d374, type: 3}
   breakEffect: {fileID: 0}
-  breakPos: {x: 0, y: 0}
-  swing: {fileID: 8645580123791882276}
+  damage: 1
+  attackCooltime: 1
+  maxDurability: -1
+  durability: -1
+  swing_obj: {fileID: 0}
+  swing_damage: 0
+  swing_spread: 0
+  swing_duration: 0
+  swing_enterEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -1,37 +1,26 @@
 using Sirenix.OdinInspector;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public abstract class Weapon : MonoBehaviour
 {
-    //기본
     public bool isUsing = false;
     public int index;
 
-    //스탯
-    public float damage;
-    public int maxDurability;
-    public int durability;
-    public float attackCooltime;
-
-    public int attackStack = 0;
-    public float attackCool = 0;
-
-    public GameObject item;
+    [Title("Object")]
+    public Sprite item;
     public Sprite UI;
     [SerializeField] GameObject breakEffect;
-    public Vector2 breakPos;
+
+    [Title("Stat")]
+    public float damage;
+    public float attackCooltime;
+    public int maxDurability;
+    public int durability;
+
+    Vector2 breakPos;
 
     void Update()
     {
-        if (attackCool > 0) attackCool -= Time.deltaTime;
-        if (attackCool < 0) attackCool = 0;
-
         #region 입력
         if (!isUsing) return;
 
@@ -43,8 +32,6 @@ public abstract class Weapon : MonoBehaviour
         if (Player.pCon.mouse1Up) Mouse1Up();
 
         if (Player.pCon.attackDown) AttackDown();
-        if (Player.pCon.attack) Attack();
-        if (Player.pCon.attackUp) AttackUp();
         #endregion
     }
 
@@ -62,15 +49,8 @@ public abstract class Weapon : MonoBehaviour
 
 
     #region 무기 관리
-    public virtual void SetData(string[] datas)
-    {
-        if (0 < datas.Length) durability = int.Parse(datas[0]);
-    }
-    public virtual string LoadData()
-    {
-        return durability.ToString();
-    }
-
+    public virtual void SetData(string[] datas) { }
+    public virtual string LoadData() { return ""; }
     public void Use(bool use)
     {
         if (use)
@@ -95,7 +75,7 @@ public abstract class Weapon : MonoBehaviour
             Player.wCon.RemoveWeapon(index);
             return;
         }
-        WeaponController.inventoryUI.ResetDurabilityUI();
+        Player.wCon.inventoryUI.ResetDurabilityUI();
     }
     public virtual void OnUse() { }
     public virtual void OnDeUse() { }

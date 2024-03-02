@@ -1,28 +1,18 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Animations;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 [RequireComponent(typeof(Player))]
 public class WeaponController : MonoBehaviour
 {
-    public static Transform weaponHolder;
-    public static Weapon curWeapon;
-    public static UI_Inventory inventoryUI;
+    [ShowInInspector] Transform weaponHolder { get; set; }
+    [ShowInInspector] public UI_Inventory inventoryUI { get; set; }
+    public int weaponCount { get { return weaponHolder.childCount; } }
+    public Weapon curWeapon { get; private set; }
+    [ShowInInspector] public Weapon[] weapons { get; private set; } = new Weapon[11];
     
-    public static int curWeaponIndex = 0;
+    public int curWeaponIndex = 0;
     int lastWeaponIndex = 0;
 
-    void Awake()
-    {
-
-    }
-    void Start()
-    {
-        
-    }
     void Update()
     {
         WheelSelect();
@@ -35,103 +25,97 @@ public class WeaponController : MonoBehaviour
 
         if (curWeaponIndex == 0)
         {
-            if (weaponHolder.childCount == 1) SelectWeapon(0);
-            else if (lastWeaponIndex != 0) SelectWeapon(lastWeaponIndex);
+            if (weaponCount == 1) SelectWeapon(0); //맨손
+            else if (lastWeaponIndex != 0) SelectWeapon(lastWeaponIndex); //맨손을 제외하고 마지막으로 들었던 무기
         }
         if (Player.pCon.mouseWheelScroll > 0) //증가
         {
-            if (curWeaponIndex == weaponHolder.childCount - 1) //마지막 순서의 무기일 때
+            if (curWeaponIndex == weaponCount - 1) //마지막 순서의 무기일 때
             {
-                if (weaponHolder.childCount == 1) SelectWeapon(0); //무기가 없을 때
+                if (weaponCount == 1) SelectWeapon(0); //무기가 없을 때
                 else SelectWeapon(1); //무기가 더 있을 때
             }
-            else SelectWeapon(curWeaponIndex + 1);
+            else SelectWeapon(curWeaponIndex + 1); //다음 무기
         }
         else //감소
         {
             if (curWeaponIndex == 1) //첫 번째 순서의 무기일 때
             {
-                if (weaponHolder.childCount == 1) SelectWeapon(0); //무기가 없을 때
-                else SelectWeapon(weaponHolder.childCount - 1); //무기가 더 있을 때
+                if (weaponCount == 1) SelectWeapon(0); //무기가 없을 때
+                else SelectWeapon(weaponCount - 1); //무기가 더 있을 때
             }
-            else SelectWeapon(curWeaponIndex - 1);
+            else SelectWeapon(curWeaponIndex - 1); //이전 무기
         }
     }
     public void TakeItem(Weapon weapon, string data)
     {
-        if (weaponHolder.childCount > 11)
+        if (weaponCount > 11)
         {
+            Debug.LogError("인벤토리 초과");
             DropItem(weapon);
             return;
-        }
-        GameObject weaponObj = Instantiate((GameObject) Resources.Load("Assets/Resources/WeaponObjPrefab/"), weaponHolder); //무기 오브젝트 생성
+        } //인벤토리 초과
 
-        weapon.index = WeaponController.weaponHolder.childCount - 1;
+        //GameObject weaponObj = Instantiate((GameObject) Resources.Load("Assets/Resources/WeaponObjPrefab/"), weaponHolder); //무기 오브젝트 생성
+        weapon.index = weaponCount - 1;
         weapon.SetData(data.Split(','));
 
-        if (weaponHolder.childCount > 1) lastWeaponIndex = 1;
+        if (weaponCount > 1) lastWeaponIndex = 1;
         inventoryUI.ResetInventoryUI();
     }
     void SelectWeapon(int index)
     {
-        if (index < 0 || weaponHolder.childCount < index + 1)
+        if (index < 0 || weaponCount < index + 1)
         {
             Debug.LogError("index가 범위를 초과함: (" + index + "/" + (weaponHolder.childCount - 1) + " )");
             SelectWeapon(0);
         } //LogError: "index가 범위를 초과함"
 
-        for (int i = 0; i < weaponHolder.childCount; i++) //무기 오브젝트 모두 비활성화
+        for (int i = 0; i < weaponCount; i++) //무기 모두 비활성화
         {
-            if (weaponHolder.GetChild(i).GetComponent<Weapon>().isUsing)
+            if (weapons[i].isUsing)
             {
-                weaponHolder.GetChild(i).GetComponent<Weapon>().Use(false);
+                weapons[i].Use(false);
             }
         }
-        if (index > weaponHolder.childCount - 1)
+        if (weapons[index] == null)
         {
-            Debug.LogError("인덱스에 무기가 없음");
+            Debug.LogError("호출한 인덱스에 무기가 없음");
             SelectWeapon(0);
             return;
-        }//LogError: "인덱스에 무기가 없음"
+        }//LogError: "호출한 인덱스에 무기가 없음"
 
         curWeaponIndex = index;
-        curWeapon = weaponHolder.GetChild(index).GetComponent<Weapon>();
+        curWeapon = weapons[index];
 
         curWeapon.Use(true); //선택한 무기 활성화
 
         if (index != 0) lastWeaponIndex = index;
         inventoryUI.ChangeWeaponUI(index);
     }
-    void DropItem(Weapon weapon)//수정 필요---------------------------
+    void DropItem(Weapon weapon)
     {
-        GameObject item = ItemManager.SpawnItem(weapon, weapon.LoadData());
+        GameObject item = ItemManager.SpawnItem(weapon, transform.position, weapon.LoadData());
         RemoveWeapon(weapon.index);
     }
     /// <summary>
-    /// 무기 인덱스 초기화: Weapon.index, WeaponController.curWeaponIndex
+    /// 무기 인덱스 초기화: Weapon.index, pCon.wCon.curWeaponIndex
     /// </summary>
-    void ResetWeaponIndex()
+    public Weapon AddWeapon(Weapon weapon, int durabillity, string weaponData)
     {
-        for (int i = 0; i < weaponHolder.childCount; i++)
-        {
-            weaponHolder.GetChild(i).GetComponent<Weapon>().index = i;
-        }
-        curWeaponIndex = curWeapon.index;
-        if (lastWeaponIndex + 1 > weaponHolder.childCount)
-        {
-            Debug.LogError("lastWeaponIndex 인덱스 초과");
-            lastWeaponIndex = 0;
-        }
+
+
+        return weapon;
     }
     public void RemoveWeapon(int index)
     {
-        Weapon weapon = weaponHolder.GetChild(index).GetComponent<Weapon>();
+        Weapon weapon = weapons[index];
         weapon.OnWeaponDestroy();
 
-        //다음 무기 선택
+        //무기 선택
         if (index + 1 == weaponHolder.childCount) //마지막 순서의 무기일 때
         {
-            if (weaponHolder.childCount == 2) //무기가 하나일 때
+            if (weaponCount == 2) //무기가 하나일 때
             {
                 SelectWeapon(0);
             }
@@ -144,8 +128,24 @@ public class WeaponController : MonoBehaviour
         Destroy(weapon.gameObject);
 
         ResetWeaponIndex();
-        if (weaponHolder.childCount == 1) lastWeaponIndex = 0;
+        if (weaponCount == 1) lastWeaponIndex = 0;
+    }
+    void ResetWeaponIndex()
+    {
+        for (int i = 0; i < 11; i++)
+        {
+            if (i < weaponCount)
+            {
+                weapons[i] = weaponHolder.GetChild(i).GetComponent<Weapon>();
+                weapons[i].index = i;
+            }
+            else weapons[i] = null;
+        }
+        curWeaponIndex = curWeapon.index;
+        if (lastWeaponIndex > weaponCount - 1)
+        {
+            Debug.LogError("lastWeaponIndex 인덱스 초과");
+            lastWeaponIndex = 0;
+        } //lastWeaponIndex 인덱스 초과
     }
 }
-
-//0001000
