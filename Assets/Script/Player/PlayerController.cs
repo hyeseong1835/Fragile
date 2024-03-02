@@ -11,10 +11,15 @@ public enum AnimateState
 [RequireComponent(typeof(Player))]
 public class PlayerController : MonoBehaviour
 {
-    float hMove = 0;
-    float vMove = 0;
-    [HideInInspector] public Vector3 moveVector = new Vector3(0, 0, 0);
-    [HideInInspector] public float curMoveSpeed = 0;
+    [HideInInspector] public Vector3 moveVector
+    {
+        get { return new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0}; }
+        set { if (moveVector.magnitude > 0.1f) moveRotate = Mathf.Atan2(moveVector.y, moveVector.x) * Mathf.Rad2Deg; }
+    }
+    [HideInInspector] public float curMoveSpeed
+    {
+        get { moveVector.magnitude * moveSpeed }
+    }
     [HideInInspector] public float moveRotate;
     /// <summary>
     /// 0(90), 1(45), 2(0), 3(315), 4(270), 5(225), 6(180), 7(135)
@@ -37,7 +42,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    //¸¶¿ì½º
+    //ë§ˆìš°ìŠ¤
     [HideInInspector]
     public Vector3 mousePos
     {
@@ -53,7 +58,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    //ÁÂÅ¬¸¯
+    //ì¢Œí´ë¦­
     [HideInInspector] public bool mouse0Down
     {
         get { return Input.GetMouseButtonDown(0); }
@@ -67,7 +72,7 @@ public class PlayerController : MonoBehaviour
         get { return Input.GetMouseButtonUp(0); }
     }
 
-    //¿ìÅ¬¸¯
+    //ìš°í´ë¦­
     [HideInInspector] public bool mouse1Down
         {
         get { return Input.GetMouseButtonDown(1); }
@@ -81,7 +86,7 @@ public class PlayerController : MonoBehaviour
         get { return Input.GetMouseButtonUp(1); }
     }
 
-    //¸¶¿ì½º ÈÙ
+    //ë§ˆìš°ìŠ¤ íœ 
     [HideInInspector]
     public float mouseWheelScroll
     {
@@ -103,69 +108,40 @@ public class PlayerController : MonoBehaviour
         get { return Input.GetMouseButtonDown(2); }
     }
 
-    //±âÅ¸
-    [HideInInspector] public bool isAttack = false;
-    [HideInInspector] public bool attackDown = false;
-    [HideInInspector] public bool attack = false;
-    [HideInInspector] public bool attackUp = false;
-
-    public float moveSpeed = 1;
-    // Start is called before the first frame update
-    void Awake()
+    //ê¸°íƒ€
+    [HideInInspector] 
+    public bool attackDown
     {
-
-    }
-    void Start()
-    {
+        get
+        {
+            if (mouse0Down)
+            {
+               if (attackStack == 0) attackStack++;
+            }
+            if ((attackStack > 0) && attackCool == 0)
+            {
+                attackStack--;
+                attackCool = attackCooltime;
         
+                StartCoroutine(AttackDown());
+            }
+        }
     }
-
-    // Update is called once per frame
+    public float moveSpeed = 1;
+    
     void Update()
-    {
-        Key();                                                                                                                                                                                                                                                                                                         
+    {                                                                                                                                                                                                                                                                                                       
         Move();
-    }
-    void Key()
-    {
-        //ÀÌµ¿
-        hMove = Input.GetAxis("Horizontal");
-        vMove = Input.GetAxis("Vertical");
-        moveVector = new Vector3(hMove,vMove);
-        if (moveVector.magnitude > 0.1f)
-        {
-            moveRotate = Mathf.Atan2(moveVector.y, moveVector.x) * Mathf.Rad2Deg;
-        }
-
-        //Attack
-        if (mouse0Down)
-        {
-            if (WeaponController.curWeapon.attackCool < 0.5f && WeaponController.curWeapon.attackStack == 0) WeaponController.curWeapon.attackStack++;
-        }
-        if ((mouse0Down || WeaponController.curWeapon.attackStack > 0) && WeaponController.curWeapon.attackCool == 0)
-        {
-            StartCoroutine(AttackDown());
-        }
     }
     IEnumerator AttackDown()
     {
-        WeaponController.curWeapon.attackStack--;
-        WeaponController.curWeapon.attackCool = WeaponController.curWeapon.attackCooltime;
-        
         attackDown = true;
         yield return null;
         attackDown = false;
+    }
+    IEnumerator AttackInput
+    {
         
-        attack = true;
-        while (isAttack)
-        {
-            yield return null;
-        }
-        attack = false;
-
-        attackUp = true;
-        yield return null;
-        attackUp = false;
     }
     void Move()
     {
