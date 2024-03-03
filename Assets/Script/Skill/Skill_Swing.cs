@@ -9,7 +9,7 @@ public class Skill_Swing : Skill
         Linear, Quadratic
     }
     public IEnumerator Swing(TriggerObject triggerObj, float spread, float duration, Curve swingCurve, 
-        UnityEvent<Transform, Collider2D> enterEvent, 
+        UnityEvent<Transform, Collider2D> enterEvent = null, 
         UnityEvent<Transform, Collider2D> stayEvent = null, 
         UnityEvent<Transform, Collider2D> exitEvent = null)
     {

@@ -5,7 +5,7 @@ using UnityEngine.Events;
 public class Skill_Spin : Skill
 {
     public IEnumerator Spin(TriggerObject triggerObj, float spinSpeed, float throwSpeed, float duration,
-        UnityEvent<Transform, Collider2D> enterEvent, 
+        UnityEvent<Transform, Collider2D> enterEvent = null, 
         UnityEvent<Transform, Collider2D> stayEvent = null, 
         UnityEvent<Transform, Collider2D> exitEvent = null)
     {

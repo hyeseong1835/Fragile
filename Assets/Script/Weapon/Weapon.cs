@@ -4,7 +4,7 @@ using UnityEngine;
 public abstract class Weapon : MonoBehaviour
 {
     public bool isUsing = false;
-    public int index;
+    public int index = 0;
 
     [Title("Object")]
     public Sprite item;
@@ -12,12 +12,12 @@ public abstract class Weapon : MonoBehaviour
     [SerializeField] GameObject breakEffect;
 
     [Title("Stat")]
-    public float damage;
-    public float attackCooltime;
-    public int maxDurability;
-    public int durability;
+    public float damage = 1;
+    public float attackCooltime = 1;
+    public int maxDurability = 1;
+    public int durability = 1;
 
-    Vector2 breakPos;
+    Vector2 breakPos = Vector2.zero;
 
     void Update()
     {
@@ -49,7 +49,12 @@ public abstract class Weapon : MonoBehaviour
 
 
     #region 무기 관리
-    public virtual void SetData(string[] datas) { }
+    public void SetData(string[] datas, string[] customDatas)
+    {
+        durability = int.Parse(datas[1]);
+        SetCustomData(customDatas);
+    }
+    protected virtual void SetCustomData(string[] datas) { }
     public virtual string LoadData() { return ""; }
     public void Use(bool use)
     {

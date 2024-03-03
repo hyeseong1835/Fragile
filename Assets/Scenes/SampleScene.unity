@@ -132,12 +132,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5837738}
-  - component: {fileID: 5837740}
   - component: {fileID: 5837737}
-  - component: {fileID: 5837739}
   - component: {fileID: 5837741}
   - component: {fileID: 5837742}
-  - component: {fileID: 5837743}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -158,6 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveRotate: 0
+  attackCool: 0
   moveSpeed: 5
 --- !u!4 &5837738
 Transform:
@@ -177,31 +175,6 @@ Transform:
   - {fileID: 519420032}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5837739
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5837736}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31a51d22922d3b24a916756f8356843d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  curWeaponIndex: 0
---- !u!114 &5837740
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5837736}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9f6ae80de2de4941a0331deeb7232a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!70 &5837741
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -264,26 +237,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &5837743
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5837736}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: effb1856fa3862c418799eb97678a146, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pCon: {fileID: 5837737}
-  body: {fileID: 1613293454}
-  pTexture: {fileID: 2800000, guid: 443482d6e712f1844ad2b17f68b3a8c6, type: 3}
-  state: 0
-  stayIndex: 0
-  stayTimeScale: 0.5
-  walkIndex: 0
-  walkTimeScale: 0.1
 --- !u!1 &374465423
 GameObject:
   m_ObjectHideFlags: 0
@@ -293,6 +246,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 374465424}
+  - component: {fileID: 374465425}
   m_Layer: 0
   m_Name: WeaponHolder
   m_TagString: Untagged
@@ -316,6 +270,31 @@ Transform:
   - {fileID: 6542580215227244286}
   m_Father: {fileID: 5837738}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &374465425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 374465423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a51d22922d3b24a916756f8356843d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventoryUI: {fileID: 1248037449}
+  weapons:
+  - {fileID: 8645580123791882277}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &421564355
 GameObject:
   m_ObjectHideFlags: 0
@@ -704,7 +683,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d0b841bc31ed1c74799a63e7047c735c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 608a83976b59cec40addcc2aaade0f0a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -773,19 +752,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   durabillity: {fileID: 2128805571}
-  UI: {fileID: 0}
-  UISprite:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  UI: {fileID: 790390312}
 --- !u!1 &1613293452
 GameObject:
   m_ObjectHideFlags: 0
@@ -879,6 +846,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1780597529}
+  - component: {fileID: 1780597530}
   m_Layer: 6
   m_Name: Grafic
   m_TagString: Untagged
@@ -902,6 +870,26 @@ Transform:
   - {fileID: 1613293453}
   m_Father: {fileID: 5837738}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1780597530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1780597528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: effb1856fa3862c418799eb97678a146, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  body: {fileID: 1613293454}
+  pTexture: {fileID: 2800000, guid: 443482d6e712f1844ad2b17f68b3a8c6, type: 3}
+  state: 0
+  isBattle: 0
+  stayIndex: 0
+  stayTimeScale: 0.5
+  walkIndex: 0
+  walkTimeScale: 0.1
 --- !u!1 &1835459132
 GameObject:
   m_ObjectHideFlags: 0
@@ -1152,8 +1140,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4761165a780f7f4abb78017c4e1f454, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  update: 0.1
-  display: 0
+  update: 1
+  display: 1
 --- !u!1 &2096667419
 GameObject:
   m_ObjectHideFlags: 0
@@ -1360,7 +1348,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
-  m_FillAmount: 0.6666
+  m_FillAmount: 0
   m_FillClockwise: 0
   m_FillOrigin: 2
   m_UseSpriteMesh: 0
@@ -1637,19 +1625,31 @@ MonoBehaviour:
   isUsing: 1
   index: 0
   item: {fileID: 0}
-  UI: {fileID: 3064606193288967393, guid: 0abcac35b2990aa489eaa38402e8d374, type: 3}
+  UI: {fileID: 21300000, guid: 608a83976b59cec40addcc2aaade0f0a, type: 3}
   breakEffect: {fileID: 0}
   damage: 1
-  attackCooltime: 1
+  attackCooltime: 0.5
   maxDurability: -1
-  durability: -1
-  swing_obj: {fileID: 0}
-  swing_damage: 0
+  durability: 0
+  swing_obj: {fileID: 5493629561600412147}
+  swing_damage: 1
   swing_spread: 0
-  swing_duration: 0
+  swing_duration: 0.25
   swing_enterEvent:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8645580123791882277}
+        m_TargetAssemblyTypeName: Weapon_Hand, Assembly-CSharp
+        m_MethodName: SwingHitEvent
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

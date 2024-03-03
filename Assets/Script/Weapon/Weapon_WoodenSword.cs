@@ -29,11 +29,11 @@ public class Weapon_WoodenSword : Weapon
     }
     public override void AttackDown()
     {
-        StartCoroutine(swing.Swing(swing_obj, swing_spread, swing_duration, Skill_Swing.Curve.Quadratic, swing_enterEvent));
+        StartCoroutine(swing.Swing(swing_obj, swing_spread, swing_duration, Skill_Swing.Curve.Quadratic, enterEvent: swing_enterEvent));
     }
     public override void Mouse1Down() 
     {
-        StartCoroutine (spin.Spin(spin_obj, spin_spinSpeed, spin_throwSpeed, spin_duration, spin_enterEvent));
+        StartCoroutine (spin.Spin(spin_obj, spin_spinSpeed, spin_throwSpeed, spin_duration, enterEvent: spin_enterEvent));
     }
     public void SwingHitEvent(Transform transform, Collider2D coll)
     {

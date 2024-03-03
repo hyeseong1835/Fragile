@@ -12,9 +12,10 @@ public class Item : MonoBehaviour
     {
         if (collision.gameObject.layer == 6)
         {
-            if (Player.wCon.weaponCount > 11) return;
+            if (Player.wCon.transform.childCount > 11) return;
 
-            Player.wCon.TakeItem(weapon, gameObject.name);
+            string[] split = gameObject.name.Split('/');
+            Player.wCon.AddWeapon(weapon, split[0], split[1]);
 
             Destroy(gameObject);
         }

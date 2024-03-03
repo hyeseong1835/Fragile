@@ -5,32 +5,34 @@ public enum AnimationState
 {
     STAY, WALK, BATTLE
 }
-[RequireComponent(typeof(Player))]
 public class PlayerGrafic : MonoBehaviour
 {
-    [SerializeField] PlayerController pCon;
-
     [SerializeField] SpriteRenderer body;
-
     [SerializeField] Texture2D pTexture;
-    [SerializeField] AnimationState state = AnimationState.STAY;
 
+    [Title("State")]
+    [SerializeField] AnimationState state = AnimationState.STAY;
+    public bool isBattle;
+
+    [Title("Stay")]
     [ShowInInspector] Sprite[,] stayFrame;
     [SerializeField] int stayIndex = 0;
-    int maxStayAnimateIndex = 2;
     [SerializeField] float stayTimeScale = 0.5f;
+    int maxStayAnimateIndex = 2;
     float stayTime = 0;
 
+    [Title("Walk")]
     [ShowInInspector] Sprite[,] walkFrame;
     [SerializeField] int walkIndex = 0;
-    int maxWalkAnimateIndex = 4;
     [SerializeField] float walkTimeScale = 0.5f;
+    int maxWalkAnimateIndex = 4;
     float walkTime = 0;
 
-    bool isBattle;
     
     void Awake()
     {
+        Player.grafic = this;
+
         stayFrame = SpriteSheet.GetSpriteArray2DFromSpriteSheet(pTexture, new Vector2Int(0, 0), new Vector2Int(1, 7), 16, 16);
         walkFrame = SpriteSheet.GetSpriteArray2DFromSpriteSheet(pTexture, new Vector2Int(3, 0), new Vector2Int(6, 7), 16, 16);
     }
@@ -41,7 +43,7 @@ public class PlayerGrafic : MonoBehaviour
     void Animation()
     {
         //상태 지정
-        if (pCon.curMoveSpeed <= 0.1f) state = AnimationState.STAY;
+        if (Player.pCon.moveVector.magnitude <= 0.1f) state = AnimationState.STAY;
         else
         {
             if (isBattle) state = AnimationState.BATTLE;
@@ -52,10 +54,10 @@ public class PlayerGrafic : MonoBehaviour
         switch (state)
         {
             case AnimationState.STAY:
-                body.sprite = stayFrame[stayIndex, pCon.moveIntRotate];
+                body.sprite = stayFrame[stayIndex, Player.pCon.moveIntRotate];
                 break;
             case AnimationState.WALK:
-                body.sprite = walkFrame[walkIndex, pCon.moveIntRotate];
+                body.sprite = walkFrame[walkIndex, Player.pCon.moveIntRotate];
                 break;
         }
         AnimationUpdate(ref stayIndex, ref stayTime, stayTimeScale, maxStayAnimateIndex);

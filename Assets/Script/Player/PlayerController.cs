@@ -6,26 +6,21 @@ public enum AnimateState
     Stay, Move, Battle
 }
 
-[RequireComponent(typeof(Player))]
+[RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
     [HideInInspector] public Vector3 moveVector
     {
         get { return new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0); }
-        set { if (moveVector.magnitude > 0.1f) moveRotate = Mathf.Atan2(moveVector.y, moveVector.x) * Mathf.Rad2Deg; }
-    }
-    [HideInInspector] public float curMoveSpeed
-    {
-        get { return moveVector.magnitude * moveSpeed; }
-        private set { }
-    }
-    [HideInInspector] public float moveRotate;
+    } 
+    [HideInInspector] public float moveRotate = 0;
     /// <summary>
     /// 0(90), 1(45), 2(0), 3(315), 4(270), 5(225), 6(180), 7(135)
     /// </summary>
     [HideInInspector] public int moveIntRotate
     {
-        get 
+        get
         {
             if (moveRotate < 0) moveRotate += 360;
 
@@ -103,23 +98,22 @@ public class PlayerController : MonoBehaviour
 
     //기타
     bool attackInput;
-    public float attackCoolTime 
-    { 
-        get { return Player.wCon.curWeapon.attackCooltime; } 
-    }
-    public float attackCool { private get; set; }
+    float attackInputAllowTime;
+    Coroutine curAttackInputCoroutine;
+    public float attackCool;
     [HideInInspector] public bool attackDown
     {
         get
         {
             if (mouse0Down)
             {
-                StartCoroutine(AttackInput());
+                if(curAttackInputCoroutine != null) StopCoroutine(curAttackInputCoroutine);
+                curAttackInputCoroutine = StartCoroutine(AttackInput());
             }
             if ((attackInput) && attackCool == 0)
             {
                 attackInput = false;
-                attackCool = attackCoolTime;
+                attackCool = Player.wCon.curWeapon.attackCooltime;
         
                 return true;
             }
@@ -127,7 +121,14 @@ public class PlayerController : MonoBehaviour
         }
     }
     public float moveSpeed = 1;
-    
+
+    void Awake()
+    {
+        Player.pCon = this;
+        Player.transform = transform;
+        Player.gameObject = gameObject;
+        Player.cam = Camera.main;
+    }
     void Update()
     {                                                                                                                                                                                                                                                                                                       
         Move();
@@ -136,7 +137,7 @@ public class PlayerController : MonoBehaviour
     void Move()
     {
         transform.position += moveVector.normalized * Time.deltaTime * moveSpeed;
-        curMoveSpeed = moveVector.magnitude * moveSpeed;
+        if (moveVector.magnitude > 0.1f) moveRotate = Mathf.Atan2(moveVector.y, moveVector.x) * Mathf.Rad2Deg;
     }
     void Attack()
     {
@@ -146,6 +147,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator AttackInput()
     {
         attackInput = true;
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(attackInputAllowTime);
+        attackInput = false;
     }
 }

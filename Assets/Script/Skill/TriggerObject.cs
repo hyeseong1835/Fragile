@@ -17,14 +17,20 @@ public class TriggerObject : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D collider)
     {
+        if (enterEvent == null) return;
+
         enterEvent.Invoke(transform, collider);
     }
     void OnTriggerStay2D(Collider2D collider)
     {
+        if (stayEvent == null) return;
+
         stayEvent.Invoke(transform, collider);
     }
     void OnTriggerExit2D(Collider2D collider)
     {
+        if (exitEvent == null) return;
+
         exitEvent.Invoke(transform, collider);
     }
 }

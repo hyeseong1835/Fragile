@@ -17,7 +17,7 @@ public class Weapon_Hand : Weapon
     }
     public override void AttackDown()
     {
-        StartCoroutine(swing.Swing(swing_obj, swing_spread, swing_duration, Skill_Swing.Curve.Quadratic, swing_enterEvent));
+        StartCoroutine(swing.Swing(swing_obj, swing_spread, swing_duration, Skill_Swing.Curve.Quadratic, enterEvent: swing_enterEvent));
     }
     public void SwingHitEvent(Transform transform, Collider2D coll)
     {
