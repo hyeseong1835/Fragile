@@ -37,11 +37,20 @@ public class UI_Inventory : MonoBehaviour
     }
     public void ResetDurabilityUI()
     {
-        if (Player.wCon.curWeapon.maxDurability == 0)
+        if (Player.wCon.curWeapon.breakable)
         {
-            Debug.LogError(Player.wCon.curWeapon.name + "의 maxDurabillity는 0일 수 없습니다");
-            Player.wCon.curWeapon.maxDurability = 1;
-        } //{name}의 maxDurabillity는 0일 수 없습니다
-        durabillity.fillAmount = (float) Player.wCon.curWeapon.durability / Player.wCon.curWeapon.maxDurability;
+            if (Player.wCon.curWeapon.maxDurability == 0)
+            {
+                Debug.LogWarning(Player.wCon.curWeapon.name + "의 maxDurabillity는 0일 수 없습니다");
+                Player.wCon.curWeapon.maxDurability = 1;
+            } //LogWarning: {name}의 maxDurabillity는 0일 수 없습니다
+            durabillity.fillAmount = (float)Player.wCon.curWeapon.durability / Player.wCon.curWeapon.maxDurability;
+        }
+        else
+        {
+            //나중에 비파괴 테두리도 만들어줘용
+            durabillity.fillAmount = 0;
+        }
+
     }
 }

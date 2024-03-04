@@ -8,14 +8,14 @@ public class Skill_Swing : Skill
     {
         Linear, Quadratic
     }
-    public IEnumerator Swing(TriggerObject triggerObj, float spread, float duration, Curve swingCurve, 
-        UnityEvent<Transform, Collider2D> enterEvent = null, 
-        UnityEvent<Transform, Collider2D> stayEvent = null, 
-        UnityEvent<Transform, Collider2D> exitEvent = null)
+    public IEnumerator Swing(TriggerObject trigger, float spread, float duration, Curve swingCurve, 
+        UnityEvent<GameObject, Collider2D> enterEvent = null, 
+        UnityEvent<GameObject, Collider2D> stayEvent = null, 
+        UnityEvent<GameObject, Collider2D> exitEvent = null)
     {
         //초기화
-        triggerObj.gameObject.SetActive(true);
-        triggerObj.SetEvent(enterEvent, stayEvent, exitEvent);
+        trigger.gameObject.SetActive(true);
+        trigger.SetEvent(enterEvent, stayEvent, exitEvent);
         float startRotateZ = Player.pCon.viewRotateZ;
 
         //스킬
@@ -25,7 +25,7 @@ public class Skill_Swing : Skill
             case Curve.Linear:
                 while (time < 1)
                 {
-                    triggerObj.transform.rotation = Quaternion.Euler(0, 0, startRotateZ + spread * 0.5f - time * spread);
+                    trigger.transform.rotation = Quaternion.Euler(0, 0, startRotateZ + spread * 0.5f - time * spread);
 
                     time += Time.deltaTime / duration;
                     yield return null;
@@ -34,28 +34,28 @@ public class Skill_Swing : Skill
             case Curve.Quadratic:
                 while (time < 1)
                 {
-                    triggerObj.transform.rotation = Quaternion.Euler(0, 0, startRotateZ + spread * 0.5f - time * time * spread);
+                    trigger.transform.rotation = Quaternion.Euler(0, 0, startRotateZ + spread * 0.5f - time * time * spread);
 
                     time += Time.deltaTime / duration;
                     yield return null;
                 }
                 break;
         }
-        triggerObj.transform.rotation = Quaternion.Euler(0, 0, startRotateZ - spread * 0.5f);
+        trigger.transform.rotation = Quaternion.Euler(0, 0, startRotateZ - spread * 0.5f);
 
         yield return null;
-        triggerObj.gameObject.SetActive(false);
+        trigger.gameObject.SetActive(false);
     }
-    public void SwingObjectTriggerEnter(Transform transform, Collider2D coll, UnityEvent<Transform, Collider2D> enterEvent)
+    public void SwingObjectTriggerEnter(GameObject triggerObj, Collider2D coll, UnityEvent<GameObject, Collider2D> enterEvent)
     {
-        enterEvent.Invoke(transform, coll);
+        enterEvent.Invoke(triggerObj, coll);
     }
-    public void SwingObjectTriggerStay(Transform transform, Collider2D coll, UnityEvent<Transform, Collider2D> stayEvent)
+    public void SwingObjectTriggerStay(GameObject triggerObj, Collider2D coll, UnityEvent<GameObject, Collider2D> stayEvent)
     {
-        stayEvent.Invoke(transform, coll);
+        stayEvent.Invoke(triggerObj, coll);
     }
-    public void SwingObjectTriggerExit(Transform transform, Collider2D coll, UnityEvent<Transform, Collider2D> exitEvent)
+    public void SwingObjectTriggerExit(GameObject triggerObj, Collider2D coll, UnityEvent<GameObject, Collider2D> exitEvent)
     {
-        exitEvent.Invoke(transform, coll);
+        exitEvent.Invoke(triggerObj, coll);
     }
 }

@@ -1622,13 +1622,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 930685344b4decc47ae27c2f6c8b3c2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dropable: 0
+  useAttackInput: 1
   isUsing: 1
   index: 0
   item: {fileID: 0}
   UI: {fileID: 21300000, guid: 608a83976b59cec40addcc2aaade0f0a, type: 3}
-  breakEffect: {fileID: 0}
   damage: 1
   attackCooltime: 0.5
+  breakable: 0
   maxDurability: -1
   durability: 0
   swing_obj: {fileID: 5493629561600412147}

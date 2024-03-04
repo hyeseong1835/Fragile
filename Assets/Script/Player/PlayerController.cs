@@ -101,15 +101,10 @@ public class PlayerController : MonoBehaviour
     float attackInputAllowTime;
     Coroutine curAttackInputCoroutine;
     public float attackCool;
-    [HideInInspector] public bool attackDown
+    [HideInInspector] public bool attack
     {
         get
         {
-            if (mouse0Down)
-            {
-                if(curAttackInputCoroutine != null) StopCoroutine(curAttackInputCoroutine);
-                curAttackInputCoroutine = StartCoroutine(AttackInput());
-            }
             if ((attackInput) && attackCool == 0)
             {
                 attackInput = false;
@@ -141,6 +136,11 @@ public class PlayerController : MonoBehaviour
     }
     void Attack()
     {
+        if (mouse0Down)
+        {
+            if (curAttackInputCoroutine != null) StopCoroutine(curAttackInputCoroutine);
+            curAttackInputCoroutine = StartCoroutine(AttackInput());
+        }
         if (attackCool > 0) attackCool -= Time.deltaTime;
         else if (attackCool < 0) attackCool = 0;
     }

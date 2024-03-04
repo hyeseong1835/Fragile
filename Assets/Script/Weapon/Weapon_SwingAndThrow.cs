@@ -1,8 +1,9 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
-
-public class Weapon_WoodenSword : Weapon
+[RequireComponent(typeof(Skill_Swing))]
+[RequireComponent(typeof(Skill_Throw))]
+public class Weapon_SwingAndThrow : Weapon
 {
     [Space(25)]
     [Title("Swing")]
@@ -10,7 +11,7 @@ public class Weapon_WoodenSword : Weapon
     [SerializeField] float swing_damage;
     [SerializeField] float swing_spread;
     [SerializeField] float swing_duration;
-    [SerializeField] UnityEvent<Transform, Collider2D> swing_enterEvent;
+    [SerializeField] UnityEvent<GameObject, Collider2D> swing_enterEvent;
     Skill_Swing swing;
 
     [Title("Spin")]
@@ -19,23 +20,23 @@ public class Weapon_WoodenSword : Weapon
     [SerializeField] float spin_throwSpeed;
     [SerializeField] float spin_spinSpeed;
     [SerializeField] float spin_duration;
-    [SerializeField] UnityEvent<Transform, Collider2D> spin_enterEvent;
-    Skill_Spin spin;
+    [SerializeField] UnityEvent<GameObject, Collider2D> spin_enterEvent;
+    Skill_Throw spin;
 
     void Awake()
     {
         swing = GetComponent<Skill_Swing>();
-        spin = GetComponent<Skill_Spin>();
+        spin = GetComponent<Skill_Throw>();
     }
-    public override void AttackDown()
+    public override void Attack()
     {
         StartCoroutine(swing.Swing(swing_obj, swing_spread, swing_duration, Skill_Swing.Curve.Quadratic, enterEvent: swing_enterEvent));
     }
     public override void Mouse1Down() 
     {
-        StartCoroutine (spin.Spin(spin_obj, spin_spinSpeed, spin_throwSpeed, spin_duration, enterEvent: spin_enterEvent));
+        StartCoroutine (spin.Throw(spin_obj, spin_spinSpeed, spin_throwSpeed, spin_duration, enterEvent: spin_enterEvent));
     }
-    public void SwingHitEvent(Transform transform, Collider2D coll)
+    public void SwingHitEvent(GameObject triggerObj, Collider2D coll)
     {
         if (coll.gameObject.layer == 20)
         {
@@ -48,7 +49,7 @@ public class Weapon_WoodenSword : Weapon
             AddDurability(-1);
         }
     }
-    public void SpinHitEvent(Transform transform, Collider2D coll)
+    public void SpinHitEvent(GameObject triggerObj, Collider2D coll)
     {
         if (coll.gameObject.layer == 20)
         {
@@ -60,5 +61,30 @@ public class Weapon_WoodenSword : Weapon
             coll.GetComponent<Stat>().OnDamage(spin_damage * damage);
             AddDurability(-1);
         }
+    }
+    protected override void WeaponBreak()
+    {
+        if (swing_obj.gameObject.activeInHierarchy)
+        {
+            breakParticle.SpawnParticle(swing_obj.transform.position, swing_obj.transform.rotation);
+            Remove();
+            Destroy();
+            return;
+        }
+        if (spin_obj.gameObject.activeInHierarchy)
+        {
+            breakParticle.SpawnParticle(spin_obj.transform.position, spin_obj.transform.rotation);
+            Remove();
+            Destroy();
+            return;
+        }
+    }
+    protected override void OnWeaponRemoved()
+    {
+
+    }
+    protected override void OnWeaponDestroyed()
+    {
+
     }
 }

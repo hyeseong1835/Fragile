@@ -9,17 +9,17 @@ public class Weapon_Hand : Weapon
     [SerializeField] float swing_damage;
     [SerializeField] float swing_spread;
     [SerializeField] float swing_duration;
-    [SerializeField] UnityEvent<Transform, Collider2D> swing_enterEvent;
+    [SerializeField] UnityEvent<GameObject, Collider2D> swing_enterEvent;
 
     void Awake()
     {
         swing = GetComponent<Skill_Swing>();
     }
-    public override void AttackDown()
+    public override void Attack()
     {
         StartCoroutine(swing.Swing(swing_obj, swing_spread, swing_duration, Skill_Swing.Curve.Quadratic, enterEvent: swing_enterEvent));
     }
-    public void SwingHitEvent(Transform transform, Collider2D coll)
+    public void SwingHitEvent(GameObject triggerObj, Collider2D coll)
     {
         if (coll.gameObject.layer == 20)
         {
@@ -29,5 +29,17 @@ public class Weapon_Hand : Weapon
         {
             coll.GetComponent<Stat>().OnDamage(swing_damage * damage);
         }
+    }
+    protected override void WeaponBreak()
+    {
+        Debug.LogError("이게 왜 없어져 미친");
+    }
+    protected override void OnWeaponRemoved()
+    {
+        Debug.LogError("이게 왜 없어져 미친");
+    }
+    protected override void OnWeaponDestroyed()
+    {
+        Debug.LogError("이게 왜 없어져 미친");
     }
 }
