@@ -7,28 +7,32 @@ public enum AnimationState
 }
 public class PlayerGrafic : MonoBehaviour
 {
-    [SerializeField] SpriteRenderer body;
-    [SerializeField] Texture2D pTexture;
+    [SerializeField]
+    [ChildGameObjectsOnly] SpriteRenderer body;
+    [SerializeField]
+    [AssetsOnly] Texture2D pTexture;
 
     [Title("State")]
     [SerializeField] AnimationState state = AnimationState.STAY;
     public bool isBattle;
 
     [Title("Stay")]
-    [ShowInInspector] Sprite[,] stayFrame;
     [SerializeField] int stayIndex = 0;
     [SerializeField] float stayTimeScale = 0.5f;
-    int maxStayAnimateIndex = 2;
+    [ReadOnly][ShowInInspector]
+    [TableMatrix(SquareCells = true)] Sprite[,] stayFrame;
+    const int maxStayAnimateIndex = 2;
     float stayTime = 0;
 
     [Title("Walk")]
-    [ShowInInspector] Sprite[,] walkFrame;
     [SerializeField] int walkIndex = 0;
     [SerializeField] float walkTimeScale = 0.5f;
-    int maxWalkAnimateIndex = 4;
+    [ReadOnly][ShowInInspector]
+    [TableMatrix(SquareCells = true)] Sprite[,] walkFrame;
+    const int maxWalkAnimateIndex = 4;
     float walkTime = 0;
 
-    
+
     void Awake()
     {
         Player.grafic = this;
@@ -43,7 +47,7 @@ public class PlayerGrafic : MonoBehaviour
     void Animation()
     {
         //상태 지정
-        if (Player.pCon.moveVector.magnitude <= 0.1f) state = AnimationState.STAY;
+        if (Player.pCon.moveVector.magnitude <= Mathf.Epsilon) state = AnimationState.STAY;
         else
         {
             if (isBattle) state = AnimationState.BATTLE;

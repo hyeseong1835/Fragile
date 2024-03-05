@@ -4,16 +4,18 @@ using UnityEngine.UI;
 
 public abstract class Weapon : MonoBehaviour
 {
+    const string nullDurabilityText = "n";
+
+    public bool isUsing = false;
+
     public bool dropable = true;
     public bool useAttackInput = true;
 
-    public bool isUsing = false;
     public int index = 0;
 
     [Title("Object")]
     [ShowIf("dropable", true)] public Sprite item;
     public Sprite UI;
-
 
     [Title("Stat")]
     public float damage = 1;
@@ -21,9 +23,9 @@ public abstract class Weapon : MonoBehaviour
 
     [Title("Break")]
     public bool breakable = true;
-    [ShowIf("breakable", true)] public int maxDurability = 1;
-    [ShowIf("breakable", true)] public int durability = 1;
-    [ShowIf("breakable", true)] protected BreakParticle breakParticle = null;
+    [ShowIf("breakable", true)][HorizontalGroup] public int durability = 1;
+    [ShowIf("breakable", true)][HorizontalGroup][HideLabel] public int maxDurability = 1;
+    [ShowIf("breakable", true)] [SerializeField] protected BreakParticle breakParticle = null;
 
 
 
@@ -33,7 +35,7 @@ public abstract class Weapon : MonoBehaviour
         if (!isUsing) return;
 
         if (Player.pCon.mouse0Down) Mouse0Down();
-        if (Player.pCon.mouse0) Mouse0();
+        if (Player.pCon.mouse0Stay) Mouse0();
         if (Player.pCon.mouse0Up) Mouse0Up();
         if (Player.pCon.mouse1Down) Mouse1Down();
         if (Player.pCon.mouse1) Mouse1();
@@ -56,7 +58,8 @@ public abstract class Weapon : MonoBehaviour
     #region 데이터
     public void SetData(string[] datas, string[] customDatas)
     {
-        durability = int.Parse(datas[1]);
+        if (datas[1] == nullDurabilityText) durability = maxDurability;
+        else durability = int.Parse(datas[1]);
         SetCustomData(customDatas);
     }
     protected virtual void SetCustomData(string[] datas) { }
@@ -105,9 +108,6 @@ public abstract class Weapon : MonoBehaviour
         OnWeaponRemoved();
         Player.wCon.RemoveWeapon(index);
     }
-    /// <summary>
-    /// 무기 오브젝트 파괴 !!Remove를 사용하였는 지 확인할 것!!
-    /// </summary>
     public void Destroy()
     {
         if(transform.parent == Player.wCon.transform) 

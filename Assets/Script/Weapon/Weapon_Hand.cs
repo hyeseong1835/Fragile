@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(Skill_Swing))]
 public class Weapon_Hand : Weapon
 {
     Skill_Swing swing;
@@ -9,11 +10,13 @@ public class Weapon_Hand : Weapon
     [SerializeField] float swing_damage;
     [SerializeField] float swing_spread;
     [SerializeField] float swing_duration;
-    [SerializeField] UnityEvent<GameObject, Collider2D> swing_enterEvent;
+    UnityEvent<GameObject, Collider2D> swing_enterEvent = new UnityEvent<GameObject, Collider2D>();
 
     void Awake()
     {
         swing = GetComponent<Skill_Swing>();
+
+        swing_enterEvent.AddListener(SwingHitEvent);
     }
     public override void Attack()
     {

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4497962208037137631}
   - component: {fileID: 3990496710023771316}
   m_Layer: 10
-  m_Name: SpinWeapon
+  m_Name: ThrowWeapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -277,9 +277,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50a99f985fe9dd84fb3a9fb03b73bb1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isUsing: 0
   dropable: 1
   useAttackInput: 1
-  isUsing: 0
   index: 0
   item: {fileID: 21300000, guid: b933908dc65243a42951c5f8aaf6fc20, type: 3}
   UI: {fileID: 21300000, guid: 4de065b7691eaa64d8d187fce863b3e3, type: 3}
@@ -288,46 +288,16 @@ MonoBehaviour:
   breakable: 1
   maxDurability: 3
   durability: 3
-  breakParticle: {fileID: 0}
+  breakParticle: {fileID: 1040867577504536758}
   swing_obj: {fileID: 1724169375036396350}
   swing_damage: 1
   swing_spread: 120
   swing_duration: 0.25
-  swing_enterEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3072198428114002479}
-        m_TargetAssemblyTypeName: Weapon_WoodenSword, Assembly-CSharp
-        m_MethodName: SwingHitEvent
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  spin_obj: {fileID: 1134626143732526640}
-  spin_damage: 1
-  spin_throwSpeed: 0.25
-  spin_spinSpeed: 720
-  spin_duration: 5
-  spin_enterEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3072198428114002479}
-        m_TargetAssemblyTypeName: Weapon_WoodenSword, Assembly-CSharp
-        m_MethodName: SpinHitEvent
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  throw_obj: {fileID: 1134626143732526640}
+  throw_damage: 1
+  throw_throwSpeed: 0.15
+  throw_spinSpeed: 720
+  throw_duration: 10
 --- !u!114 &3182766494214464233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -586,3 +556,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 661677133259877264, guid: 14e1b82cc36170748841c03969f908d1, type: 3}
   m_PrefabInstance: {fileID: 154571019621454845}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1040867577504536758 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 888548374611643211, guid: 14e1b82cc36170748841c03969f908d1, type: 3}
+  m_PrefabInstance: {fileID: 154571019621454845}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0119e13a3d6bd7c4c9ca39dfad440105, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

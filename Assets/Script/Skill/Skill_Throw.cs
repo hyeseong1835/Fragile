@@ -7,8 +7,11 @@ public class Skill_Throw : Skill
     public IEnumerator Throw(TriggerObject trigger, float spinSpeed, float throwSpeed, float duration,
         UnityEvent<GameObject, Collider2D> enterEvent = null, 
         UnityEvent<GameObject, Collider2D> stayEvent = null, 
-        UnityEvent<GameObject, Collider2D> exitEvent = null)
+        UnityEvent<GameObject, Collider2D> exitEvent = null, 
+        UnityEvent<GameObject> endEvent = null
+        )
     {
+        //시작
         weapon.Remove();
         trigger.gameObject.SetActive(true);
         trigger.SetEvent(enterEvent, stayEvent, exitEvent);
@@ -17,6 +20,8 @@ public class Skill_Throw : Skill
             Player.cam.ScreenToWorldPoint(Player.pCon.mousePos).x - Player.transform.position.x) * Mathf.Rad2Deg - 90;
         Vector3 startVector = Player.cam.ScreenToWorldPoint(Player.pCon.mousePos) + new Vector3(0, 0, 10) - Player.transform.position;
         float time = 0;
+
+        //실행 중
         while (time <= duration)
         {
             trigger.transform.position += startVector.normalized * throwSpeed;
@@ -24,8 +29,11 @@ public class Skill_Throw : Skill
             time += Time.deltaTime;
             yield return null;
         }
+
+        //종료
         Destroy(trigger.gameObject);
-        weapon.Remove();
+
+        if (endEvent != null) endEvent.Invoke(trigger.gameObject);
     }
     public void SpinObjectTriggerEnter(Transform transform, Collider2D coll, UnityEvent<Transform, Collider2D> enterEvent)
     {

@@ -1,6 +1,7 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
+
 [RequireComponent(typeof(Skill_Swing))]
 [RequireComponent(typeof(Skill_Throw))]
 public class Weapon_SwingAndThrow : Weapon
@@ -11,22 +12,27 @@ public class Weapon_SwingAndThrow : Weapon
     [SerializeField] float swing_damage;
     [SerializeField] float swing_spread;
     [SerializeField] float swing_duration;
-    [SerializeField] UnityEvent<GameObject, Collider2D> swing_enterEvent;
+    UnityEvent<GameObject, Collider2D> swing_enterEvent = new UnityEvent<GameObject, Collider2D>();
     Skill_Swing swing;
 
-    [Title("Spin")]
-    [SerializeField] TriggerObject spin_obj;
-    [SerializeField] float spin_damage;
-    [SerializeField] float spin_throwSpeed;
-    [SerializeField] float spin_spinSpeed;
-    [SerializeField] float spin_duration;
-    [SerializeField] UnityEvent<GameObject, Collider2D> spin_enterEvent;
-    Skill_Throw spin;
+    [Title("Throw")]
+    [SerializeField] TriggerObject throw_obj;
+    [SerializeField] float throw_damage;
+    [SerializeField] float throw_throwSpeed;
+    [SerializeField] float throw_spinSpeed;
+    [SerializeField] float throw_duration;
+    UnityEvent<GameObject, Collider2D> throw_enterEvent = new UnityEvent<GameObject, Collider2D>();
+    Skill_Throw @throw;
 
+    UnityEvent<GameObject> throw_endEvent = new UnityEvent<GameObject>();
     void Awake()
     {
         swing = GetComponent<Skill_Swing>();
-        spin = GetComponent<Skill_Throw>();
+        @throw = GetComponent<Skill_Throw>();
+
+        swing_enterEvent.AddListener(SwingHitEvent);
+        throw_enterEvent.AddListener(ThrowHitEvent);
+        throw_endEvent.AddListener(EndEvent);
     }
     public override void Attack()
     {
@@ -34,7 +40,7 @@ public class Weapon_SwingAndThrow : Weapon
     }
     public override void Mouse1Down() 
     {
-        StartCoroutine (spin.Throw(spin_obj, spin_spinSpeed, spin_throwSpeed, spin_duration, enterEvent: spin_enterEvent));
+        StartCoroutine (@throw.Throw(throw_obj, throw_spinSpeed, throw_throwSpeed, throw_duration, enterEvent: throw_enterEvent, endEvent: throw_endEvent));
     }
     public void SwingHitEvent(GameObject triggerObj, Collider2D coll)
     {
@@ -49,18 +55,20 @@ public class Weapon_SwingAndThrow : Weapon
             AddDurability(-1);
         }
     }
-    public void SpinHitEvent(GameObject triggerObj, Collider2D coll)
+    public void ThrowHitEvent(GameObject triggerObj, Collider2D coll)
     {
         if (coll.gameObject.layer == 20)
         {
-            coll.GetComponent<Stat>().OnDamage(spin_damage * damage);
-            AddDurability(-1);
+            coll.GetComponent<Stat>().OnDamage(throw_damage * damage);
         }
         else if (coll.gameObject.layer == 21)
         {
-            coll.GetComponent<Stat>().OnDamage(spin_damage * damage);
-            AddDurability(-1);
+            coll.GetComponent<Stat>().OnDamage(throw_damage * damage);
         }
+    }
+    public void EndEvent(GameObject triggerObj)
+    {
+        Destroy();
     }
     protected override void WeaponBreak()
     {
@@ -71,9 +79,9 @@ public class Weapon_SwingAndThrow : Weapon
             Destroy();
             return;
         }
-        if (spin_obj.gameObject.activeInHierarchy)
+        if (throw_obj.gameObject.activeInHierarchy)
         {
-            breakParticle.SpawnParticle(spin_obj.transform.position, spin_obj.transform.rotation);
+            breakParticle.SpawnParticle(throw_obj.transform.position, throw_obj.transform.rotation);
             Remove();
             Destroy();
             return;

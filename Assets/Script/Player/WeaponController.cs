@@ -5,25 +5,20 @@ using UnityEngine;
 public class WeaponController : MonoBehaviour
 {
     public UI_Inventory inventoryUI;
-
-    [SerializeField] public Weapon[] weapons = new Weapon[11];
-    public Weapon curWeapon { get; private set; }
+    [Title("Weapon")]
+    public Weapon curWeapon;
+    public Weapon[] weapons = new Weapon[11];
     int lastWeaponIndex = 0;
     
 
     void Awake()
     {
         Player.wCon = this;
-
-        curWeapon = weapons[0];
-        LoadWeapons("WoodenSword,3/\n");
-
-        ResetWeaponIndex();
     }
     void Update()
     {
         WheelSelect();
-        if (Input.GetKeyDown(KeyCode.P)) LoadWeapon("WoodenSword,3/");
+        if (Input.GetKeyDown(KeyCode.P)) LoadWeapon("WoodenSword,n/");
     }
     #region 저장
     public void SaveWeapons()
@@ -51,9 +46,8 @@ public class WeaponController : MonoBehaviour
 
         string[] split = weaponData.Split('/');
 
-        Debug.Log("LoadWeapon: {" + split[0].Substring(0, split[0].IndexOf(','))+"split[0]: [" + split[0]+"], " + "split[1]: [" + split[1] +"]}");
-        GameObject weaponObj = 
-            Instantiate((GameObject) Resources.Load("WeaponObjPrefab/" + split[0].Substring(0, split[0].IndexOf(','))), transform);
+        Debug.Log("LoadWeapon: {\"" + "WeaponObjPrefab/" + split[0].Substring(0, split[0].IndexOf(',')) + "\": ( split[0]: [ " + split[0] + " ], " + "split[1]: [ " + split[1] + " ])}");
+        GameObject weaponObj = Instantiate((GameObject) Resources.Load("WeaponObjPrefab/" + split[0].Substring(0, split[0].IndexOf(','))), transform);
         Weapon weapon = weaponObj.GetComponent<Weapon>();
         AddWeapon(weapon, split[0], split[1]);
         return weapon;
@@ -98,8 +92,8 @@ public class WeaponController : MonoBehaviour
         //제거(인벤토리에서)
         weapons[index].transform.parent = null;
 
-        ResetWeaponIndex();
         if (transform.childCount == 1) lastWeaponIndex = 0;
+        ResetWeaponIndex();
     }
 
     #endregion
@@ -113,7 +107,12 @@ public class WeaponController : MonoBehaviour
 
         if (curWeapon.index == 0) //맨손일 때
         {
-            if (transform.childCount != 1 && lastWeaponIndex != 0) //무기가 존재하고 마지막으로 들었던 무기가 있을 때
+            if(transform.childCount == 1) //무기가 없을 때
+            {
+                if (curWeapon.index != 0) SelectWeapon(0);
+                return;
+            }
+            if (lastWeaponIndex != 0) //마지막으로 들었던 무기가 있을 때
             {
                 SelectWeapon(lastWeaponIndex); //마지막으로 들었던 무기
                 return;
@@ -140,6 +139,30 @@ public class WeaponController : MonoBehaviour
             return;
         }
     }
+    [DisableInEditorMode]
+    [Button(name: "초기화")]
+    void ResetWeaponIndex()
+    {
+        weapons = new Weapon[11];
+        for (int i = 0; i < 11; i++)
+        {
+            if (i < transform.childCount)
+            {
+                weapons[i] = transform.GetChild(i).GetComponent<Weapon>();
+                weapons[i].index = i;
+            }
+            else weapons[i] = null;
+        }
+        if (lastWeaponIndex > transform.childCount - 1)
+        {
+            Debug.LogWarning("lastWeaponIndex 인덱스 초과( " + lastWeaponIndex + "/" + (transform.childCount - 1) + " )");
+            lastWeaponIndex = 0;
+        } //LogWarning: lastWeaponIndex 인덱스 초과
+
+        inventoryUI.ResetInventoryUI();
+    }
+    [DisableInEditorMode]
+    [Button(ButtonStyle.Box)]
     void SelectWeapon(int index)
     {
         if (index < 0 || transform.childCount - 1 < index)
@@ -168,25 +191,6 @@ public class WeaponController : MonoBehaviour
         if (index != 0) lastWeaponIndex = index;
         inventoryUI.ChangeWeaponUI(index);
     }
-    void ResetWeaponIndex()
-    {
-        weapons = new Weapon[11];
-        for (int i = 1; i < 11; i++)
-        {
-            if (i < transform.childCount)
-            {
-                weapons[i] = transform.GetChild(i).GetComponent<Weapon>();
-                weapons[i].index = i;
-            }
-            else weapons[i] = null;
-        }
-        if (lastWeaponIndex > transform.childCount - 1)
-        {
-            Debug.LogWarning("lastWeaponIndex 인덱스 초과");
-            lastWeaponIndex = 0;
-        } //LogWarning: lastWeaponIndex 인덱스 초과
-
-        inventoryUI.ResetInventoryUI();
-    }
+    
     #endregion
 }

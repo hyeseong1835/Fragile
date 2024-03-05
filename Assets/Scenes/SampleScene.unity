@@ -283,6 +283,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventoryUI: {fileID: 1248037449}
+  curWeapon: {fileID: 8645580123791882277}
   weapons:
   - {fileID: 8645580123791882277}
   - {fileID: 0}
@@ -751,8 +752,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f19d7285a108323499b090cdea216d12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  durabillity: {fileID: 2128805571}
   UI: {fileID: 790390312}
+  durabillity: {fileID: 2128805571}
+  UISprite:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &1613293452
 GameObject:
   m_ObjectHideFlags: 0
@@ -1201,7 +1214,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0
@@ -1622,36 +1635,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 930685344b4decc47ae27c2f6c8b3c2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isUsing: 1
   dropable: 0
   useAttackInput: 1
-  isUsing: 1
   index: 0
   item: {fileID: 0}
   UI: {fileID: 21300000, guid: 608a83976b59cec40addcc2aaade0f0a, type: 3}
   damage: 1
   attackCooltime: 0.5
   breakable: 0
-  maxDurability: -1
   durability: 0
+  maxDurability: -1
+  breakParticle: {fileID: 0}
   swing_obj: {fileID: 5493629561600412147}
   swing_damage: 1
   swing_spread: 0
   swing_duration: 0.25
-  swing_enterEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8645580123791882277}
-        m_TargetAssemblyTypeName: Weapon_Hand, Assembly-CSharp
-        m_MethodName: SwingHitEvent
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

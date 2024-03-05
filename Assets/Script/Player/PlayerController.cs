@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using System.Collections;
 using UnityEngine;
 
@@ -10,10 +11,7 @@ public enum AnimateState
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
-    [HideInInspector] public Vector3 moveVector
-    {
-        get { return new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0); }
-    } 
+    [HideInInspector] public Vector3 moveVector { get { return new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0); } }
     [HideInInspector] public float moveRotate = 0;
     /// <summary>
     /// 0(90), 1(45), 2(0), 3(315), 4(270), 5(225), 6(180), 7(135)
@@ -37,64 +35,27 @@ public class PlayerController : MonoBehaviour
     }
 
     //마우스
-    [HideInInspector] public Vector3 mousePos
-    {
-        get { return Input.mousePosition; }
-    }
-    [HideInInspector] public float viewRotateZ
-    {
-        get
-        {
-            return Mathf.Atan2(Player.cam.ScreenToWorldPoint(mousePos).y - transform.position.y,
-                Player.cam.ScreenToWorldPoint(mousePos).x - transform.position.x) * Mathf.Rad2Deg - 90;
-        }
+    [HideInInspector] public Vector3 mousePos { get { return Input.mousePosition; } }
+    [HideInInspector] public float viewRotateZ { get { return Mathf.Atan2(
+        Player.cam.ScreenToWorldPoint(mousePos).y - transform.position.y, 
+        Player.cam.ScreenToWorldPoint(mousePos).x - transform.position.x) * Mathf.Rad2Deg - 90; } 
     }
 
     //좌클릭
-    [HideInInspector] public bool mouse0Down
-    {
-        get { return Input.GetMouseButtonDown(0); }
-    }
-    [HideInInspector] public bool mouse0
-    {
-        get { return Input.GetMouseButton(0); }
-    }
-    [HideInInspector] public bool mouse0Up
-    {
-        get { return Input.GetMouseButtonUp(0); }
-    }
+    [ReadOnly][ShowInInspector][HorizontalGroup("mouse0", Title = "Mouse0")][LabelText("Down")][ToggleLeft] public bool mouse0Down { get { return Input.GetMouseButtonDown(0); } }
+    [ReadOnly][ShowInInspector][HorizontalGroup("mouse0")][LabelText("Stay")][ToggleLeft] public bool mouse0Stay { get { return Input.GetMouseButton(0); } }
+    [ReadOnly][ShowInInspector][HorizontalGroup("mouse0")][LabelText("Up")][ToggleLeft] public bool mouse0Up { get { return Input.GetMouseButtonUp(0); } }
 
     //우클릭
-    [HideInInspector] public bool mouse1Down
-        {
-        get { return Input.GetMouseButtonDown(1); }
-    }
-    [HideInInspector] public bool mouse1
-    {
-        get { return Input.GetMouseButton(1); }
-    }
-    [HideInInspector] public bool mouse1Up
-    {
-        get { return Input.GetMouseButtonUp(1); }
-    }
+    [ReadOnly][ShowInInspector][HorizontalGroup("mouse1", Title = "Mouse1")][LabelText("Down")][ToggleLeft] public bool mouse1Down { get { return Input.GetMouseButtonDown(1); } }
+    [ReadOnly][ShowInInspector][HorizontalGroup("mouse1")][LabelText("Stay")][ToggleLeft] public bool mouse1 { get { return Input.GetMouseButton(1); } }
+    [ReadOnly][ShowInInspector][HorizontalGroup("mouse1")][LabelText("Up")][ToggleLeft] public bool mouse1Up { get { return Input.GetMouseButtonUp(1); } }
 
     //마우스 휠
-    [HideInInspector] public float mouseWheelScroll
-    {
-        get { return Input.GetAxis("Mouse ScrollWheel"); }
-    }
-    [HideInInspector] public bool mouseWheelClickDown
-    {
-        get { return Input.GetMouseButtonDown(2); }
-    }
-    [HideInInspector] public bool mouseWheelClick
-    {
-        get { return Input.GetMouseButtonUp(2); }
-    }
-    [HideInInspector] public bool mouseWheelClickUp
-    {
-        get { return Input.GetMouseButtonDown(2); }
-    }
+    [HideInInspector] public float mouseWheelScroll { get { return Input.GetAxis("Mouse ScrollWheel"); } }
+    [HideInInspector] public bool mouseWheelClickDown { get { return Input.GetMouseButtonDown(2); } }
+    [HideInInspector] public bool mouseWheelClick{ get { return Input.GetMouseButtonUp(2); } }
+    [HideInInspector] public bool mouseWheelClickUp { get { return Input.GetMouseButtonDown(2); } }
 
     //기타
     bool attackInput;
@@ -132,7 +93,7 @@ public class PlayerController : MonoBehaviour
     void Move()
     {
         transform.position += moveVector.normalized * Time.deltaTime * moveSpeed;
-        if (moveVector.magnitude > 0.1f) moveRotate = Mathf.Atan2(moveVector.y, moveVector.x) * Mathf.Rad2Deg;
+        if (moveVector.magnitude > Mathf.Epsilon) moveRotate = Mathf.Atan2(moveVector.y, moveVector.x) * Mathf.Rad2Deg;
     }
     void Attack()
     {
