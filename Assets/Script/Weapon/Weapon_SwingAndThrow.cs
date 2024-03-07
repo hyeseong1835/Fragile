@@ -13,6 +13,8 @@ public class Weapon_SwingAndThrow : Weapon
     [SerializeField] float swing_spread;
     [SerializeField] float swing_duration;
     UnityEvent<GameObject, Collider2D> swing_enterEvent = new UnityEvent<GameObject, Collider2D>();
+    UnityEvent<GameObject> swing_endEvent = new UnityEvent<GameObject>();
+
     Skill_Swing swing;
 
     [Title("Throw")]
@@ -22,25 +24,31 @@ public class Weapon_SwingAndThrow : Weapon
     [SerializeField] float throw_spinSpeed;
     [SerializeField] float throw_duration;
     UnityEvent<GameObject, Collider2D> throw_enterEvent = new UnityEvent<GameObject, Collider2D>();
+    UnityEvent<GameObject> throw_endEvent = new UnityEvent<GameObject>();
+
     Skill_Throw @throw;
 
-    UnityEvent<GameObject> throw_endEvent = new UnityEvent<GameObject>();
     void Awake()
     {
         swing = GetComponent<Skill_Swing>();
         @throw = GetComponent<Skill_Throw>();
 
+        //Swing
         swing_enterEvent.AddListener(SwingHitEvent);
+        swing_endEvent.AddListener(SwingEndEvent);
+
+        //Throw
         throw_enterEvent.AddListener(ThrowHitEvent);
-        throw_endEvent.AddListener(EndEvent);
+        throw_endEvent.AddListener(ThrowEndEvent);
     }
+    #region Attack
     public override void Attack()
     {
-        StartCoroutine(swing.Swing(swing_obj, swing_spread, swing_duration, Skill_Swing.Curve.Quadratic, enterEvent: swing_enterEvent));
-    }
-    public override void Mouse1Down() 
-    {
-        StartCoroutine (@throw.Throw(throw_obj, throw_spinSpeed, throw_throwSpeed, throw_duration, enterEvent: throw_enterEvent, endEvent: throw_endEvent));
+        handWeapon.gameObject.SetActive(false);
+        Player.grafic.HandLink(swing_obj.transform, true);
+
+        StartCoroutine(swing.Swing(swing_obj, swing_spread, swing_duration, Skill_Swing.Curve.Quadratic, 
+            enterEvent: swing_enterEvent, endEvent: swing_endEvent));
     }
     public void SwingHitEvent(GameObject triggerObj, Collider2D coll)
     {
@@ -55,6 +63,18 @@ public class Weapon_SwingAndThrow : Weapon
             AddDurability(-1);
         }
     }
+    public void SwingEndEvent(GameObject triggerObj)
+    {
+        handWeapon.gameObject.SetActive(true);
+        Player.grafic.HandLink(handWeapon);
+    }
+    #endregion
+    public override void Mouse1Down() 
+    {
+        Player.grafic.HandLink(null);
+        StartCoroutine(@throw.Throw(throw_obj, throw_spinSpeed, throw_throwSpeed, throw_duration, 
+            enterEvent: throw_enterEvent, endEvent: throw_endEvent));
+    }
     public void ThrowHitEvent(GameObject triggerObj, Collider2D coll)
     {
         if (coll.gameObject.layer == 20)
@@ -66,11 +86,11 @@ public class Weapon_SwingAndThrow : Weapon
             coll.GetComponent<Stat>().OnDamage(throw_damage * damage);
         }
     }
-    public void EndEvent(GameObject triggerObj)
+    public void ThrowEndEvent(GameObject triggerObj)
     {
         Destroy();
     }
-    protected override void WeaponBreak()
+    protected override void Break()
     {
         if (swing_obj.gameObject.activeInHierarchy)
         {

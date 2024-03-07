@@ -33,6 +33,18 @@ public class PlayerController : MonoBehaviour
             else return 0;
         }
     }
+    /// <summary>
+    /// N: 1, H: 0, S:-1
+    /// </summary>
+    [HideInInspector] public int moveLookRotate
+    {
+        get
+        {
+            if (moveIntRotate == 0 || moveIntRotate == 4) return 0;
+            else if (moveIntRotate <= 3) return 1;
+            else return -1;
+        }
+    }
 
     //마우스
     [HideInInspector] public Vector3 mousePos { get { return Input.mousePosition; } }
@@ -42,14 +54,14 @@ public class PlayerController : MonoBehaviour
     }
 
     //좌클릭
-    [ReadOnly][ShowInInspector][HorizontalGroup("mouse0", Title = "Mouse0")][LabelText("Down")][ToggleLeft] public bool mouse0Down { get { return Input.GetMouseButtonDown(0); } }
-    [ReadOnly][ShowInInspector][HorizontalGroup("mouse0")][LabelText("Stay")][ToggleLeft] public bool mouse0Stay { get { return Input.GetMouseButton(0); } }
-    [ReadOnly][ShowInInspector][HorizontalGroup("mouse0")][LabelText("Up")][ToggleLeft] public bool mouse0Up { get { return Input.GetMouseButtonUp(0); } }
+    [HideInInspector] public bool mouse0Down { get { return Input.GetMouseButtonDown(0); } }
+    [HideInInspector] public bool mouse0Stay { get { return Input.GetMouseButton(0); } }
+    [HideInInspector] public bool mouse0Up { get { return Input.GetMouseButtonUp(0); } }
 
     //우클릭
-    [ReadOnly][ShowInInspector][HorizontalGroup("mouse1", Title = "Mouse1")][LabelText("Down")][ToggleLeft] public bool mouse1Down { get { return Input.GetMouseButtonDown(1); } }
-    [ReadOnly][ShowInInspector][HorizontalGroup("mouse1")][LabelText("Stay")][ToggleLeft] public bool mouse1 { get { return Input.GetMouseButton(1); } }
-    [ReadOnly][ShowInInspector][HorizontalGroup("mouse1")][LabelText("Up")][ToggleLeft] public bool mouse1Up { get { return Input.GetMouseButtonUp(1); } }
+    [HideInInspector] public bool mouse1Down { get { return Input.GetMouseButtonDown(1); } }
+    [HideInInspector] public bool mouse1 { get { return Input.GetMouseButton(1); } }
+    [HideInInspector] public bool mouse1Up { get { return Input.GetMouseButtonUp(1); } }
 
     //마우스 휠
     [HideInInspector] public float mouseWheelScroll { get { return Input.GetAxis("Mouse ScrollWheel"); } }
@@ -58,8 +70,8 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public bool mouseWheelClickUp { get { return Input.GetMouseButtonDown(2); } }
 
     //기타
-    bool attackInput;
-    float attackInputAllowTime;
+    [SerializeField][ReadOnly] bool attackInput = false;
+    float attackInputAllowTime = 1;
     Coroutine curAttackInputCoroutine;
     public float attackCool;
     [HideInInspector] public bool attack

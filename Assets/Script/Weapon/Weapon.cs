@@ -1,6 +1,7 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 public abstract class Weapon : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public abstract class Weapon : MonoBehaviour
     [Title("Object")]
     [ShowIf("dropable", true)] public Sprite item;
     public Sprite UI;
+    [ChildGameObjectsOnly] public Transform handWeapon;
 
     [Title("Stat")]
     public float damage = 1;
@@ -71,11 +73,18 @@ public abstract class Weapon : MonoBehaviour
     {
         if (use)
         {
+            handWeapon.gameObject.SetActive(true);
+            Player.grafic.HandLink(handWeapon, false);
+
             isUsing = true;
             OnUse();
         }
         else
         {
+            handWeapon.gameObject.SetActive(false);
+            Player.grafic.handLink = false;
+            Player.grafic.targetTransform = null;
+
             isUsing = false;
             OnDeUse();
         }
@@ -87,7 +96,7 @@ public abstract class Weapon : MonoBehaviour
         durability += add;
         if (durability <= 0)
         {
-            WeaponBreak();
+            Break();
             return;
         }
         Player.wCon.inventoryUI.ResetDurabilityUI();
@@ -123,7 +132,7 @@ public abstract class Weapon : MonoBehaviour
     #region ÀÌº¥Æ®
     protected virtual void OnUse() { }
     protected virtual void OnDeUse() { }
-    protected abstract void WeaponBreak();
+    protected abstract void Break();
     protected abstract void OnWeaponRemoved();
     protected abstract void OnWeaponDestroyed();
     #endregion

@@ -6,6 +6,7 @@ public class Weapon_Hand : Weapon
 {
     Skill_Swing swing;
 
+    [SerializeField] Transform hand_obj;
     [SerializeField] TriggerObject swing_obj;
     [SerializeField] float swing_damage;
     [SerializeField] float swing_spread;
@@ -20,6 +21,7 @@ public class Weapon_Hand : Weapon
     }
     public override void Attack()
     {
+        Player.grafic.HandLink(swing_obj.transform, false);
         StartCoroutine(swing.Swing(swing_obj, swing_spread, swing_duration, Skill_Swing.Curve.Quadratic, enterEvent: swing_enterEvent));
     }
     public void SwingHitEvent(GameObject triggerObj, Collider2D coll)
@@ -33,7 +35,7 @@ public class Weapon_Hand : Weapon
             coll.GetComponent<Stat>().OnDamage(swing_damage * damage);
         }
     }
-    protected override void WeaponBreak()
+    protected override void Break()
     {
         Debug.LogError("이게 왜 없어져 미친");
     }

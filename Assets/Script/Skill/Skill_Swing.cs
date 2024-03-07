@@ -11,7 +11,8 @@ public class Skill_Swing : Skill
     public IEnumerator Swing(TriggerObject trigger, float spread, float duration, Curve swingCurve, 
         UnityEvent<GameObject, Collider2D> enterEvent = null, 
         UnityEvent<GameObject, Collider2D> stayEvent = null, 
-        UnityEvent<GameObject, Collider2D> exitEvent = null)
+        UnityEvent<GameObject, Collider2D> exitEvent = null,
+        UnityEvent<GameObject> endEvent = null)
     {
         //√ ±‚»≠
         trigger.gameObject.SetActive(true);
@@ -44,7 +45,9 @@ public class Skill_Swing : Skill
         trigger.transform.rotation = Quaternion.Euler(0, 0, startRotateZ - spread * 0.5f);
 
         yield return null;
+
         trigger.gameObject.SetActive(false);
+        if (endEvent != null) endEvent.Invoke(trigger.gameObject);
     }
     public void SwingObjectTriggerEnter(GameObject triggerObj, Collider2D coll, UnityEvent<GameObject, Collider2D> enterEvent)
     {

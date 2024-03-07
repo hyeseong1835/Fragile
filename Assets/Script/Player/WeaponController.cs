@@ -188,6 +188,8 @@ public class WeaponController : MonoBehaviour
 
         curWeapon.SetUse(true); //선택한 무기 활성화
 
+
+
         if (index != 0) lastWeaponIndex = index;
         inventoryUI.ChangeWeaponUI(index);
     }

@@ -5,6 +5,11 @@ public enum AnimationState
 {
     STAY, WALK, BATTLE
 }
+public class Vector2AndQuaternion
+{
+    public Vector2 v;
+    public Quaternion q;
+}
 public class PlayerGrafic : MonoBehaviour
 {
     [SerializeField]
@@ -15,6 +20,15 @@ public class PlayerGrafic : MonoBehaviour
     [Title("State")]
     [SerializeField] AnimationState state = AnimationState.STAY;
     public bool isBattle;
+
+    [Title("Hand")]
+    public bool handLink;
+    public bool IK;
+
+    [ChildGameObjectsOnly] public Transform hand;
+    public Transform targetTransform;
+    Vector2[,] stayFrameHandPos;
+    [ShowInInspector] Quaternion[,] stayFrameHandRot;
 
     [Title("Stay")]
     [SerializeField] int stayIndex = 0;
@@ -42,7 +56,38 @@ public class PlayerGrafic : MonoBehaviour
     }
     void Update()
     {
+        Hand();
         Animation();
+    }
+    public void HandLink(Transform target, bool _IK = false)
+    {
+        if (target != null)
+        {
+            handLink = true;
+            IK = _IK;
+            targetTransform = target;
+        }
+        else
+        {
+            handLink = false;
+            IK = _IK;
+            targetTransform = null;
+        }
+    }
+    void Hand()
+    {
+        if (!handLink) return;
+
+        if(IK)
+        {
+            hand.transform.position = targetTransform.position;
+            hand.transform.rotation = targetTransform.rotation;
+        }
+        else
+        {
+            targetTransform.position = hand.transform.position;
+            targetTransform.rotation = hand.transform.rotation;
+        }
     }
     void Animation()
     {
@@ -59,6 +104,8 @@ public class PlayerGrafic : MonoBehaviour
         {
             case AnimationState.STAY:
                 body.sprite = stayFrame[stayIndex, Player.pCon.moveIntRotate];
+                hand.localPosition = stayFrameHandPos[stayIndex, Player.pCon.moveIntRotate];
+                hand.localRotation = stayFrameHandRot[stayIndex, Player.pCon.moveIntRotate];
                 break;
             case AnimationState.WALK:
                 body.sprite = walkFrame[walkIndex, Player.pCon.moveIntRotate];
@@ -75,5 +122,5 @@ public class PlayerGrafic : MonoBehaviour
             time = 0;
             if (++index >= maxAnimateIndex) index = 0;
         }
-    }   
+    }
 }
