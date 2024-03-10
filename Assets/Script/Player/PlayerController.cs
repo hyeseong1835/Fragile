@@ -11,7 +11,8 @@ public enum AnimateState
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
-    [HideInInspector] public Vector3 moveVector { get { return new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0); } }
+    [HideInInspector] public Vector3 moveVector; 
+    [HideInInspector] public Vector3 prevMoveVector;
     [HideInInspector] public float moveRotate = 0;
     /// <summary>
     /// 0(90), 1(45), 2(0), 3(315), 4(270), 5(225), 6(180), 7(135)
@@ -45,13 +46,11 @@ public class PlayerController : MonoBehaviour
             else return -1;
         }
     }
-
+    
     //마우스
-    [HideInInspector] public Vector3 mousePos { get { return Input.mousePosition; } }
-    [HideInInspector] public float viewRotateZ { get { return Mathf.Atan2(
-        Player.cam.ScreenToWorldPoint(mousePos).y - transform.position.y, 
-        Player.cam.ScreenToWorldPoint(mousePos).x - transform.position.x) * Mathf.Rad2Deg - 90; } 
-    }
+    [HideInInspector] public Vector2 mousePos { get { return Input.mousePosition; } }
+    [HideInInspector] public Vector2 playerToMouse { get { return (Player.camCon.cam.ScreenToWorldPoint(mousePos) - transform.position); } }
+    [HideInInspector] public float viewRotateZ { get { return Mathf.Atan2(playerToMouse.y, playerToMouse.x) * Mathf.Rad2Deg; } }
 
     //좌클릭
     [HideInInspector] public bool mouse0Down { get { return Input.GetMouseButtonDown(0); } }
@@ -95,7 +94,6 @@ public class PlayerController : MonoBehaviour
         Player.pCon = this;
         Player.transform = transform;
         Player.gameObject = gameObject;
-        Player.cam = Camera.main;
     }
     void Update()
     {                                                                                                                                                                                                                                                                                                       
@@ -104,6 +102,9 @@ public class PlayerController : MonoBehaviour
     }
     void Move()
     {
+        prevMoveVector = moveVector;
+        moveVector = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
+
         transform.position += moveVector.normalized * Time.deltaTime * moveSpeed;
         if (moveVector.magnitude > Mathf.Epsilon) moveRotate = Mathf.Atan2(moveVector.y, moveVector.x) * Mathf.Rad2Deg;
     }

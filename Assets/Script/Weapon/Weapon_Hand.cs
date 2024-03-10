@@ -12,17 +12,22 @@ public class Weapon_Hand : Weapon
     [SerializeField] float swing_spread;
     [SerializeField] float swing_duration;
     UnityEvent<GameObject, Collider2D> swing_enterEvent = new UnityEvent<GameObject, Collider2D>();
+    UnityEvent<GameObject> swing_endEvent = new UnityEvent<GameObject>();
+
 
     void Awake()
     {
         swing = GetComponent<Skill_Swing>();
 
         swing_enterEvent.AddListener(SwingHitEvent);
+        swing_endEvent.AddListener(SwingEndEvent);
     }
     public override void Attack()
     {
-        Player.grafic.HandLink(swing_obj.transform, false);
-        StartCoroutine(swing.Swing(swing_obj, swing_spread, swing_duration, Skill_Swing.Curve.Quadratic, enterEvent: swing_enterEvent));
+        Player.grafic.HandLink(swing_obj.transform, true);
+        handWeapon.gameObject.SetActive(false);
+        StartCoroutine(swing.Swing(swing_obj, swing_spread, swing_duration, Skill_Swing.Curve.Quadratic,
+            enterEvent: swing_enterEvent, endEvent: swing_endEvent));
     }
     public void SwingHitEvent(GameObject triggerObj, Collider2D coll)
     {
@@ -34,6 +39,12 @@ public class Weapon_Hand : Weapon
         {
             coll.GetComponent<Stat>().OnDamage(swing_damage * damage);
         }
+    }
+    public void SwingEndEvent(GameObject triggerObj)
+    {
+        swing_obj.gameObject.SetActive(false);
+        handWeapon.gameObject.SetActive(true);
+        Player.grafic.HandLink(handWeapon, false);
     }
     protected override void Break()
     {

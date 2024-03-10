@@ -154,6 +154,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f2b5b4f8513afd4da14abac2e5d03be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveVector: {x: 0, y: 0, z: 0}
+  prevMoveVector: {x: 0, y: 0, z: 0}
   moveRotate: 0
   attackInput: 0
   attackCool: 0
@@ -173,7 +175,6 @@ Transform:
   m_Children:
   - {fileID: 1780597529}
   - {fileID: 374465424}
-  - {fileID: 519420032}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!70 &5837741
@@ -458,6 +459,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 519420032}
+  - component: {fileID: 519420033}
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
@@ -584,8 +586,24 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5837738}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 050b3ce77337e37499d9922398253ad6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 0}
+  camMove: 1
+  speed: 0
+  posZ: -10
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -835,7 +853,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1232170858
 Transform:
   m_ObjectHideFlags: 0
@@ -1103,6 +1121,7 @@ MonoBehaviour:
   isBattle: 0
   handLink: 0
   IK: 0
+  stateHandAnimation: 1
   hand: {fileID: 294250559}
   targetTransform: {fileID: 1211724437}
   stayIndex: 0
@@ -1870,3 +1889,4 @@ SceneRoots:
   - {fileID: 1835459136}
   - {fileID: 758728249}
   - {fileID: 421564358}
+  - {fileID: 519420032}

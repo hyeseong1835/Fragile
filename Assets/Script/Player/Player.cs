@@ -9,5 +9,5 @@ public static class Player
     public static WeaponController wCon;
     public static PlayerGrafic grafic;
 
-    public static Camera cam;
+    public static CameraController camCon;
 }

@@ -16,9 +16,9 @@ public class Skill_Throw : Skill
         trigger.gameObject.SetActive(true);
         trigger.SetEvent(enterEvent, stayEvent, exitEvent);
         transform.SetParent(null);
-        float startAngleZ = Mathf.Atan2(Player.cam.ScreenToWorldPoint(Player.pCon.mousePos).y - Player.transform.position.y,
-            Player.cam.ScreenToWorldPoint(Player.pCon.mousePos).x - Player.transform.position.x) * Mathf.Rad2Deg - 90;
-        Vector3 startVector = Player.cam.ScreenToWorldPoint(Player.pCon.mousePos) + new Vector3(0, 0, 10) - Player.transform.position;
+        float startAngleZ = Mathf.Atan2(Player.camCon.cam.ScreenToWorldPoint(Player.pCon.mousePos).y - Player.transform.position.y,
+            Player.camCon.cam.ScreenToWorldPoint(Player.pCon.mousePos).x - Player.transform.position.x) * Mathf.Rad2Deg - 90;
+        Vector3 startVector = Player.camCon.cam.ScreenToWorldPoint(Player.pCon.mousePos) + new Vector3(0, 0, 10) - Player.transform.position;
         float time = 0;
 
         //½ÇÇà Áß

@@ -8,7 +8,6 @@ public abstract class Weapon : MonoBehaviour
     const string nullDurabilityText = "n";
 
     public bool isUsing = false;
-
     public bool dropable = true;
     public bool useAttackInput = true;
 
@@ -17,7 +16,7 @@ public abstract class Weapon : MonoBehaviour
     [Title("Object")]
     [ShowIf("dropable", true)] public Sprite item;
     public Sprite UI;
-    [ChildGameObjectsOnly] public Transform handWeapon;
+    public Transform handWeapon;
 
     [Title("Stat")]
     public float damage = 1;
@@ -28,7 +27,6 @@ public abstract class Weapon : MonoBehaviour
     [ShowIf("breakable", true)][HorizontalGroup] public int durability = 1;
     [ShowIf("breakable", true)][HorizontalGroup][HideLabel] public int maxDurability = 1;
     [ShowIf("breakable", true)] [SerializeField] protected BreakParticle breakParticle = null;
-
 
 
     void Update()
@@ -46,14 +44,27 @@ public abstract class Weapon : MonoBehaviour
         if (Player.pCon.attack) Attack();
         #endregion
     }
-
     #region ют╥б
+    [DisableInEditorMode]
+    [Button(ButtonStyle.Box)]
     public virtual void Attack() { }
+    [DisableInEditorMode]
+    [HorizontalGroup("Mouse0"), Button(ButtonStyle.Box)]
     public virtual void Mouse0Down() { }
+    [DisableInEditorMode]
+    [HorizontalGroup("Mouse0"), Button(ButtonStyle.Box)]
     public virtual void Mouse0() { }
+    [DisableInEditorMode]
+    [HorizontalGroup("Mouse0"), Button(ButtonStyle.Box)]
     public virtual void Mouse0Up() { }
+    [DisableInEditorMode]
+    [HorizontalGroup("Mouse1"), Button(ButtonStyle.Box)]
     public virtual void Mouse1Down() { }
+    [DisableInEditorMode]
+    [HorizontalGroup("Mouse1"), Button(ButtonStyle.Box)]
     public virtual void Mouse1() { }
+    [DisableInEditorMode]
+    [HorizontalGroup("Mouse1"), Button(ButtonStyle.Box)]
     public virtual void Mouse1Up() { }
     #endregion
 
@@ -114,6 +125,7 @@ public abstract class Weapon : MonoBehaviour
     }
     public void Remove()
     {
+        OnDeUse();
         OnWeaponRemoved();
         Player.wCon.RemoveWeapon(index);
     }

@@ -45,6 +45,7 @@ public class Weapon_SwingAndThrow : Weapon
     public override void Attack()
     {
         handWeapon.gameObject.SetActive(false);
+        swing_obj.gameObject.SetActive(true);
         Player.grafic.HandLink(swing_obj.transform, true);
 
         StartCoroutine(swing.Swing(swing_obj, swing_spread, swing_duration, Skill_Swing.Curve.Quadratic, 
@@ -65,8 +66,9 @@ public class Weapon_SwingAndThrow : Weapon
     }
     public void SwingEndEvent(GameObject triggerObj)
     {
+        swing_obj.gameObject.SetActive(false);
         handWeapon.gameObject.SetActive(true);
-        Player.grafic.HandLink(handWeapon);
+        Player.grafic.HandLink(handWeapon, false);
     }
     #endregion
     public override void Mouse1Down() 
@@ -94,6 +96,9 @@ public class Weapon_SwingAndThrow : Weapon
     {
         if (swing_obj.gameObject.activeInHierarchy)
         {
+            Player.grafic.HandLink(null);
+            Player.grafic.stateHandAnimation = true;
+
             breakParticle.SpawnParticle(swing_obj.transform.position, swing_obj.transform.rotation);
             Remove();
             Destroy();
@@ -115,4 +120,15 @@ public class Weapon_SwingAndThrow : Weapon
     {
 
     }
+    /*
+    private void OnDrawGizmos()
+    {
+        if (swing_obj.gameObject.activeInHierarchy)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(swing_obj.transform.position);
+            Gizmos.
+        }
+    }
+*/
 }

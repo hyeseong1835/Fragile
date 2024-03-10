@@ -5,11 +5,6 @@ public enum AnimationState
 {
     STAY, WALK, BATTLE
 }
-public class Vector2AndQuaternion
-{
-    public Vector2 v;
-    public Quaternion q;
-}
 public class PlayerGrafic : MonoBehaviour
 {
     [SerializeField]
@@ -24,25 +19,37 @@ public class PlayerGrafic : MonoBehaviour
     [Title("Hand")]
     public bool handLink;
     public bool IK;
+    public bool stateHandAnimation = true;
 
     [ChildGameObjectsOnly] public Transform hand;
     public Transform targetTransform;
-    Vector2[,] stayFrameHandPos;
-    [ShowInInspector] Quaternion[,] stayFrameHandRot;
+
+
 
     [Title("Stay")]
     [SerializeField] int stayIndex = 0;
     [SerializeField] float stayTimeScale = 0.5f;
     [ReadOnly][ShowInInspector]
-    [TableMatrix(SquareCells = true)] Sprite[,] stayFrame;
+    [TableMatrix()] Sprite[,] stayFrame;
+    /*
+    [ShowInInspector] public Vector3[,] stayRHand = { 
+        { new Vector3(0, -0.5f, 0), new Vector3(0.25f, -0.25f, 0), new Vector3(0.5f, 0, 0), new Vector3(0.25f, 0.25f, 0), new Vector3(0, 0.5f, 0), new Vector3(-0.25f, -0.25f, 0), new Vector3(-0.5f, 0, 0), new Vector3(-0.25f, 0.25f, 0), }, 
+        { new Vector3(0, -0.5f, 0), new Vector3(0.25f, -0.25f, 0), new Vector3(0.5f, 0, 0), new Vector3(0.25f, 0.25f, 0), new Vector3(0, 0.5f, 0), new Vector3(-0.25f, -0.25f, 0), new Vector3(-0.5f, 0, 0), new Vector3(-0.25f, 0.25f, 0) } 
+    };
+    */
     const int maxStayAnimateIndex = 2;
     float stayTime = 0;
+
+
 
     [Title("Walk")]
     [SerializeField] int walkIndex = 0;
     [SerializeField] float walkTimeScale = 0.5f;
     [ReadOnly][ShowInInspector]
     [TableMatrix(SquareCells = true)] Sprite[,] walkFrame;
+    [ShowInInspector] public Vector3[,] walkRHand;
+
+
     const int maxWalkAnimateIndex = 4;
     float walkTime = 0;
 
@@ -61,7 +68,8 @@ public class PlayerGrafic : MonoBehaviour
     }
     public void HandLink(Transform target, bool _IK = false)
     {
-        if (target != null)
+        
+        if (target != null && target != targetTransform)
         {
             handLink = true;
             IK = _IK;
@@ -73,10 +81,11 @@ public class PlayerGrafic : MonoBehaviour
             IK = _IK;
             targetTransform = null;
         }
+        stateHandAnimation = !_IK;
     }
     void Hand()
     {
-        if (!handLink) return;
+        if (!handLink || targetTransform == null) return;
 
         if(IK)
         {
@@ -91,6 +100,9 @@ public class PlayerGrafic : MonoBehaviour
     }
     void Animation()
     {
+        AnimationUpdate(ref stayIndex, ref stayTime, stayTimeScale, maxStayAnimateIndex);
+        AnimationUpdate(ref walkIndex, ref walkTime, walkTimeScale, maxWalkAnimateIndex);
+
         //상태 지정
         if (Player.pCon.moveVector.magnitude <= Mathf.Epsilon) state = AnimationState.STAY;
         else
@@ -103,16 +115,34 @@ public class PlayerGrafic : MonoBehaviour
         switch (state)
         {
             case AnimationState.STAY:
+                //Body
                 body.sprite = stayFrame[stayIndex, Player.pCon.moveIntRotate];
-                hand.localPosition = stayFrameHandPos[stayIndex, Player.pCon.moveIntRotate];
-                hand.localRotation = stayFrameHandRot[stayIndex, Player.pCon.moveIntRotate];
+
+                if (stateHandAnimation)
+                {
+                    if (Player.pCon.prevMoveVector.magnitude <= Player.pCon.moveVector.magnitude || Player.pCon.moveVector.magnitude >= 1)
+                        hand.localPosition = new Vector3(Player.pCon.moveVector.normalized.x * 0.75f, Player.pCon.moveVector.normalized.y * 0.5f, 0)
+                            + (new Vector3(Player.pCon.moveVector.normalized.y, Player.pCon.moveVector.normalized.x * -0.5f) * 0.25f);
+                    hand.localRotation = Quaternion.identity;
+                }
+
                 break;
             case AnimationState.WALK:
+                //Body
                 body.sprite = walkFrame[walkIndex, Player.pCon.moveIntRotate];
+
+                //Hand
+                
+                if (stateHandAnimation)
+                {
+                    if (Player.pCon.prevMoveVector.magnitude <= Player.pCon.moveVector.magnitude || Player.pCon.moveVector.magnitude >= 1)
+                        hand.localPosition = new Vector3(Player.pCon.moveVector.normalized.x * 0.75f, Player.pCon.moveVector.normalized.y * 0.5f, 0)
+                            + (new Vector3(Player.pCon.moveVector.normalized.y, Player.pCon.moveVector.normalized.x * -0.5f) * 0.25f);
+                    hand.localRotation = Quaternion.identity;
+                }
+
                 break;
         }
-        AnimationUpdate(ref stayIndex, ref stayTime, stayTimeScale, maxStayAnimateIndex);
-        AnimationUpdate(ref walkIndex, ref walkTime, walkTimeScale, maxWalkAnimateIndex);
     }
     void AnimationUpdate(ref int index, ref float time, float timeScale, int maxAnimateIndex)
     {

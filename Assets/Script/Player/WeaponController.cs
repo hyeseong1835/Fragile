@@ -10,7 +10,6 @@ public class WeaponController : MonoBehaviour
     public Weapon[] weapons = new Weapon[11];
     int lastWeaponIndex = 0;
     
-
     void Awake()
     {
         Player.wCon = this;
@@ -32,6 +31,8 @@ public class WeaponController : MonoBehaviour
                 Player.wCon.weapons[i].LoadCustomData() + "\n";
         }
     }
+    [DisableInEditorMode]
+    [Button(ButtonStyle.Box)]
     public void LoadWeapons(string data)
     {
         string[] weaponDatas = data.Split('\n');
@@ -40,6 +41,8 @@ public class WeaponController : MonoBehaviour
             if (LoadWeapon(weaponData) == null) return;
         }
     }
+    [DisableInEditorMode]
+    [Button(ButtonStyle.Box)]
     public Weapon LoadWeapon(string weaponData)
     {
         if (weaponData == "") return null;
@@ -70,6 +73,8 @@ public class WeaponController : MonoBehaviour
         //UI
         inventoryUI.AddToInventory(weapon);
     }
+    [DisableInEditorMode]
+    [Button(ButtonStyle.Box)]
     public void RemoveWeapon(int index)
     {
         if(index == 0)
@@ -193,6 +198,5 @@ public class WeaponController : MonoBehaviour
         if (index != 0) lastWeaponIndex = index;
         inventoryUI.ChangeWeaponUI(index);
     }
-    
     #endregion
 }
