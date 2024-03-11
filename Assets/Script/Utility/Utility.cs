@@ -2,8 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class SpriteSheet
+public static class Utility
 {
+    public static float GetTargetAngle(Vector2 origin, Vector2 target)
+    {
+        Vector2 dir = target - origin;
+        return Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+    }
     /// <summary>
     /// 
     /// </summary>

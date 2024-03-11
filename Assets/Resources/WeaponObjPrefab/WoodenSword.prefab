@@ -322,8 +322,6 @@ GameObject:
   m_Component:
   - component: {fileID: 79897219896935475}
   - component: {fileID: 3072198428114002479}
-  - component: {fileID: 3182766494214464233}
-  - component: {fileID: 5555053396181352182}
   m_Layer: 0
   m_Name: WoodenSword
   m_TagString: Untagged
@@ -367,8 +365,8 @@ MonoBehaviour:
   useAttackInput: 1
   index: 0
   item: {fileID: 21300000, guid: b933908dc65243a42951c5f8aaf6fc20, type: 3}
-  handWeapon: {fileID: 8653363987513085753}
   UI: {fileID: 21300000, guid: 4de065b7691eaa64d8d187fce863b3e3, type: 3}
+  handWeapon: {fileID: 8653363987513085753}
   damage: 1
   attackCooltime: 1
   breakable: 1
@@ -384,30 +382,6 @@ MonoBehaviour:
   throw_throwSpeed: 0.15
   throw_spinSpeed: 720
   throw_duration: 10
---- !u!114 &3182766494214464233
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5212936070462222221}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d78ff806491665740bd81bb76a245a3a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &5555053396181352182
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5212936070462222221}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55dfe9d28880c544d9c81d89be519e5a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &5468265036078441362
 GameObject:
   m_ObjectHideFlags: 0

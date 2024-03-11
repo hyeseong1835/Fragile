@@ -9,44 +9,9 @@ public enum AnimateState
 
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(Rigidbody2D))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : Controller
 {
-    [HideInInspector] public Vector3 moveVector; 
     [HideInInspector] public Vector3 prevMoveVector;
-    [HideInInspector] public float moveRotate = 0;
-    /// <summary>
-    /// 0(90), 1(45), 2(0), 3(315), 4(270), 5(225), 6(180), 7(135)
-    /// </summary>
-    [HideInInspector] public int moveIntRotate
-    {
-        get
-        {
-            if (moveRotate < 0) moveRotate += 360;
-
-            if (moveRotate < 22.5) return 0;
-            else if (moveRotate < 67.5) return 1;
-            else if (moveRotate < 112.5) return 2;
-            else if (moveRotate < 157.5) return 3;
-            else if (moveRotate < 202.5) return 4;
-            else if (moveRotate < 247.5) return 5;
-            else if (moveRotate < 292.5) return 6;
-            else if (moveRotate < 337.5) return 7;
-            else return 0;
-        }
-    }
-    /// <summary>
-    /// N: 1, H: 0, S:-1
-    /// </summary>
-    [HideInInspector] public int moveLookRotate
-    {
-        get
-        {
-            if (moveIntRotate == 0 || moveIntRotate == 4) return 0;
-            else if (moveIntRotate <= 3) return 1;
-            else return -1;
-        }
-    }
-    
     //마우스
     [HideInInspector] public Vector2 mousePos { get { return Input.mousePosition; } }
     [HideInInspector] public Vector2 playerToMouse { get { return (Player.camCon.cam.ScreenToWorldPoint(mousePos) - transform.position); } }
@@ -72,21 +37,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField][ReadOnly] bool attackInput = false;
     float attackInputAllowTime = 1;
     Coroutine curAttackInputCoroutine;
-    public float attackCool;
-    [HideInInspector] public bool attack
-    {
-        get
-        {
-            if ((attackInput) && attackCool == 0)
-            {
-                attackInput = false;
-                attackCool = Player.wCon.curWeapon.attackCooltime;
-        
-                return true;
-            }
-            else return false;
-        }
-    }
+    public float attackCool = 0;
     public float moveSpeed = 1;
 
     void Awake()
@@ -96,9 +47,14 @@ public class PlayerController : MonoBehaviour
         Player.gameObject = gameObject;
     }
     void Update()
-    {                                                                                                                                                                                                                                                                                                       
+    {                         
+        Mouse();
         Move();
         Attack();
+    }
+    void Mouse()
+    {
+        targetPos = Player.camCon.cam.ScreenToWorldPoint(mousePos);
     }
     void Move()
     {
@@ -106,22 +62,31 @@ public class PlayerController : MonoBehaviour
         moveVector = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
 
         transform.position += moveVector.normalized * Time.deltaTime * moveSpeed;
-        if (moveVector.magnitude > Mathf.Epsilon) moveRotate = Mathf.Atan2(moveVector.y, moveVector.x) * Mathf.Rad2Deg;
+        if (moveVector.magnitude >= Mathf.Epsilon) moveRotate = Mathf.Atan2(moveVector.y, moveVector.x) * Mathf.Rad2Deg;
     }
     void Attack()
     {
         if (mouse0Down)
         {
-            if (curAttackInputCoroutine != null) StopCoroutine(curAttackInputCoroutine);
-            curAttackInputCoroutine = StartCoroutine(AttackInput());
+            CancelInvoke(nameof(AttackInputCancel));
+            attackInput = true;
+            Invoke(nameof(AttackInputCancel), attackInputAllowTime);
         }
+
+        if ((attackInput) && attackCool == 0)
+        {
+            attackInput = false;
+            attackCool = Player.wCon.curWeapon.attackCooltime;
+
+            attack = true;
+        }
+        else attack = false;
+        
         if (attackCool > 0) attackCool -= Time.deltaTime;
         else if (attackCool < 0) attackCool = 0;
     }
-    IEnumerator AttackInput()
+    void AttackInputCancel()
     {
-        attackInput = true;
-        yield return new WaitForSeconds(attackInputAllowTime);
         attackInput = false;
     }
 }

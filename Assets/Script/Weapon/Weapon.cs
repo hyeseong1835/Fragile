@@ -5,6 +5,8 @@ using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 public abstract class Weapon : MonoBehaviour
 {
+    public Controller con;
+
     const string nullDurabilityText = "n";
 
     public bool isUsing = false;
@@ -28,7 +30,18 @@ public abstract class Weapon : MonoBehaviour
     [ShowIf("breakable", true)][HorizontalGroup][HideLabel] public int maxDurability = 1;
     [ShowIf("breakable", true)] [SerializeField] protected BreakParticle breakParticle = null;
 
-
+    void Awake()
+    {
+        WeaponAwake();
+    }
+    void Start()
+    {
+        WeaponStart();
+    }
+    private void FixedUpdate()
+    {
+        WeaponFixedUpdate();
+    }
     void Update()
     {
         #region 입력
@@ -43,7 +56,24 @@ public abstract class Weapon : MonoBehaviour
 
         if (Player.pCon.attack) Attack();
         #endregion
+
+        WeaponUpdate();
     }
+    void LateUpdate()
+    {
+        WeaponLateUpdate();
+    }
+    void OnDrawGizmos()
+    {
+        WeaponOnDrawGizmos();
+    }
+    public virtual void WeaponAwake() { }
+    public virtual void WeaponStart() { }
+    public virtual void WeaponFixedUpdate() { }
+    public virtual void WeaponUpdate() { }
+    public virtual void WeaponLateUpdate() { }
+    public virtual void WeaponOnDrawGizmos() { }
+
     #region 입력
     [DisableInEditorMode]
     [Button(ButtonStyle.Box)]

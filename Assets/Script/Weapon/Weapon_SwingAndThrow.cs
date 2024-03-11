@@ -2,8 +2,6 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(Skill_Swing))]
-[RequireComponent(typeof(Skill_Throw))]
 public class Weapon_SwingAndThrow : Weapon
 {
     [Space(25)]
@@ -15,8 +13,6 @@ public class Weapon_SwingAndThrow : Weapon
     UnityEvent<GameObject, Collider2D> swing_enterEvent = new UnityEvent<GameObject, Collider2D>();
     UnityEvent<GameObject> swing_endEvent = new UnityEvent<GameObject>();
 
-    Skill_Swing swing;
-
     [Title("Throw")]
     [SerializeField] TriggerObject throw_obj;
     [SerializeField] float throw_damage;
@@ -26,13 +22,8 @@ public class Weapon_SwingAndThrow : Weapon
     UnityEvent<GameObject, Collider2D> throw_enterEvent = new UnityEvent<GameObject, Collider2D>();
     UnityEvent<GameObject> throw_endEvent = new UnityEvent<GameObject>();
 
-    Skill_Throw @throw;
-
-    void Awake()
+    public override void WeaponAwake()
     {
-        swing = GetComponent<Skill_Swing>();
-        @throw = GetComponent<Skill_Throw>();
-
         //Swing
         swing_enterEvent.AddListener(SwingHitEvent);
         swing_endEvent.AddListener(SwingEndEvent);
@@ -44,11 +35,11 @@ public class Weapon_SwingAndThrow : Weapon
     #region Attack
     public override void Attack()
     {
+        Player.grafic.HandLink(swing_obj.transform, true);//
         handWeapon.gameObject.SetActive(false);
         swing_obj.gameObject.SetActive(true);
-        Player.grafic.HandLink(swing_obj.transform, true);
 
-        StartCoroutine(swing.Swing(swing_obj, swing_spread, swing_duration, Skill_Swing.Curve.Quadratic, 
+        StartCoroutine(Skill.Swing(con.transform.position, swing_obj, Utility.GetTargetAngle(transform.position, con.targetPos), swing_spread, swing_duration, Skill.Curve.Quadratic, 
             enterEvent: swing_enterEvent, endEvent: swing_endEvent));
     }
     public void SwingHitEvent(GameObject triggerObj, Collider2D coll)
@@ -74,7 +65,7 @@ public class Weapon_SwingAndThrow : Weapon
     public override void Mouse1Down() 
     {
         Player.grafic.HandLink(null);
-        StartCoroutine(@throw.Throw(throw_obj, throw_spinSpeed, throw_throwSpeed, throw_duration, 
+        StartCoroutine(Skill.Throw(this, throw_obj, throw_spinSpeed, throw_throwSpeed, throw_duration, 
             enterEvent: throw_enterEvent, endEvent: throw_endEvent));
     }
     public void ThrowHitEvent(GameObject triggerObj, Collider2D coll)

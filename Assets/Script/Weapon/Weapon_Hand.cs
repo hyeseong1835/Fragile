@@ -1,11 +1,8 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(Skill_Swing))]
 public class Weapon_Hand : Weapon
 {
-    Skill_Swing swing;
-
     [SerializeField] Transform hand_obj;
     [SerializeField] TriggerObject swing_obj;
     [SerializeField] float swing_damage;
@@ -14,11 +11,8 @@ public class Weapon_Hand : Weapon
     UnityEvent<GameObject, Collider2D> swing_enterEvent = new UnityEvent<GameObject, Collider2D>();
     UnityEvent<GameObject> swing_endEvent = new UnityEvent<GameObject>();
 
-
     void Awake()
     {
-        swing = GetComponent<Skill_Swing>();
-
         swing_enterEvent.AddListener(SwingHitEvent);
         swing_endEvent.AddListener(SwingEndEvent);
     }
@@ -26,7 +20,8 @@ public class Weapon_Hand : Weapon
     {
         Player.grafic.HandLink(swing_obj.transform, true);
         handWeapon.gameObject.SetActive(false);
-        StartCoroutine(swing.Swing(swing_obj, swing_spread, swing_duration, Skill_Swing.Curve.Quadratic,
+
+        StartCoroutine(Skill.Swing(con.transform.position, swing_obj, Utility.GetTargetAngle(con.transform.position, con.targetPos), swing_spread, swing_duration, Skill.Curve.Quadratic,
             enterEvent: swing_enterEvent, endEvent: swing_endEvent));
     }
     public void SwingHitEvent(GameObject triggerObj, Collider2D coll)

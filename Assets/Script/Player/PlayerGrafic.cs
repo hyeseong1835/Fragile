@@ -58,8 +58,8 @@ public class PlayerGrafic : MonoBehaviour
     {
         Player.grafic = this;
 
-        stayFrame = SpriteSheet.GetSpriteArray2DFromSpriteSheet(pTexture, new Vector2Int(0, 0), new Vector2Int(1, 7), 16, 16);
-        walkFrame = SpriteSheet.GetSpriteArray2DFromSpriteSheet(pTexture, new Vector2Int(3, 0), new Vector2Int(6, 7), 16, 16);
+        stayFrame = Utility.GetSpriteArray2DFromSpriteSheet(pTexture, new Vector2Int(0, 0), new Vector2Int(1, 7), 16, 16);
+        walkFrame = Utility.GetSpriteArray2DFromSpriteSheet(pTexture, new Vector2Int(3, 0), new Vector2Int(6, 7), 16, 16);
     }
     void Update()
     {

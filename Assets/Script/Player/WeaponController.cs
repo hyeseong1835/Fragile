@@ -66,6 +66,7 @@ public class WeaponController : MonoBehaviour
             return;
         } //LogError: 인벤토리 초과
 
+        weapon.con = Player.pCon;
         weapon.index = transform.childCount - 1;
         weapon.SetData(data.Split(','), customData.Split(','));
         weapons[weapon.index] = weapon;
