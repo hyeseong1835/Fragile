@@ -118,14 +118,6 @@ public class PlayerGrafic : MonoBehaviour
                 //Body
                 body.sprite = stayFrame[stayIndex, Player.pCon.moveIntRotate];
 
-                if (stateHandAnimation)
-                {
-                    if (Player.pCon.prevMoveVector.magnitude <= Player.pCon.moveVector.magnitude || Player.pCon.moveVector.magnitude >= 1)
-                        hand.localPosition = new Vector3(Player.pCon.moveVector.normalized.x * 0.75f, Player.pCon.moveVector.normalized.y * 0.5f, 0)
-                            + (new Vector3(Player.pCon.moveVector.normalized.y, Player.pCon.moveVector.normalized.x * -0.5f) * 0.25f);
-                    hand.localRotation = Quaternion.identity;
-                }
-
                 break;
             case AnimationState.WALK:
                 //Body

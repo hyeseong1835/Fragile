@@ -24,7 +24,7 @@ public static class Skill
     /// <param name="exitEvent">나갔을 때</param>
     /// <param name="endEvent">시전이 끝났을 때</param>
     /// <returns></returns>
-    public static IEnumerator Swing(Vector3 origin, TriggerObject trigger,float startRotateZ, float spread, float duration, Curve swingCurve,
+    public static IEnumerator Swing(UnityEngine.Transform origin, TriggerObject trigger,float startRotateZ, float spread, float duration, Curve swingCurve,
         UnityEvent<GameObject, Collider2D> enterEvent = null,
         UnityEvent<GameObject, Collider2D> stayEvent = null,
         UnityEvent<GameObject, Collider2D> exitEvent = null,
@@ -35,33 +35,28 @@ public static class Skill
 
         //스킬
         Player.grafic.stateHandAnimation = false;
-        trigger.transform.position = origin + (Vector3)Player.pCon.playerToMouse.normalized * 0.5f;
+        trigger.transform.position = origin.position + (Vector3)Player.pCon.playerToMouse.normalized * 0.5f;
 
         float time = 0;
-        switch (swingCurve)
+        float t = 0;
+        while (t < 1)
         {
-            case Curve.Linear:
-                while (time < 1)
-                {
-                    trigger.transform.rotation = Quaternion.Euler(0, 0, startRotateZ + spread * 0.5f - time * spread - 90);
-                    trigger.transform.localPosition = new Vector3(1, Mathf.Tan(startRotateZ + spread * 0.5f - time * spread), 0).normalized * 0.25f;
+            switch (swingCurve)
+            {
+                case Curve.Linear:
+                    t = time;
+                    break;
+                case Curve.Quadratic:
+                    t = time * time;
+                    break;
+            }
+            trigger.transform.rotation = Quaternion.Euler(0, 0, startRotateZ + spread * 0.5f - t * spread - 90);
+            trigger.transform.position = origin.position + new Vector3(
+                Mathf.Cos((startRotateZ + spread * 0.5f - t * spread) * Mathf.Deg2Rad),
+                Mathf.Sin((startRotateZ + spread * 0.5f - t * spread) * Mathf.Deg2Rad) * 0.5f, 0).normalized * 0.5f;
 
-                    time += Time.deltaTime / duration;
-                    yield return null;
-                }
-                break;
-            case Curve.Quadratic:
-                while (time < 1)
-                {
-                    trigger.transform.rotation = Quaternion.Euler(0, 0, startRotateZ + spread * 0.5f - time * time * spread); 
-                    trigger.transform.localPosition = new Vector3(
-                        Mathf.Cos((startRotateZ + spread * 0.5f - time * time * spread) * Mathf.Deg2Rad),
-                        Mathf.Sin((startRotateZ + spread * 0.5f - time * time * spread) * Mathf.Deg2Rad) * 0.5f, 0).normalized * 0.5f;
-                   
-                    time += Time.deltaTime / duration;
-                    yield return null;
-                }
-                break;
+            time += Time.deltaTime / duration;
+            yield return null;
         }
         trigger.transform.rotation = Quaternion.Euler(0, 0, startRotateZ - spread * 0.5f);
 

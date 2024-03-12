@@ -1,148 +1,181 @@
+using JetBrains.Annotations;
+using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
+public enum NodeType
+{
+    Void,
+    Ground,
+}
 public class Node
 {
-    public bool walkable;
+    PathFindGrid grid;
+    
+    [ShowInInspector] public NodeType type;
+    [ShowInInspector] public Vector2Int pos;
     public Vector2 worldPosition;
-    public int gridX;
-    public int gridY;
-
-    public int gCost;
-    public int hCost;
-    // 길 되추적을 위한 parent변수.
+    /// <summary>
+    /// 길 되추적을 위한 parent변수.
+    /// </summary>
     public Node parent;
 
-    // F cost 계산 속성.
-    public int fCost { get { return gCost + hCost; } }
+    //비용-----------------------------------------------------
+    /// <summary>
+    /// 시작점 -> 현재 노드
+    /// </summary>
+    public float pastCost;
+    /// <summary>
+    /// 현재 노드 -> 목표지점 이동비용.
+    /// </summary>
+    public float futureCost;
+    /// <summary>
+    /// 이동비용의 총합.
+    /// </summary>
+    public float cost { get { return pastCost + futureCost; } }
+    //---------------------------------------------------------
 
-    // Node 생성자.
-    public Node(bool walkable, Vector2 worldPos, int gridX, int gridY)
+
+    #region Tools
+    public static Node GetNodeByIndex(PathFindGrid grid, int x, int y)
     {
-        this.walkable = walkable;
-        this.worldPosition = worldPos;
-        this.gridX = gridX;
-        this.gridY = gridY;
+        if ((x < 0 && y < 0) && (x >= grid.cellCount.x && y >= grid.cellCount.y)) return null;
+
+        return grid.grid[x, y];
+    }
+    public static Node GetNodeByIndex(PathFindGrid grid, Vector2Int pos)
+    {
+        if ((pos.x < 0 && pos.y < 0) && (pos.x >= grid.cellCount.x && pos.y >= grid.cellCount.y)) return null;
+
+        return grid.grid[pos.x, pos.y];
+    }
+    public static Node GetNodeByWorldPos(PathFindGrid grid, Vector2 worldPos)
+    {
+        return grid.grid[
+            Mathf.RoundToInt((worldPos.x - grid.pivot.x) / grid.nodeSize.x), 
+            Mathf.RoundToInt((worldPos.y - grid.pivot.y) / grid.nodeSize.y)
+            ];
+    }
+    #endregion
+    public Node(PathFindGrid _grid, NodeType _type, int _x, int _y)
+    {
+        grid = _grid;
+        type = _type;
+        pos = new Vector2Int(_x, _y);
+
+        worldPosition = grid.pivot + pos * grid.nodeSize + 0.5f * grid.nodeSize;
     }
 }
 
 public class PathFindGrid : MonoBehaviour
 {
-    public bool displayGridGizmos;
-    // 플레이어의 위치
-    public Transform monster;
-    // 장애물 레이어
-    public LayerMask OBSTACLE;
     // 화면의 크기
-    public Vector2 gridWorldSize;
-    // 반지름
-    public float nodeRadius;
-    Node[,] grid;
+    [ShowInInspector][TableMatrix(SquareCells = true)] public Node[,] grid;
 
-    // 격자의 지름
-    float nodeDiameter;
-    // x,y축 사이즈
-    int gridSizeX, gridSizeY;
+    [DisableInPlayMode] public Vector2Int cellCount;
+    [DisableInPlayMode] public Vector2 nodeSize;
+
+    [HideInEditorMode] public Vector2 pivot;
+
+    [SerializeField] float thickness = 0.5f;
+
+
+    [SerializeField] public List<Node> path;
 
     private void Awake()
     {
-        nodeDiameter = nodeRadius * 2;
-        gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
-        gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
-        // 격자 생성
-        CreateGrid();
+        pivot = (Vector2)transform.position - 0.5f * nodeSize * cellCount;
+        SetGrid();
     }
 
-    // A*에서 사용할 PATH.
-    [SerializeField]
-    public List<Node> path;
-
-    // Scene view 출력용 기즈모.
-    private void OnDrawGizmos()
+    public void SetGrid()
     {
-        Gizmos.DrawWireCube(transform.position, new Vector2(gridWorldSize.x, gridWorldSize.y));
-        if (grid != null)
+        grid = new Node[cellCount.x, cellCount.y];
+        for (int x = 0; x < cellCount.x; x++)
         {
-            Node playerNode = NodeFromWorldPoint(monster.position);
-            foreach (Node n in grid)
+            for (int y = 0; y < cellCount.y; y++)
             {
-                Gizmos.color = (n.walkable) ? new Color(1, 1, 1, 0.3f) : new Color(1, 0, 0, 0.3f);
-                if (n.walkable == false)
-
-                    if (path != null)
-                    {
-                        if (path.Contains(n))
-                        {
-                            Gizmos.color = new Color(0, 0, 0, 0.3f);
-                            Debug.Log("?");
-                        }
-                    }
-                if (playerNode == n) Gizmos.color = new Color(0, 1, 1, 0.3f);
-                Gizmos.DrawCube(n.worldPosition, Vector2.one * (nodeDiameter - 0.1f));
+                SetCell(NodeType.Ground, x, y);
             }
         }
     }
-
-    // 격자 생성 함수
-    void CreateGrid()
+    public Node SetCell(NodeType type, int x, int y)
     {
-        grid = new Node[gridSizeX, gridSizeY];
-        // 격자 생성은 좌측 최하단부터 시작. transform은 월드 중앙에 위치한다. 
-        // 이에 x와 y좌표를 반반 씩 왼쪽, 아래쪽으로 옮겨준다.
-        Vector2 worldBottomLeft = (Vector2)transform.position - Vector2.right * gridWorldSize.x / 2 - Vector2.up * gridWorldSize.y / 2;
-
-        for (int x = 0; x < gridSizeX; x++)
-        {
-            for (int y = 0; y < gridSizeY; y++)
-            {
-                Vector2 worldPoint = worldBottomLeft + Vector2.right * (x * nodeDiameter + nodeRadius) + Vector2.up * (y * nodeDiameter + nodeRadius);
-                // 해당 격자가 Walkable한지 아닌지 판단.
-                bool walkable = !(Physics2D.OverlapCircle(worldPoint, nodeRadius, OBSTACLE));
-                // 노드 할당.
-                grid[x, y] = new Node(walkable, worldPoint, x, y);
-            }
-        }
+        grid[x, y] = new Node(this, type, x, y);
+        return grid[x, y];
     }
-
-    // node 상하 좌우 대각 노드를 반환하는 함수.
-    public List<Node> GetNeighbours(Node node)
+    /// <summary>
+    /// 기준 노드를 중심으로 근처 8개 중 유효한 노드를 반환.
+    /// </summary>
+    /// <param name="node">기준 노드</param>
+    /// <returns></returns>
+    public List<Node> GetNearNodes(Node node)
     {
         List<Node> neighbours = new List<Node>();
 
-        for (int x = -1; x <= 1; x++)
-        {
-            for (int y = -1; y <= 1; y++)
-            {
-                if (x == 0 && y == 0) continue;
+        AddNodeInListByLocalPos(node, ref neighbours, -1, -1);
+        AddNodeInListByLocalPos(node, ref neighbours, -1, 0);
+        AddNodeInListByLocalPos(node, ref neighbours, -1, 1);
 
-                int checkX = node.gridX + x;
-                int checkY = node.gridY + y;
+        AddNodeInListByLocalPos(node, ref neighbours, 0, -1);
+        AddNodeInListByLocalPos(node, ref neighbours, 0, 1);
 
-                if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY)
-                {
-                    if (!grid[node.gridX, checkY].walkable && !grid[checkX, node.gridY].walkable) continue;
-                    if (!grid[node.gridX, checkY].walkable || !grid[checkX, node.gridY].walkable) continue;
-
-                    neighbours.Add(grid[checkX, checkY]);
-                }
-            }
-        }
+        AddNodeInListByLocalPos(node, ref neighbours, 1, -1);
+        AddNodeInListByLocalPos(node, ref neighbours, 1, 0);
+        AddNodeInListByLocalPos(node, ref neighbours, 1, 1);
 
         return neighbours;
     }
-
-
-    // 입력으로 들어온 월드좌표를 node좌표계로 변환.
-    public Node NodeFromWorldPoint(Vector2 worldPosition)
+    void AddNodeInListByLocalPos(Node node, ref List<Node> nodes, int x, int y)
     {
-        float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
-        float percentY = (worldPosition.y + gridWorldSize.y / 2) / gridWorldSize.y;
-        percentX = Mathf.Clamp01(percentX);
-        percentY = Mathf.Clamp01(percentY);
-        int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
-        int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
+        Node temp = Node.GetNodeByIndex(this, node.pos + new Vector2Int(x, y));
 
-        return grid[x, y];
+        if (temp == null) return;
+        else nodes.Add(temp);
+    }
+    private void OnDrawGizmos()
+    {
+        if (grid == null) return;
+        Gizmos.color = new Color(0, 0, 0, 0.25f);
+        // LB (i )
+        Gizmos.DrawCube(new Vector2(pivot.x - 0.5f * thickness, transform.position.y - 0.5f * thickness), 
+            new Vector2(thickness, nodeSize.y * cellCount.y + thickness));
+
+        // RB ( _)
+        Gizmos.DrawCube(new Vector2(transform.position.x + 0.5f * thickness, pivot.y - 0.5f * thickness), 
+            new Vector2(nodeSize.x * cellCount.x + thickness, thickness));
+
+        // LT (^ )
+        Gizmos.DrawCube(new Vector2(transform.position.x - 0.5f * thickness, pivot.y + nodeSize.y * cellCount.y + 0.5f * thickness),
+            new Vector2(nodeSize.x * cellCount.x + thickness, thickness));
+
+        // RT ( !)
+        Gizmos.DrawCube(new Vector2(pivot.x + nodeSize.x * cellCount.x + 0.5f * thickness, transform.position.y + 0.5f * thickness),
+            new Vector2(thickness, nodeSize.y * cellCount.y + thickness));
+
+    }
+    private void OnDrawGizmosSelected()
+    {
+        if (grid == null) return;
+
+        foreach (Node node in grid)
+        {
+            switch (node.type)
+            {
+                case NodeType.Void:
+                    Gizmos.color = new Color(0, 0, 0, 0.5f);
+                    Gizmos.DrawWireCube(node.worldPosition, nodeSize * 0.99f);
+                    Gizmos.color = new Color(0, 0, 0, 0.25f);
+                    Gizmos.DrawCube(node.worldPosition, nodeSize * 1);
+
+                    break;
+                case NodeType.Ground:
+                    Gizmos.color = new Color(0.25f, 0.25f, 0.5f, 0.25f);
+                    Gizmos.DrawWireCube(node.worldPosition, nodeSize * 0.99f);
+                    break;
+            }
+        }
     }
 }

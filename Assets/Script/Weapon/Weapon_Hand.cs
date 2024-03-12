@@ -21,7 +21,7 @@ public class Weapon_Hand : Weapon
         Player.grafic.HandLink(swing_obj.transform, true);
         handWeapon.gameObject.SetActive(false);
 
-        StartCoroutine(Skill.Swing(con.transform.position, swing_obj, Utility.GetTargetAngle(con.transform.position, con.targetPos), swing_spread, swing_duration, Skill.Curve.Quadratic,
+        StartCoroutine(Skill.Swing(con.transform, swing_obj, Utility.GetTargetAngle(con.transform.position, con.targetPos), swing_spread, swing_duration, Skill.Curve.Quadratic,
             enterEvent: swing_enterEvent, endEvent: swing_endEvent));
     }
     public void SwingHitEvent(GameObject triggerObj, Collider2D coll)

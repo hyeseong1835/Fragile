@@ -39,7 +39,7 @@ public class Weapon_SwingAndThrow : Weapon
         handWeapon.gameObject.SetActive(false);
         swing_obj.gameObject.SetActive(true);
 
-        StartCoroutine(Skill.Swing(con.transform.position, swing_obj, Utility.GetTargetAngle(transform.position, con.targetPos), swing_spread, swing_duration, Skill.Curve.Quadratic, 
+        StartCoroutine(Skill.Swing(con.transform, swing_obj, Utility.GetTargetAngle(transform.position, con.targetPos), swing_spread, swing_duration, Skill.Curve.Quadratic, 
             enterEvent: swing_enterEvent, endEvent: swing_endEvent));
     }
     public void SwingHitEvent(GameObject triggerObj, Collider2D coll)
