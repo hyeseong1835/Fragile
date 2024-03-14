@@ -1097,10 +1097,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cecc7ce269c7bda40902e74f5723d7f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellCount: {x: 25, y: 25}
-  nodeSize: {x: 1, y: 1}
+  cellCount: {x: 10, y: 10}
+  cellSize: {x: 1, y: 1}
   pivot: {x: 2, y: 2}
-  thickness: 10
+  voidColor: {r: 0, g: 0, b: 0, a: 0.5}
+  groundColor: {r: 1, g: 1, b: 1, a: 0.25}
 --- !u!1 &1613293452
 GameObject:
   m_ObjectHideFlags: 0
@@ -1194,6 +1195,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1693787335}
+  - component: {fileID: 1693787336}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -1217,6 +1219,22 @@ Transform:
   - {fileID: 2096667421}
   m_Father: {fileID: 1255931500}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1693787336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1693787334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bafca5cab1561742ad8a2e133077bb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 1255931501}
+  openColor: {r: 0, g: 0.6262355, b: 1, a: 0.39215687}
+  closeColor: {r: 0, g: 0, b: 0, a: 0.39215687}
+  moveColor: {r: 1, g: 1, b: 1, a: 0.5882353}
 --- !u!1 &1780597528
 GameObject:
   m_ObjectHideFlags: 0
