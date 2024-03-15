@@ -12,9 +12,25 @@ public enum CellType
 }
 public class Cell
 {
+    public Node node;
     public CellType type;
     public Vector2Int cellPos;
     public Vector2 worldPos;
+    public Cell(CellType type, Vector2Int cellPos, Vector2 worldPos)
+    {
+        this.type = type;
+        this.cellPos = cellPos;
+        this.worldPos = worldPos;
+    }
+    public Cell(PathFindGrid grid, CellType type, Vector2Int cellPos)
+    {
+        this.type = type;
+        this.cellPos = cellPos;
+        this.worldPos = grid.pivot + cellPos * grid.cellSize + 0.5f * grid.cellSize;
+    }
+
+
+
     /*
     public Cell(PathFindGrid _grid, CellType _type, int _x, int _y)
     {
@@ -36,11 +52,9 @@ public class Cell
 public class PathFindGrid : MonoBehaviour
 {
     public Cell[,] grid;
-
     [DisableInPlayMode] public Vector2Int cellCount;
     [DisableInPlayMode] public Vector2 cellSize;
-
-    [HideInEditorMode] public Vector2 pivot;
+    [DisableInEditorMode] public Vector2 pivot;
 
     [SerializeField] Color voidColor = new Color(0, 0, 0, 0.5f);
     [SerializeField] Color groundColor = new Color(0.25f, 0.25f, 0.5f, 0.25f);
@@ -49,18 +63,29 @@ public class PathFindGrid : MonoBehaviour
     {
         SetGrid();
     }
+    [DisableInEditorMode]
+    [Button(ButtonStyle.Box)]
     void SetGrid()
     {
         pivot = (Vector2)transform.position - 0.5f * cellSize * cellCount;
 
         grid = new Cell[cellCount.x, cellCount.y];
+        Debug.Log(grid+" / "+grid.Length);
         for (int x = 0; x < cellCount.x; x++)
         {
             for (int y = 0; y < cellCount.y; y++)
             {
-                grid[x, y].type = CellType.Ground;
-                grid[x, y].cellPos = new Vector2Int(x, y);
-                grid[x, y].worldPos = GetWorldPosByCellPos(grid[x,y].cellPos);
+                grid[x, y] = new Cell(this, CellType.Ground, new Vector2Int(x, y));
+            }
+        }
+    }
+    void ClearNode()
+    {
+        for (int x = 0; x < cellCount.x; x++)
+        {
+            for (int y = 0; y < cellCount.y; y++)
+            {
+                grid[x, y].node = null;
             }
         }
     }

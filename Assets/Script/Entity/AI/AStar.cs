@@ -2,7 +2,11 @@ using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class Node
 {
@@ -29,20 +33,6 @@ public class Node
         pastCost = _pastCost;
         futureCost = _futureCost;
     }
-    public Node(PathFindGrid grid, Vector2Int pos, Node _parent, float _pastCost, float _futureCost)
-    {
-        cell = grid.grid[pos.x, pos.y];
-        parent = _parent;
-        pastCost = _pastCost;
-        futureCost = _futureCost;
-    }
-    public Node(PathFindGrid grid, int x, int y, Node _parent, float _pastCost, float _futureCost)
-    {
-        cell = grid.grid[x, y];
-        parent = _parent;
-        pastCost = _pastCost;
-        futureCost = _futureCost;
-    }
 }
 
 
@@ -50,18 +40,18 @@ public class AStar : MonoBehaviour
 {
     [Header("Path Finding")]
     public PathFindGrid grid;
-    Dictionary<Vector2Int, Node> nodes = new Dictionary<Vector2Int, Node>();
 
+    Color[,] debugMap;
+    [SerializeField] Color defaultColor = new Color(1, 1, 1, 0);
+    [SerializeField] Color openColor;
+    [SerializeField] Color startColor;
+    [SerializeField] Color targetColor;
+    [SerializeField] Color closeColor;
+    [SerializeField] Color moveColor;
+    public Vector2[] debugPath;
 
-    [ShowInInspector][TableMatrix(SquareCells = true)] Color[,] debugMap;
-    [SerializeField] Color openColor = Color.red;
-    [SerializeField] Color closeColor = Color.blue;
-    [SerializeField] Color moveColor = Color.white;
-
-    void Start()
-    {
-        FindPath(new Vector2(-2, -2), new Vector2(2, 2));
-    }
+    [DisableInEditorMode]
+    [Button(ButtonStyle.Box)]
     public Vector2[] FindPath(Vector2 startWorldPos, Vector2 targetWorldPos)
     {
         #region 변수 초기화
@@ -85,156 +75,187 @@ public class AStar : MonoBehaviour
             Debug.LogWarning("목적지( " + targetWorldPos + " )가 유효하지 않습니다.");
             return null;
         } //LogWarning: 목적지가 유효하지 않습니다.
-        if (startCell == targetCell) return new Vector2[] { targetCell.cellPos };
-
+        if (startCell == targetCell)
+        {
+            return new Vector2[] { startCell.cellPos, targetCell.cellPos };
+        }
         if (targetCell.type == CellType.Void)
         {
             Debug.LogWarning("목적지[ " + targetCell.cellPos + " ]( " + targetCell.worldPos + " )가 Void입니다.");
             return null;
         }
         
-
         Node startNode = new Node(startCell, null, 0, Vector2Int.Distance(startCell.cellPos, targetCell.cellPos));
         Node targetNode = new Node(targetCell, null, -1, -1);
 
-        nodes = new Dictionary<Vector2Int, Node>() {
-                { startCell.cellPos, startNode }
-            };
         debugMap = new Color[grid.cellCount.x, grid.cellCount.y];
+        for(int x = 0; x < grid.cellCount.x; x++)
+        {
+            for(int y = 0; y < grid.cellCount.y; y++)
+            {
+                debugMap[x, y] = defaultColor;
+            }
+        }
+        debugMap[startCell.cellPos.x, startCell.cellPos.y] = startColor;
+        debugMap[targetCell.cellPos.x, targetCell.cellPos.y] = targetColor;
 
         List<Node> openSet = new List<Node>(){ startNode };
         HashSet<Node> closedSet = new HashSet<Node>();
         #endregion
 
+        #region 길 찾기
+        Node curNode;
+        int curNodeIndex = 0;
         while (openSet.Count > 0)
         {
-            Node currentNode = openSet[0];
+            #region 예상비용이 가장 낮은 노드 => curNode
+            curNode = openSet[0];
 
-            // 총 비용과 다음 예상 비용이 가장 낮은 노드 선택 => currentNode
             for (int i = 1; i < openSet.Count; i++)
             {
-                // 도착 => 경로 반환
-                if (currentNode.pastCost == -1 && currentNode.futureCost == -1) return GetPathBetweenNodes(startNode, targetNode);
-
-                if (openSet[i].cost <= currentNode.cost
-                    && openSet[i].futureCost < currentNode.futureCost)
-                    currentNode = openSet[i];
-            }
-
-            Debug.Log("읽음: " + currentNode.cell.cellPos);
-            debugMap[currentNode.cell.cellPos.x, currentNode.cell.cellPos.y] = moveColor;
-
-            // 이웃 노드들을 추가 및 검사
-            foreach (Node nearNode in GetNearNode(currentNode))
-            {
-                if ((nearNode.cell.type == CellType.Void) || closedSet.Contains(nearNode)) continue;
-                Debug.Log("추가"+nearNode.cell.cellPos);
-                float movementCost = currentNode.pastCost + Vector2Int.Distance(currentNode.cell.cellPos, nearNode.cell.cellPos);
-
-                // 비용이 감소하는 방향으로 이동했을 때
-                if (movementCost < nearNode.pastCost || !openSet.Contains(nearNode))
+                if (openSet[i].cost <= curNode.cost && openSet[i].futureCost < curNode.futureCost)
                 {
-                    nearNode.pastCost = movementCost;
-                    nearNode.futureCost = Vector2Int.Distance(nearNode.cell.cellPos, targetNode.cell.cellPos);
-                    nearNode.parent = currentNode;
-
-                    // openSet에 추가.
-                    if (!openSet.Contains(nearNode))
-                    {
-                        openSet.Add(nearNode);
-                        Debug.Log("추가: " + nearNode.cell.cellPos);
-                        debugMap[nearNode.cell.cellPos.x, nearNode.cell.cellPos.y] = openColor;
-                    }
-                    else Debug.Log("갱신: " + nearNode.cell.cellPos);
+                    curNode = openSet[i];
+                    curNodeIndex = i;
                 }
             }
-            // currentNode를 닫음.
-            openSet.Remove(currentNode);
-            closedSet.Add(currentNode);
-            debugMap[currentNode.cell.cellPos.x, currentNode.cell.cellPos.y] = closeColor;
+            if(debugMap[curNode.cell.cellPos.x, curNode.cell.cellPos.y] == defaultColor) 
+                debugMap[curNode.cell.cellPos.x, curNode.cell.cellPos.y] = moveColor;
+            #endregion
+
+            #region curNode의 이웃 노드 검사
+            List<Node> nearNodes = new List<Node>();
+
+            AddNodeInListByLocalPos(curNode.cell.cellPos, new Vector2Int(-1, -1), ref nearNodes);
+            AddNodeInListByLocalPos(curNode.cell.cellPos, new Vector2Int(-1, 0), ref nearNodes);
+            AddNodeInListByLocalPos(curNode.cell.cellPos, new Vector2Int(-1, 1), ref nearNodes);
+
+            AddNodeInListByLocalPos(curNode.cell.cellPos, new Vector2Int(0, -1), ref nearNodes);
+            AddNodeInListByLocalPos(curNode.cell.cellPos, new Vector2Int(0, 1), ref nearNodes);
+
+            AddNodeInListByLocalPos(curNode.cell.cellPos, new Vector2Int(1, -1), ref nearNodes);
+            AddNodeInListByLocalPos(curNode.cell.cellPos, new Vector2Int(1, 0), ref nearNodes);
+            AddNodeInListByLocalPos(curNode.cell.cellPos, new Vector2Int(1, 1), ref nearNodes);
+
+            foreach (Node nearNode in nearNodes)
+            {
+                #region 이웃 노드가 도착지일 때
+                if (nearNode == targetNode)
+                {
+                    List<Node> path = new List<Node>();
+
+                    Debug.Log("길 찾음: " + nearNode.cell.cellPos);
+                    targetNode.parent = curNode;
+
+                    foreach (Node node in openSet)
+                    {
+                        node.cell.node = null;
+                    }
+                    while (targetNode != startNode)
+                    {
+                        path.Add(targetNode);
+                        targetNode = targetNode.parent;
+                    }
+                    Vector2[] wayPoints = new Vector2[path.Count];
+                    for (int i = path.Count -1; i >= 0; i--)
+                    {
+                        wayPoints[i] = path[i].cell.worldPos;
+                    }
+                    debugPath = wayPoints;
+                    return wayPoints;
+                }
+                #endregion
+                
+                #region 다음 Set 설정
+                if (nearNode.cell.type == CellType.Void)
+                {
+                    closedSet.Add(nearNode);
+                }
+                if (closedSet.Contains(nearNode)) continue;
+
+                // futureCost는 AddNodeInListByLocalPos에서 curNode에서 nearNode 사이의 거리로 계산됨
+                nearNode.pastCost = curNode.pastCost + nearNode.futureCost;
+
+                nearNode.futureCost = Vector2Int.Distance(nearNode.cell.cellPos, targetNode.cell.cellPos); //위로 올려???????????????????/
+
+                nearNode.parent = curNode;
+
+                if (openSet.Contains(nearNode)) continue;
+
+                openSet.Add(nearNode);
+                #endregion
+                if (debugMap[curNode.cell.cellPos.x, curNode.cell.cellPos.y] == defaultColor)
+                    debugMap[nearNode.cell.cellPos.x, nearNode.cell.cellPos.y] = openColor;
+            }
+            #endregion
+
+            #region curNode 닫음.
+            openSet.RemoveAt(curNodeIndex);
+            
+            curNode.cell.node = null;
+            closedSet.Add(curNode);
+
+            if (debugMap[curNode.cell.cellPos.x, curNode.cell.cellPos.y] == openColor)
+                debugMap[curNode.cell.cellPos.x, curNode.cell.cellPos.y] = closeColor;
+            #endregion
         }
+        #endregion
+
+        #region 도착지까지 가는 길이 없을 때
         Debug.LogWarning("길을 찾을 수 없습니다.");
+        foreach (Node node in openSet)
+        {
+            node.cell.node = null;
+        }
         return null;
-    }
-    Node LoadNode(Vector2Int pos)
-    {
-        Debug.Log("LoadNode"+pos+"/"+ grid.IsCellExist(pos));
-        if(!grid.IsCellExist(pos)) return null;
-
-        if (nodes.TryGetValue(pos, out Node node))
-        {
-            return node;
-        }
-        else
-        {
-            nodes.Add(pos, new Node(grid, pos, null, -1, -1));
-            return node;
-        }
-    }
-    bool TryLoadNode(Vector2Int pos, out Node node)
-    {
-        node = LoadNode(pos);
-
-        Debug.Log("TryLoadNode" + pos+"/"+node);
-        if (node == null) return false;
-        else return true;
-    }
-    public List<Node> GetNearNode(Node node)
-    {
-        List<Node> nearNodes = new List<Node>();
-
-        AddNodeInListByLocalPos(node.cell.cellPos, new Vector2Int(-1, -1), ref nearNodes);
-        AddNodeInListByLocalPos(node.cell.cellPos, new Vector2Int(-1, 0), ref nearNodes);
-        AddNodeInListByLocalPos(node.cell.cellPos, new Vector2Int(-1, 1), ref nearNodes);
-
-        AddNodeInListByLocalPos(node.cell.cellPos, new Vector2Int(0, -1), ref nearNodes);
-        AddNodeInListByLocalPos(node.cell.cellPos, new Vector2Int(0, 1), ref nearNodes);
-        
-        AddNodeInListByLocalPos(node.cell.cellPos, new Vector2Int(1, -1), ref nearNodes);
-        AddNodeInListByLocalPos(node.cell.cellPos, new Vector2Int(1, 0), ref nearNodes);
-        AddNodeInListByLocalPos(node.cell.cellPos, new Vector2Int(1, 1), ref nearNodes);
-        foreach (Node nearNode in nearNodes)
-        {
-            Debug.Log("주변노드"+nearNode.cell.cellPos);
-        }
-        return nearNodes;
+        #endregion
     }
     void AddNodeInListByLocalPos(Vector2Int anchor, Vector2Int localPos, ref List<Node> nodeList)
     {
-        Debug.Log("확인"+anchor+localPos);
-        Node node;
-        if (TryLoadNode(anchor + localPos, out node))
-        {
-            Debug.Log("추가"+node.cell.cellPos);
-            nodeList.Add(node);
-        }
-    }
-    Vector2[] GetPathBetweenNodes(Node startNode, Node endNode)
-    {
-        if (!grid.IsCellExist(startNode.cell.cellPos)) return null;
+        Vector2Int cellPos = anchor + localPos;
+        if (!grid.IsCellExist(cellPos)) return;
 
-        List<Node> path = new List<Node>();
-        Node curNode = endNode;
-        while (curNode != startNode)
+        Node node = grid.grid[cellPos.x, cellPos.y].node;
+        
+        if (node == null)
         {
-            path.Add(curNode);
-            curNode = curNode.parent;
+            if (localPos.x * localPos.y == 0) node = new Node(grid.grid[cellPos.x, cellPos.y], null, -1, 1);
+            else node = new Node(grid.grid[cellPos.x, cellPos.y], null, -1, 1.41421356f);
+            nodeList.Add(node);
+            return;
         }
-        path.Reverse();
-        Vector2[] wayPoints = NodeListToVector2Array(path);
-        return wayPoints;
-    }
-    Vector2[] NodeListToVector2Array(List<Node> path)
-    {
-        Vector2[] wayPoints = new Vector2[path.Count];
-        for (int i = 0; i < path.Count; i++)
+        else
         {
-            wayPoints[i] = path[i].cell.worldPos;
+            if (localPos.x * localPos.y == 0) node.futureCost = 1;
+            else node.futureCost = 1.41421356f;
+            nodeList.Add(node);
+            return;
         }
-        return wayPoints;
     }
     void OnDrawGizmos()
     {
         
+    }
+    void OnDrawGizmosSelected()
+    {
+        if (debugMap != null)
+        {
+            for (int x = 0; x < grid.cellCount.x; x++)
+            {
+                for (int y = 0; y < grid.cellCount.y; y++)
+                {
+                    Gizmos.color = debugMap[x, y];
+                    Gizmos.DrawCube(grid.GetWorldPosByCellPos(new Vector2Int(x, y)), grid.cellSize * 0.5f);
+                }
+            }
+        }
+        if (debugPath != null)
+        {
+            foreach (Vector2 point in debugPath)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawCube(point, grid.cellSize * 0.1f);
+            }
+        }
     }
 }
