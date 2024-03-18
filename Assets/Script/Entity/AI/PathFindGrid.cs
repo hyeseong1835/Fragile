@@ -79,16 +79,6 @@ public class PathFindGrid : MonoBehaviour
             }
         }
     }
-    void ClearNode()
-    {
-        for (int x = 0; x < cellCount.x; x++)
-        {
-            for (int y = 0; y < cellCount.y; y++)
-            {
-                grid[x, y].node = null;
-            }
-        }
-    }
     public Vector2 GetWorldPosByCellPos(Vector2Int cellPos)
     {
         return pivot + cellPos * cellSize + 0.5f * cellSize;
@@ -117,9 +107,165 @@ public class PathFindGrid : MonoBehaviour
             cell = null;
             return false;
         }
-
-        cell = grid[cellPos.x, cellPos.y];
+        else
+        {
+            cell = grid[cellPos.x, cellPos.y];
+            return true;
+        }
+    }
+    bool CheckCell(Cell cell)
+    {
         return true;
+    }
+    public Cell RayCastGrid(Vector2 startWorldPos, Vector2 dir, float distance)
+    {
+        Vector2Int cellPos = UnSafeGetCellPosByWorldPos(startWorldPos);
+
+        #region 길이가 0일 때
+        
+        if (distance == 0 || dir.x == 0 && dir.y == 0)
+        {
+            Cell cell;
+            if (TryGetCell(cellPos, out cell) && CheckCell(cell))
+            {
+                return cell;
+            }
+            else return null;
+        }
+
+        #endregion
+
+        Vector2Int endCellPos = UnSafeGetCellPosByWorldPos(startWorldPos + dir * distance);
+        Vector2Int checkCellPos = cellPos;
+
+        #region 축과 수직일 때
+
+        //X축과 수직일 때
+        if (dir.x == 0)
+        {
+            if (dir.y > 0)
+            {
+                //위로 체크
+                for(; ; )
+                {
+                    Cell cell;
+                    if(++checkCellPos.y < endCellPos.y && TryGetCell(checkCellPos, out cell))
+                    {
+                        CheckCell(cell);
+                    }
+                    else return null;
+                }
+            }
+            else
+            {
+                //아래로 체크
+                for (; ; )
+                {
+                    Cell cell;
+                    if (--checkCellPos.y > endCellPos.y && TryGetCell(checkCellPos, out cell))
+                    {
+                        //cell 체크
+                    }
+                    else return null;
+                }
+            }
+        }
+
+        //Y축과 수직일 때
+        if (dir.y == 0)
+        {
+            if (dir.x > 0)
+            {
+                //오른쪽으로 체크
+                for (; ; )
+                {
+                    Cell cell;
+                    if (++checkCellPos.x < endCellPos.y && TryGetCell(checkCellPos, out cell))
+                    {
+                        CheckCell(cell);
+                    }
+                    else return null;
+                }
+            }
+            else
+            {
+                //왼쪽으로 체크
+                for (; ; )
+                {
+                    Cell cell;
+                    if (--checkCellPos.y > endCellPos.y && TryGetCell(checkCellPos, out cell))
+                    {
+                        CheckCell(cell);
+                    }
+                    else return null;
+                }
+            }
+        }
+
+        #endregion
+
+        /*
+        if (dir.x > 0)
+        {
+            moveX = 1;
+            startX = Mathf.Ceil(startWorldPos.x * cellSize.x);
+            slope = dir.y / dir.x;
+        }
+        else
+        {
+            moveX = -1;
+            startX = Mathf.Floor(startWorldPos.x * cellSize.x);
+            slope = dir.y / dir.x;
+        }
+        //*/
+
+        #region 계산
+        float slope = dir.x / dir.y;
+
+        //기울기가 1보다 클 때
+        if (slope > 1)
+        {
+            //체크 시스템 만들어라---
+            cellPos.y += slope;
+
+            while (true)
+            {
+                
+                for (int i = cellPos.y; i < destinationY; i++)
+                {
+                    Cell cell;
+                    if (TryGetCell(new Vector2Int(cellPos.x, i), out cell))
+                    {
+                        //검사
+                        //맞으면 리턴 아니면 계속
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+
+        //기울기가 1보다 작을 때
+        if(slope < -1)
+        {
+
+        }
+
+        // 기울기가 0~1 사이일 때
+        if (slope > 0)
+        {
+
+        }
+
+        // 기울기가 -1~0 사이일 때
+        if(slope < 0)
+        {
+
+        }
+        #endregion
+        
     }
     private void OnDrawGizmos()
     {
