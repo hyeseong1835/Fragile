@@ -11,7 +11,8 @@ public enum AnimateState
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : Controller
 {
-    [HideInInspector] public Vector3 prevMoveVector;
+    #region 입력
+
     //마우스
     [HideInInspector] public Vector2 mousePos { get { return Input.mousePosition; } }
     [HideInInspector] public Vector2 playerToMouse { get { return (Player.camCon.cam.ScreenToWorldPoint(mousePos) - transform.position); } }
@@ -32,6 +33,8 @@ public class PlayerController : Controller
     [HideInInspector] public bool mouseWheelClickDown { get { return Input.GetMouseButtonDown(2); } }
     [HideInInspector] public bool mouseWheelClick{ get { return Input.GetMouseButtonUp(2); } }
     [HideInInspector] public bool mouseWheelClickUp { get { return Input.GetMouseButtonDown(2); } }
+
+    #endregion
 
     //기타
     [SerializeField][ReadOnly] bool attackInput = false;

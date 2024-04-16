@@ -88,6 +88,7 @@ public class AStar : MonoBehaviour
         Node startNode = new Node(startCell, null, 0, Vector2Int.Distance(startCell.cellPos, targetCell.cellPos));
         Node targetNode = new Node(targetCell, null, -1, -1);
 
+        #region µð¹ö±×
         debugMap = new Color[grid.cellCount.x, grid.cellCount.y];
         for(int x = 0; x < grid.cellCount.x; x++)
         {
@@ -98,6 +99,7 @@ public class AStar : MonoBehaviour
         }
         debugMap[startCell.cellPos.x, startCell.cellPos.y] = startColor;
         debugMap[targetCell.cellPos.x, targetCell.cellPos.y] = targetColor;
+        #endregion
 
         List<Node> openSet = new List<Node>(){ startNode };
         HashSet<Node> closedSet = new HashSet<Node>();

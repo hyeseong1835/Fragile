@@ -30,21 +30,13 @@ public static class Utility
                 tex.filterMode = FilterMode.Point;
                 tex.Apply();
 
-                /*Debug
-                Color[] spriteSheetColors = spriteSheet.GetPixels(x * spritePixelWidth, spriteSheet.height - (y * spritePixelHeight), spritePixelWidth, spritePixelHeight);
-                Color[] texColor = tex.GetPixels();
-
-                for (int i = 0; i < texColor.Length; i++)
-                {
-                    Debug.Log("(" + (x - startPos.x) + ", " + (y - startPos.y) + " )" +
-                        ": [ " + +spriteSheetColors[i].r + ", " + spriteSheetColors[i].g + ", " + spriteSheetColors[i].b + ", " + spriteSheetColors[i].a +
-                        " ] -> [ " + texColor[i].r + ", " + texColor[i].g + ", " + texColor[i].b + ", " + texColor[i].a + " ]");
-                }
-                */
-
                 frames[x - startPos.x, y - startPos.y] = Sprite.Create(tex, new Rect(0, 0, spritePixelWidth, spritePixelHeight), Vector2.one * 0.5f);
             }
         }
         return frames;
+    }
+    public static int FloorRotateToInt(float rotate, int count)
+    {   
+        return Mathf.FloorToInt(((rotate % 360) / 360) * count); 
     }
 }

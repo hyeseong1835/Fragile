@@ -59,9 +59,29 @@ public class PathFindGrid : MonoBehaviour
     [SerializeField] Color voidColor = new Color(0, 0, 0, 0.5f);
     [SerializeField] Color groundColor = new Color(0.25f, 0.25f, 0.5f, 0.25f);
 
+    Color[,] debugMap;
+    [SerializeField] Color defaultColor = new Color(1, 1, 1, 0);
+    [SerializeField] Color trueColor;
+    [SerializeField] Color falseColor = Color.green;
+    [SerializeField] Color startColor = Color.red;
+    [SerializeField] Color endColor = Color.blue;
+    [SerializeField] Color lineColor = Color.cyan;
+    [SerializeField] Vector2 start;
+    [SerializeField] Vector2 end;
+
+
     private void Awake()
     {
         SetGrid();
+
+        debugMap = new Color[cellCount.x, cellCount.y];
+        for (int x = 0; x < cellCount.x; x++)
+        {
+            for (int y = 0; y < cellCount.y; y++)
+            {
+                debugMap[x, y] = defaultColor;
+            }
+        }
     }
     [DisableInEditorMode]
     [Button(ButtonStyle.Box)]
@@ -89,16 +109,13 @@ public class PathFindGrid : MonoBehaviour
             Mathf.RoundToInt((worldPos.x - pivot.x) / cellSize.x),
             Mathf.RoundToInt((worldPos.y - pivot.y) / cellSize.y));
     }
+    public Vector2 ExtendToCellGrid(Vector2 worldPos)
+    {
+        return (worldPos - pivot) / cellSize;
+    }
     public bool IsCellExist(Vector2Int cellPos)
     {
         return ((cellPos.x >= 0 && cellPos.y >= 0) && (cellPos.x < cellCount.x && cellPos.y < cellCount.y));
-    }
-    public Cell UnSafeGetCellByWorldPos(Vector2 worldPos)
-    {
-        Vector2Int cellPos = UnSafeGetCellPosByWorldPos(worldPos);
-        if(!IsCellExist(cellPos)) return null;
-
-        return grid[cellPos.x, cellPos.y];
     }
     public bool TryGetCell(Vector2Int cellPos, out Cell cell)
     {
@@ -115,18 +132,29 @@ public class PathFindGrid : MonoBehaviour
     }
     bool CheckCell(Cell cell)
     {
-        return true;
+        //Debug.Log(cell.cellPos);
+        debugMap[cell.cellPos.x, cell.cellPos.y] = falseColor;
+        return false;
     }
+    [DisableInEditorMode]
+    [Button(ButtonStyle.Box)]
     public Cell RayCastGrid(Vector2 startWorldPos, Vector2 dir, float distance)
     {
-        Vector2Int cellPos = UnSafeGetCellPosByWorldPos(startWorldPos);
+        for (int x = 0; x < cellCount.x; x++)
+        {
+            for (int y = 0; y < cellCount.y; y++)
+            {
+                debugMap[x, y] = defaultColor;
+            }
+        }
+
+        Cell cell;
 
         #region 길이가 0일 때
-        
+
         if (distance == 0 || dir.x == 0 && dir.y == 0)
         {
-            Cell cell;
-            if (TryGetCell(cellPos, out cell) && CheckCell(cell))
+            if (TryGetCell(UnSafeGetCellPosByWorldPos(startWorldPos), out cell) && CheckCell(cell))
             {
                 return cell;
             }
@@ -135,38 +163,33 @@ public class PathFindGrid : MonoBehaviour
 
         #endregion
 
-        Vector2Int endCellPos = UnSafeGetCellPosByWorldPos(startWorldPos + dir * distance);
-        Vector2Int checkCellPos = cellPos;
+        dir = (dir / cellSize).normalized;
+        Vector2 startExtendPos = ExtendToCellGrid(startWorldPos);
+        Vector2 endExtendPos = ExtendToCellGrid(startWorldPos + dir * distance);
+
+        Vector2Int checkCellPos 
+            = new Vector2Int(Mathf.RoundToInt(startExtendPos.x), Mathf.RoundToInt(startExtendPos.y));
+
 
         #region 축과 수직일 때
 
         //X축과 수직일 때
         if (dir.x == 0)
         {
+            //위로 체크
             if (dir.y > 0)
             {
-                //위로 체크
-                for(; ; )
+                while (checkCellPos.y++ - 0.5f < endExtendPos.y && TryGetCell(checkCellPos, out cell))
                 {
-                    Cell cell;
-                    if(++checkCellPos.y < endCellPos.y && TryGetCell(checkCellPos, out cell))
-                    {
-                        CheckCell(cell);
-                    }
-                    else return null;
+                    if(CheckCell(cell)) return cell;
                 }
             }
+            //아래로 체크
             else
             {
-                //아래로 체크
-                for (; ; )
+                while (checkCellPos.y-- + 0.5f > endExtendPos.y && TryGetCell(checkCellPos, out cell))
                 {
-                    Cell cell;
-                    if (--checkCellPos.y > endCellPos.y && TryGetCell(checkCellPos, out cell))
-                    {
-                        //cell 체크
-                    }
-                    else return null;
+                    if (CheckCell(cell)) return cell;
                 }
             }
         }
@@ -174,98 +197,80 @@ public class PathFindGrid : MonoBehaviour
         //Y축과 수직일 때
         if (dir.y == 0)
         {
+            //오른쪽으로 체크
             if (dir.x > 0)
             {
-                //오른쪽으로 체크
-                for (; ; )
+                while (checkCellPos.x++ - 0.5f < endExtendPos.x && TryGetCell(checkCellPos, out cell))
                 {
-                    Cell cell;
-                    if (++checkCellPos.x < endCellPos.y && TryGetCell(checkCellPos, out cell))
-                    {
-                        CheckCell(cell);
-                    }
-                    else return null;
+                    if (CheckCell(cell)) return cell;
                 }
             }
+            //왼쪽으로 체크
             else
             {
-                //왼쪽으로 체크
-                for (; ; )
+                while (checkCellPos.x-- + 0.5f > endExtendPos.x && TryGetCell(checkCellPos, out cell))
                 {
-                    Cell cell;
-                    if (--checkCellPos.y > endCellPos.y && TryGetCell(checkCellPos, out cell))
-                    {
-                        CheckCell(cell);
-                    }
-                    else return null;
+                    if (CheckCell(cell)) return cell;
                 }
             }
         }
 
         #endregion
 
-        /*
-        if (dir.x > 0)
-        {
-            moveX = 1;
-            startX = Mathf.Ceil(startWorldPos.x * cellSize.x);
-            slope = dir.y / dir.x;
-        }
-        else
-        {
-            moveX = -1;
-            startX = Mathf.Floor(startWorldPos.x * cellSize.x);
-            slope = dir.y / dir.x;
-        }
-        //*/
-
         #region 계산
-        float slope = dir.x / dir.y;
+        float extendCellSlope = dir.y / dir.x;
 
         //기울기가 1보다 클 때
-        if (slope > 1)
+        if (extendCellSlope >= 1)
         {
-            //체크 시스템 만들어라---
-            cellPos.y += slope;
-
-            while (true)
+            if (startExtendPos.x < 0)
             {
-                
-                for (int i = cellPos.y; i < destinationY; i++)
+
+            }
+            if (startExtendPos.y < 0)
+            {
+
+            }
+            //X 순회
+            while (checkCellPos.x - 0.5f <= endExtendPos.x) //초과
+            {
+                int nextCellPosY = Mathf.RoundToInt(extendCellSlope * (checkCellPos.x + 0.5f) - startExtendPos.y);
+                Debug.Log("Next: " + nextCellPosY);
+                while ((checkCellPos.y <= nextCellPosY) && ((checkCellPos.y + 0.5f) <= endExtendPos.y))
                 {
-                    Cell cell;
-                    if (TryGetCell(new Vector2Int(cellPos.x, i), out cell))
+                    Debug.Log("Check: " + checkCellPos.y);
+                    if (TryGetCell(checkCellPos, out cell))
                     {
-                        //검사
-                        //맞으면 리턴 아니면 계속
+                        if (CheckCell(cell)) return cell;
+                        else checkCellPos.y++;
                     }
-                    else
-                    {
-                        return null;
-                    }
+                    else return null;
+                }
+                checkCellPos.x++;
+                if (TryGetCell(new Vector2Int(checkCellPos.x, checkCellPos.y - 1), out cell))
+                {
+                    if (CheckCell(cell)) return cell;
                 }
             }
         }
 
         //기울기가 1보다 작을 때
-        if(slope < -1)
+        if(extendCellSlope < -1)
         {
-
+            
         }
 
         // 기울기가 0~1 사이일 때
-        if (slope > 0)
+        if (extendCellSlope > 0)
         {
 
         }
 
         // 기울기가 -1~0 사이일 때
-        if(slope < 0)
-        {
-
-        }
-        #endregion
         
+        #endregion
+
+        return null;
     }
     private void OnDrawGizmos()
     {
@@ -274,6 +279,26 @@ public class PathFindGrid : MonoBehaviour
 
         Gizmos.DrawWireCube(transform.position, cellSize * cellCount + new Vector2(0.25f, 0.25f));
         Gizmos.DrawWireCube(transform.position, cellSize * cellCount + new Vector2(0.5f, 0.5f));
+
+        if (debugMap != null)
+        {
+            for (int x = 0; x < cellCount.x; x++)
+            {
+                for (int y = 0; y < cellCount.y; y++)
+                {
+                    Gizmos.color = debugMap[x, y];
+                    Gizmos.DrawCube(GetWorldPosByCellPos(new Vector2Int(x, y)), cellSize * 0.5f);
+                }
+            }
+            Gizmos.color = startColor;
+            Gizmos.DrawSphere(start, 0.1f);
+            
+            Gizmos.color = endColor;
+            Gizmos.DrawSphere(end, 0.1f);
+
+            Gizmos.color = lineColor;
+            Gizmos.DrawLine(start, end);
+        }
     }
     private void OnDrawGizmosSelected()
     {
