@@ -7,8 +7,6 @@ public enum AnimateState
     Stay, Move, Battle
 }
 
-[RequireComponent(typeof(Collider2D))]
-[RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : Controller
 {
     #region 입력

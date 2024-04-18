@@ -35,7 +35,7 @@ public class Weapon_SwingAndThrow : Weapon
     #region Attack
     public override void Attack()
     {
-        Player.grafic.HandLink(swing_obj.transform, true);//
+        Player.grafic.HandLink(swing_obj.transform, true); //공격 시작: 손 -> 무기
         handWeapon.gameObject.SetActive(false);
         swing_obj.gameObject.SetActive(true);
 
@@ -87,7 +87,6 @@ public class Weapon_SwingAndThrow : Weapon
     {
         if (swing_obj.gameObject.activeInHierarchy)
         {
-            Player.grafic.HandLink(null);
             Player.grafic.stateHandAnimation = true;
 
             breakParticle.SpawnParticle(swing_obj.transform.position, swing_obj.transform.rotation);

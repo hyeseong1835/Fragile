@@ -115,7 +115,7 @@ public abstract class Weapon : MonoBehaviour
         if (use)
         {
             handWeapon.gameObject.SetActive(true);
-            Player.grafic.HandLink(handWeapon, false);
+            Player.grafic.HandLink(handWeapon, false); //초기 설정: 손
 
             isUsing = true;
             OnUse();
@@ -123,7 +123,6 @@ public abstract class Weapon : MonoBehaviour
         else
         {
             handWeapon.gameObject.SetActive(false);
-            Player.grafic.handLink = false;
             Player.grafic.targetTransform = null;
 
             isUsing = false;

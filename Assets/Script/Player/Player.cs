@@ -7,7 +7,7 @@ public static class Player
 
     public static PlayerController pCon;
     public static WeaponController wCon;
-    public static PlayerGrafic grafic;
+    public static Grafic grafic;
 
     public static CameraController camCon;
 }

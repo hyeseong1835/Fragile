@@ -18,7 +18,7 @@ public class Weapon_Hand : Weapon
     }
     public override void Attack()
     {
-        Player.grafic.HandLink(swing_obj.transform, true);
+        Player.grafic.HandLink(swing_obj.transform, true); //공격 시작: 손 -> 무기
         handWeapon.gameObject.SetActive(false);
 
         StartCoroutine(Skill.Swing(con.transform, swing_obj, Utility.GetTargetAngle(con.transform.position, con.targetPos), swing_spread, swing_duration, Skill.Curve.Quadratic,
@@ -35,11 +35,11 @@ public class Weapon_Hand : Weapon
             coll.GetComponent<Stat>().OnDamage(swing_damage * damage);
         }
     }
-    public void SwingEndEvent(GameObject triggerObj)
+    public void SwingEndEvent(GameObject triggerObj) 
     {
         swing_obj.gameObject.SetActive(false);
         handWeapon.gameObject.SetActive(true);
-        Player.grafic.HandLink(handWeapon, false);
+        Player.grafic.HandLink(handWeapon, false); //공격 끝: 무기 -> 손
     }
     protected override void Break()
     {
