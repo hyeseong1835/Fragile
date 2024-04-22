@@ -1,21 +1,45 @@
 using UnityEngine;
 
+public struct ItemData
+{
+    public string name;
+    public string[] weaponData;
+    
+    public Vector2 pos;
+
+    public ItemData(string _name, string[] _weaponData, Vector2 _pos)
+    {
+        name = _name;
+        weaponData = _weaponData;
+        pos = _pos;
+    }
+}
 public class Item : MonoBehaviour
 {
-    Weapon weapon;
+    public string weaponName;
+    public Weapon weapon;
 
-    public Item(Weapon _weapon)
+    public string GetData()
     {
-        weapon = _weapon;
+        return JsonUtility.ToJson(
+            new ItemData
+            (
+                weapon.name,
+                weapon.GetData(),
+                transform.position
+            )
+        );
+
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.layer == 6)
         {
-            if (Player.wCon.transform.childCount > 11) return;
+            Controller controller = collision.GetComponent<Controller>();
+            
+            if (controller.weapons.Length >= controller.inventorySize) return;
 
-            string[] split = gameObject.name.Split('/');
-            Player.wCon.AddWeapon(weapon, split[0], split[1]);
+            controller.AddWeapon(weapon);
 
             Destroy(gameObject);
         }

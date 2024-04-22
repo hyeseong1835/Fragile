@@ -1,9 +1,13 @@
+using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
+using System.IO;
 
 public static class Utility
 {
+    public static float rotateMax = 360f - Mathf.Epsilon;
     public static float GetTargetAngle(Vector2 origin, Vector2 target)
     {
         Vector2 dir = target - origin;
@@ -48,6 +52,7 @@ public static class Utility
                     );
                 tex.filterMode = FilterMode.Point;
                 tex.Apply();
+
                 frames[x, y] = Sprite.Create(
                     tex, 
                     new Rect(0, 0, spritePixelWidth, spritePixelHeight), 
@@ -56,8 +61,51 @@ public static class Utility
         }
         return frames;
     }
+    /// <summary>
+    /// {count}개의 각도 범위 중 {rotate}가 있는 범위
+    /// </summary>
+    /// <param name="rotate">(0 <= rotate <= 360)</param>
+    /// <param name="count"></param>
+    /// <returns></returns>
+
+    public static Weapon LoadWeapon(string name)
+    {
+        Debug.Log("LoadWeapon: {\"" + "WeaponObjPrefab/" + name + "\"}");
+        
+        GameObject weaponObj = Object.Instantiate(
+            Resources.Load<GameObject>("WeaponObjPrefab/" + name)
+        );
+        Weapon weapon = weaponObj.GetComponent<Weapon>();
+
+        return weapon;
+    }
+    public static Weapon LoadWeapon(string name, string[] data)
+    {
+        Weapon weapon = LoadWeapon(name);
+        weapon.SetData(data);
+
+        return weapon;
+    }
+
+
     public static int FloorRotateToInt(float rotate, int count)
     {   
-        return Mathf.FloorToInt(((rotate % 360) / 360) * count);
+        int intRotate = Mathf.FloorToInt((rotate / 360) * count);
+
+        if (intRotate == count) return 0;
+
+        return intRotate;
+    }
+    /// <summary>
+    /// {vector}를 각도로 변환
+    /// </summary>
+    /// <param name="vector"></param>
+    /// <returns>0 <= return < 360</returns>
+    public static float Vector2ToRotate(Vector2 vector)
+    {
+        float rotate = Mathf.Atan2(vector.y, vector.x) * Mathf.Rad2Deg;
+        
+        if (rotate < 0) return rotate + 360;
+        return rotate;
     }
 }

@@ -4,28 +4,40 @@ using UnityEngine;
 
 public enum PlayerAnimationState
 {
-    NONE
+    NONE, test1, test2, test3
 }
 interface OtherGrafic
 {
-    void OtherAnimation();
+    public void StateSetToNONE();
+    public void OtherAnimation();
 }
 public class PlayerGrafic : Grafic, OtherGrafic
 {
-    public PlayerAnimationState playerState;
+    [PropertySpace(10)]
+    [FoldoutGroup("State")]
+    [ShowInInspector]
+    public PlayerAnimationState playerState
+    {
+        get { return _playerState; }
+        set
+        {
+            if (value != PlayerAnimationState.NONE)
+            {
+                animationState = AnimationState.NONE;
+            }
 
+            _playerState = value;
+        }
+    } PlayerAnimationState _playerState;
+
+    public void StateSetToNONE()
+    {
+        playerState = PlayerAnimationState.NONE;
+    }
     public void OtherAnimation()
     {
-        if (state != AnimationState.NONE) return;
+        if (animationState != AnimationState.NONE) return;
 
 
     }
-    [ShowIf("debug")][Button]
-    public void SetState(PlayerAnimationState _playerState)
-    {
-        state = AnimationState.NONE;
-
-        playerState = _playerState;
-    }
-
 }

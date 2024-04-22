@@ -10,33 +10,41 @@ public class ItemManager : MonoBehaviour
     {
 
     }
-    public static GameObject SpawnItem(Weapon weapon, Vector3 pos, string data)
+    public static Item LoadItem(ItemData data)
     {
-        GameObject itemObj = Instantiate(itemPrefab, droppedItem);
-        itemObj.AddComponent(weapon.GetType());
-        itemObj.transform.position = pos;
-        itemObj.name = data;
+        GameObject itemObj = Instantiate(itemPrefab);
+        itemObj.name = "Item_" + data.name;
 
-        return itemObj;
+        Item item = itemObj.GetComponent<Item>();
+        item.weaponName = data.name;
+
+        item.weapon = Utility.LoadWeapon(data.name, data.weaponData);
+
+        item.transform.position = data.pos;
+
+        return item;
     }
-    public static GameObject SpawnItem(string weapon, Vector3 pos, string data)
+    public static Item SpawnItem(string weaponName)
     {
-        GameObject itemObj = Instantiate(itemPrefab, droppedItem);
-        itemObj.AddComponent((new Item((Weapon)Activator.CreateInstance(Type.GetType(weapon)))).GetType());
-        itemObj.transform.position = pos;
-        itemObj.name = data;
+        GameObject itemObj = Instantiate(itemPrefab);
+        itemObj.name = "Item_" + weaponName;
 
-        return itemObj;
+        Item item = itemObj.GetComponent<Item>();
+        item.weaponName = weaponName;
+        item.weapon = Utility.LoadWeapon(weaponName);
+
+        return item;
     }
-    public void LoadItems(string itemData)
+    public static Item WeaponToItem(Weapon weapon)
     {
-        string[] items = itemData.Split('\n');
+        Item item = Instantiate(itemPrefab).GetComponent<Item>();
 
-        foreach (string item in items)
-        {
-            string[] split = item.Split('/');
-            string[] datas = split[0].Split(',');
-            SpawnItem(datas[0], new Vector3(float.Parse(datas[1]), float.Parse(datas[2]), 0), split[1]);
-        }
+        weapon.transform.SetParent(item.transform);
+        weapon.transform.localPosition = Vector3.zero;
+     
+        item.weaponName = weapon.weaponName;
+        item.weapon = weapon;
+
+        return item;
     }
 }

@@ -22,6 +22,18 @@ public class Weapon_SwingAndThrow : Weapon
     UnityEvent<GameObject, Collider2D> throw_enterEvent = new UnityEvent<GameObject, Collider2D>();
     UnityEvent<GameObject> throw_endEvent = new UnityEvent<GameObject>();
 
+    public override string[] GetData()
+    {
+        return new string[]
+        {
+            JsonUtility.ToJson(durability)
+        };
+    }
+    public override void SetData(string[] data)
+    {
+        durability = JsonUtility.FromJson<int>(data[0]);
+    }
+    
     public override void WeaponAwake()
     {
         //Swing
@@ -35,7 +47,7 @@ public class Weapon_SwingAndThrow : Weapon
     #region Attack
     public override void Attack()
     {
-        Player.grafic.HandLink(swing_obj.transform, true); //공격 시작: 손 -> 무기
+        con.grafic.HandLink(HandMode.ToTarget, swing_obj.transform);
         handWeapon.gameObject.SetActive(false);
         swing_obj.gameObject.SetActive(true);
 
@@ -58,13 +70,13 @@ public class Weapon_SwingAndThrow : Weapon
     public void SwingEndEvent(GameObject triggerObj)
     {
         swing_obj.gameObject.SetActive(false);
-        handWeapon.gameObject.SetActive(true);
-        Player.grafic.HandLink(handWeapon, false);
+        
+        con.grafic.HandLink(HandMode.ToHand, handWeapon);
     }
     #endregion
     public override void Mouse1Down() 
     {
-        Player.grafic.HandLink(null);
+        con.grafic.HandLink(null);
         StartCoroutine(Skill.Throw(this, throw_obj, throw_spinSpeed, throw_throwSpeed, throw_duration, 
             enterEvent: throw_enterEvent, endEvent: throw_endEvent));
     }
@@ -87,7 +99,7 @@ public class Weapon_SwingAndThrow : Weapon
     {
         if (swing_obj.gameObject.activeInHierarchy)
         {
-            Player.grafic.stateHandAnimation = true;
+            con.grafic.handMode = HandMode.NONE;
 
             breakParticle.SpawnParticle(swing_obj.transform.position, swing_obj.transform.rotation);
             Remove();

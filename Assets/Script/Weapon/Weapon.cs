@@ -5,10 +5,10 @@ using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 public abstract class Weapon : MonoBehaviour
 {
+    public GameObject weaponPrefab;
     public Controller con;
 
-    const string nullDurabilityText = "n";
-
+    public string weaponName;
     public bool isUsing = false;
     public bool dropable = true;
     public bool useAttackInput = true;
@@ -47,14 +47,7 @@ public abstract class Weapon : MonoBehaviour
         #region 입력
         if (!isUsing) return;
 
-        if (Player.pCon.mouse0Down) Mouse0Down();
-        if (Player.pCon.mouse0Stay) Mouse0();
-        if (Player.pCon.mouse0Up) Mouse0Up();
-        if (Player.pCon.mouse1Down) Mouse1Down();
-        if (Player.pCon.mouse1) Mouse1();
-        if (Player.pCon.mouse1Up) Mouse1Up();
 
-        if (Player.pCon.attack) Attack();
         #endregion
 
         WeaponUpdate();
@@ -99,14 +92,10 @@ public abstract class Weapon : MonoBehaviour
     #endregion
 
     #region 데이터
-    public void SetData(string[] datas, string[] customDatas)
-    {
-        if (datas[1] == nullDurabilityText) durability = maxDurability;
-        else durability = int.Parse(datas[1]);
-        SetCustomData(customDatas);
-    }
-    protected virtual void SetCustomData(string[] datas) { }
-    public virtual string LoadCustomData() { return ""; }
+    
+    public abstract string[] GetData();
+    public abstract void SetData(string[] data);
+
     #endregion
 
     #region 도구
@@ -115,7 +104,7 @@ public abstract class Weapon : MonoBehaviour
         if (use)
         {
             handWeapon.gameObject.SetActive(true);
-            Player.grafic.HandLink(handWeapon, false); //초기 설정: 손
+            con.grafic.HandLink(HandMode.ToHand, handWeapon);
 
             isUsing = true;
             OnUse();
@@ -123,7 +112,7 @@ public abstract class Weapon : MonoBehaviour
         else
         {
             handWeapon.gameObject.SetActive(false);
-            Player.grafic.targetTransform = null;
+            con.grafic.HandLink(HandMode.NONE, handWeapon);
 
             isUsing = false;
             OnDeUse();
@@ -139,7 +128,6 @@ public abstract class Weapon : MonoBehaviour
             Break();
             return;
         }
-        Player.wCon.inventoryUI.ResetDurabilityUI();
     }
     /// <summary>
     /// 인벤토리에서 무기 제거
@@ -148,7 +136,9 @@ public abstract class Weapon : MonoBehaviour
     {
         if (!dropable) return;
 
-        GameObject item = ItemManager.SpawnItem(this, Player.transform.position, LoadCustomData());
+        Item item = ItemManager.WeaponToItem(this);
+        item.transform.position = con.transform.position;
+
         Remove();
         Destroy();
     }
@@ -156,11 +146,11 @@ public abstract class Weapon : MonoBehaviour
     {
         OnDeUse();
         OnWeaponRemoved();
-        Player.wCon.RemoveWeapon(index);
+        con.RemoveWeapon(index);
     }
     public void Destroy()
     {
-        if(transform.parent == Player.wCon.transform) 
+        if(transform.parent == con.transform) 
         {
             Debug.LogWarning("인벤토리에서 제거되지 않은 무기를 제거할 수 없습니다");
             Remove();

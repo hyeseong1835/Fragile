@@ -34,8 +34,7 @@ public static class Skill
         trigger.SetEvent(enterEvent, stayEvent, exitEvent);
 
         //½ºÅ³
-        Player.grafic.stateHandAnimation = false;
-        trigger.transform.position = origin.position + (Vector3)Player.pCon.playerToMouse.normalized * 0.5f;
+        trigger.transform.position = origin.position + (Vector3)con.playerToMouse.normalized * 0.5f;
 
         float time = 0;
         float t = 0;
@@ -63,7 +62,6 @@ public static class Skill
         yield return null;
 
         trigger.gameObject.SetActive(false);
-        Player.grafic.stateHandAnimation = true;
         if (endEvent != null) endEvent.Invoke(trigger.gameObject);
     }
     public static IEnumerator Throw(Weapon weapon, TriggerObject trigger, float spinSpeed, float throwSpeed, float duration,

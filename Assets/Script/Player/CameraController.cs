@@ -11,6 +11,7 @@ public enum CameraMove
 }
 public class CameraController : MonoBehaviour
 {
+    [SerializeField] Transform target;
     [HideInInspector] public Camera cam;
     [HorizontalGroup("Move")] public CameraMove camMove;
     [HorizontalGroup("Move")][HideLabel] public float speed;
@@ -18,7 +19,6 @@ public class CameraController : MonoBehaviour
 
     void Awake()
     {
-        Player.camCon = this;
         cam = GetComponent<Camera>();
     }
     void Update()
@@ -28,15 +28,15 @@ public class CameraController : MonoBehaviour
             case CameraMove.Stop:
                 break;
             case CameraMove.Perfect:
-                transform.position = new Vector3(Player.transform.position.x, Player.transform.position.y, posZ);
+                transform.position = new Vector3(target.position.x, target.position.y, posZ);
                 break;
             case CameraMove.MoveTo:
-                if ((Player.transform.position - transform.position).magnitude == 0) break;
+                if ((target.position - transform.position).magnitude == 0) break;
 
-                if (((Vector2)Player.transform.position - (Vector2)transform.position).magnitude < speed * Time.deltaTime)
-                    transform.position = new Vector3(Player.transform.position.x, Player.transform.position.y, posZ);
+                if (((Vector2)target.position - (Vector2)transform.position).magnitude < speed * Time.deltaTime)
+                    transform.position = new Vector3(target.position.x, target.position.y, posZ);
                 else transform.position += (Vector3)(
-                        ((Vector2)Player.transform.position - (Vector2)transform.position).normalized * speed * Time.deltaTime);
+                        ((Vector2)target.position - (Vector2)transform.position).normalized * speed * Time.deltaTime);
                 break;
         }
     }
