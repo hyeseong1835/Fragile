@@ -11,10 +11,23 @@ public enum CameraMove
 }
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] Transform target;
-    [HideInInspector] public Camera cam;
-    [HorizontalGroup("Move")] public CameraMove camMove;
-    [HorizontalGroup("Move")][HideLabel] public float speed;
+    [SerializeField] 
+        Transform target;
+    
+    [HideInInspector]
+        [Required] 
+        public Camera cam;
+
+    [HorizontalGroup("Move")]
+    #region Move
+    
+            public CameraMove camMove = CameraMove.Stop;
+
+        [HorizontalGroup("Move", width:30)]
+            [HideLabel]
+            public float speed;
+
+    #endregion
     public float posZ = -10;
 
     void Awake()
@@ -23,6 +36,8 @@ public class CameraController : MonoBehaviour
     }
     void Update()
     {
+        if (target == null) return;
+
         switch (camMove)
         {
             case CameraMove.Stop:

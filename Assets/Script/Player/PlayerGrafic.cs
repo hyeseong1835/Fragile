@@ -14,21 +14,21 @@ interface OtherGrafic
 public class PlayerGrafic : Grafic, OtherGrafic
 {
     [PropertySpace(10)]
-    [FoldoutGroup("State")]
-    [ShowInInspector]
-    public PlayerAnimationState playerState
-    {
-        get { return _playerState; }
-        set
+    
+    [FoldoutGroup("State")][ShowInInspector]
+        public PlayerAnimationState playerState
         {
-            if (value != PlayerAnimationState.NONE)
+            get { return _playerState; }
+            set
             {
-                animationState = AnimationState.NONE;
-            }
+                if (value != PlayerAnimationState.NONE)
+                {
+                    animationState = AnimationState.NONE;
+                }
 
-            _playerState = value;
-        }
-    } PlayerAnimationState _playerState;
+                _playerState = value;
+            }
+        } PlayerAnimationState _playerState;
 
     public void StateSetToNONE()
     {

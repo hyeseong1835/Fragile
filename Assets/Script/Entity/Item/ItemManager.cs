@@ -1,14 +1,16 @@
+using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
 
+[ExecuteAlways]
 public class ItemManager : MonoBehaviour
 {
     static Transform droppedItem;
-    static GameObject itemPrefab;
+    [ShowInInspector][ReadOnly] static GameObject itemPrefab;
 
-    void Awake()
+    void Update()
     {
-
+        if (itemPrefab == null) itemPrefab = Resources.Load<GameObject>("ItemPrefab");
     }
     public static Item LoadItem(ItemData data)
     {
@@ -35,15 +37,15 @@ public class ItemManager : MonoBehaviour
 
         return item;
     }
-    public static Item WeaponToItem(Weapon weapon)
+    public static Item WrapWeaponInItem(Weapon weapon)
     {
         Item item = Instantiate(itemPrefab).GetComponent<Item>();
 
         weapon.transform.SetParent(item.transform);
-        weapon.transform.localPosition = Vector3.zero;
      
         item.weaponName = weapon.weaponName;
         item.weapon = weapon;
+        item.gameObject.name = "Item";
 
         return item;
     }

@@ -19,6 +19,10 @@ public class Item : MonoBehaviour
     public string weaponName;
     public Weapon weapon;
 
+    void Update()
+    {
+ 
+    }
     public string GetData()
     {
         return JsonUtility.ToJson(
@@ -37,7 +41,7 @@ public class Item : MonoBehaviour
         {
             Controller controller = collision.GetComponent<Controller>();
             
-            if (controller.weapons.Length >= controller.inventorySize) return;
+            if (controller.weapons.Count >= controller.inventorySize) return;
 
             controller.AddWeapon(weapon);
 

@@ -15,7 +15,7 @@ public static class Skill
     /// 대상을 회전각만큼 회전시키는 스킬
     /// </summary>
     /// <param name="origin">시전 위치</param>
-    /// <param name="trigger">대상</param>
+    /// <param name="triggerObj">대상</param>
     /// <param name="spread">회전각</param>
     /// <param name="duration">시전에 걸리는 시간</param>
     /// <param name="swingCurve">가속도</param>
@@ -24,17 +24,17 @@ public static class Skill
     /// <param name="exitEvent">나갔을 때</param>
     /// <param name="endEvent">시전이 끝났을 때</param>
     /// <returns></returns>
-    public static IEnumerator Swing(UnityEngine.Transform origin, TriggerObject trigger,float startRotateZ, float spread, float duration, Curve swingCurve,
+    public static IEnumerator Swing(Controller con, TriggerObject triggerObj, float startRotateZ, float spread, float duration, Curve swingCurve,
         UnityEvent<GameObject, Collider2D> enterEvent = null,
         UnityEvent<GameObject, Collider2D> stayEvent = null,
         UnityEvent<GameObject, Collider2D> exitEvent = null,
         UnityEvent<GameObject> endEvent = null)
     {
         //초기화
-        trigger.SetEvent(enterEvent, stayEvent, exitEvent);
+        triggerObj.SetEvent(enterEvent, stayEvent, exitEvent);
 
         //스킬
-        trigger.transform.position = origin.position + (Vector3)con.playerToMouse.normalized * 0.5f;
+        triggerObj.transform.position = con.transform.position + (Vector3)con.targetDir * 0.5f;
 
         float time = 0;
         float t = 0;
@@ -49,48 +49,47 @@ public static class Skill
                     t = time * time;
                     break;
             }
-            trigger.transform.rotation = Quaternion.Euler(0, 0, startRotateZ + spread * 0.5f - t * spread - 90);
-            trigger.transform.position = origin.position + new Vector3(
+            triggerObj.transform.rotation = Quaternion.Euler(0, 0, startRotateZ + spread * 0.5f - t * spread - 90);
+            triggerObj.transform.position = con.transform.position + new Vector3(
                 Mathf.Cos((startRotateZ + spread * 0.5f - t * spread) * Mathf.Deg2Rad),
                 Mathf.Sin((startRotateZ + spread * 0.5f - t * spread) * Mathf.Deg2Rad) * 0.5f, 0).normalized * 0.5f;
 
             time += Time.deltaTime / duration;
             yield return null;
         }
-        trigger.transform.rotation = Quaternion.Euler(0, 0, startRotateZ - spread * 0.5f);
+        triggerObj.transform.rotation = Quaternion.Euler(0, 0, startRotateZ - spread * 0.5f);
 
         yield return null;
 
-        trigger.gameObject.SetActive(false);
-        if (endEvent != null) endEvent.Invoke(trigger.gameObject);
+        triggerObj.gameObject.SetActive(false);
+        if (endEvent != null) endEvent.Invoke(triggerObj.gameObject);
     }
-    public static IEnumerator Throw(Weapon weapon, TriggerObject trigger, float spinSpeed, float throwSpeed, float duration,
-    UnityEvent<GameObject, Collider2D> enterEvent = null,
-    UnityEvent<GameObject, Collider2D> stayEvent = null,
-    UnityEvent<GameObject, Collider2D> exitEvent = null,
-    UnityEvent<GameObject> endEvent = null)
+    public static IEnumerator Throw(Controller con, TriggerObject triggerObj, 
+        float spinSpeed, float throwSpeed, float duration,
+        UnityEvent<GameObject, Collider2D> enterEvent = null,
+        UnityEvent<GameObject, Collider2D> stayEvent = null,
+        UnityEvent<GameObject, Collider2D> exitEvent = null,
+        UnityEvent<GameObject> endEvent = null)
     {
         //시작
-        weapon.Remove();
-        trigger.gameObject.SetActive(true);
-        trigger.SetEvent(enterEvent, stayEvent, exitEvent);
-        weapon.transform.SetParent(null);
-        float startAngleZ = Mathf.Atan2(Player.camCon.cam.ScreenToWorldPoint(Player.pCon.mousePos).y - Player.transform.position.y,
-            Player.camCon.cam.ScreenToWorldPoint(Player.pCon.mousePos).x - Player.transform.position.x) * Mathf.Rad2Deg - 90;
-        Vector3 startVector = Player.camCon.cam.ScreenToWorldPoint(Player.pCon.mousePos) + new Vector3(0, 0, 10) - Player.transform.position;
+        triggerObj.gameObject.SetActive(true);
+        triggerObj.SetEvent(enterEvent, stayEvent, exitEvent);
+        triggerObj.transform.SetParent(null);
+
+        Vector3 startVector = con.targetDir;
+        float startAngleZ = Mathf.Atan2(startVector.y, startVector.x) * Mathf.Rad2Deg - 90;
         float time = 0;
 
         //실행 중
         while (time <= duration)
         {
-            trigger.transform.position += startVector.normalized * throwSpeed;
-            trigger.transform.rotation = Quaternion.Euler(0, 0, startAngleZ - time * spinSpeed);
+            triggerObj.transform.position += startVector.normalized * throwSpeed;
+            triggerObj.transform.rotation = Quaternion.Euler(0, 0, startAngleZ - time * spinSpeed);
             time += Time.deltaTime;
             yield return null;
         }
 
         //종료
-
-        if (endEvent != null) endEvent.Invoke(trigger.gameObject);
+        if (endEvent != null) endEvent.Invoke(triggerObj.gameObject);
     }
 }

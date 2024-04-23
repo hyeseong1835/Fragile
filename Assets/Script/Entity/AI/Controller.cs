@@ -1,75 +1,190 @@
 using Sirenix.OdinInspector;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.Rendering;
 
-public class Controller : MonoBehaviour
+public abstract class Controller : MonoBehaviour
 {
-    public Grafic grafic;
+    [Required]
+        public Grafic grafic;
+
     public Vector2 targetPos;
+    public Vector2 targetDir 
+    { 
+        get 
+        {
+            return new Vector3(
+                targetPos.x - transform.position.x,
+                targetPos.y - transform.position.y,
+                0).normalized; 
+        } 
+    }
     public Vector3 moveVector;
     [HideInInspector] public Vector3 prevMoveVector;
 
     [Range(0f, 360f)] public float moveRotate = 0;
+    
     //입력
     public bool attack = false;
     public bool special = false;
 
-    public Weapon curWeapon;
-    protected int curWeponIndex;
-    public Weapon[] weapons;
-    public int inventorySize;
+    [BoxGroup("Weapon")]
+    #region Weapon
+
+        [ShowInInspector]
+            [Required]
+            public Weapon defaultWeapon
+            {
+                get { return _defaultWeapon; }
+                set
+                {
+                #if UNITY_EDITOR
+
+                    if (value == null)
+                    {
+                        _defaultWeapon = null;
+                        return;
+                    }
+                    if (curWeapon == null)
+                    {
+                        curWeapon = value;
+                        value.SetUse(true); //선택한 무기 활성화
+                    }
+                    if (weapons.Contains(value))
+                    {
+                        weapons.Remove(value);
+                    }
+
+                #endif
+                    _defaultWeapon = value;
+                }
+            } Weapon _defaultWeapon;
+
+        [BoxGroup("Weapon")]
+            [ReadOnly][Required][PropertyOrder(2)]
+            public Weapon curWeapon;
+
+        [HorizontalGroup("Weapon/Horizontal")][PropertyOrder(3)]
+        #region Horizontal
+
+            [ReadOnly]
+                public List<Weapon> weapons;
+    
+            [HorizontalGroup("Weapon/Horizontal", width: 30)][ShowInInspector][PropertyOrder(3)]
+                [HideLabel]
+                public int inventorySize
+                {
+                    get { return _inventorySize; }
+                    set
+                    {
+                        for (int i = weapons.Count - 1; i >= _inventorySize; i--)
+                        {
+                            DropWeapon(weapons[i]);
+                        }
+                        _inventorySize = value;
+                    }
+                } int _inventorySize = 1;
+
+        #endregion
+
+    #endregion
 
     public void AddWeapon(Weapon weapon)
     {
+        if (weapons.Count >= inventorySize)
+        {
+            Debug.LogWarning("인벤토리가 꽉 참");
+            weapon.Drop();
+            return;
+        }
         weapon.con = this;
-        weapon.index = transform.childCount - 1;
-        weapons[weapon.index] = weapon;
+        
+        weapons.Add(weapon);
     }
-    [DisableInEditorMode]
     [Button(ButtonStyle.Box)]
-    public void RemoveWeapon(int index)
+    public void RemoveWeapon(Weapon weapon)
     {
+        if(weapons.Contains(weapon) == false)
+        {
+            Debug.LogError("{" + weapon.name + "}을(를) 인벤토리에서 찾을 수 없어 제거하지 못함.");
+            return;
+        }
+        int index = weapons.IndexOf(weapon);
+        weapons.RemoveAt(index);
+
         //무기 선택
-        if (index + 1 == transform.childCount) //마지막 순서의 무기일 때
+        if (index == weapons.Count - 1) //마지막 순서의 무기일 때
         {
-            if (transform.childCount == 2) //무기가 하나일 때
-            {
-                SelectWeapon(0);
-            }
-            else SelectWeapon(index - 1); //무기가 더 있을 때
+            if (weapons.Count == 0) SelectWeapon(defaultWeapon);
+            else SelectWeapon(weapons[0]);
         }
-        else SelectWeapon(index + 1);
+        else SelectWeapon(weapons[index]);
 
-        //제거(인벤토리에서)
-        weapons[index].transform.parent = null;
+        weapon.transform.parent = null;
 
     }
-    [DisableInEditorMode]
+
+#if UNITY_EDITOR
+    
     [Button(ButtonStyle.Box)]
-    protected void SelectWeapon(int index)
+    void SelectWeaponInInspector(int index)
     {
-        if (index < 0 || transform.childCount - 1 < index)
-        {
-            Debug.LogWarning("index가 범위를 초과함: (" + index + "/" + (transform.childCount - 1) + " )");
-            index = 0;
-        } //LogWarning: "index가 범위를 초과함"
+        if(index == -1) SelectWeapon(defaultWeapon);
+        else SelectWeapon(weapons[index]);
+    }
 
-        for (int i = 0; i < transform.childCount; i++) //무기 모두 비활성화
+#endif
+    protected void SelectWeapon(Weapon weapon)
+    {
+        if (weapons.Contains(weapon) == false)
         {
-            if (weapons[i].isUsing)
-            {
-                weapons[i].SetUse(false);
-            }
+            Debug.LogError("{" + weapon.name + "}을(를) 인벤토리에서 찾을 수 없어 선택하지 못함.");
+            return;
         }
-        if (weapons[index] == null)
+        curWeapon.SetUse(false); //현재 무기 비활성화
+
+        curWeapon = weapon;
+        weapon.SetUse(true); //선택한 무기 활성화
+    }
+    [Button(ButtonStyle.Box)]
+    public void DropWeapon(Weapon weapon)
+    {
+        Item item = null;
+
+        switch (weapon.state)
         {
-            Debug.LogWarning("호출한 인덱스에 무기가 없음");
-            index = 0;
-        } //LogWarning: "호출한 인덱스에 무기가 없음"
+            case WeaponState.PREFAB:
+                Debug.LogError("프리팹 상태에서는 드랍할 수 없습니다.");
+                break;
 
-        curWeapon = weapons[index];
+            case WeaponState.ITEM:
+                item = weapon.transform.parent.GetComponent<Item>();
+                break;
 
-        curWeapon.SetUse(true); //선택한 무기 활성화
+            case WeaponState.HOLD:
+                weapon.Remove();
+                weapons.Remove(weapon);
+                item = ItemManager.WrapWeaponInItem(weapon);
+                weapon.state = WeaponState.ITEM;
+                break;
+
+            case WeaponState.INVENTORY:
+                weapon.Remove();
+                weapons.Remove(weapon);
+                item = ItemManager.WrapWeaponInItem(weapon);
+                weapon.state = WeaponState.ITEM;
+                break;
+
+            case WeaponState.REMOVED:
+                Debug.LogError("제거된 무기는 드랍할 수 없습니다?");
+                break;
+        }
+
+        item.transform.position = transform.position;
+        
+        //던지는 효과----------------------------------------------------
     }
 }

@@ -360,20 +360,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50a99f985fe9dd84fb3a9fb03b73bb1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state: 0
   con: {fileID: 0}
-  isUsing: 0
+  weaponName: WoodenSword
   dropable: 1
-  useAttackInput: 1
-  index: 0
   item: {fileID: 21300000, guid: b933908dc65243a42951c5f8aaf6fc20, type: 3}
   UI: {fileID: 21300000, guid: 4de065b7691eaa64d8d187fce863b3e3, type: 3}
-  handWeapon: {fileID: 8653363987513085753}
   damage: 1
   attackCooltime: 1
   breakable: 1
   durability: 3
   maxDurability: 3
   breakParticle: {fileID: 1040867577504536758}
+  hand_obj: {fileID: 0}
   swing_obj: {fileID: 1724169375036396350}
   swing_damage: 1
   swing_spread: 120

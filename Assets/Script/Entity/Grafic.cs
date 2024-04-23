@@ -60,21 +60,23 @@ public class Grafic : MonoBehaviour
         [HorizontalGroup("Hand/Horizontal")]
         #region Horizontal
             
-            [SerializeField][ChildGameObjectsOnly] protected Transform hand;
+            [SerializeField]
+                [Required][ChildGameObjectsOnly]
+                protected Transform hand;
 
             [VerticalGroup("Hand/Horizontal/Vertical")]
             #region Vertical
-        
+
+                    [LabelText("Mode")]
                     public HandMode handMode = HandMode.NONE;
 
                 [VerticalGroup("Hand/Horizontal/Vertical")]
-                    [ShowIf("debug")] 
+                    [ShowIf("debug")][LabelText("Target")]
                     public Transform targetTransform;
 
             #endregion
-    
-        #endregion
 
+        #endregion
     #endregion
 
     [PropertySpace(10)]
@@ -131,6 +133,7 @@ public class Grafic : MonoBehaviour
                 #endregion
 
                 [BoxGroup("Animation/Stay/Time")][SerializeField]
+                    [LabelText("Time")]
                     float stayTimeScale = 0.5f;
 
             #endregion
@@ -190,7 +193,8 @@ public class Grafic : MonoBehaviour
                     
                 #endregion
 
-                [BoxGroup("Animation/Walk/Time")][SerializeField] 
+                [BoxGroup("Animation/Walk/Time")][SerializeField]
+                    [LabelText("Time")]
                     float walkTimeScale = 0.1f;
 
             #endregion
@@ -201,6 +205,7 @@ public class Grafic : MonoBehaviour
 
     void Awake()
     {
+
     }
     void Start()
     {
@@ -209,6 +214,12 @@ public class Grafic : MonoBehaviour
     }
     void Update()
     {
+        if (Selection.Contains(this) == false)
+        {
+            staySimulate = false;
+            walkSimulate = false;
+        }
+
         if (staySimulate) AnimationUpdate(ref stayTime, stayTimeScale);
         if (walkSimulate) AnimationUpdate(ref walkTime, walkTimeScale);
 

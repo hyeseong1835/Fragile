@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class UI_Inventory : MonoBehaviour
 {
+    [SerializeField] PlayerController pCon;
     [SerializeField]
     [ChildGameObjectsOnly] Image UI;
     [SerializeField]
@@ -27,28 +28,28 @@ public class UI_Inventory : MonoBehaviour
             Debug.LogWarning(weapon + ".UI is null");
             ResetInventoryUI();
         }//LogError: {name}(Weapon).UI is null
-        UISprite[weapon.index] = weapon.UI;
+        //UISprite[weapon.index] = weapon.UI;
     }
     public void ResetInventoryUI()
     {
         UISprite = new Sprite[11];
-        for (int i = 0; i < Player.wCon.transform.childCount; i++)
+        for (int i = 0; i < pCon.transform.childCount; i++)
         {
-            UISprite[i] = Player.wCon.weapons[i].UI;
+            UISprite[i] = pCon.weapons[i].UI;
         }
-        UI.sprite = UISprite[Player.wCon.curWeapon.index];
+        //UI.sprite = UISprite[pCon.curWeapon.index];
         ResetDurabilityUI();
     }
     public void ResetDurabilityUI()
     {
-        if (Player.wCon.curWeapon.breakable)
+        if (pCon.curWeapon.breakable)
         {
-            if (Player.wCon.curWeapon.maxDurability == 0)
+            if (pCon.curWeapon.maxDurability == 0)
             {
-                Debug.LogWarning(Player.wCon.curWeapon.name + "의 maxDurabillity는 0일 수 없습니다");
-                Player.wCon.curWeapon.maxDurability = 1;
+                Debug.LogWarning(pCon.curWeapon.name + "의 maxDurabillity는 0일 수 없습니다");
+                pCon.curWeapon.maxDurability = 1;
             } //LogWarning: {name}의 maxDurabillity는 0일 수 없습니다
-            durabillity.fillAmount = ((float) Player.wCon.curWeapon.durability) / Player.wCon.curWeapon.maxDurability;
+            durabillity.fillAmount = ((float) pCon.curWeapon.durability) / pCon.curWeapon.maxDurability;
         }
         else
         {
