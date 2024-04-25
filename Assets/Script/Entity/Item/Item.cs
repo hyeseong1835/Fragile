@@ -1,40 +1,33 @@
+using UnityEditor;
 using UnityEngine;
 
 public struct ItemData
 {
-    public string name;
-    public string[] weaponData;
-    
     public Vector2 pos;
 
-    public ItemData(string _name, string[] _weaponData, Vector2 _pos)
+    public WeaponData weaponData;
+
+    public ItemData(Vector2 _pos, WeaponData _weaponData)
     {
-        name = _name;
-        weaponData = _weaponData;
         pos = _pos;
+        weaponData = _weaponData;
     }
 }
 public class Item : MonoBehaviour
 {
-    public string weaponName;
     public Weapon weapon;
 
-    void Update()
-    {
- 
-    }
     public string GetData()
     {
         return JsonUtility.ToJson(
             new ItemData
             (
-                weapon.name,
-                weapon.GetData(),
-                transform.position
+                transform.position,
+                weapon.GetData()
             )
         );
-
     }
+    /*
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.layer == 6)
@@ -48,4 +41,5 @@ public class Item : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    */
 }

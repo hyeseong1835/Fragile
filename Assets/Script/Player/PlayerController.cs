@@ -96,7 +96,7 @@ public class PlayerController : Controller
         Attack();
 
         WheelSelect();
-        if (Input.GetKeyDown(KeyCode.P)) AddWeapon(Utility.LoadWeapon("WoodenSword"));
+        if (Input.GetKeyDown(KeyCode.P)) AddWeapon(Utility.SpawnWeapon("WoodenSword"));
     }
     void Mouse()
     {

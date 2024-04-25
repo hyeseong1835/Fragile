@@ -1,4 +1,5 @@
 using Sirenix.OdinInspector;
+using System.Security.Cryptography;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,19 +14,13 @@ public enum HandMode
 [ExecuteAlways]
 public class Grafic : MonoBehaviour
 {
-    #if UNITY_EDITOR
-    
-        [SerializeField] protected bool debug = false;
-    
-    #endif
-
     [VerticalGroup("Base")]
-    #region Base
+    #region Vertical Base
         
         [VerticalGroup("Base")][SerializeField] 
             protected Controller con;
     
-        [VerticalGroup("Base")][SerializeField] 
+        [VerticalGroup("Base")][SerializeField]
             protected Texture2D texture;
 
         [VerticalGroup("Base")][SerializeField]
@@ -34,64 +29,66 @@ public class Grafic : MonoBehaviour
     
     #endregion
 
-    [FoldoutGroup("State")]
-    #region State
 
-        [ShowInInspector]
-            public AnimationState animationState
-            {
-                get { return _animationState; }
-                set
-                {
-                    if (value != AnimationState.NONE)
-                    {
-                        if (this is OtherGrafic) ((OtherGrafic)this).StateSetToNONE();
-                    }
-
-                    _animationState = value;
-                } 
-            } AnimationState _animationState;
-
-    #endregion
 
     [FoldoutGroup("Hand")]
-    #region Hand
+    #region Foldout Hand
+
+        [SerializeField]
+            [Required][ChildGameObjectsOnly]
+            protected Transform hand;
 
         [HorizontalGroup("Hand/Horizontal")]
         #region Horizontal
-            
-            [SerializeField]
-                [Required][ChildGameObjectsOnly]
-                protected Transform hand;
 
-            [VerticalGroup("Hand/Horizontal/Vertical")]
-            #region Vertical
+            [VerticalGroup("Hand/Horizontal/Mode", PaddingBottom = 25)][ReadOnly]
+            #region Vertical Mode          
 
                     [LabelText("Mode")]
                     public HandMode handMode = HandMode.NONE;
 
-                [VerticalGroup("Hand/Horizontal/Vertical")]
-                    [ShowIf("debug")][LabelText("Target")]
+                [VerticalGroup("Hand/Horizontal/Mode")][ReadOnly]
+                    [LabelText("Target")]
                     public Transform targetTransform;
 
             #endregion
-
+    
         #endregion
+
     #endregion
 
-    [PropertySpace(10)]
-
     [FoldoutGroup("Animation")]
-    #region Animation
+    #region Foldout Animation
 
-        [FoldoutGroup("Animation/Stay")]
-        #region Stay
+        [BoxGroup("Animation/State", Order = 0)]
+        #region Box State
 
+            [ShowInInspector]
+                [LabelText("Animation")]
+                public AnimationState animationState
+                {
+                    get { return _animationState; }
+                    set
+                    {
+                        if (value != AnimationState.NONE)
+                        {
+                            if (this is OtherGrafic) ((OtherGrafic)this).StateSetToNONE();
+                        }
+
+                        _animationState = value;
+                    } 
+                } AnimationState _animationState;
+
+        #endregion
+
+        [FoldoutGroup("Animation/Stay", Order = 1)]
+        #region Foldout Stay
+
+            [PropertySpace(5)]
             [BoxGroup("Animation/Stay/Texture")]
-            #region Texture
+            #region Box Texture
 
                 [ShowInInspector]
-                    [ShowIf("debug")]
                     [TableMatrix(IsReadOnly = true, SquareCells = true, HorizontalTitle = "Rotation", VerticalTitle = "Frame")] Sprite[,] stayFrame;
                 
                 [PropertySpace(10)]
@@ -108,13 +105,12 @@ public class Grafic : MonoBehaviour
             #endregion
 
             [BoxGroup("Animation/Stay/Time")]
-            #region Time        
+            #region Box Time        
 
                 [HorizontalGroup("Animation/Stay/Time/Horizontal")]
                 #region Horizontal
 
                     [ShowInInspector]
-                        [ShowIf("debug")]
                         [Range(0, 0.9999f)] protected float stayTime = 0;
 
                     [HorizontalGroup("Animation/Stay/Time/Horizontal", width: 10, marginRight: 5, marginLeft: 2)][ShowInInspector]
@@ -140,16 +136,14 @@ public class Grafic : MonoBehaviour
         
         #endregion
         
-        [PropertySpace(10)]
+        [FoldoutGroup("Animation/Walk", Order = 2)]
+        #region Foldout Walk
 
-        [FoldoutGroup("Animation/Walk")]
-        #region Walk
-
+            [PropertySpace(5)]
             [BoxGroup("Animation/Walk/Texture")]    
-            #region Texture
+            #region Box Texture
                 
                 [ShowInInspector]
-                    [ShowIf("debug")]
                     [TableMatrix(IsReadOnly = true, SquareCells = true, HorizontalTitle = "Rotation", VerticalTitle = "Frame")] Sprite[,] walkFrame;
                 
                 [PropertySpace(10)]
@@ -169,17 +163,16 @@ public class Grafic : MonoBehaviour
             #endregion
 
             [BoxGroup("Animation/Walk/Time")]
-            #region Time
+            #region Box Time
 
                 [HorizontalGroup("Animation/Walk/Time/Horizontal")]
                 #region Horizontal
 
                     [SerializeField]
-                        [ShowIf("debug")]
                         [Range(0, 0.9999f)] protected float walkTime = 0;
 
                     [HorizontalGroup("Animation/Walk/Time/Horizontal", width: 10, marginRight: 5, marginLeft: 2)][ShowInInspector]
-                        [ShowIf("debug")][HideLabel] 
+                        [HideLabel] 
                         protected bool walkSimulate
                                         {
                                             get { return _walkSimulate; }
@@ -197,9 +190,11 @@ public class Grafic : MonoBehaviour
                     [LabelText("Time")]
                     float walkTimeScale = 0.1f;
 
-            #endregion
-        
-        #endregion
+    #endregion
+
+    #endregion
+    
+
     
     #endregion
 
@@ -247,16 +242,8 @@ public class Grafic : MonoBehaviour
             }
             else
             {
-                if (debug)
-                {
-                    staySimulate = true;
-                    walkSimulate = true;
-                }
-                else
-                {
-                    staySimulate = false;
-                    walkSimulate = false;
-                }
+                staySimulate = false;
+                walkSimulate = false;
             }
         }
     }
@@ -287,8 +274,7 @@ public class Grafic : MonoBehaviour
     /// </summary>
     /// <param name="target"></param>
     /// <param name="_IK">제어권 [true: 무기, false: 손]</param>
-    [HorizontalGroup("Hand/Hand")]
-    [ShowIf("debug")]
+    [HorizontalGroup("Hand/Horizontal")]
     [Button]
     public void HandLink(HandMode mode, Transform target)
     {

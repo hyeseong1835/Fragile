@@ -2,8 +2,24 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 
+
 public class Weapon_SwingAndThrow : Weapon
 {
+    public override WeaponData GetData()
+    {
+        return new WeaponData
+            (
+                weaponName,
+                durability,
+                null
+            );
+    }
+    public override void SetData(WeaponData data)
+    {
+        weaponName = data.name;
+        durability = data.durability;
+    }
+
     public Transform hand_obj;
 
     [Space(25)]
@@ -24,18 +40,7 @@ public class Weapon_SwingAndThrow : Weapon
     UnityEvent<GameObject, Collider2D> throw_enterEvent = new UnityEvent<GameObject, Collider2D>();
     UnityEvent<GameObject> throw_endEvent = new UnityEvent<GameObject>();
 
-    public override string[] GetData()
-    {
-        return new string[]
-        {
-            JsonUtility.ToJson(durability)
-        };
-    }
-    public override void SetData(string[] data)
-    {
-        durability = JsonUtility.FromJson<int>(data[0]);
-    }
-    
+
     protected override void WeaponAwake()
     {
         //Swing
@@ -86,7 +91,7 @@ public class Weapon_SwingAndThrow : Weapon
 
         public override void Mouse1Down() 
         {
-            Remove();
+            con.RemoveWeapon(this);
             StartCoroutine(Skill.Throw(con, throw_obj, 
                 throw_spinSpeed, throw_throwSpeed, throw_duration, 
                 enterEvent: throw_enterEvent, endEvent: throw_endEvent)
@@ -117,24 +122,16 @@ public class Weapon_SwingAndThrow : Weapon
             con.grafic.handMode = HandMode.NONE;
 
             breakParticle.SpawnParticle(swing_obj.transform.position, swing_obj.transform.rotation);
-            Remove();
+            con.RemoveWeapon(this);
             Destroy();
             return;
         }
         if (throw_obj.gameObject.activeInHierarchy)
         {
             breakParticle.SpawnParticle(throw_obj.transform.position, throw_obj.transform.rotation);
-            Remove();
+            con.RemoveWeapon(this);
             Destroy();
             return;
         }
-    }
-    protected override void OnWeaponRemoved()
-    {
-
-    }
-    protected override void OnWeaponDestroyed()
-    {
-
     }
 }

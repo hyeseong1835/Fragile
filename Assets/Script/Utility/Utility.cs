@@ -68,25 +68,24 @@ public static class Utility
     /// <param name="count"></param>
     /// <returns></returns>
 
-    public static Weapon LoadWeapon(string name)
+    public static Weapon SpawnWeapon(string weaponName)
     {
-        Debug.Log("LoadWeapon: {\"" + "WeaponObjPrefab/" + name + "\"}");
-        
         GameObject weaponObj = Object.Instantiate(
-            Resources.Load<GameObject>("WeaponObjPrefab/" + name)
+            Resources.Load<GameObject>("WeaponObjPrefab/" + weaponName)
         );
+        weaponObj.name = weaponName;
+
         Weapon weapon = weaponObj.GetComponent<Weapon>();
 
         return weapon;
     }
-    public static Weapon LoadWeapon(string name, string[] data)
+    public static Weapon LoadWeapon(WeaponData data)
     {
-        Weapon weapon = LoadWeapon(name);
+        Weapon weapon = SpawnWeapon(data.name);
         weapon.SetData(data);
 
         return weapon;
     }
-
 
     public static int FloorRotateToInt(float rotate, int count)
     {   

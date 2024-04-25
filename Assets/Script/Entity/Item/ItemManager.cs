@@ -1,52 +1,69 @@
 using Sirenix.OdinInspector;
-using System;
 using UnityEngine;
 
 [ExecuteAlways]
 public class ItemManager : MonoBehaviour
 {
-    static Transform droppedItem;
-    [ShowInInspector][ReadOnly] static GameObject itemPrefab;
-
-    void Update()
+    public static string itemSuffix = "(Item)";
+    
+    public static Item InstantiateEmptyItem(string weaponName)
     {
-        if (itemPrefab == null) itemPrefab = Resources.Load<GameObject>("ItemPrefab");
+        GameObject itemObj = new GameObject(weaponName + itemSuffix);
+        return itemObj.AddComponent<Item>();
     }
+    /// <summary>
+    /// ItemData -> Item
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
     public static Item LoadItem(ItemData data)
     {
-        GameObject itemObj = Instantiate(itemPrefab);
-        itemObj.name = "Item_" + data.name;
+        Item item = InstantiateEmptyItem(data.weaponData.name);
 
-        Item item = itemObj.GetComponent<Item>();
-        item.weaponName = data.name;
-
-        item.weapon = Utility.LoadWeapon(data.name, data.weaponData);
+        item.weapon = Utility.LoadWeapon(data.weaponData);
 
         item.transform.position = data.pos;
 
         return item;
     }
+    /// <summary>
+    /// {weaponName} -> Item
+    /// </summary>
+    /// <param name="weaponName"></param>
+    /// <returns></returns>
     public static Item SpawnItem(string weaponName)
     {
-        GameObject itemObj = Instantiate(itemPrefab);
-        itemObj.name = "Item_" + weaponName;
+        return WrapWeaponInItem(Utility.SpawnWeapon(weaponName));
+    }
+    /// <summary>
+    /// {weapon} -> Item
+    /// </summary>
+    /// <param name="weapon"></param>
+    /// <returns></returns>
+    public static Item WrapWeaponInItem(Weapon weapon)
+    {
+        Item item = InstantiateEmptyItem(weapon.weaponName);
+        item.weapon = weapon;
 
-        Item item = itemObj.GetComponent<Item>();
-        item.weaponName = weaponName;
-        item.weapon = Utility.LoadWeapon(weaponName);
+        weapon.transform.SetParent(item.transform);
+        weapon.state = WeaponState.ITEM;
 
         return item;
     }
-    public static Item WrapWeaponInItem(Weapon weapon)
+    /// <summary>
+    /// Item -> Weapon(NULL)
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    public static Weapon UnWrapItem(Item item)
     {
-        Item item = Instantiate(itemPrefab).GetComponent<Item>();
+        Weapon weapon = item.weapon;
 
-        weapon.transform.SetParent(item.transform);
-     
-        item.weaponName = weapon.weaponName;
-        item.weapon = weapon;
-        item.gameObject.name = "Item";
+        weapon.transform.SetParent(null);
+        weapon.state = WeaponState.NULL;
 
-        return item;
+        Destroy(item.gameObject);
+
+        return weapon;
     }
 }

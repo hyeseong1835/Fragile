@@ -14,8 +14,9 @@ interface OtherGrafic
 public class PlayerGrafic : Grafic, OtherGrafic
 {
     [PropertySpace(10)]
-    
-    [FoldoutGroup("State")][ShowInInspector]
+
+    [BoxGroup("Animation/State")][ShowInInspector]
+        [LabelText("Player")]
         public PlayerAnimationState playerState
         {
             get { return _playerState; }

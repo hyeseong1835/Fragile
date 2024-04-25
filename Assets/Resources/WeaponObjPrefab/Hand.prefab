@@ -365,9 +365,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 930685344b4decc47ae27c2f6c8b3c2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 0
   con: {fileID: 0}
-  weaponName: 
+  weaponName: Hand
+  state: 1
   dropable: 0
   item: {fileID: 0}
   UI: {fileID: 21300000, guid: 608a83976b59cec40addcc2aaade0f0a, type: 3}

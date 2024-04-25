@@ -3,6 +3,20 @@ using UnityEngine.Events;
 
 public class Weapon_Hand : Weapon
 {
+    public override WeaponData GetData()
+    {
+        return new WeaponData
+            (
+                weaponName,
+                durability
+            );
+    }
+    public override void SetData(WeaponData data)
+    {
+        weaponName = data.name;
+        durability = data.durability;
+    }
+
     [SerializeField] Transform hand;
 
     [SerializeField] TriggerObject swing_obj;
@@ -16,17 +30,6 @@ public class Weapon_Hand : Weapon
     {
         swing_enterEvent.AddListener(SwingHitEvent);
         swing_endEvent.AddListener(SwingEndEvent);
-    }
-    public override void SetData(string[] data)
-    {
-        
-    }
-    public override string[] GetData()
-    {
-        return new string[]
-        {
-
-        };
     }
     public override void Attack()
     {
@@ -56,17 +59,5 @@ public class Weapon_Hand : Weapon
         hand.gameObject.SetActive(true);
 
         con.grafic.HandLink(HandMode.ToHand, hand);
-    }
-    protected override void Break()
-    {
-        Debug.LogError("이게 왜 없어져 미친");
-    }
-    protected override void OnWeaponRemoved()
-    {
-        Debug.LogError("이게 왜 없어져 미친");
-    }
-    protected override void OnWeaponDestroyed()
-    {
-        Debug.LogError("이게 왜 없어져 미친");
     }
 }
