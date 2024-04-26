@@ -1,5 +1,7 @@
 using Sirenix.OdinInspector;
 using System.Collections;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 public enum AnimateState
@@ -18,10 +20,10 @@ public class PlayerController : Controller
         #region 마우스
     
             [HideInInspector] 
-                public Vector2 mousePos { get { return Input.mousePosition; } }
+                public Vector2 mousePos { get { return camCon.cam.ScreenToWorldPoint(Input.mousePosition); } }
     
             [HideInInspector] 
-                public Vector2 playerToMouse { get { return (camCon.cam.ScreenToWorldPoint(mousePos) - transform.position); } }
+                public Vector2 playerToMouse { get { return mousePos - (Vector2)transform.position; } }
     
             [HideInInspector] 
                 public float viewRotateZ { get { return Mathf.Atan2(playerToMouse.y, playerToMouse.x) * Mathf.Rad2Deg; } }
@@ -75,41 +77,65 @@ public class PlayerController : Controller
     Weapon lastNotHandWeapon;
 
     [SerializeField][ReadOnly] bool attackInput = false;
-    float attackInputAllowTime = 1;
+    [SerializeField] float attackInputAllowTime = 1;
     Coroutine curAttackInputCoroutine;
-    public float attackCool = 0;
+
+    #if UNITY_EDITOR
+    float attackCoolMax
+    {
+        get
+        {
+            if (curWeapon == null)
+            {
+                return 0;
+            }
+            else return curWeapon.attackCooltime;
+        }
+    }
+    #endif
+        [PropertyRange(0, "attackCoolMax")] public float attackCool = 0;
+
     public float moveSpeed = 1;
 
+    void Awake()
+    {
+
+    }
     void Update()
     {
-        if (mouse0Down) curWeapon.Mouse0Down();
-        if (mouse0Stay) curWeapon.Mouse0();
-        if (mouse0Up) curWeapon.Mouse0Up();
-        if (mouse1Down) curWeapon.Mouse1Down();
-        if (mouse1) curWeapon.Mouse1();
-        if (mouse1Up) curWeapon.Mouse1Up();
+        if(curWeapon != null)
+        {
+            if (mouse0Down) curWeapon.Mouse0Down();
+            if (mouse0Stay) curWeapon.Mouse0();
+            if (mouse0Up) curWeapon.Mouse0Up();
+            if (mouse1Down) curWeapon.Mouse1Down();
+            if (mouse1) curWeapon.Mouse1();
+            if (mouse1Up) curWeapon.Mouse1Up();
 
-        if (attack) Attack();
+            Attack();
+            if (attack) curWeapon.Attack();
+        }
 
         Mouse();
         Move();
-        Attack();
 
         WheelSelect();
         if (Input.GetKeyDown(KeyCode.P)) AddWeapon(Utility.SpawnWeapon("WoodenSword"));
     }
     void Mouse()
     {
-        targetPos = camCon.cam.ScreenToWorldPoint(mousePos);
+        targetPos = mousePos;
     }
     void Move()
     {
-        prevMoveVector = moveVector;
         moveVector = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
 
         transform.position += moveVector.normalized * Time.deltaTime * moveSpeed;
-        if (moveVector.magnitude > Mathf.Epsilon) moveRotate = Utility.Vector2ToRotate(moveVector);
-               
+        if (moveVector.magnitude > Mathf.Epsilon)
+        {
+            lastMoveVector = moveVector;
+            moveRotate = Utility.Vector2ToRotate(moveVector);
+        }      
     }
     void WheelSelect()
     {
@@ -167,15 +193,15 @@ public class PlayerController : Controller
 
         if ((attackInput) && attackCool == 0)
         {
-            attackInput = false;
-            attackCool = curWeapon.attackCooltime;
-
             attack = true;
+
+            attackCool = curWeapon.attackCooltime;
+            attackInput = false;
         }
         else attack = false;
         
         if (attackCool > 0) attackCool -= Time.deltaTime;
-        else if (attackCool < 0) attackCool = 0;
+        if (attackCool < 0) attackCool = 0;
     }
     void AttackInputCancel()
     {

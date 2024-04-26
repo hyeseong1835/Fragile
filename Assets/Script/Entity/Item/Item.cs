@@ -13,10 +13,20 @@ public struct ItemData
         weaponData = _weaponData;
     }
 }
+[ExecuteAlways]
 public class Item : MonoBehaviour
 {
     public Weapon weapon;
 
+    void Update()
+    {
+        if (weapon == null 
+            || weapon.transform.IsChildOf(transform) == false)
+        {
+            if (EditorApplication.isPlaying) Destroy(gameObject);
+            else DestroyImmediate(gameObject);
+        }
+    }
     public string GetData()
     {
         return JsonUtility.ToJson(

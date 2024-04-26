@@ -42,19 +42,21 @@ public class UI_Inventory : MonoBehaviour
     }
     public void ResetDurabilityUI()
     {
-        if (pCon.curWeapon.breakable)
+        //내구도가 없을 때
+        if (pCon.curWeapon.durability == -1)
+        {
+            //나중에 비파괴 전용 테두리도 만들어줘용
+            durabillity.fillAmount = 0;
+        }
+        //내구도가 있을 때
+        else
         {
             if (pCon.curWeapon.maxDurability == 0)
             {
                 Debug.LogWarning(pCon.curWeapon.name + "의 maxDurabillity는 0일 수 없습니다");
                 pCon.curWeapon.maxDurability = 1;
             } //LogWarning: {name}의 maxDurabillity는 0일 수 없습니다
-            durabillity.fillAmount = ((float) pCon.curWeapon.durability) / pCon.curWeapon.maxDurability;
-        }
-        else
-        {
-            //나중에 비파괴 전용 테두리도 만들어줘용
-            durabillity.fillAmount = 0;
+            durabillity.fillAmount = ((float)pCon.curWeapon.durability) / pCon.curWeapon.maxDurability;
         }
 
     }

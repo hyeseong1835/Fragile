@@ -56,9 +56,10 @@ public class Weapon_SwingAndThrow : Weapon
 
         public override void Attack()
         {
-            con.grafic.HandLink(HandMode.ToTarget, swing_obj.transform);
             hand_obj.gameObject.SetActive(false);
+
             swing_obj.gameObject.SetActive(true);
+            con.grafic.HandLink(HandMode.ToTarget, swing_obj.transform);
 
             StartCoroutine(Skill.Swing(con, swing_obj, 
                 Utility.GetTargetAngle(transform.position, con.targetPos), swing_spread, swing_duration, Skill.Curve.Quadratic, 
@@ -82,6 +83,7 @@ public class Weapon_SwingAndThrow : Weapon
         {
             swing_obj.gameObject.SetActive(false);
         
+            hand_obj.gameObject.SetActive(true);
             con.grafic.HandLink(HandMode.ToHand, hand_obj);
         }
     
@@ -112,9 +114,20 @@ public class Weapon_SwingAndThrow : Weapon
         {
             Destroy();
         }
-    
+
     #endregion
-    
+
+    protected override void OnUse()
+    {
+        hand_obj.gameObject.SetActive(true);
+        con.grafic.HandLink(HandMode.ToHand, hand_obj);
+    }
+    protected override void OnDeUse()
+    {
+        hand_obj.gameObject.SetActive(false);
+        con.grafic.HandLink(null);
+    }
+
     protected override void Break()
     {
         if (swing_obj.gameObject.activeInHierarchy)

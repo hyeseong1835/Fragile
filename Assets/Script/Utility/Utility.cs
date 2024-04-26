@@ -68,14 +68,25 @@ public static class Utility
     /// <param name="count"></param>
     /// <returns></returns>
 
-    public static Weapon SpawnWeapon(string weaponName)
+    public static Weapon SpawnWeapon(string weaponName, UnityEngine.Transform parent = null)
     {
-        GameObject weaponObj = Object.Instantiate(
+        GameObject weaponObj;
+        if (parent != null)
+        {
+            weaponObj = Object.Instantiate(
+            Resources.Load<GameObject>("WeaponObjPrefab/" + weaponName),
+                parent
+            );
+        }
+        else
+        {
+            weaponObj = Object.Instantiate(
             Resources.Load<GameObject>("WeaponObjPrefab/" + weaponName)
-        );
-        weaponObj.name = weaponName;
-
+            );
+        }
+        
         Weapon weapon = weaponObj.GetComponent<Weapon>();
+        weapon.state = WeaponState.NULL;
 
         return weapon;
     }

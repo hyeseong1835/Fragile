@@ -4,11 +4,9 @@ using UnityEngine;
 [ExecuteAlways]
 public class ItemManager : MonoBehaviour
 {
-    public static string itemSuffix = "(Item)";
-    
     public static Item InstantiateEmptyItem(string weaponName)
     {
-        GameObject itemObj = new GameObject(weaponName + itemSuffix);
+        GameObject itemObj = new GameObject("Item(" + weaponName + ")");
         return itemObj.AddComponent<Item>();
     }
     /// <summary>
@@ -46,6 +44,7 @@ public class ItemManager : MonoBehaviour
         item.weapon = weapon;
 
         weapon.transform.SetParent(item.transform);
+
         weapon.state = WeaponState.ITEM;
 
         return item;

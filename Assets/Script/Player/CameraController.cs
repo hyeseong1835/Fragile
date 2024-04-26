@@ -14,8 +14,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] 
         Transform target;
     
-    [HideInInspector]
-        [Required] 
+    [Required] 
         public Camera cam;
 
     [HorizontalGroup("Move")]
@@ -30,10 +29,6 @@ public class CameraController : MonoBehaviour
     #endregion
     public float posZ = -10;
 
-    void Awake()
-    {
-        cam = GetComponent<Camera>();
-    }
     void Update()
     {
         if (target == null) return;

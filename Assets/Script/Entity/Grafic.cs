@@ -124,7 +124,7 @@ public class Grafic : MonoBehaviour
 
                                 _staySimulate = value;
                             }
-                        }protected bool _staySimulate;
+                        } protected bool _staySimulate;
 
                 #endregion
 
@@ -204,12 +204,14 @@ public class Grafic : MonoBehaviour
     }
     void Start()
     {
+        animationState = AnimationState.STAY;
+
         staySimulate = true;
         walkSimulate = true;
     }
     void Update()
     {
-        if (Selection.Contains(this) == false)
+        if (EditorApplication.isPlaying == false && Selection.Contains(this) == false)
         {
             staySimulate = false;
             walkSimulate = false;
@@ -278,8 +280,6 @@ public class Grafic : MonoBehaviour
     [Button]
     public void HandLink(HandMode mode, Transform target)
     {
-        target.gameObject.SetActive(true);
-
         handMode = mode;
 
         switch (mode)
@@ -303,9 +303,6 @@ public class Grafic : MonoBehaviour
     {
         switch (handMode)
         {
-            case HandMode.NONE:
-                break;
-
             case HandMode.ToHand:
                 if (targetTransform == null) Debug.LogError("{TargetTransform} is null");
                 
@@ -335,6 +332,13 @@ public class Grafic : MonoBehaviour
 
                 body.sprite = stayFrame[Utility.FloorRotateToInt(con.moveRotate, 8), Mathf.FloorToInt(stayTime * stayFrameTextureSize.y)];
 
+                //Hand
+                if (handMode == HandMode.ToHand)
+                {
+                    hand.localPosition = new Vector3(con.lastMoveVector.normalized.x * 0.75f, con.lastMoveVector.normalized.y * 0.5f, 0);
+                    hand.localRotation = Quaternion.identity;
+                }
+                
                 break;
             case AnimationState.WALK:
                 //Body
@@ -345,9 +349,7 @@ public class Grafic : MonoBehaviour
                 //Hand
                 if (handMode == HandMode.ToHand)
                 {
-                    if (con.prevMoveVector.magnitude <= con.moveVector.magnitude || con.moveVector.magnitude >= 1)
-                        hand.localPosition = new Vector3(con.moveVector.normalized.x * 0.75f, con.moveVector.normalized.y * 0.5f, 0)
-                            + (new Vector3(con.moveVector.normalized.y, con.moveVector.normalized.x * -0.5f) * 0.25f);
+                    hand.localPosition = new Vector3(con.moveVector.normalized.x * 0.75f, con.moveVector.normalized.y * 0.5f, 0);
                     hand.localRotation = Quaternion.identity;
                 }
 

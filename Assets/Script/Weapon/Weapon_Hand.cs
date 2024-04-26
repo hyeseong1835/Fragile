@@ -17,7 +17,7 @@ public class Weapon_Hand : Weapon
         durability = data.durability;
     }
 
-    [SerializeField] Transform hand;
+    [SerializeField] Transform hand_obj;
 
     [SerializeField] TriggerObject swing_obj;
     [SerializeField] float swing_damage;
@@ -33,8 +33,8 @@ public class Weapon_Hand : Weapon
     }
     public override void Attack()
     {
+        swing_obj.gameObject.SetActive(true);
         con.grafic.HandLink(HandMode.ToTarget, swing_obj.transform);
-        hand.gameObject.SetActive(false);
 
         StartCoroutine(Skill.Swing(con, swing_obj, 
             Utility.GetTargetAngle(con.transform.position, con.targetPos), 
@@ -56,8 +56,19 @@ public class Weapon_Hand : Weapon
     public void SwingEndEvent(GameObject triggerObj) 
     {
         swing_obj.gameObject.SetActive(false);
-        hand.gameObject.SetActive(true);
 
-        con.grafic.HandLink(HandMode.ToHand, hand);
+        hand_obj.gameObject.SetActive(true);
+        con.grafic.HandLink(HandMode.ToHand, hand_obj);
+    }
+
+    protected override void OnUse()
+    {
+        hand_obj.gameObject.SetActive(true);
+        con.grafic.HandLink(HandMode.ToHand, hand_obj);
+    }
+    protected override void OnDeUse()
+    {
+        hand_obj.gameObject.SetActive(false);
+        con.grafic.HandLink(null);
     }
 }
