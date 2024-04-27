@@ -5,23 +5,6 @@ using UnityEngine.Events;
 
 public class Weapon_SwingAndThrow : Weapon
 {
-    public override WeaponData GetData()
-    {
-        return new WeaponData
-            (
-                weaponName,
-                durability,
-                null
-            );
-    }
-    public override void SetData(WeaponData data)
-    {
-        weaponName = data.name;
-        durability = data.durability;
-    }
-
-    public Transform hand_obj;
-
     [Space(25)]
     [Title("Swing")]
     [SerializeField] TriggerObject swing_obj;
@@ -81,6 +64,8 @@ public class Weapon_SwingAndThrow : Weapon
         }
         public void SwingEndEvent(GameObject triggerObj)
         {
+            if (state == WeaponState.REMOVED) Destroy();
+
             swing_obj.gameObject.SetActive(false);
         
             hand_obj.gameObject.SetActive(true);
@@ -117,17 +102,10 @@ public class Weapon_SwingAndThrow : Weapon
 
     #endregion
 
-    protected override void OnUse()
-    {
-        hand_obj.gameObject.SetActive(true);
-        con.grafic.HandLink(HandMode.ToHand, hand_obj);
-    }
     protected override void OnDeUse()
     {
-        hand_obj.gameObject.SetActive(false);
-        con.grafic.HandLink(null);
+        swing_obj.gameObject.SetActive(false);
     }
-
     protected override void Break()
     {
         if (swing_obj.gameObject.activeInHierarchy)

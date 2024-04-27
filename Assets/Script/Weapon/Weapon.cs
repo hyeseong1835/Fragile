@@ -43,14 +43,13 @@ public abstract class Weapon : MonoBehaviour
 
     public WeaponState state = WeaponState.NULL;
 
-    public bool dropable = true;
-
     [Title("Object")]
-    [ShowIf("dropable", true)]
-    [Required]
-        public Sprite item;
     [Required]
     public Sprite UI;
+    
+    [SerializeField] protected Transform hand_obj;
+    [SerializeField] protected BreakParticle breakParticle;
+
 
     [Title("Stat")]
     public float damage = 1;
@@ -63,10 +62,8 @@ public abstract class Weapon : MonoBehaviour
         [HideLabel] 
         public int maxDurability = 1;
 
-    [SerializeField] protected BreakParticle breakParticle = null;
-
     #if UNITY_EDITOR
-    public Transform parent = null;
+    [HideInInspector] public Transform parent = null;
     int prevChildIndex;
     #endif
 
@@ -122,61 +119,53 @@ public abstract class Weapon : MonoBehaviour
     {
         WeaponStart();
     }
-    void Update()
-    {
-        #if UNITY_EDITOR
-
-        switch (state)
-        {
-            case WeaponState.PREFAB:
-
-                if (transform.parent != null)
-                {
-                    transform.parent.position = transform.position;
-                    state = WeaponState.ITEM;
-                } //드롭다운 >> 부모 위치 수정(1회)
-
-                gameObject.name = weaponName + "[Prefab]";
-                break; 
-            case WeaponState.HOLD:
-                gameObject.name = "[Hold] ";
-                gameObject.name += weaponName + "(" + con.gameObject.name;
-                if (this == con.defaultWeapon) gameObject.name += "(Default)";
-                gameObject.name += ")";
-
-                WeaponUpdate();
-                break;
-            case WeaponState.INVENTORY:
-                gameObject.name = weaponName + "(" + con.gameObject.name;
-                if (this == con.defaultWeapon) gameObject.name += "(Default)";
-                gameObject.name += ")";
-
-                WeaponBackGroundUpdate();
-                break;
-            case WeaponState.ITEM:
-                gameObject.name = weaponName + "[Item]";
-                break;
-            case WeaponState.REMOVED:
-                gameObject.name = weaponName + "[Removed(" + con.gameObject.name + ")]";
-                break;
-            case WeaponState.NULL:
-                gameObject.name = weaponName + "[NULL]";
-                break;
-        }
-
-        #endif
-
-    }
     void LateUpdate()
     {
         #if UNITY_EDITOR
-        
-        #region 자동 디버깅
-         
-        AutoDebug();
 
-        #endregion
-        
+        if (PrefabUtility.GetPrefabInstanceStatus(gameObject) != PrefabInstanceStatus.NotAPrefab
+            || EditorApplication.isPlaying)
+        {
+            switch (state)
+            {
+                case WeaponState.PREFAB:
+
+                    if (transform.parent != null)
+                    {
+                        transform.parent.position = transform.position;
+                        state = WeaponState.ITEM;
+                    } //드롭다운 >> 부모 위치 수정(1회)
+
+                    gameObject.name = weaponName + "[Prefab]";
+                    break;
+                case WeaponState.HOLD:
+                    gameObject.name = "[Hold] ";
+                    gameObject.name += weaponName + "(" + con.gameObject.name;
+                    if (this == con.defaultWeapon) gameObject.name += "(Default)";
+                    gameObject.name += ")";
+
+                    WeaponUpdate();
+                    break;
+                case WeaponState.INVENTORY:
+                    gameObject.name = weaponName + "(" + con.gameObject.name;
+                    if (this == con.defaultWeapon) gameObject.name += "(Default)";
+                    gameObject.name += ")";
+
+                    WeaponBackGroundUpdate();
+                    break;
+                case WeaponState.ITEM:
+                    gameObject.name = weaponName + "[Item]";
+                    break;
+                case WeaponState.REMOVED:
+                    gameObject.name = weaponName + "[Removed(" + con.gameObject.name + ")]";
+                    break;
+                case WeaponState.NULL:
+                    gameObject.name = weaponName + "[NULL]";
+                    break;
+            }
+
+            AutoDebug();
+        }
         #endif
     }
     void OnDrawGizmos()
@@ -215,8 +204,20 @@ public abstract class Weapon : MonoBehaviour
 
     #region 데이터
     
-    public abstract WeaponData GetData();
-    public abstract void SetData(WeaponData data);
+    public virtual WeaponData GetData()
+    {
+        return new WeaponData
+            (
+                weaponName,
+                durability,
+                null
+            );
+    }
+    public virtual void SetData(WeaponData data)
+    {
+        weaponName = data.name;
+        durability = data.durability;
+    }
 
     #endregion
 
@@ -252,6 +253,8 @@ public abstract class Weapon : MonoBehaviour
                 Debug.LogWarning("이미 활성화되었습니다.");
             } //LogWarning: 이미 활성화되었습니다.
 
+            hand_obj.gameObject.SetActive(true);
+            con.grafic.HandLink(HandMode.ToHand, hand_obj);
             OnUse();
          
             state = WeaponState.HOLD;
@@ -263,6 +266,8 @@ public abstract class Weapon : MonoBehaviour
                 Debug.LogWarning("이미 비활성화되었습니다.");
             } //LogWarning: 이미 비활성화되었습니다.
 
+            hand_obj.gameObject.SetActive(false);
+            con.grafic.HandLink(null);
             OnDeUse();
         
             state = WeaponState.INVENTORY;

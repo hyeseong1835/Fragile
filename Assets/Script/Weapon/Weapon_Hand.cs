@@ -3,22 +3,6 @@ using UnityEngine.Events;
 
 public class Weapon_Hand : Weapon
 {
-    public override WeaponData GetData()
-    {
-        return new WeaponData
-            (
-                weaponName,
-                durability
-            );
-    }
-    public override void SetData(WeaponData data)
-    {
-        weaponName = data.name;
-        durability = data.durability;
-    }
-
-    [SerializeField] Transform hand_obj;
-
     [SerializeField] TriggerObject swing_obj;
     [SerializeField] float swing_damage;
     [SerializeField] float swing_spread;
@@ -59,16 +43,5 @@ public class Weapon_Hand : Weapon
 
         hand_obj.gameObject.SetActive(true);
         con.grafic.HandLink(HandMode.ToHand, hand_obj);
-    }
-
-    protected override void OnUse()
-    {
-        hand_obj.gameObject.SetActive(true);
-        con.grafic.HandLink(HandMode.ToHand, hand_obj);
-    }
-    protected override void OnDeUse()
-    {
-        hand_obj.gameObject.SetActive(false);
-        con.grafic.HandLink(null);
     }
 }

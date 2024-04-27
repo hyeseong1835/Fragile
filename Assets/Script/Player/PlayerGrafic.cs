@@ -6,12 +6,7 @@ public enum PlayerAnimationState
 {
     NONE, test1, test2, test3
 }
-interface OtherGrafic
-{
-    public void StateSetToNONE();
-    public void OtherAnimation();
-}
-public class PlayerGrafic : Grafic, OtherGrafic
+public class PlayerGrafic : Grafic
 {
     [PropertySpace(10)]
 
@@ -31,11 +26,11 @@ public class PlayerGrafic : Grafic, OtherGrafic
             }
         } PlayerAnimationState _playerState;
 
-    public void StateSetToNONE()
+    protected override void StateSetToNONE()
     {
         playerState = PlayerAnimationState.NONE;
     }
-    public void OtherAnimation()
+    protected override void OtherAnimation()
     {
         if (animationState != AnimationState.NONE) return;
 

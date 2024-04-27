@@ -103,7 +103,9 @@ public class PlayerController : Controller
     }
     void Update()
     {
-        if(curWeapon != null)
+        if (EditorApplication.isPlaying == false) return;
+
+        if (curWeapon != null)
         {
             if (mouse0Down) curWeapon.Mouse0Down();
             if (mouse0Stay) curWeapon.Mouse0();
@@ -130,7 +132,7 @@ public class PlayerController : Controller
     {
         moveVector = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
 
-        transform.position += moveVector.normalized * Time.deltaTime * moveSpeed;
+        transform.position += (Vector3)moveVector.normalized * Time.deltaTime * moveSpeed;
         if (moveVector.magnitude > Mathf.Epsilon)
         {
             lastMoveVector = moveVector;

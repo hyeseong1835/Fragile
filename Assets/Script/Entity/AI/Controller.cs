@@ -44,14 +44,14 @@ public abstract class Controller : MonoBehaviour
     { 
         get 
         {
-            return new Vector3(
+            return new Vector2(
                 targetPos.x - transform.position.x,
-                targetPos.y - transform.position.y,
-                0).normalized; 
+                targetPos.y - transform.position.y).normalized; 
         } 
     }
-    public Vector3 moveVector;
-    [HideInInspector] public Vector3 lastMoveVector;
+
+    public Vector2 moveVector = new Vector3(0.5f, 0, 0);
+    public Vector2 lastMoveVector = new Vector3(0.5f, 0, 0);
 
     [Range(0f, 360f)] public float moveRotate = 0;
     

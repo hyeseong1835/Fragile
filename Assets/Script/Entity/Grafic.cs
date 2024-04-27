@@ -12,7 +12,7 @@ public enum HandMode
     NONE, ToHand, ToTarget
 }
 [ExecuteAlways]
-public class Grafic : MonoBehaviour
+public abstract class Grafic : MonoBehaviour
 {
     [VerticalGroup("Base")]
     #region Vertical Base
@@ -72,7 +72,7 @@ public class Grafic : MonoBehaviour
                     {
                         if (value != AnimationState.NONE)
                         {
-                            if (this is OtherGrafic) ((OtherGrafic)this).StateSetToNONE();
+                            StateSetToNONE();
                         }
 
                         _animationState = value;
@@ -211,25 +211,24 @@ public class Grafic : MonoBehaviour
     }
     void Update()
     {
-        if (EditorApplication.isPlaying == false && Selection.Contains(this) == false)
-        {
-            staySimulate = false;
-            walkSimulate = false;
-        }
-
+        //애니메이션 재생
         if (staySimulate) AnimationUpdate(ref stayTime, stayTimeScale);
         if (walkSimulate) AnimationUpdate(ref walkTime, walkTimeScale);
-
+        
+        //그리기
         Animation();
-        if (this is OtherGrafic) ((OtherGrafic)this).OtherAnimation();
+        OtherAnimation();
 
+        //플레이 모드
         if (EditorApplication.isPlaying)
         {
             StateUpdate();
             Hand();
         }
+        //에디터 모드
         else
         {
+            //선택 시 즉시 로드
             if (Selection.Contains(gameObject) || Selection.Contains(transform.parent.gameObject))
             {
                 if (stayFrame == null)
@@ -259,6 +258,7 @@ public class Grafic : MonoBehaviour
         if (animationState == AnimationState.WALK &&
             con.moveVector.magnitude <= Mathf.Epsilon) animationState = AnimationState.STAY;
     }
+    protected abstract void StateSetToNONE();
     /// <summary>
     /// 연결 해제
     /// </summary>
@@ -324,7 +324,7 @@ public class Grafic : MonoBehaviour
         switch (animationState)
         {
             case AnimationState.NONE:
-                if (this is OtherGrafic) ((OtherGrafic)this).OtherAnimation();
+                OtherAnimation();
                 break;
             case AnimationState.STAY:
                 //Body
@@ -356,6 +356,8 @@ public class Grafic : MonoBehaviour
                 break;
         }
     }
+
+    protected abstract void OtherAnimation();
     void AnimationUpdate(ref float time, float timeScale)
     {
         time += Time.deltaTime / timeScale;
