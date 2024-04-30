@@ -1,9 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 using UnityEngine.Events;
-using Unity.VisualScripting;
 
 public static class Skill
 {
@@ -24,7 +21,7 @@ public static class Skill
     /// <param name="exitEvent">나갔을 때</param>
     /// <param name="endEvent">시전이 끝났을 때</param>
     /// <returns></returns>
-    public static IEnumerator Swing(Controller con, TriggerObject triggerObj, float startRotateZ, float spread, float duration, Curve swingCurve,
+    public static IEnumerator Swing(Controller con, TriggerObject triggerObj, float spread, float duration, Curve swingCurve,
         UnityEvent<GameObject, Collider2D> enterEvent = null,
         UnityEvent<GameObject, Collider2D> stayEvent = null,
         UnityEvent<GameObject, Collider2D> exitEvent = null,
@@ -34,10 +31,13 @@ public static class Skill
         triggerObj.SetEvent(enterEvent, stayEvent, exitEvent);
 
         //스킬
-        triggerObj.transform.position = con.transform.position + (Vector3)con.targetDir * 0.5f;
+        triggerObj.transform.position = con.transform.position + (Vector3)con.center;
+
+        float startRotateZ = Utility.Vector2ToDegree(con.targetDir);
 
         float time = 0;
         float t = 0;
+        float rotateZ = startRotateZ;
         while (t < 1)
         {
             switch (swingCurve)
@@ -49,15 +49,21 @@ public static class Skill
                     t = time * time;
                     break;
             }
-            triggerObj.transform.rotation = Quaternion.Euler(0, 0, startRotateZ + spread * 0.5f - t * spread - 90);
-            triggerObj.transform.position = con.transform.position + new Vector3(
-                Mathf.Cos((startRotateZ + spread * 0.5f - t * spread) * Mathf.Deg2Rad),
-                Mathf.Sin((startRotateZ + spread * 0.5f - t * spread) * Mathf.Deg2Rad) * 0.5f, 0).normalized * 0.5f;
+            rotateZ = startRotateZ + spread * 0.5f - t * spread - 90;
+            triggerObj.transform.rotation = Quaternion.Euler(0, 0, rotateZ);
+            triggerObj.transform.position = (Vector2)con.transform.position + con.center
+                + Utility.Vector2TransformToEllipse(
+                    Utility.RadianToVector2((rotateZ + 90) * Mathf.Deg2Rad)
+                    , 0.75f, 0.5f);
 
             time += Time.deltaTime / duration;
             yield return null;
         }
-        triggerObj.transform.rotation = Quaternion.Euler(0, 0, startRotateZ - spread * 0.5f);
+        triggerObj.transform.rotation = Quaternion.Euler(0, 0, startRotateZ - spread * 0.5f - 90);
+        triggerObj.transform.position = (Vector2)con.transform.position + con.center
+                + Utility.Vector2TransformToEllipse(
+                    Utility.RadianToVector2((rotateZ + 90) * Mathf.Deg2Rad)
+                    , 0.75f, 0.5f);
 
         yield return null;
 

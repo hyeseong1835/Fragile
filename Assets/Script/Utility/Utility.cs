@@ -1,18 +1,10 @@
-using Sirenix.OdinInspector;
-using System.Collections;
-using System.Collections.Generic;
+using System;
+using UnityEditor;
 using UnityEngine;
 using static UnityEngine.RuleTile.TilingRuleOutput;
-using System.IO;
 
-public static class Utility
+public static class Utility 
 {
-    public static float rotateMax = 360f - Mathf.Epsilon;
-    public static float GetTargetAngle(Vector2 origin, Vector2 target)
-    {
-        Vector2 dir = target - origin;
-        return Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-    }
     /// <summary>
     /// 시작 스프라이트 좌표에서 배열 크기만큼 오른쪽 아래로 불러오는 함수
     /// </summary>
@@ -54,9 +46,9 @@ public static class Utility
                 tex.Apply();
 
                 frames[x, y] = Sprite.Create(
-                    tex, 
-                    new Rect(0, 0, spritePixelWidth, spritePixelHeight), 
-                    Vector2.one * 0.5f);
+                    tex,
+                    new Rect(0, 0, spritePixelWidth, spritePixelHeight),
+                    new Vector2(0.5f, 0));
             }
         }
         return frames;
@@ -73,14 +65,14 @@ public static class Utility
         GameObject weaponObj;
         if (parent != null)
         {
-            weaponObj = Object.Instantiate(
+            weaponObj = UnityEngine.Object.Instantiate(
             Resources.Load<GameObject>("WeaponObjPrefab/" + weaponName),
                 parent
             );
         }
         else
         {
-            weaponObj = Object.Instantiate(
+            weaponObj = UnityEngine.Object.Instantiate(
             Resources.Load<GameObject>("WeaponObjPrefab/" + weaponName)
             );
         }
@@ -111,11 +103,70 @@ public static class Utility
     /// </summary>
     /// <param name="vector"></param>
     /// <returns>0 <= return < 360</returns>
-    public static float Vector2ToRotate(Vector2 vector)
+    public static float Vector2ToDegree(Vector2 vector)
     {
         float rotate = Mathf.Atan2(vector.y, vector.x) * Mathf.Rad2Deg;
         
         if (rotate < 0) return rotate + 360;
         return rotate;
+    }
+    public static Vector2 Vector2TransformToEllipse(Vector2 vector, float x, float y)
+    {
+        return new Vector2(vector.x * x, vector.y * y);
+    }
+    public static Vector2 RadianToVector2(float radian)
+    {
+        return new Vector2(Mathf.Cos(radian), Mathf.Sin(radian));
+    }
+    public static void Destroy(UnityEngine.Object obj)
+    {
+#if UNITY_EDITOR
+        if (EditorApplication.isPlaying) Destroy(obj);
+        else UnityEngine.Object.DestroyImmediate(obj);
+#else
+            Destroy(obj);
+#endif
+    }
+    public enum EditorState
+    {
+        UNKNOWN, BUILDPLAY, EDITORPLAY, EDITORPLAYPAUSE, EDITORPLAYCOMPILING, PREFAB
+    }
+    public enum StateType
+    {
+        ISPLAY, ISEDITOR
+    }
+    public static EditorState GetEditorState(GameObject gameObject = null)
+    {
+#if UNITY_EDITOR
+        if (EditorApplication.isPlaying) return EditorState.EDITORPLAY;
+        else if (gameObject != null && PrefabUtility.GetPrefabInstanceStatus(gameObject) == PrefabInstanceStatus.NotAPrefab) return EditorState.PREFAB;
+
+        if (EditorApplication.isPaused) return EditorState.EDITORPLAYPAUSE;
+
+        if (EditorApplication.isCompiling) return EditorState.EDITORPLAYCOMPILING;
+
+
+        return EditorState.UNKNOWN;
+#else
+        return EditorState.BUILDPLAY;
+#endif
+    }
+    public static bool GetEditorStateByType(StateType type)
+    {
+        EditorState state = GetEditorState();
+        switch (type)
+        {
+            case StateType.ISPLAY:
+                return (state == EditorState.EDITORPLAY 
+                    || state == EditorState.BUILDPLAY);
+            case StateType.ISEDITOR:
+#if UNITY_EDITOR
+                return true;
+#else
+                return false;
+#endif
+            default:
+                return false;
+        }
     }
 }

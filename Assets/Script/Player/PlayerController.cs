@@ -1,7 +1,7 @@
 using Sirenix.OdinInspector;
-using System.Collections;
-using Unity.VisualScripting;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 public enum AnimateState
@@ -103,7 +103,7 @@ public class PlayerController : Controller
     }
     void Update()
     {
-        if (EditorApplication.isPlaying == false) return;
+        if (Utility.GetEditorStateByType(Utility.StateType.ISPLAY) == false) return;
 
         if (curWeapon != null)
         {
@@ -130,14 +130,27 @@ public class PlayerController : Controller
     }
     void Move()
     {
-        moveVector = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
 
-        transform.position += (Vector3)moveVector.normalized * Time.deltaTime * moveSpeed;
-        if (moveVector.magnitude > Mathf.Epsilon)
+        if (Input.GetButton("Horizontal") == false && Input.GetButton("Vertical") == false)
         {
-            lastMoveVector = moveVector;
-            moveRotate = Utility.Vector2ToRotate(moveVector);
-        }      
+            if (moveVector == Vector2.zero)
+            {
+
+            }
+            else
+            {
+                lastMoveVector = moveVector;
+                lastMoveRotate = Utility.Vector2ToDegree(moveVector);
+                moveVector = Vector2.zero;
+            }
+        }
+        else
+        {
+            moveVector = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
+            moveRotate = Utility.Vector2ToDegree(moveVector);
+
+            transform.position += (Vector3)moveVector.normalized * Time.deltaTime * moveSpeed;
+        }
     }
     void WheelSelect()
     {

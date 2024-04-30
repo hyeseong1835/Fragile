@@ -5,6 +5,8 @@ using UnityEngine.Events;
 
 public class Weapon_SwingAndThrow : Weapon
 {
+    [SerializeField] Transform hand_obj;
+
     [Space(25)]
     [Title("Swing")]
     [SerializeField] TriggerObject swing_obj;
@@ -34,18 +36,28 @@ public class Weapon_SwingAndThrow : Weapon
         throw_enterEvent.AddListener(ThrowHitEvent);
         throw_endEvent.AddListener(ThrowEndEvent);
     }
+    protected override void OnUse()
+    {
+        hand_obj.gameObject.SetActive(true);
+        con.grafic.hand.HandLink(hand_obj, HandMode.ToHand);
+    }
+    protected override void OnDeUse()
+    {
+        hand_obj.gameObject.SetActive(false);
+        con.grafic.hand.HandLink(null);
+    }
 
     #region Attack
 
-        public override void Attack()
+    public override void Attack()
         {
             hand_obj.gameObject.SetActive(false);
 
             swing_obj.gameObject.SetActive(true);
-            con.grafic.HandLink(HandMode.ToTarget, swing_obj.transform);
+            con.grafic.hand.HandLink(swing_obj.transform, HandMode.ToTarget);
 
             StartCoroutine(Skill.Swing(con, swing_obj, 
-                Utility.GetTargetAngle(transform.position, con.targetPos), swing_spread, swing_duration, Skill.Curve.Quadratic, 
+                swing_spread, swing_duration, Skill.Curve.Quadratic, 
                 enterEvent: swing_enterEvent, endEvent: swing_endEvent)
                 );
         }
@@ -69,7 +81,7 @@ public class Weapon_SwingAndThrow : Weapon
             swing_obj.gameObject.SetActive(false);
         
             hand_obj.gameObject.SetActive(true);
-            con.grafic.HandLink(HandMode.ToHand, hand_obj);
+            con.grafic.hand.HandLink(hand_obj, HandMode.ToHand);
         }
     
     #endregion
@@ -97,20 +109,18 @@ public class Weapon_SwingAndThrow : Weapon
         }
         public void ThrowEndEvent(GameObject triggerObj)
         {
+            Destroy(throw_obj.gameObject);
+
             Destroy();
         }
 
     #endregion
 
-    protected override void OnDeUse()
-    {
-        swing_obj.gameObject.SetActive(false);
-    }
     protected override void Break()
     {
         if (swing_obj.gameObject.activeInHierarchy)
         {
-            con.grafic.handMode = HandMode.NONE;
+            con.grafic.hand.HandLink(null);
 
             breakParticle.SpawnParticle(swing_obj.transform.position, swing_obj.transform.rotation);
             con.RemoveWeapon(this);

@@ -1,6 +1,7 @@
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -39,22 +40,29 @@ public abstract class Controller : MonoBehaviour
         public Transform weaponHolder;
     [ShowInInspector] public static string weaponHolderName { get { return "WeaponHolder"; } }
 
-    public Vector2 targetPos;
-    public Vector2 targetDir 
-    { 
-        get 
-        {
-            return new Vector2(
-                targetPos.x - transform.position.x,
-                targetPos.y - transform.position.y).normalized; 
-        } 
-    }
+    public Vector2 center = new Vector2(0, 0.5f);
 
-    public Vector2 moveVector = new Vector3(0.5f, 0, 0);
-    public Vector2 lastMoveVector = new Vector3(0.5f, 0, 0);
+    [VerticalGroup("Input")]
+    #region Vertical Input
 
-    [Range(0f, 360f)] public float moveRotate = 0;
+        public Vector2 moveVector = new Vector3(0.5f, 0, 0);                        [VerticalGroup("Input")]
+        public Vector2 lastMoveVector = new Vector3(0.5f, 0, 0);                    [VerticalGroup("Input")]
+        public Vector2 targetPos;                                                   [VerticalGroup("Input")]
+        [ShowInInspector] public Vector2 targetDir { get { 
+            return (targetPos - ((Vector2)transform.position + center)).normalized; 
+        } }
     
+    #endregion
+
+    #if UNITY_EDITOR
+    bool inspectorShowLastMoveVector{ get { return (moveVector == Vector2.zero); } }
+    #endif
+    [HideIf("inspectorShowLastMoveVector")][Range(0f, 360f)] public float moveRotate = 0;
+    [ShowIf("inspectorShowLastMoveVector")][Range(0f, 360f)] public float lastMoveRotate = 0;
+
+
+
+
     //입력
     public bool attack = false;
     public bool special = false;
@@ -66,13 +74,19 @@ public abstract class Controller : MonoBehaviour
         [HorizontalGroup("Weapon/DefaultWeapon/Horizontal")]
         #region Horizontal DefaultWeapon
 
-            [VerticalGroup("Weapon/DefaultWeapon/Horizontal/Vertical", PaddingBottom = 25)][ShowInInspector][ReadOnly]
-                [Required]
+            [ShowInInspector][ReadOnly][Required]
+            [VerticalGroup("Weapon/DefaultWeapon/Horizontal/Vertical", PaddingBottom = 25)]
+            #region Vertical    
+            
                 public Weapon defaultWeapon;
+
+            #endregion
 
             #if UNITY_EDITOR
             [HorizontalGroup("Weapon/DefaultWeapon/Horizontal", width:150)]
-                [Button(name:"Set")]
+            [Button(name:"Set")]
+            #region Button Set
+
                 void SetDefaultWeapon(int index)
                 {
                     // 제거(-1)
@@ -105,13 +119,14 @@ public abstract class Controller : MonoBehaviour
                         defaultWeapon.transform.SetAsFirstSibling();
                     }
                 }
-
+    
+            #endregion
             #endif
 
         #endregion
 
 
-        [HorizontalGroup("Weapon/CurWeapon")]
+    [HorizontalGroup("Weapon/CurWeapon")]
         #region Horizontal CurWeapon
 
             [VerticalGroup("Weapon/CurWeapon/Vertical", PaddingBottom = 25)]
@@ -126,7 +141,8 @@ public abstract class Controller : MonoBehaviour
                 {
                     if (transform.childCount == 0) return;
 
-                    SelectWeapon(weaponHolder.GetChild(index).GetComponent<Weapon>());
+                    if(index == 0) SelectWeapon(defaultWeapon);
+                    else SelectWeapon(weapons[index - 1]);
                 }
 
             #endif
@@ -147,17 +163,6 @@ public abstract class Controller : MonoBehaviour
             
                     [HideLabel]
                     public int inventorySize = 0;
-                    /*{
-                        get { return defaultInventorySize; }
-                        set
-                        {
-                            for (int i = weapons.Count - 1; i >= defaultInventorySize; i--)
-                            {
-                                DropWeapon(weapons[i]);
-                            }
-                            defaultInventorySize = value;
-                        }
-                    } int defaultInventorySize;*/
 
                 #if UNITY_EDITOR
                 [VerticalGroup("Weapon/Inventory/Horizontal/Manage")]
@@ -186,22 +191,6 @@ public abstract class Controller : MonoBehaviour
                         
                         defaultWeapon = null;
                         curWeapon = null;
-
-                        //확실히 제거 (즉시 파괴 때문에 인덱스 꼬임)
-                        /*
-                        Transform weaponHolder = transform.Find(Weapon.weaponHolderName);
-                        for (int i = 0; i < weaponHolder.childCount; i++)
-                        {
-                            if (EditorApplication.isPlaying) Destroy(weaponHolder.GetChild(i).gameObject);
-                            else DestroyImmediate(weaponHolder.GetChild(i).gameObject);
-                        }
-                        foreach(Weapon weapon in weapons)
-                        {
-                            weapons.Remove(weapon); 
-                        }
-                        if (weapons.Count > 0) Debug.LogWarning(weapons.Count + "개가 무기 리스트에서 제거되지 않음.");
-                        weapons.Clear();
-                        */
                     }
                 #endif
 
@@ -213,9 +202,9 @@ public abstract class Controller : MonoBehaviour
             #region Horizontal Manage
 
                     [Button(name: "Add")]
-                    void AddWeaponInInspector(string weaponName)
+                    void AddWeaponInInspector(string name)
                     {
-                        AddWeapon(Utility.SpawnWeapon(weaponName));
+                        AddWeapon(Utility.SpawnWeapon(name));
                     }
 
                 [HorizontalGroup("Weapon/Inventory/Manage")]
@@ -392,8 +381,6 @@ public abstract class Controller : MonoBehaviour
     /// <param name="weapon"></param>
     public void RemoveWeapon(Weapon weapon)
     {
-        Debug.Log("Remove: "+weapon);
-        //기본 무기를 제거할 때
         if (weapon == defaultWeapon)
         {
             Debug.LogError("기본 무기는 제거할 수 없음");
@@ -409,46 +396,44 @@ public abstract class Controller : MonoBehaviour
         if (weapon.state == WeaponState.HOLD)
         {
             weapon.SetUse(false);
+
         } //HOLD -> INVENTORY
 
-        if (weapon.state == WeaponState.INVENTORY)
+        else if (weapon.state == WeaponState.INVENTORY)
         {
-            int index = weapons.IndexOf(weapon);
 
-            weapon.OnWeaponRemoved();
-            
-            weapons.Remove(weapon);
+        }
+        else return;
 
-            weapon.transform.parent = null;
-            weapon.state = WeaponState.REMOVED;
+        int index = weapons.IndexOf(weapon);
+        weapon.OnWeaponRemoved();
 
-            //무기 선택
-            if (index == weapons.Count) //마지막 순서의 무기일 때
+        weapons.Remove(weapon);
+
+        weapon.transform.parent = null;
+        weapon.state = WeaponState.REMOVED;
+
+        //무기 선택
+        if (index == weapons.Count) //마지막 순서의 무기일 때
+        {
+            if (weapons.Count == 0)
             {
-                if (weapons.Count == 0)
-                {
-                    if (defaultWeapon != null) SelectWeapon(defaultWeapon);
-                }
-                else SelectWeapon(weapons[0]);
+                if (defaultWeapon != null) SelectWeapon(defaultWeapon);
             }
-            else
-            {
-                if (weapons[index] != null) SelectWeapon(weapons[index]);
-                else if (defaultWeapon != null) SelectWeapon(defaultWeapon);
-            }
-            return;
+            else SelectWeapon(weapons[0]);
+        }
+        else
+        {
+            if (weapons[index] != null) SelectWeapon(weapons[index]);
+            else if (defaultWeapon != null) SelectWeapon(defaultWeapon);
         }
     }
 
     protected void SelectWeapon(Weapon weapon)
     {
-        if (weapons.Contains(weapon) == false)
+        if (weapon != defaultWeapon && weapons.Contains(weapon) == false)
         {
-            if (curWeapon.state == WeaponState.HOLD) curWeapon.SetUse(false);
-            if (defaultWeapon != null)
-            {
-                if (defaultWeapon.state == WeaponState.INVENTORY) defaultWeapon.SetUse(true);
-            }
+            Debug.LogError("{" + weapon.name + "}을(를) 인벤토리에서 찾을 수 없어 선택하지 못함.");
             return;
         } //LogError: {weapon.name}을(를) 인벤토리에서 찾을 수 없어 선택하지 못함. >> return
 
@@ -456,5 +441,18 @@ public abstract class Controller : MonoBehaviour
 
         curWeapon = weapon;
         if (curWeapon.state == WeaponState.INVENTORY) weapon.SetUse(true); //선택한 무기 활성화
+    }
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = new Color(0, 1, 0, 0.25f);
+        Gizmos.DrawRay(transform.position, lastMoveVector.normalized);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawRay(transform.position, moveVector.normalized);
+
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position + (Vector3)center, targetPos);
+        Gizmos.DrawWireSphere(targetPos, 0.1f);
     }
 }

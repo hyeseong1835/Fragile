@@ -1,4 +1,6 @@
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 public struct ItemData
@@ -23,8 +25,12 @@ public class Item : MonoBehaviour
         if (weapon == null 
             || weapon.transform.IsChildOf(transform) == false)
         {
+#if UNITY_EDITOR
             if (EditorApplication.isPlaying) Destroy(gameObject);
             else DestroyImmediate(gameObject);
+#else
+            Destroy(gameObject);
+#endif
         }
     }
     public string GetData()

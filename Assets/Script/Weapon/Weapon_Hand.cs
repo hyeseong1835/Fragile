@@ -15,13 +15,16 @@ public class Weapon_Hand : Weapon
         swing_enterEvent.AddListener(SwingHitEvent);
         swing_endEvent.AddListener(SwingEndEvent);
     }
+    protected override void OnUse()
+    {
+        con.grafic.hand.HandLink(null);
+    }
     public override void Attack()
     {
         swing_obj.gameObject.SetActive(true);
-        con.grafic.HandLink(HandMode.ToTarget, swing_obj.transform);
+        con.grafic.hand.HandLink(swing_obj.transform, HandMode.ToTarget);
 
         StartCoroutine(Skill.Swing(con, swing_obj, 
-            Utility.GetTargetAngle(con.transform.position, con.targetPos), 
             swing_spread, swing_duration, Skill.Curve.Quadratic,
             enterEvent: swing_enterEvent, endEvent: swing_endEvent)
             );
@@ -40,8 +43,6 @@ public class Weapon_Hand : Weapon
     public void SwingEndEvent(GameObject triggerObj) 
     {
         swing_obj.gameObject.SetActive(false);
-
-        hand_obj.gameObject.SetActive(true);
-        con.grafic.HandLink(HandMode.ToHand, hand_obj);
+        con.grafic.hand.HandLink(null);
     }
 }

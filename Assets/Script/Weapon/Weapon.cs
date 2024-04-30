@@ -1,12 +1,9 @@
 using Sirenix.OdinInspector;
+#if UNITY_EDITOR
 using UnityEditor;
-using UnityEditor.SceneManagement;
+#endif
 using UnityEngine;
-using UnityEngine.Timeline;
 using UnityEngine.UI;
-using static UnityEngine.UIElements.UxmlAttributeDescription;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 
 public struct WeaponData
 {
@@ -47,7 +44,6 @@ public abstract class Weapon : MonoBehaviour
     [Required]
     public Sprite UI;
     
-    [SerializeField] protected Transform hand_obj;
     [SerializeField] protected BreakParticle breakParticle;
 
 
@@ -69,10 +65,9 @@ public abstract class Weapon : MonoBehaviour
 
     void Awake()
     {
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         //프리팹 수정 창이 아닌 경우
-        if (PrefabUtility.GetPrefabInstanceStatus(gameObject) != PrefabInstanceStatus.NotAPrefab
-            || EditorApplication.isPlaying)
+        if (Utility.GetEditorState(gameObject: gameObject) != Utility.EditorState.PREFAB)
         {
             if (state == WeaponState.PREFAB)
             {
@@ -88,8 +83,7 @@ public abstract class Weapon : MonoBehaviour
                         {
                             Debug.LogWarning("인벤토리가 가득참.");
 
-                            if (EditorApplication.isPlaying) Destroy(gameObject);
-                            else DestroyImmediate(gameObject);
+                            Utility.Destroy(gameObject);
 
                             return;
                         }
@@ -110,9 +104,7 @@ public abstract class Weapon : MonoBehaviour
                 }
             }
         } //드롭 다운 위치에 따른 빠른 수정
-        
-        #endif
-
+#endif
         WeaponAwake();
     }
     void Start()
@@ -123,8 +115,7 @@ public abstract class Weapon : MonoBehaviour
     {
         #if UNITY_EDITOR
 
-        if (PrefabUtility.GetPrefabInstanceStatus(gameObject) != PrefabInstanceStatus.NotAPrefab
-            || EditorApplication.isPlaying)
+        if (Utility.GetEditorState(gameObject: gameObject) != Utility.EditorState.PREFAB)
         {
             switch (state)
             {
@@ -253,8 +244,6 @@ public abstract class Weapon : MonoBehaviour
                 Debug.LogWarning("이미 활성화되었습니다.");
             } //LogWarning: 이미 활성화되었습니다.
 
-            hand_obj.gameObject.SetActive(true);
-            con.grafic.HandLink(HandMode.ToHand, hand_obj);
             OnUse();
          
             state = WeaponState.HOLD;
@@ -266,8 +255,6 @@ public abstract class Weapon : MonoBehaviour
                 Debug.LogWarning("이미 비활성화되었습니다.");
             } //LogWarning: 이미 비활성화되었습니다.
 
-            hand_obj.gameObject.SetActive(false);
-            con.grafic.HandLink(null);
             OnDeUse();
         
             state = WeaponState.INVENTORY;
@@ -296,17 +283,15 @@ public abstract class Weapon : MonoBehaviour
     {
         //PREFAB >> Destroy(gameObject) >> return
         if (state == WeaponState.PREFAB)
-        {
-            if (EditorApplication.isPlaying) DestroyImmediate(gameObject);
-            else DestroyImmediate(gameObject);
+        {   
+            DestroyImmediate(gameObject);
             return;
         }
 
         //ITEM >> Destroy(parent) >> return
         if (state == WeaponState.ITEM)
         {
-            if (EditorApplication.isPlaying) Destroy(transform.parent.gameObject);
-            else DestroyImmediate(transform.parent.gameObject);
+            Utility.Destroy(transform.parent.gameObject);
             return;
         }
 
@@ -321,15 +306,14 @@ public abstract class Weapon : MonoBehaviour
         if (state == WeaponState.REMOVED)
         {
             OnWeaponDestroyed();
-            if (EditorApplication.isPlaying) Destroy(gameObject);
-            else DestroyImmediate(gameObject);
+            Utility.Destroy(transform.parent.gameObject);
             return;
         }
 
         Debug.LogError("무기 상태가 유효하지 않습니다.");
     }
 
-    #endregion
+#endregion
 
     #region 이벤트
 
@@ -341,7 +325,7 @@ public abstract class Weapon : MonoBehaviour
 
     #endregion
 
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     public void AutoDebug()
     {
         switch (state)
@@ -392,7 +376,7 @@ public abstract class Weapon : MonoBehaviour
      
         prevChildIndex = transform.GetSiblingIndex();
     }
-    #endif
+#endif
 }
 
 /*

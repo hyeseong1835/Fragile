@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 2655792286598304377}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.1875, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -57,8 +57,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3146790254224872252}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.1875, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.21875, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -251,7 +251,7 @@ Transform:
   m_GameObject: {fileID: 5502070828320023148}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.21875, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -444,14 +444,12 @@ MonoBehaviour:
   con: {fileID: 0}
   weaponName: WoodenSword
   state: 1
-  dropable: 1
-  item: {fileID: 21300000, guid: b933908dc65243a42951c5f8aaf6fc20, type: 3}
   UI: {fileID: 21300000, guid: 4de065b7691eaa64d8d187fce863b3e3, type: 3}
+  breakParticle: {fileID: 2571649083285314777}
   damage: 1
   attackCooltime: 1
   durability: 3
   maxDurability: 3
-  breakParticle: {fileID: 2571649083285314777}
   parent: {fileID: 0}
   hand_obj: {fileID: 6925892068553711680}
   swing_obj: {fileID: 1240919334449475685}
@@ -509,7 +507,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0119e13a3d6bd7c4c9ca39dfad440105, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particle: {fileID: 8831772302285814989}
+  breakTexture: {fileID: 0}
 --- !u!198 &8831772302285814989
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -5392,7 +5390,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8782504600347740333}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

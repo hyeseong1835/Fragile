@@ -1,6 +1,8 @@
 using Sirenix.OdinInspector;
 using System.Security.Cryptography;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 public enum AnimationState
@@ -14,6 +16,8 @@ public enum HandMode
 [ExecuteAlways]
 public abstract class Grafic : MonoBehaviour
 {
+    public HandGrafic hand;
+
     [VerticalGroup("Base")]
     #region Vertical Base
         
@@ -27,34 +31,6 @@ public abstract class Grafic : MonoBehaviour
             [ChildGameObjectsOnly]
             protected SpriteRenderer body;
     
-    #endregion
-
-
-
-    [FoldoutGroup("Hand")]
-    #region Foldout Hand
-
-        [SerializeField]
-            [Required][ChildGameObjectsOnly]
-            protected Transform hand;
-
-        [HorizontalGroup("Hand/Horizontal")]
-        #region Horizontal
-
-            [VerticalGroup("Hand/Horizontal/Mode", PaddingBottom = 25)][ReadOnly]
-            #region Vertical Mode          
-
-                    [LabelText("Mode")]
-                    public HandMode handMode = HandMode.NONE;
-
-                [VerticalGroup("Hand/Horizontal/Mode")][ReadOnly]
-                    [LabelText("Target")]
-                    public Transform targetTransform;
-
-            #endregion
-    
-        #endregion
-
     #endregion
 
     [FoldoutGroup("Animation")]
@@ -218,16 +194,17 @@ public abstract class Grafic : MonoBehaviour
         //그리기
         Animation();
         OtherAnimation();
+        hand.Hand();
 
         //플레이 모드
-        if (EditorApplication.isPlaying)
+        if (Utility.GetEditorStateByType(Utility.StateType.ISPLAY))
         {
             StateUpdate();
-            Hand();
         }
         //에디터 모드
         else
         {
+#if UNITY_EDITOR
             //선택 시 즉시 로드
             if (Selection.Contains(gameObject) || Selection.Contains(transform.parent.gameObject))
             {
@@ -246,78 +223,21 @@ public abstract class Grafic : MonoBehaviour
                 staySimulate = false;
                 walkSimulate = false;
             }
+#endif
         }
     }
     public virtual void StateUpdate()
     {
         //Stay => Walk
         if (animationState == AnimationState.STAY &&
-            con.moveVector.magnitude > Mathf.Epsilon) animationState = AnimationState.WALK;
+            con.moveVector != Vector2.zero) animationState = AnimationState.WALK;
 
         //Walk => Stay
         if (animationState == AnimationState.WALK &&
-            con.moveVector.magnitude <= Mathf.Epsilon) animationState = AnimationState.STAY;
+            con.moveVector == Vector2.zero) animationState = AnimationState.STAY;
     }
     protected abstract void StateSetToNONE();
-    /// <summary>
-    /// 연결 해제
-    /// </summary>
-    /// <param name="target"></param>
-    public void HandLink(Transform target)
-    {
-        if (target != null) Debug.LogWarning("Parameter: {target} must be null");
-
-        handMode = HandMode.NONE;
-
-        targetTransform = null;
-    }
-    /// <summary>
-    /// 손을 연결함
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="_IK">제어권 [true: 무기, false: 손]</param>
-    [HorizontalGroup("Hand/Horizontal")]
-    [Button]
-    public void HandLink(HandMode mode, Transform target)
-    {
-        handMode = mode;
-
-        switch (mode)
-        {
-            case HandMode.NONE:
-                targetTransform = null;
-                break;
-            
-            case HandMode.ToHand:
-                if (target == null) Debug.LogError("Parameter: {TargetTransform} is null");
-                targetTransform = target;
-                break;
-
-            case HandMode.ToTarget:
-                if (target == null) Debug.LogError("Parameter: {TargetTransform} is null");
-                targetTransform = target;
-                break;
-        }
-    }
-    void Hand()
-    {
-        switch (handMode)
-        {
-            case HandMode.ToHand:
-                if (targetTransform == null) Debug.LogError("{TargetTransform} is null");
-                
-                targetTransform.position = hand.position;
-                targetTransform.rotation = hand.rotation;
-                break;
-
-            case HandMode.ToTarget:
-                if (targetTransform == null) Debug.LogError("{TargetTransform} is null");
-                
-                hand.position = targetTransform.position;
-                hand.rotation = targetTransform.rotation;
-                break;
-        }
-    }
+    
     void Animation()
     {
         //상태에 따른 애니메이션
@@ -327,30 +247,34 @@ public abstract class Grafic : MonoBehaviour
                 OtherAnimation();
                 break;
             case AnimationState.STAY:
+                if (staySimulate == false) break;
+                
                 //Body
                 if (stayFrame == null) stayFrame = Utility.GetSpriteArray2DFromSpriteSheet(texture, stayFrameTextureAnchor, stayFrameTextureSize, stayFrameSpriteSize);
 
-                body.sprite = stayFrame[Utility.FloorRotateToInt(con.moveRotate, 8), Mathf.FloorToInt(stayTime * stayFrameTextureSize.y)];
+                body.sprite = stayFrame[Utility.FloorRotateToInt(con.lastMoveRotate, 8), Mathf.FloorToInt(stayTime * stayFrameTextureSize.y)];
 
                 //Hand
-                if (handMode == HandMode.ToHand)
+                if (hand.handMode == HandMode.NONE || hand.handMode == HandMode.ToHand)
                 {
-                    hand.localPosition = new Vector3(con.lastMoveVector.normalized.x * 0.75f, con.lastMoveVector.normalized.y * 0.5f, 0);
-                    hand.localRotation = Quaternion.identity;
+                    hand.transform.localPosition = Utility.Vector2TransformToEllipse(con.lastMoveVector.normalized, 0.75f, 0.5f) + con.center;
+                    hand.transform.localRotation = Quaternion.identity;
                 }
                 
                 break;
             case AnimationState.WALK:
+                if (walkSimulate == false) break;
+
                 //Body
                 if (walkFrame == null) walkFrame = Utility.GetSpriteArray2DFromSpriteSheet(texture, walkFrameTextureAnchor, walkFrameTextureSize, walkFrameSpriteSize);
 
                 body.sprite = walkFrame[Utility.FloorRotateToInt(con.moveRotate, 8), Mathf.FloorToInt(walkTime * walkFrameTextureSize.y)];
 
                 //Hand
-                if (handMode == HandMode.ToHand)
+                if (hand.handMode == HandMode.NONE || hand.handMode == HandMode.ToHand)
                 {
-                    hand.localPosition = new Vector3(con.moveVector.normalized.x * 0.75f, con.moveVector.normalized.y * 0.5f, 0);
-                    hand.localRotation = Quaternion.identity;
+                    hand.transform.localPosition = Utility.Vector2TransformToEllipse(con.moveVector.normalized, 0.75f, 0.5f) + con.center;
+                    hand.transform.localRotation = Quaternion.identity;
                 }
 
                 break;
