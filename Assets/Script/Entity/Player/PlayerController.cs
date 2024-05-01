@@ -1,13 +1,5 @@
 using Sirenix.OdinInspector;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 using UnityEngine;
-
-public enum AnimateState
-{
-    Stay, Move, Battle
-}
 
 public class PlayerController : Controller
 {
@@ -79,23 +71,6 @@ public class PlayerController : Controller
     [SerializeField][ReadOnly] bool attackInput = false;
     [SerializeField] float attackInputAllowTime = 1;
     Coroutine curAttackInputCoroutine;
-
-    #if UNITY_EDITOR
-    float attackCoolMax
-    {
-        get
-        {
-            if (curWeapon == null)
-            {
-                return 0;
-            }
-            else return curWeapon.attackCooltime;
-        }
-    }
-    #endif
-        [PropertyRange(0, "attackCoolMax")] public float attackCool = 0;
-
-    public float moveSpeed = 1;
 
     void Awake()
     {

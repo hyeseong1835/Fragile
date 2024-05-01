@@ -39,12 +39,12 @@ public class Weapon_SwingAndThrow : Weapon
     protected override void OnUse()
     {
         hand_obj.gameObject.SetActive(true);
-        con.grafic.hand.HandLink(hand_obj, HandMode.ToHand);
+        con.hand.HandLink(hand_obj, HandMode.ToHand);
     }
     protected override void OnDeUse()
     {
         hand_obj.gameObject.SetActive(false);
-        con.grafic.hand.HandLink(null);
+        con.hand.HandLink(null);
     }
 
     #region Attack
@@ -54,7 +54,7 @@ public class Weapon_SwingAndThrow : Weapon
             hand_obj.gameObject.SetActive(false);
 
             swing_obj.gameObject.SetActive(true);
-            con.grafic.hand.HandLink(swing_obj.transform, HandMode.ToTarget);
+            con.hand.HandLink(swing_obj.transform, HandMode.ToTarget);
 
             StartCoroutine(Skill.Swing(con, swing_obj, 
                 swing_spread, swing_duration, Skill.Curve.Quadratic, 
@@ -65,12 +65,12 @@ public class Weapon_SwingAndThrow : Weapon
         {
             if (coll.gameObject.layer == 20)
             {
-                coll.GetComponent<Stat>().OnDamage(swing_damage * damage);
+                coll.GetComponent<Controller>().OnDamage(swing_damage * damage);
                 AddDurability(-1);
             }
             else if (coll.gameObject.layer == 21)
             {
-                coll.GetComponent<Stat>().OnDamage(swing_damage * damage);
+                coll.GetComponent<Controller>().OnDamage(swing_damage * damage);
                 AddDurability(-1);
             }
         }
@@ -81,7 +81,7 @@ public class Weapon_SwingAndThrow : Weapon
             swing_obj.gameObject.SetActive(false);
         
             hand_obj.gameObject.SetActive(true);
-            con.grafic.hand.HandLink(hand_obj, HandMode.ToHand);
+            con.hand.HandLink(hand_obj, HandMode.ToHand);
         }
     
     #endregion
@@ -100,11 +100,11 @@ public class Weapon_SwingAndThrow : Weapon
         {
             if (coll.gameObject.layer == 20)
             {
-                coll.GetComponent<Stat>().OnDamage(throw_damage * damage);
+                coll.GetComponent<Controller>().OnDamage(throw_damage * damage);
             }
             else if (coll.gameObject.layer == 21)
             {
-                coll.GetComponent<Stat>().OnDamage(throw_damage * damage);
+                coll.GetComponent<Controller>().OnDamage(throw_damage * damage);
             }
         }
         public void ThrowEndEvent(GameObject triggerObj)
@@ -120,7 +120,7 @@ public class Weapon_SwingAndThrow : Weapon
     {
         if (swing_obj.gameObject.activeInHierarchy)
         {
-            con.grafic.hand.HandLink(null);
+            con.hand.HandLink(null);
 
             breakParticle.SpawnParticle(swing_obj.transform.position, swing_obj.transform.rotation);
             con.RemoveWeapon(this);

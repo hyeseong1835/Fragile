@@ -17,12 +17,12 @@ public class Weapon_Hand : Weapon
     }
     protected override void OnUse()
     {
-        con.grafic.hand.HandLink(null);
+        con.hand.HandLink(null);
     }
     public override void Attack()
     {
         swing_obj.gameObject.SetActive(true);
-        con.grafic.hand.HandLink(swing_obj.transform, HandMode.ToTarget);
+        con.hand.HandLink(swing_obj.transform, HandMode.ToTarget);
 
         StartCoroutine(Skill.Swing(con, swing_obj, 
             swing_spread, swing_duration, Skill.Curve.Quadratic,
@@ -33,16 +33,16 @@ public class Weapon_Hand : Weapon
     {
         if (coll.gameObject.layer == 20)
         {
-            coll.GetComponent<Stat>().OnDamage(swing_damage * damage);
+            coll.GetComponent<Controller>().OnDamage(swing_damage * damage);
         }
         else if (coll.gameObject.layer == 21)
         {
-            coll.GetComponent<Stat>().OnDamage(swing_damage * damage);
+            coll.GetComponent<Controller>().OnDamage(swing_damage * damage);
         }
     }
     public void SwingEndEvent(GameObject triggerObj) 
     {
         swing_obj.gameObject.SetActive(false);
-        con.grafic.hand.HandLink(null);
+        con.hand.HandLink(null);
     }
 }

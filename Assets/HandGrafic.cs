@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR;
 
+public enum HandMode
+{
+    NONE, ToHand, ToTarget
+}
 public class HandGrafic : MonoBehaviour
 {
     [HorizontalGroup("Horizontal")]

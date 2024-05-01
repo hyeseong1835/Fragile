@@ -1,290 +1,141 @@
 using Sirenix.OdinInspector;
-using System.Security.Cryptography;
-#if UNITY_EDITOR
+using System;
 using UnityEditor;
-#endif
 using UnityEngine;
 
-public enum AnimationState
+[Serializable]
+public class Animation
 {
-    NONE, STAY, WALK, BATTLE
-}
-public enum HandMode
-{
-    NONE, ToHand, ToTarget
-}
-[ExecuteAlways]
-public abstract class Grafic : MonoBehaviour
-{
-    public HandGrafic hand;
+    public Animation(Vector2Int _textureAnchor, Vector2Int _textureSize, Vector2Int _spriteSize)
+    {
+        textureAnchor = _textureAnchor;
+        textureSize = _textureSize;
+        spriteSize = _spriteSize;
+    }
 
-    [VerticalGroup("Base")]
-    #region Vertical Base
+    [VerticalGroup("Animation")]
+    #region Vertical Animation
+    
+        #if UNITY_EDITOR
+        [HorizontalGroup("Animation/Header")]
+        #region Vertical Header
+    
+            [SerializeField][HideLabel] 
+            string name;
+
+            [HideLabel]    [HorizontalGroup("Animation/Header", width: 10, marginRight: 7, marginLeft: 2)]
+            public bool autoLoad = false;
+    
+        #endregion
+        #endif
+
+        [TableMatrix(IsReadOnly = true, SquareCells = true, HorizontalTitle = "Rotation", VerticalTitle = "Frame")]     [VerticalGroup("Animation")]
+        [ShowInInspector] Sprite[,] animationSprites = null;
+
+        [VerticalGroup("Animation/Texture")][ShowIf(nameof(isAnimationSpritesNull))]
+        #region Vertical Texture
+
+            [LabelText("Start Sprite")][SerializeField]  
+            public Vector2Int textureAnchor = Vector2Int.zero;
+                                                                            
+            [LabelText("Array Length")][SerializeField]             [VerticalGroup("Animation/Texture")][ShowIf(nameof(isAnimationSpritesNull))]
+            Vector2Int textureSize = Vector2Int.zero;
+            
+            [LabelText("Sprite Size ")][SerializeField]             [VerticalGroup("Animation/Texture")][ShowIf(nameof(isAnimationSpritesNull))]
+            public Vector2Int spriteSize = Vector2Int.zero;
+
+            public bool isTextureInfoNull { get { return (
+                textureSize.x == 0 || textureSize.y == 0 
+                || spriteSize.x == 0 || spriteSize.y == 0); } }
+            #if UNITY_EDITOR
+            public bool isAnimationSpritesNull { get { return animationSprites == null; } }
+            #endif
         
-        [VerticalGroup("Base")][SerializeField] 
-            protected Controller con;
-    
-        [VerticalGroup("Base")][SerializeField]
-            protected Texture2D texture;
+        #endregion
 
-        [VerticalGroup("Base")][SerializeField]
-            [ChildGameObjectsOnly]
-            protected SpriteRenderer body;
-    
-    #endregion
+        [VerticalGroup("Animation/Time")]
+        #region Vertical Time
 
-    [FoldoutGroup("Animation")]
-    #region Foldout Animation
+            [HorizontalGroup("Animation/Time/Horizontal")]
+            #region Horizontal
 
-        [BoxGroup("Animation/State", Order = 0)]
-        #region Box State
+                [Range(0, 0.9999f)]
+                public float time = 0;
 
-            [ShowInInspector]
-                [LabelText("Animation")]
-                public AnimationState animationState
+                [ShowInInspector][HideLabel]    [HorizontalGroup("Animation/Time/Horizontal", width: 10, marginRight: 5, marginLeft: 2)]
+                public bool simulate
                 {
-                    get { return _animationState; }
+                    get { return _simulate; }
                     set
                     {
-                        if (value != AnimationState.NONE)
-                        {
-                            StateSetToNONE();
-                        }
+                        if (value == true) time = UnityEngine.Random.Range(0f, 0.9999f);
 
-                        _animationState = value;
-                    } 
-                } AnimationState _animationState;
+                        _simulate = value;
+                    }
+                } bool _simulate = false;
+
+            #endregion
+
+            [LabelText("Scale")]            [VerticalGroup("Animation/Time")][SerializeField]
+            public float timeScale = 0.5f;
 
         #endregion
 
-        [FoldoutGroup("Animation/Stay", Order = 1)]
-        #region Foldout Stay
-
-            [PropertySpace(5)]
-            [BoxGroup("Animation/Stay/Texture")]
-            #region Box Texture
-
-                [ShowInInspector]
-                    [TableMatrix(IsReadOnly = true, SquareCells = true, HorizontalTitle = "Rotation", VerticalTitle = "Frame")] Sprite[,] stayFrame;
-                
-                [PropertySpace(10)]
-            
-                [BoxGroup("Animation/Stay/Texture")][SerializeField]
-                    [LabelText("Start Sprite")] Vector2Int stayFrameTextureAnchor = new Vector2Int(0, 0);
-            
-                [BoxGroup("Animation/Stay/Texture")][SerializeField]
-                    [LabelText("Array Length")] Vector2Int stayFrameTextureSize = new Vector2Int(8, 2);
-    
-                [BoxGroup("Animation/Stay/Texture")][SerializeField]
-                    [LabelText("Sprite Size ")]Vector2Int stayFrameSpriteSize = new Vector2Int(16, 16);
-
-            #endregion
-
-            [BoxGroup("Animation/Stay/Time")]
-            #region Box Time        
-
-                [HorizontalGroup("Animation/Stay/Time/Horizontal")]
-                #region Horizontal
-
-                    [ShowInInspector]
-                        [Range(0, 0.9999f)] protected float stayTime = 0;
-
-                    [HorizontalGroup("Animation/Stay/Time/Horizontal", width: 10, marginRight: 5, marginLeft: 2)][ShowInInspector]
-                        [HideLabel]
-                        protected bool staySimulate
-                        {
-                            get { return _staySimulate; }
-                            set
-                            {
-                                if (value == true) stayTime = Random.Range(0f, 0.9999f);
-
-                                _staySimulate = value;
-                            }
-                        } protected bool _staySimulate;
-
-                #endregion
-
-                [BoxGroup("Animation/Stay/Time")][SerializeField]
-                    [LabelText("Time")]
-                    float stayTimeScale = 0.5f;
-
-            #endregion
-        
-        #endregion
-        
-        [FoldoutGroup("Animation/Walk", Order = 2)]
-        #region Foldout Walk
-
-            [PropertySpace(5)]
-            [BoxGroup("Animation/Walk/Texture")]    
-            #region Box Texture
-                
-                [ShowInInspector]
-                    [TableMatrix(IsReadOnly = true, SquareCells = true, HorizontalTitle = "Rotation", VerticalTitle = "Frame")] Sprite[,] walkFrame;
-                
-                [PropertySpace(10)]
-            
-                [BoxGroup("Animation/Walk/Texture")][SerializeField]
-                    [LabelText("Start Sprite")] 
-                    Vector2Int walkFrameTextureAnchor = new Vector2Int(0, 2);
-
-                [BoxGroup("Animation/Walk/Texture")][SerializeField]
-                    [LabelText("Array Length")] 
-                    Vector2Int walkFrameTextureSize = new Vector2Int(8, 4);
-
-                [BoxGroup("Animation/Walk/Texture")][SerializeField]
-                    [LabelText("Sprite Size ")] 
-                    Vector2Int walkFrameSpriteSize = new Vector2Int(16, 16);
-
-            #endregion
-
-            [BoxGroup("Animation/Walk/Time")]
-            #region Box Time
-
-                [HorizontalGroup("Animation/Walk/Time/Horizontal")]
-                #region Horizontal
-
-                    [SerializeField]
-                        [Range(0, 0.9999f)] protected float walkTime = 0;
-
-                    [HorizontalGroup("Animation/Walk/Time/Horizontal", width: 10, marginRight: 5, marginLeft: 2)][ShowInInspector]
-                        [HideLabel] 
-                        protected bool walkSimulate
-                                        {
-                                            get { return _walkSimulate; }
-                                            set
-                                            {
-                                                if (value == true) stayTime = Random.Range(0f, 0.9999f);
-
-                                                _walkSimulate = value;
-                                            }
-                                        }protected bool _walkSimulate;
-                    
-                #endregion
-
-                [BoxGroup("Animation/Walk/Time")][SerializeField]
-                    [LabelText("Time")]
-                    float walkTimeScale = 0.1f;
-
     #endregion
 
-    #endregion
-    
 
-    
-    #endregion
-
-    void Awake()
+    public void LoadTexture(ref Texture2D _texture)
     {
-
+        animationSprites = Utility.GetSpriteArray2DFromSpriteSheet(_texture, textureAnchor, textureSize, spriteSize);
     }
-    void Start()
+    public Sprite GetSprite(ref Texture2D texture, int rotation)
     {
-        animationState = AnimationState.STAY;
+        if(animationSprites == null) LoadTexture(ref texture);
 
-        staySimulate = true;
-        walkSimulate = true;
+        return animationSprites[rotation, Mathf.FloorToInt(time * textureSize.y)];
     }
-    void Update()
-    {
-        //애니메이션 재생
-        if (staySimulate) AnimationUpdate(ref stayTime, stayTimeScale);
-        if (walkSimulate) AnimationUpdate(ref walkTime, walkTimeScale);
-        
-        //그리기
-        Animation();
-        OtherAnimation();
-        hand.Hand();
-
-        //플레이 모드
-        if (Utility.GetEditorStateByType(Utility.StateType.ISPLAY))
-        {
-            StateUpdate();
-        }
-        //에디터 모드
-        else
-        {
-#if UNITY_EDITOR
-            //선택 시 즉시 로드
-            if (Selection.Contains(gameObject) || Selection.Contains(transform.parent.gameObject))
-            {
-                if (stayFrame == null)
-                {
-                    stayFrame = Utility.GetSpriteArray2DFromSpriteSheet(texture, stayFrameTextureAnchor, stayFrameTextureSize, stayFrameSpriteSize);
-                    body.sprite = stayFrame[0, 0];
-                }
-                if (walkFrame == null)
-                {
-                    walkFrame = Utility.GetSpriteArray2DFromSpriteSheet(texture, walkFrameTextureAnchor, walkFrameTextureSize, walkFrameSpriteSize);
-                }
-            }
-            else
-            {
-                staySimulate = false;
-                walkSimulate = false;
-            }
-#endif
-        }
-    }
-    public virtual void StateUpdate()
-    {
-        //Stay => Walk
-        if (animationState == AnimationState.STAY &&
-            con.moveVector != Vector2.zero) animationState = AnimationState.WALK;
-
-        //Walk => Stay
-        if (animationState == AnimationState.WALK &&
-            con.moveVector == Vector2.zero) animationState = AnimationState.STAY;
-    }
-    protected abstract void StateSetToNONE();
-    
-    void Animation()
-    {
-        //상태에 따른 애니메이션
-        switch (animationState)
-        {
-            case AnimationState.NONE:
-                OtherAnimation();
-                break;
-            case AnimationState.STAY:
-                if (staySimulate == false) break;
-                
-                //Body
-                if (stayFrame == null) stayFrame = Utility.GetSpriteArray2DFromSpriteSheet(texture, stayFrameTextureAnchor, stayFrameTextureSize, stayFrameSpriteSize);
-
-                body.sprite = stayFrame[Utility.FloorRotateToInt(con.lastMoveRotate, 8), Mathf.FloorToInt(stayTime * stayFrameTextureSize.y)];
-
-                //Hand
-                if (hand.handMode == HandMode.NONE || hand.handMode == HandMode.ToHand)
-                {
-                    hand.transform.localPosition = Utility.Vector2TransformToEllipse(con.lastMoveVector.normalized, 0.75f, 0.5f) + con.center;
-                    hand.transform.localRotation = Quaternion.identity;
-                }
-                
-                break;
-            case AnimationState.WALK:
-                if (walkSimulate == false) break;
-
-                //Body
-                if (walkFrame == null) walkFrame = Utility.GetSpriteArray2DFromSpriteSheet(texture, walkFrameTextureAnchor, walkFrameTextureSize, walkFrameSpriteSize);
-
-                body.sprite = walkFrame[Utility.FloorRotateToInt(con.moveRotate, 8), Mathf.FloorToInt(walkTime * walkFrameTextureSize.y)];
-
-                //Hand
-                if (hand.handMode == HandMode.NONE || hand.handMode == HandMode.ToHand)
-                {
-                    hand.transform.localPosition = Utility.Vector2TransformToEllipse(con.moveVector.normalized, 0.75f, 0.5f) + con.center;
-                    hand.transform.localRotation = Quaternion.identity;
-                }
-
-                break;
-        }
-    }
-
-    protected abstract void OtherAnimation();
-    void AnimationUpdate(ref float time, float timeScale)
+    public void AnimationUpdate(float timeScale)
     {
         time += Time.deltaTime / timeScale;
         if (time >= 1) time = 0;
     }
+}
+[ExecuteAlways]
+public abstract class Grafic : MonoBehaviour
+{
+    [SerializeField] 
+    public HandGrafic hand;
+
+    [SerializeField] 
+    protected Controller con;
+
+    [SerializeField] 
+    protected Texture2D texture;
+
+    [SerializeField]
+    [ChildGameObjectsOnly] protected SpriteRenderer body;
+
+    [ShowInInspector][PropertyOrder(100)]
+    [TableList(DrawScrollView = false)] protected Animation[] animations;
+
+#if UNITY_EDITOR
+    void Update()
+    {
+        if (Selection.Contains(gameObject))
+        {
+            foreach (Animation animation in animations)
+            {
+                if (animation.autoLoad && animation.isAnimationSpritesNull)
+                {
+                    if (animation.isTextureInfoNull)
+                    {
+                        animation.autoLoad = false;
+                        continue;
+                    }
+                    animation.LoadTexture(ref texture);
+                }
+            }
+        }
+    }
+#endif
 }
