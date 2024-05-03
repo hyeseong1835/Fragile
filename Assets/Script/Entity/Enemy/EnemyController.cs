@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Sirenix.OdinInspector;
+using System.Reflection.Emit;
 
+[ExecuteAlways]
 public class EnemyController : Controller
 {
     enum BehaviorState
@@ -12,22 +15,18 @@ public class EnemyController : Controller
     {
         NULL, None, Stay, Move
     }
-    public EnemyGrafic grafic;
+    [Required][PropertyOrder(0)]
+        public EnemyGrafic grafic;
 
     [SerializeField] BehaviorState behaviorState;
-    [SerializeField] Transform target;
-
-    [SerializeField] float attackMinDistance;
-    [SerializeField] float attackMaxDistance;
+    [SerializeField] Controller target;
 
     //[SerializeField] float attackCoolTime;
-    [SerializeField] float attackFrontDelay;
-    [SerializeField] float attackDelay;
-    [SerializeField] float attackBackDelay;
+
 
     void Update()
     {
-        targetPos = target.position;
+        targetPos = (Vector2)target.transform.position + target.center;
 
         if (Utility.GetEditorStateByType(Utility.StateType.ISPLAY) == false) return;
 
@@ -35,7 +34,7 @@ public class EnemyController : Controller
     }
     void Move()
     {
-        moveVector = target.position - transform.position;
+        moveVector = target.transform.position - transform.position;
         moveRotate = Utility.Vector2ToDegree(moveVector);
 
         transform.position += (Vector3)moveVector.normalized * Time.deltaTime * moveSpeed;
@@ -46,8 +45,6 @@ public class EnemyController : Controller
     }
     void Behavior()
     {
-        float distanceBetweenTarget = Vector2.Distance(target.position, transform.position);
-
         switch (behaviorState)
         {
             case BehaviorState.Idle:
@@ -56,13 +53,18 @@ public class EnemyController : Controller
 
             case BehaviorState.Move:
 
+                grafic.animationState = EnemyAnimationState.WALK;
+
+                float distanceBetweenTarget = Vector2.Distance(targetPos, (Vector2)transform.position + center);
+                
                 //최대 거리 만족
-                if (distanceBetweenTarget < attackMaxDistance)
+                if (distanceBetweenTarget < curWeapon.attackMaxDistance)
                 {
                     //최소 거리 만족
-                    if (distanceBetweenTarget > attackMinDistance)
+                    if (distanceBetweenTarget > curWeapon.attackMinDistance)
                     {
-                        StartCoroutine(Attack());
+                        if(curWeapon != null) StartCoroutine(Attack());
+                        //무기 없어지면 CancelCoroutine
                     }
                     //최소 거리 미만 >> 도주
                     else Recoil();
@@ -77,16 +79,23 @@ public class EnemyController : Controller
     {
         behaviorState = BehaviorState.None;
         grafic.animationState = EnemyAnimationState.NONE;
-        lastMoveVector = moveVector;
-        moveVector = Vector2.zero;
 
-        yield return new WaitForSeconds(attackFrontDelay);
+        yield return new WaitForSeconds(curWeapon.attackFrontDelay);
 
         curWeapon.Attack();
-        yield return new WaitForSeconds(attackDelay);
+        yield return new WaitForSeconds(curWeapon.attackDelay);
 
-        yield return new WaitForSeconds(attackBackDelay);
+        yield return new WaitForSeconds(curWeapon.attackBackDelay);
 
         behaviorState = BehaviorState.Idle;
+    }
+    protected override void ControllerOnDrawGizmosSelected()
+    {
+        if (curWeapon != null)
+        {
+            //AttackRange
+            Gizmos.DrawWireSphere(transform.position + (Vector3)center, curWeapon.attackMinDistance);
+            Gizmos.DrawWireSphere(transform.position + (Vector3)center, curWeapon.attackMaxDistance);
+        }
     }
 }

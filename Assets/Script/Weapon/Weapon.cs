@@ -58,11 +58,45 @@ public abstract class Weapon : MonoBehaviour
         [HideLabel] 
         public int maxDurability = 1;
 
-    #if UNITY_EDITOR
+    public float attackFrontDelay;
+    public float attackDelay;
+    public float attackBackDelay;
+
+    public float specialFrontDelay;
+    public float specialDelay;
+    public float specialBackDelay;
+
+    [HorizontalGroup("AttackRange", width: 50)]
+    #region Horizontal Range
+
+        [SerializeField][HideLabel][PropertyOrder(0)]
+            public float attackMinDistance = 0;
+
+        #if UNITY_EDITOR
+        [ShowInInspector][HideLabel][PropertyOrder(1)]                      [HorizontalGroup("AttackRange")]
+        [MinMaxSlider(0, nameof(attackMaxDistance))] Vector2 attackRange
+        {
+            get { return new Vector2(attackMinDistance, attackMaxDistance); }
+        
+            set 
+            {
+                attackMinDistance = value.x;
+                attackMaxDistance = value.y; 
+            }
+        }
+        #endif
+    
+        [SerializeField][HideLabel][PropertyOrder(2)]                       [HorizontalGroup("AttackRange", width: 50)]
+        public float attackMaxDistance = 1;
+
+    #endregion
+
+
+#if UNITY_EDITOR
     [HideInInspector] public Transform parent = null;
     int prevChildIndex;
-    #endif
-
+#endif
+    
     void Awake()
     {
 #if UNITY_EDITOR
@@ -170,27 +204,11 @@ public abstract class Weapon : MonoBehaviour
     protected virtual void WeaponOnDrawGizmos() { }
 
     #region 입력
-    [DisableInEditorMode]
-    [Button(ButtonStyle.Box)]
-    public virtual void Attack() { }
-    [DisableInEditorMode]
-    [HorizontalGroup("Mouse0"), Button(ButtonStyle.Box)]
-    public virtual void Mouse0Down() { }
-    [DisableInEditorMode]
-    [HorizontalGroup("Mouse0"), Button(ButtonStyle.Box)]
-    public virtual void Mouse0() { }
-    [DisableInEditorMode]
-    [HorizontalGroup("Mouse0"), Button(ButtonStyle.Box)]
-    public virtual void Mouse0Up() { }
-    [DisableInEditorMode]
-    [HorizontalGroup("Mouse1"), Button(ButtonStyle.Box)]
-    public virtual void Mouse1Down() { }
-    [DisableInEditorMode]
-    [HorizontalGroup("Mouse1"), Button(ButtonStyle.Box)]
-    public virtual void Mouse1() { }
-    [DisableInEditorMode]
-    [HorizontalGroup("Mouse1"), Button(ButtonStyle.Box)]
-    public virtual void Mouse1Up() { }
+
+    public abstract void Attack();
+
+    public abstract void Special();
+
     #endregion
 
     #region 데이터

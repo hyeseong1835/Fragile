@@ -3,9 +3,11 @@ using UnityEngine;
 
 public class PlayerController : Controller
 {
-    [SerializeField]
-        [Required]
-        CameraController camCon;
+    [Required][PropertyOrder(0)]
+        public CameraController camCon;
+
+    [Required][PropertyOrder(0)]
+        public PlayerGrafic grafic;
 
     #region 입력
 
@@ -82,15 +84,10 @@ public class PlayerController : Controller
 
         if (curWeapon != null)
         {
-            if (mouse0Down) curWeapon.Mouse0Down();
-            if (mouse0Stay) curWeapon.Mouse0();
-            if (mouse0Up) curWeapon.Mouse0Up();
-            if (mouse1Down) curWeapon.Mouse1Down();
-            if (mouse1) curWeapon.Mouse1();
-            if (mouse1Up) curWeapon.Mouse1Up();
-
             Attack();
+         
             if (attack) curWeapon.Attack();
+            if (mouse1Down) curWeapon.Special();
         }
 
         Mouse();
@@ -105,26 +102,36 @@ public class PlayerController : Controller
     }
     void Move()
     {
-
-        if (Input.GetButton("Horizontal") == false && Input.GetButton("Vertical") == false)
+        //입력이 있을 때
+        if (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
         {
-            if (moveVector == Vector2.zero)
+            //처음
+            if (grafic.animationState == PlayerAnimationState.STAY)
             {
-
+                grafic.animationState = PlayerAnimationState.WALK;
             }
+            //계속
             else
             {
+                moveVector = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
+                moveRotate = Utility.Vector2ToDegree(moveVector);
+
+                transform.position += (Vector3)moveVector.normalized * Time.deltaTime * moveSpeed;
+            }
+        }
+        //입력이 없을 때
+        else
+        {
+            //처음
+            if (grafic.animationState == PlayerAnimationState.WALK)
+            {
+                grafic.animationState = PlayerAnimationState.STAY;
+
                 lastMoveVector = moveVector;
                 lastMoveRotate = Utility.Vector2ToDegree(moveVector);
                 moveVector = Vector2.zero;
-            }
-        }
-        else
-        {
-            moveVector = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
-            moveRotate = Utility.Vector2ToDegree(moveVector);
 
-            transform.position += (Vector3)moveVector.normalized * Time.deltaTime * moveSpeed;
+            }
         }
     }
     void WheelSelect()

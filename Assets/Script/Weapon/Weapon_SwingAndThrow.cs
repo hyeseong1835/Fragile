@@ -1,4 +1,5 @@
 using Sirenix.OdinInspector;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,29 +13,25 @@ public class Weapon_SwingAndThrow : Weapon
     [SerializeField] TriggerObject swing_obj;
     [SerializeField] float swing_damage;
     [SerializeField] float swing_spread;
-    [SerializeField] float swing_duration;
+
+    [SerializeField] Skill.SwingCurve swing_curve;
     UnityEvent<GameObject, Collider2D> swing_enterEvent = new UnityEvent<GameObject, Collider2D>();
-    UnityEvent<GameObject> swing_endEvent = new UnityEvent<GameObject>();
 
     [Title("Throw")]
     [SerializeField] TriggerObject throw_obj;
     [SerializeField] float throw_damage;
     [SerializeField] float throw_throwSpeed;
     [SerializeField] float throw_spinSpeed;
-    [SerializeField] float throw_duration;
     UnityEvent<GameObject, Collider2D> throw_enterEvent = new UnityEvent<GameObject, Collider2D>();
-    UnityEvent<GameObject> throw_endEvent = new UnityEvent<GameObject>();
 
 
     protected override void WeaponAwake()
     {
         //Swing
         swing_enterEvent.AddListener(SwingHitEvent);
-        swing_endEvent.AddListener(SwingEndEvent);
 
         //Throw
         throw_enterEvent.AddListener(ThrowHitEvent);
-        throw_endEvent.AddListener(ThrowEndEvent);
     }
     protected override void OnUse()
     {
@@ -50,18 +47,25 @@ public class Weapon_SwingAndThrow : Weapon
     #region Attack
 
     public override void Attack()
-        {
-            hand_obj.gameObject.SetActive(false);
+    {
 
-            swing_obj.gameObject.SetActive(true);
-            con.hand.HandLink(swing_obj.transform, HandMode.ToTarget);
+    }
+    IEnumerator AttackCoroutine()
+    {
+        yield return new WaitForSeconds(attackFrontDelay);
+        hand_obj.gameObject.SetActive(false);
 
-            StartCoroutine(Skill.Swing(con, swing_obj, 
-                swing_spread, swing_duration, Skill.Curve.Quadratic, 
-                enterEvent: swing_enterEvent, endEvent: swing_endEvent)
-                );
-        }
-        public void SwingHitEvent(GameObject triggerObj, Collider2D coll)
+        swing_obj.gameObject.SetActive(true);
+        con.hand.HandLink(swing_obj.transform, HandMode.ToTarget);
+
+        StartCoroutine(Skill.Swing(con, swing_obj,
+            swing_spread, attackDelay, swing_curve,
+            enterEvent: swing_enterEvent)
+            );
+        yield return new WaitForSeconds(attackBackDelay);
+        SwingEndEvent();
+    }
+    public void SwingHitEvent(GameObject triggerObj, Collider2D coll)
         {
             if (coll.gameObject.layer == 20)
             {
@@ -74,7 +78,7 @@ public class Weapon_SwingAndThrow : Weapon
                 AddDurability(-1);
             }
         }
-        public void SwingEndEvent(GameObject triggerObj)
+        public void SwingEndEvent()
         {
             if (state == WeaponState.REMOVED) Destroy();
 
@@ -88,12 +92,12 @@ public class Weapon_SwingAndThrow : Weapon
 
     #region Special
 
-        public override void Mouse1Down() 
+        public override void Special() 
         {
             con.RemoveWeapon(this);
             StartCoroutine(Skill.Throw(con, throw_obj, 
-                throw_spinSpeed, throw_throwSpeed, throw_duration, 
-                enterEvent: throw_enterEvent, endEvent: throw_endEvent)
+                throw_spinSpeed, throw_throwSpeed, specialDelay, 
+                enterEvent: throw_enterEvent)
                 );
         }
         public void ThrowHitEvent(GameObject triggerObj, Collider2D coll)

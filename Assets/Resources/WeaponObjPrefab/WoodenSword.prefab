@@ -455,7 +455,8 @@ MonoBehaviour:
   swing_obj: {fileID: 1240919334449475685}
   swing_damage: 1
   swing_spread: 120
-  swing_duration: 0.25
+  swing_duration: 0.1
+  swing_curve: 1
   throw_obj: {fileID: 7714189541306298493}
   throw_damage: 1
   throw_throwSpeed: 0.15

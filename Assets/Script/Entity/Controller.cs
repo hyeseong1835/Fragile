@@ -33,12 +33,13 @@ public struct ControllerData
 [ExecuteAlways]
 public abstract class Controller : MonoBehaviour
 {
-    [Required]
+    [Required][PropertyOrder(0)]
         public HandGrafic hand;
 
-    [Required]
+    [Required][PropertyOrder(0)]
         public Transform weaponHolder;
-    [ShowInInspector] public static string weaponHolderName { get { return "WeaponHolder"; } }
+
+    public const string weaponHolderName = "WeaponHolder";
 
     public Vector2 center = new Vector2(0, 0.5f);
 
@@ -46,25 +47,28 @@ public abstract class Controller : MonoBehaviour
 
     #region 입력
 
-    [VerticalGroup("Input")]
+        [VerticalGroup("Input")]
         #region Vertical Input
 
-            public Vector2 moveVector = new Vector3(0.5f, 0, 0);                        [VerticalGroup("Input")]
-            public Vector2 lastMoveVector = new Vector3(0.5f, 0, 0);                    [VerticalGroup("Input")]
-            public Vector2 targetPos;                                                   [VerticalGroup("Input")]
-            [ShowInInspector] public Vector2 targetDir { get { 
-                return (targetPos - ((Vector2)transform.position + center)).normalized; 
-            } }
-    
+            [HideIf("inspectorShowLastMoveVector")] public Vector2 moveVector = new Vector3(0.5f, 0, 0);                        [VerticalGroup("Input")]
+            [ShowIf("inspectorShowLastMoveVector")] public Vector2 lastMoveVector = new Vector3(0.5f, 0, 0);                    [VerticalGroup("Input")]
+            public Vector2 targetPos;                                                                                           [VerticalGroup("Input")]
+            [ShowInInspector]                                                                                                   [VerticalGroup("Input")]
+            public Vector2 targetDir { get {                                                                                        
+                return (targetPos - ((Vector2)transform.position + center)).normalized;                                                 
+            } }                                                                                                                                         
+                                                                                                                                        
+            [HideIf("inspectorShowLastMoveVector")][Range(0f, 360f)]                                                            [VerticalGroup("Input")]
+            public float moveRotate = 0;
+            [ShowIf("inspectorShowLastMoveVector")][Range(0f, 360f)]                                                            [VerticalGroup("Input")]
+            public float lastMoveRotate = 0;
+            #if UNITY_EDITOR
+            bool inspectorShowLastMoveVector{ get { return (moveVector == Vector2.zero); } }
+            #endif
+
         #endregion
 
-        #if UNITY_EDITOR
-        bool inspectorShowLastMoveVector{ get { return (moveVector == Vector2.zero); } }
-        #endif
-        [HideIf("inspectorShowLastMoveVector")][Range(0f, 360f)] public float moveRotate = 0;
-        [ShowIf("inspectorShowLastMoveVector")][Range(0f, 360f)] public float lastMoveRotate = 0;
-
-        public bool attack = false;
+        [HideInInspector] public bool attack = false;
         #if UNITY_EDITOR
         float attackCoolMax
         {
@@ -80,13 +84,13 @@ public abstract class Controller : MonoBehaviour
         #endif
         [PropertyRange(0, "attackCoolMax")] public float attackCool = 0;
 
-        public bool special = false;
+        [HideInInspector] public bool special = false;
 
     #endregion
 
     #region 무기
 
-    [BoxGroup("Weapon")]
+        [BoxGroup("Weapon")]
         #region Box Weapon
 
             [VerticalGroup("Weapon/DefaultWeapon")]
@@ -145,7 +149,7 @@ public abstract class Controller : MonoBehaviour
             #endregion
 
 
-        [HorizontalGroup("Weapon/CurWeapon")]
+            [HorizontalGroup("Weapon/CurWeapon")]
             #region Horizontal CurWeapon
 
                 [VerticalGroup("Weapon/CurWeapon/Vertical", PaddingBottom = 25)]
@@ -477,15 +481,23 @@ public abstract class Controller : MonoBehaviour
     
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = new Color(0, 1, 0, 0.25f);
-        Gizmos.DrawRay(transform.position, lastMoveVector.normalized);
+        //LastMoveVector
+        if(moveVector == Vector2.zero)
+        {
+            Gizmos.color = new Color(0, 1, 0, 0.25f);
+            Gizmos.DrawRay(transform.position, lastMoveVector.normalized);
+        }
 
+        //MoveVector
         Gizmos.color = Color.green;
         Gizmos.DrawRay(transform.position, moveVector.normalized);
 
-
+        //Target
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position + (Vector3)center, targetPos);
         Gizmos.DrawWireSphere(targetPos, 0.1f);
+
+        ControllerOnDrawGizmosSelected();
     }
+    protected virtual void ControllerOnDrawGizmosSelected() { }
 }

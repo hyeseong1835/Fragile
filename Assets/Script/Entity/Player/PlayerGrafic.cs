@@ -14,17 +14,20 @@ public class PlayerGrafic : Grafic
     const int stayIndex = (int)PlayerAnimationState.STAY;
     const int walkIndex = (int)PlayerAnimationState.WALK;
 
+    void Update()
+    {
+        Animation();
+    }
     void Animation()
     {
         //상태에 따른 애니메이션
         switch (animationState)
         {
             case PlayerAnimationState.STAY:
+                
+                body.sprite = animations[stayIndex].GetSprite(ref texture, Utility.FloorRotateToInt(con.lastMoveRotate, 8));
 
-                if (animations[stayIndex].simulate)
-                {
-                    body.sprite = animations[stayIndex].GetSprite(ref texture, Utility.FloorRotateToInt(con.lastMoveRotate, 8));
-                }
+                animations[stayIndex].AnimationUpdate();
 
                 //Hand
                 if (hand.handMode == HandMode.NONE || hand.handMode == HandMode.ToHand)
@@ -35,11 +38,10 @@ public class PlayerGrafic : Grafic
                 break;
             
             case PlayerAnimationState.WALK:
+
+                body.sprite = animations[walkIndex].GetSprite(ref texture, Utility.FloorRotateToInt(con.moveRotate, 8));
                 
-                if (animations[walkIndex].simulate)
-                {
-                    body.sprite = animations[walkIndex].GetSprite(ref texture, Utility.FloorRotateToInt(con.lastMoveRotate, 8));
-                }
+                animations[walkIndex].AnimationUpdate();
 
                 //Hand
                 if (hand.handMode == HandMode.NONE || hand.handMode == HandMode.ToHand)

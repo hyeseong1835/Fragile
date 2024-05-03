@@ -258,6 +258,8 @@ MonoBehaviour:
   durability: 0
   maxDurability: -1
   parent: {fileID: 0}
+  attackMinDistance: 0
+  attackMaxDistance: 1
   swing_obj: {fileID: 838333191345355858}
   swing_damage: 1
   swing_spread: 0

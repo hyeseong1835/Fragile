@@ -25,8 +25,8 @@ public class Weapon_Hand : Weapon
         con.hand.HandLink(swing_obj.transform, HandMode.ToTarget);
 
         StartCoroutine(Skill.Swing(con, swing_obj, 
-            swing_spread, swing_duration, Skill.Curve.Quadratic,
-            enterEvent: swing_enterEvent, endEvent: swing_endEvent)
+            swing_spread, swing_duration, Skill.SwingCurve.Quadratic,
+            enterEvent: swing_enterEvent)
             );
     }
     public void SwingHitEvent(GameObject triggerObj, Collider2D coll)
@@ -44,5 +44,9 @@ public class Weapon_Hand : Weapon
     {
         swing_obj.gameObject.SetActive(false);
         con.hand.HandLink(null);
+    }
+    public override void Special()
+    {
+
     }
 }

@@ -8,6 +8,7 @@ public enum HandMode
 {
     NONE, ToHand, ToTarget
 }
+[ExecuteAlways]
 public class HandGrafic : MonoBehaviour
 {
     [HorizontalGroup("Horizontal")]
@@ -31,7 +32,6 @@ public class HandGrafic : MonoBehaviour
         /// </summary>
         /// <param name="target"></param>
         /// <param name="_IK">제어권 [true: 무기, false: 손]</param>
-        
         [Button]                                                                                [HorizontalGroup("Horizontal")]
         public void HandLink(Transform target, HandMode mode)
         {
@@ -53,8 +53,13 @@ public class HandGrafic : MonoBehaviour
             }
             handMode = mode;
         }
-    
+
     #endregion
+
+    void Update()
+    {
+        Hand();
+    }
 
     /// <summary>
     /// 연결 해제
@@ -86,5 +91,24 @@ public class HandGrafic : MonoBehaviour
                 transform.rotation = targetTransform.rotation;
                 break;
         }
+    }
+    void OnDrawGizmosSelected()
+    {
+        switch (handMode)
+        {
+            case HandMode.NONE:
+                Gizmos.color = new Color(0.25f, 0.25f, 0.25f);
+                break;
+            case HandMode.ToHand:
+                Gizmos.color = Color.blue;
+                break;
+            case HandMode.ToTarget:
+                Gizmos.color = Color.red;
+                break;
+            default:
+                Gizmos.color = Color.black;
+                break;
+        }
+        Gizmos.DrawWireSphere(transform.position, 0.25f);
     }
 }

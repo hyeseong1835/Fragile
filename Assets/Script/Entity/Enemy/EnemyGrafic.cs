@@ -13,6 +13,10 @@ public class EnemyGrafic : Grafic
     const int stayIndex = (int)EnemyAnimationState.STAY;
     const int walkIndex = (int)EnemyAnimationState.WALK;
 
+    void Update()
+    {
+        Animation();
+    }
     void Animation()
     {
         //상태에 따른 애니메이션
@@ -20,10 +24,8 @@ public class EnemyGrafic : Grafic
         {
             case EnemyAnimationState.STAY:
 
-                if (animations[stayIndex].simulate)
-                {
-                    body.sprite = animations[stayIndex].GetSprite(ref texture, Utility.FloorRotateToInt(con.lastMoveRotate, 8));
-                }
+                body.sprite = animations[stayIndex].GetSprite(ref texture, Utility.FloorRotateToInt(con.lastMoveRotate, 8));
+                animations[stayIndex].AnimationUpdate();
 
                 //Hand
                 if (hand.handMode == HandMode.NONE || hand.handMode == HandMode.ToHand)
@@ -35,10 +37,8 @@ public class EnemyGrafic : Grafic
 
             case EnemyAnimationState.WALK:
 
-                if (animations[walkIndex].simulate)
-                {
-                    body.sprite = animations[walkIndex].GetSprite(ref texture, Utility.FloorRotateToInt(con.lastMoveRotate, 8));
-                }
+                body.sprite = animations[walkIndex].GetSprite(ref texture, Utility.FloorRotateToInt(con.moveRotate, 8));
+                animations[walkIndex].AnimationUpdate();
 
                 //Hand
                 if (hand.handMode == HandMode.NONE || hand.handMode == HandMode.ToHand)

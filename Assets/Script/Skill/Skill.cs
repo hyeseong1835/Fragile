@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 public static class Skill
 {
-    public enum Curve
+    public enum SwingCurve
     {
         Linear, Quadratic
     }
@@ -21,11 +21,8 @@ public static class Skill
     /// <param name="exitEvent">나갔을 때</param>
     /// <param name="endEvent">시전이 끝났을 때</param>
     /// <returns></returns>
-    public static IEnumerator Swing(Controller con, TriggerObject triggerObj, float spread, float duration, Curve swingCurve,
-        UnityEvent<GameObject, Collider2D> enterEvent = null,
-        UnityEvent<GameObject, Collider2D> stayEvent = null,
-        UnityEvent<GameObject, Collider2D> exitEvent = null,
-        UnityEvent<GameObject> endEvent = null)
+    public static IEnumerator Swing(Controller con, TriggerObject triggerObj, float spread, float duration, SwingCurve swingCurve,
+        UnityEvent<GameObject, Collider2D> enterEvent = null, UnityEvent<GameObject, Collider2D> stayEvent = null, UnityEvent<GameObject, Collider2D> exitEvent = null)
     {
         //초기화
         triggerObj.SetEvent(enterEvent, stayEvent, exitEvent);
@@ -42,10 +39,10 @@ public static class Skill
         {
             switch (swingCurve)
             {
-                case Curve.Linear:
+                case SwingCurve.Linear:
                     t = time;
                     break;
-                case Curve.Quadratic:
+                case SwingCurve.Quadratic:
                     t = time * time;
                     break;
             }
@@ -68,7 +65,6 @@ public static class Skill
         yield return null;
 
         triggerObj.gameObject.SetActive(false);
-        if (endEvent != null) endEvent.Invoke(triggerObj.gameObject);
     }
     public static IEnumerator Throw(Controller con, TriggerObject triggerObj, 
         float spinSpeed, float throwSpeed, float duration,
