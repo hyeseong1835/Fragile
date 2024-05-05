@@ -17,7 +17,7 @@ public class ItemManager : MonoBehaviour
     {
         Item item = InstantiateEmptyItem(data.weaponData.name);
 
-        item.weapon = Utility.LoadWeapon(data.weaponData);
+        item.weapon = Weapon.LoadWeapon(data.weaponData);
 
         item.transform.position = data.pos;
 
@@ -30,7 +30,7 @@ public class ItemManager : MonoBehaviour
     /// <returns></returns>
     public static Item SpawnItem(string weaponName)
     {
-        return WrapWeaponInItem(Utility.SpawnWeapon(weaponName));
+        return WrapWeaponInItem(Weapon.SpawnWeapon(weaponName));
     }
     /// <summary>
     /// {weapon} -> Item

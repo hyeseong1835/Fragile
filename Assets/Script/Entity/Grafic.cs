@@ -6,55 +6,50 @@ using UnityEngine;
 public class Animation
 {
     [VerticalGroup("Animation")]
-    #region Vertical Animation                                                  
+    #region Vertical Animation  - - - - - - - - - - - - - - - - - - - - - - - - - - - -|                          
                                                                                         
-        #if UNITY_EDITOR                                                    
-        [SerializeField][HideLabel]
+        #if UNITY_EDITOR      
+    
+        [SerializeField]
+        [HideLabel]
         public string name;
+
         #endif
-
+                                                                                        [VerticalGroup("Animation")]
+        [ShowInInspector]                                             
         [TableMatrix(IsReadOnly = true, SquareCells = true
-            , HorizontalTitle = "Rotation", VerticalTitle = "Frame")]     [VerticalGroup("Animation")]
-        [ShowInInspector] Sprite[,] animationSprites;
+            , HorizontalTitle = "Rotation", VerticalTitle = "Frame")]     
+        Sprite[,] animationSprites;
 
-        [VerticalGroup("Animation/Texture")][ShowIf(nameof(isAnimationSpritesNull))]
-        #region Vertical Texture                                                        
-                                                                                        
+
+        [VerticalGroup("Animation/Texture")][ShowIf(nameof(isAnimationSpritesNull))]//-|
+        #region Vertical Texture  - - - - - - - - - - - - - - - - - - - - - - - - -|                                                          
+            
             [LabelText("Start Sprite")]                                                 
-            public Vector2Int textureAnchor = Vector2Int.zero;                          
-                                                                                        
-            [LabelText("Array Length")]                                             [VerticalGroup("Animation/Texture")][ShowIf(nameof(isAnimationSpritesNull))]
+            public Vector2Int textureAnchor = Vector2Int.zero;                  
+                                                                                    [VerticalGroup("Animation/Texture")][ShowIf(nameof(isAnimationSpritesNull))]                  
+            [LabelText("Array Length")]                           
             public Vector2Int textureSize = Vector2Int.zero;                        
-                                                                                        
-            [LabelText("Sprite Size ")]                                             [VerticalGroup("Animation/Texture")][ShowIf(nameof(isAnimationSpritesNull))]
+                                                                                    [VerticalGroup("Animation/Texture")][ShowIf(nameof(isAnimationSpritesNull))]                  
+            [LabelText("Sprite Size ")]                           
             public Vector2Int spriteSize = Vector2Int.zero;
 
+        #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-            #if UNITY_EDITOR
-            public bool isTextureInfoNull 
-            { get { return (
-                    textureSize.x == 0 || textureSize.y == 0 
-                    || spriteSize.x == 0 || spriteSize.y == 0
-                    ); } }            
-            public bool isAnimationSpritesNull 
-            { get { return animationSprites == null; } }
-            #endif
-        
-        #endregion
 
-        
         [HorizontalGroup("Animation/Time")]
-        #region Horizontal Time                            
+        #region Horizontal Time - - - - - - -|                            
                                             
             [Range(0, 0.9999f)]                       
             public float time = 0;                      
-                                                        
-            [HideLabel]                    [HorizontalGroup("Animation/Time", width: 30)]
-            public float timeScale = 0.5f;
-    
-        #endregion
+                                              [HorizontalGroup("Animation/Time", width: 30)]          
+            [HideLabel]                       
+            public float timeScale = 0.5f;//-|
 
-    #endregion
+        #endregion  - - - - - - - - - - - - -|
+
+    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
 
 
     public void LoadTexture(ref Texture2D _texture)
@@ -72,6 +67,22 @@ public class Animation
         time += Time.deltaTime / timeScale;
         if (time >= 1) time = 0;
     }
+
+#if UNITY_EDITOR
+
+    public bool isTextureInfoNull { 
+        get { 
+            return (
+            textureSize.x == 0 || textureSize.y == 0 
+            || spriteSize.x == 0 || spriteSize.y == 0
+            ); 
+        } 
+    }            
+    public bool isAnimationSpritesNull {
+        get { return animationSprites == null; } 
+    }
+    
+#endif
 }
 public abstract class Grafic : MonoBehaviour
 {

@@ -60,35 +60,7 @@ public static class Utility
     /// <param name="count"></param>
     /// <returns></returns>
 
-    public static Weapon SpawnWeapon(string weaponName, UnityEngine.Transform parent = null)
-    {
-        GameObject weaponObj;
-        if (parent != null)
-        {
-            weaponObj = UnityEngine.Object.Instantiate(
-            Resources.Load<GameObject>("WeaponObjPrefab/" + weaponName),
-                parent
-            );
-        }
-        else
-        {
-            weaponObj = UnityEngine.Object.Instantiate(
-            Resources.Load<GameObject>("WeaponObjPrefab/" + weaponName)
-            );
-        }
-        
-        Weapon weapon = weaponObj.GetComponent<Weapon>();
-        weapon.state = WeaponState.NULL;
-
-        return weapon;
-    }
-    public static Weapon LoadWeapon(WeaponData data)
-    {
-        Weapon weapon = SpawnWeapon(data.name);
-        weapon.SetData(data);
-
-        return weapon;
-    }
+    
 
     public static int FloorRotateToInt(float rotate, int count)
     {   
@@ -129,42 +101,54 @@ public static class Utility
     }
     public enum EditorState
     {
-        UNKNOWN, BUILDPLAY, EDITORPLAY, EDITORPLAYPAUSE, EDITORPLAYCOMPILING, PREFAB
+        UNKNOWN, BUILDPLAY, EDITORPLAY, EDITORPLAYPAUSE, EDITORPLAYCOMPILING, PREFABEDIT
     }
     public enum StateType
     {
-        ISPLAY, ISEDITOR
+        ISPLAY, ISEDITOR, ISBUILD
     }
-    public static EditorState GetEditorState(GameObject gameObject = null)
+    public static EditorState GetEditorState(GameObject gameObject)
     {
 #if UNITY_EDITOR
+        //플레이
         if (EditorApplication.isPlaying) return EditorState.EDITORPLAY;
-        else if (gameObject != null && PrefabUtility.GetPrefabInstanceStatus(gameObject) == PrefabInstanceStatus.NotAPrefab) return EditorState.PREFAB;
+        
+        //프리팹 수정
+        if (gameObject != null && PrefabUtility.GetPrefabInstanceStatus(gameObject) == PrefabInstanceStatus.NotAPrefab) return EditorState.PREFABEDIT;
 
+        //정지
         if (EditorApplication.isPaused) return EditorState.EDITORPLAYPAUSE;
 
+        //컴파일 중
         if (EditorApplication.isCompiling) return EditorState.EDITORPLAYCOMPILING;
 
 
         return EditorState.UNKNOWN;
 #else
+        //빌드
         return EditorState.BUILDPLAY;
 #endif
     }
     public static bool GetEditorStateByType(StateType type)
     {
-        EditorState state = GetEditorState();
+        EditorState state = GetEditorState(null);
         switch (type)
         {
             case StateType.ISPLAY:
                 return (state == EditorState.EDITORPLAY 
                     || state == EditorState.BUILDPLAY);
             case StateType.ISEDITOR:
-#if UNITY_EDITOR
-                return true;
-#else
-                return false;
-#endif
+                #if UNITY_EDITOR
+                    return true;
+                #else
+                    return false;
+                #endif
+            case StateType.ISBUILD:
+                #if UNITY_EDITOR
+                    return false;
+                #else
+                    return true;
+                #endif
             default:
                 return false;
         }

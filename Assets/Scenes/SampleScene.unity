@@ -160,19 +160,17 @@ MonoBehaviour:
   moveSpeed: 5
   moveVector: {x: 0.5, y: 0}
   lastMoveVector: {x: 0.5, y: 0}
-  targetPos: {x: 0, y: 0.5}
-  moveRotate: 360
+  moveRotate: 0
   lastMoveRotate: 0
-  attack: 0
+  targetPos: {x: 0, y: 0.5}
   attackCool: 0
+  attack: 0
   special: 0
   defaultWeapon: {fileID: 1295162771}
   curWeapon: {fileID: 1295162771}
   weapons:
   - {fileID: 1655136533}
   inventorySize: 5
-  attackMinDistance: 0
-  attackMaxDistance: 1
   camCon: {fileID: 519420033}
   grafic: {fileID: 1780597530}
   attackInput: 0
@@ -1258,7 +1256,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9139701432265484412, guid: cbcb7d104e2eabe4697f38f4bb426d93, type: 3}
       propertyPath: m_Name
-      value: Hand(Player(Default))
+      value: '[Hold] Hand(Player[Default])'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1751,7 +1749,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6184998612823097134, guid: 99f5840724a58234084b620c0a9e3f04, type: 3}
       propertyPath: m_Name
-      value: WoodenSword(Enemy(Default))
+      value: '[Hold] WoodenSword(Enemy[Default])'
       objectReference: {fileID: 0}
     - target: {fileID: 6925892068553711680, guid: 99f5840724a58234084b620c0a9e3f04, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2739,24 +2737,19 @@ MonoBehaviour:
   moveSpeed: 2
   moveVector: {x: 1, y: 0}
   lastMoveVector: {x: 1, y: 0}
-  targetPos: {x: 0, y: 0.5}
   moveRotate: 0
   lastMoveRotate: 0
-  attack: 0
+  targetPos: {x: 0, y: 0.5}
   attackCool: 0
+  attack: 0
   special: 0
   defaultWeapon: {fileID: 1717259081}
   curWeapon: {fileID: 1717259081}
   weapons: []
   inventorySize: 5
-  attackMinDistance: 0
-  attackMaxDistance: 2
   grafic: {fileID: 4211380931731464729}
   behaviorState: 2
   target: {fileID: 5837737}
-  attackFrontDelay: 0.1
-  attackDelay: 0.1
-  attackBackDelay: 0
 --- !u!1 &8017749139827695125
 GameObject:
   m_ObjectHideFlags: 0
