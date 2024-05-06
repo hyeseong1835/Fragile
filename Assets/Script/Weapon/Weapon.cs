@@ -143,8 +143,12 @@ public abstract class Weapon : MonoBehaviour
     {
     #if UNITY_EDITOR
 
-        DropDown();
-
+        //최초 생성
+        if (con == null)
+        {
+            DropDown();
+        }
+    
     #endif
 
         WeaponAwake();
@@ -360,6 +364,7 @@ public abstract class Weapon : MonoBehaviour
                         Debug.LogError("아이템이 아닌 무기는 항상 \"" + Controller.weaponHolderName + "\" 안에 있어야 합니다.");
                         return;
                     } //LogError: 아이템이 아닌 무기는 항상 "{Controller.weaponHolderName}" 안에 있어야 합니다. >> return
+                    
 
                     con = transform.parent.parent.GetComponent<Controller>();
 
@@ -370,7 +375,6 @@ public abstract class Weapon : MonoBehaviour
                         Utility.Destroy(gameObject);
                     } //LogWarning: 인벤토리가 가득참. >> 제거
 
-                
                     con.AddWeapon(this);
 
                     parent = transform.parent;

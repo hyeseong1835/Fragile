@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -13,38 +14,50 @@ public class Weapon_Hand : Weapon
     protected override void WeaponAwake()
     {
         swing_enterEvent.AddListener(SwingHitEvent);
-        swing_endEvent.AddListener(SwingEndEvent);
     }
     protected override void OnUse()
     {
         con.hand.HandLink(null);
     }
+    #region Attack
+
     public override void Attack()
     {
+        StartCoroutine(AttackCoroutine());
+    }
+    IEnumerator AttackCoroutine()
+    {
+        yield return new WaitForSeconds(attackFrontDelay);
+
         swing_obj.gameObject.SetActive(true);
         con.hand.HandLink(swing_obj.transform, HandMode.ToTarget);
 
-        StartCoroutine(Skill.Swing(con, swing_obj, 
-            swing_spread, swing_duration, Skill.SwingCurve.Quadratic,
+        StartCoroutine(Skill.Swing(con, swing_obj,
+            swing_spread, attackDelay, Skill.SwingCurve.Linear,
             enterEvent: swing_enterEvent)
             );
+        yield return new WaitForSeconds(attackBackDelay);
+
+        if (state == WeaponState.REMOVED) Destroy();
+
+        swing_obj.gameObject.SetActive(false);
+
+        con.hand.HandLink(null);
     }
     public void SwingHitEvent(GameObject triggerObj, Collider2D coll)
     {
         if (coll.gameObject.layer == 20)
         {
-            coll.GetComponent<Controller>().OnDamage(swing_damage * damage);
+            coll.GetComponent<Controller>().TakeDamage(swing_damage * damage);
         }
         else if (coll.gameObject.layer == 21)
         {
-            coll.GetComponent<Controller>().OnDamage(swing_damage * damage);
+            coll.GetComponent<Controller>().TakeDamage(swing_damage * damage);
         }
     }
-    public void SwingEndEvent(GameObject triggerObj) 
-    {
-        swing_obj.gameObject.SetActive(false);
-        con.hand.HandLink(null);
-    }
+
+    #endregion
+
     public override void Special()
     {
 

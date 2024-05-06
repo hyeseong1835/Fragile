@@ -48,7 +48,7 @@ public class Weapon_SwingAndThrow : Weapon
 
     public override void Attack()
     {
-
+        StartCoroutine(AttackCoroutine());
     }
     IEnumerator AttackCoroutine()
     {
@@ -63,36 +63,33 @@ public class Weapon_SwingAndThrow : Weapon
             enterEvent: swing_enterEvent)
             );
         yield return new WaitForSeconds(attackBackDelay);
-        SwingEndEvent();
+
+        if (state == WeaponState.REMOVED) Destroy();
+
+        swing_obj.gameObject.SetActive(false);
+
+        hand_obj.gameObject.SetActive(true);
+        con.hand.HandLink(hand_obj, HandMode.ToHand);
     }
     public void SwingHitEvent(GameObject triggerObj, Collider2D coll)
+    {
+        if (coll.gameObject.layer == 20)
         {
-            if (coll.gameObject.layer == 20)
-            {
-                coll.GetComponent<Controller>().OnDamage(swing_damage * damage);
-                AddDurability(-1);
-            }
-            else if (coll.gameObject.layer == 21)
-            {
-                coll.GetComponent<Controller>().OnDamage(swing_damage * damage);
-                AddDurability(-1);
-            }
+            coll.GetComponent<Controller>().TakeDamage(swing_damage * damage);
+            AddDurability(-1);
         }
-        public void SwingEndEvent()
+        else if (coll.gameObject.layer == 21)
         {
-            if (state == WeaponState.REMOVED) Destroy();
+            coll.GetComponent<Controller>().TakeDamage(swing_damage * damage);
+            AddDurability(-1);
+        }
+    }
 
-            swing_obj.gameObject.SetActive(false);
-        
-            hand_obj.gameObject.SetActive(true);
-            con.hand.HandLink(hand_obj, HandMode.ToHand);
-        }
-    
     #endregion
 
     #region Special
 
-        public override void Special() 
+    public override void Special() 
         {
             con.RemoveWeapon(this);
             StartCoroutine(Skill.Throw(con, throw_obj, 
@@ -104,11 +101,11 @@ public class Weapon_SwingAndThrow : Weapon
         {
             if (coll.gameObject.layer == 20)
             {
-                coll.GetComponent<Controller>().OnDamage(throw_damage * damage);
+                coll.GetComponent<Controller>().TakeDamage(throw_damage * damage);
             }
             else if (coll.gameObject.layer == 21)
             {
-                coll.GetComponent<Controller>().OnDamage(throw_damage * damage);
+                coll.GetComponent<Controller>().TakeDamage(throw_damage * damage);
             }
         }
         public void ThrowEndEvent(GameObject triggerObj)

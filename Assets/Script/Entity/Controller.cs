@@ -21,7 +21,8 @@ public struct ControllerData
     public ControllerData(
         Vector2 _pos, 
         WeaponData _defaultWeaponData, 
-        WeaponData[] _weaponDatas, int _curWeaponIndex
+        WeaponData[] _weaponDatas, 
+        int _curWeaponIndex
         )
     {
         pos = _pos;
@@ -49,10 +50,41 @@ public abstract class Controller : MonoBehaviour
 
     public Vector2 center = new Vector2(0, 0.5f);
 
+    [FoldoutGroup("Stat")]
+    #region Foldout Stat - - - - - - - - - - -|                                         
+
+        [HorizontalGroup("Stat/HP")]
+        #region Horizontal HP  - - - - - -|
+
+            [PropertyRange(0, "maxHp")]//-|
+            public float hp;
+
+            [HideInInspector]
+            public float maxHp = 100;
+            
+            #if UNITY_EDITOR
+                                           [HorizontalGroup("Stat/HP", width: 30)]
+            [ShowInInspector]
+            [HideLabel]
+            float _maxHp { 
+                get { return maxHp; } 
+                set {
+                    if (hp == maxHp || hp > value) hp = value;
+                    
+                    maxHp = value;
+                }
+            }
+            
+            #endif
+
+        #endregion - - - - - - - - - - - -|                         
+    [FoldoutGroup("Stat")]
     public float moveSpeed = 1;
 
+    #endregion - - - - - - - - - - - - - - - -|
+
     [FoldoutGroup("Input")]
-    #region ют╥б - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    #region Foldout Input  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
         [VerticalGroup("Input/Move")]
         #region Vertical Move - - - - - - - - - - - - - - - - - - - - -|
@@ -406,12 +438,10 @@ public abstract class Controller : MonoBehaviour
 
     #endregion
 
-    public void OnDamage(float damage)
+    public void TakeDamage(float damage)
     {
-
+        hp -= damage;
     }
-
-
     void LateUpdate()
     {
         AutoDebug();

@@ -157,6 +157,8 @@ MonoBehaviour:
   hand: {fileID: 1313857094}
   weaponHolder: {fileID: 374465424}
   center: {x: 0, y: 0.5}
+  hp: 20
+  maxHp: 20
   moveSpeed: 5
   moveVector: {x: 0.5, y: 0}
   lastMoveVector: {x: 0.5, y: 0}
@@ -2734,6 +2736,8 @@ MonoBehaviour:
   hand: {fileID: 6553057030171741434}
   weaponHolder: {fileID: 3483696773581803520}
   center: {x: 0, y: 0.5}
+  hp: 0
+  maxHp: 100
   moveSpeed: 2
   moveVector: {x: 1, y: 0}
   lastMoveVector: {x: 1, y: 0}
