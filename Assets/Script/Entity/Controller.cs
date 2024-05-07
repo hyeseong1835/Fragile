@@ -51,21 +51,22 @@ public abstract class Controller : MonoBehaviour
     public Vector2 center = new Vector2(0, 0.5f);
 
     [FoldoutGroup("Stat")]
-    #region Foldout Stat - - - - - - - - - - -|                                         
+    #region Foldout Stat - - - - - - - - - - - - - - - -|                                         
 
         [HorizontalGroup("Stat/HP")]
-        #region Horizontal HP  - - - - - -|
-
-            [PropertyRange(0, "maxHp")]//-|
+        #region Horizontal HP  - - - - - - - - - - -|
+            
+            [ProgressBar(0, nameof(_maxHp), 
+                ColorGetter = nameof(_hpColor)),]//-|
             public float hp;
 
             [HideInInspector]
-            public float maxHp = 100;
+            public float maxHp;
             
             #if UNITY_EDITOR
-                                           [HorizontalGroup("Stat/HP", width: 30)]
+                                                     [HorizontalGroup("Stat/HP", width: 30)]
             [ShowInInspector]
-            [HideLabel]
+            [HideLabel][DelayedProperty]
             float _maxHp { 
                 get { return maxHp; } 
                 set {
@@ -75,10 +76,24 @@ public abstract class Controller : MonoBehaviour
                 }
             }
             
+            Color _hpColor {
+                get {
+                    Gradient gradient = new Gradient();
+                    gradient.SetKeys(
+                        new GradientColorKey[] {
+                            new GradientColorKey(Color.yellow, 0),
+                            new GradientColorKey(Color.red, 1)
+                        },
+                        new GradientAlphaKey[] { new GradientAlphaKey(1,0) }
+                    );
+                    return gradient.Evaluate(hp / maxHp);
+                }
+            }
+            
             #endif
 
         #endregion - - - - - - - - - - - -|                         
-    [FoldoutGroup("Stat")]
+                                               [FoldoutGroup("Stat")]
     public float moveSpeed = 1;
 
     #endregion - - - - - - - - - - - - - - - -|
@@ -209,12 +224,18 @@ public abstract class Controller : MonoBehaviour
                                                                                 [HorizontalGroup("Weapon/CurWeapon", width:150)]
             [Button(name:"Set")]
             void SetCurWeapon(int index)
-                {
-                    if (transform.childCount == 0) return;
+            {
+                //무기 없음
+                if (transform.childCount == 0) return;
 
-                    if(index == 0) SelectWeapon(defaultWeapon);
-                    else SelectWeapon(weapons[index - 1]);
+                //선택 해제
+                if (index == -1)
+                {
+                    curWeapon.state = WeaponState.INVENTORY;
+                    curWeapon = null;
                 }
+                else SelectWeapon(weaponHolder.GetChild(index).GetComponent<Weapon>());
+            }
 
             #endif
 
@@ -231,7 +252,7 @@ public abstract class Controller : MonoBehaviour
             [VerticalGroup("Weapon/Inventory/Horizontal/Manage")]
             #region Vertical Manage  - - - - - - - - - - - - - - - - - - - - - - - - - - - -|       
             
-                [HideLabel]
+                [DelayedProperty][HideLabel]
                 public int inventorySize = 0;
 
                 #if UNITY_EDITOR

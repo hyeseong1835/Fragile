@@ -1,5 +1,6 @@
 using System;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using static UnityEngine.RuleTile.TilingRuleOutput;
 
@@ -114,7 +115,7 @@ public static class Utility
         if (EditorApplication.isPlaying) return EditorState.EDITORPLAY;
         
         //프리팹 수정
-        if (gameObject != null && PrefabUtility.GetPrefabInstanceStatus(gameObject) == PrefabInstanceStatus.NotAPrefab) return EditorState.PREFABEDIT;
+        if (gameObject != null && StageUtility.GetStage(gameObject) != StageUtility.GetMainStage()) return EditorState.PREFABEDIT;
 
         //정지
         if (EditorApplication.isPaused) return EditorState.EDITORPLAYPAUSE;

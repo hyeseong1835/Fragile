@@ -1,6 +1,10 @@
 using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
+using System.Collections.Generic;
+using UnityEditor;
+using Sirenix.OdinInspector.Editor;
+using Unity.VisualScripting;
 
 [Serializable]
 public class Animation
@@ -92,11 +96,14 @@ public abstract class Grafic : MonoBehaviour
     [SerializeField] 
     protected Controller con;
 
-    [SerializeField] 
+    [SerializeField]
+    [AssetList(Path = "/Sprite/Entity/Texture/")]
+    [PreviewField(Height = 300, FilterMode = FilterMode.Point, Alignment = ObjectFieldAlignment.Left)]
     protected Texture2D texture;
 
     [SerializeField]
-    [ChildGameObjectsOnly] protected SpriteRenderer body;
+    [ChildGameObjectsOnly]
+    protected SpriteRenderer body;
 
     [PropertyOrder(100)]
     [TableList(DrawScrollView = false)] public Animation[] animations;
@@ -128,4 +135,5 @@ public abstract class Grafic : MonoBehaviour
     }
 
 #endif
+
 }
