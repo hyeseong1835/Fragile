@@ -450,18 +450,24 @@ MonoBehaviour:
   attackCooltime: 1
   durability: 3
   maxDurability: 3
+  attackFrontDelay: 0
+  attackDelay: 0.1
+  attackBackDelay: 0.5
+  specialFrontDelay: 0.5
+  specialDelay: 5
+  specialBackDelay: 0
+  attackMinDistance: 0
+  attackMaxDistance: 1
   parent: {fileID: 0}
   hand_obj: {fileID: 6925892068553711680}
   swing_obj: {fileID: 1240919334449475685}
   swing_damage: 1
   swing_spread: 120
-  swing_duration: 0.1
   swing_curve: 1
   throw_obj: {fileID: 7714189541306298493}
-  throw_damage: 1
-  throw_throwSpeed: 0.15
+  throw_damage: 5
+  throw_throwSpeed: 1
   throw_spinSpeed: 720
-  throw_duration: 10
 --- !u!1 &8310801394951807032
 GameObject:
   m_ObjectHideFlags: 0
@@ -508,7 +514,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0119e13a3d6bd7c4c9ca39dfad440105, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  breakTexture: {fileID: 0}
+  breakTexture: {fileID: 2800000, guid: b933908dc65243a42951c5f8aaf6fc20, type: 3}
 --- !u!198 &8831772302285814989
 ParticleSystem:
   m_ObjectHideFlags: 0

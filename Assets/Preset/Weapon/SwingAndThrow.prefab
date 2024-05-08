@@ -406,7 +406,7 @@ GameObject:
   m_Layer: 0
   m_Name: SwingAndThrow
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2800000, guid: 33a6c692c9dfd594583f8577fd304c76, type: 3}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -445,22 +445,29 @@ MonoBehaviour:
   weaponName: 
   state: 1
   UI: {fileID: 0}
-  hand_obj: {fileID: 6925892068553711680}
   breakParticle: {fileID: 2571649083285314777}
   damage: 1
   attackCooltime: 1
   durability: 1
   maxDurability: 1
+  attackFrontDelay: 0
+  attackDelay: 0
+  attackBackDelay: 0
+  specialFrontDelay: 0
+  specialDelay: 0
+  specialBackDelay: 0
+  attackMinDistance: 0
+  attackMaxDistance: 1
   parent: {fileID: 0}
+  hand_obj: {fileID: 6925892068553711680}
   swing_obj: {fileID: 1240919334449475685}
   swing_damage: 1
   swing_spread: 120
-  swing_duration: 0.25
+  swing_curve: 0
   throw_obj: {fileID: 7714189541306298493}
   throw_damage: 1
   throw_throwSpeed: 0.15
   throw_spinSpeed: 720
-  throw_duration: 10
 --- !u!1 &8310801394951807032
 GameObject:
   m_ObjectHideFlags: 0

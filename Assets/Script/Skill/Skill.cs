@@ -21,8 +21,10 @@ public static class Skill
     /// <param name="exitEvent">나갔을 때</param>
     /// <param name="endEvent">시전이 끝났을 때</param>
     /// <returns></returns>
-    public static IEnumerator Swing(Controller con, TriggerObject triggerObj, float spread, float duration, SwingCurve swingCurve,
-        UnityEvent<GameObject, Collider2D> enterEvent = null, UnityEvent<GameObject, Collider2D> stayEvent = null, UnityEvent<GameObject, Collider2D> exitEvent = null)
+    public static IEnumerator Swing(Controller con, TriggerObject triggerObj, 
+        float spread, float duration, SwingCurve swingCurve,
+        UnityEvent<GameObject, Collider2D> enterEvent = null, UnityEvent<GameObject, Collider2D> stayEvent = null, UnityEvent<GameObject, Collider2D> exitEvent = null
+        )
     {
         //초기화
         triggerObj.SetEvent(enterEvent, stayEvent, exitEvent);
@@ -61,22 +63,44 @@ public static class Skill
                 + Utility.Vector2TransformToEllipse(
                     Utility.RadianToVector2((rotateZ + 90) * Mathf.Deg2Rad)
                     , 0.75f, 0.5f);
-
-        yield return null;
-
-        triggerObj.gameObject.SetActive(false);
     }
+    public static IEnumerator Spear(Controller con, TriggerObject triggerObj,
+        float startDistance, float distance, float duration,
+        UnityEvent<GameObject, Collider2D> enterEvent = null, UnityEvent<GameObject, Collider2D> stayEvent = null, UnityEvent<GameObject, Collider2D> exitEvent = null
+        )
+    {
+        //초기화
+        triggerObj.SetEvent(enterEvent, stayEvent, exitEvent);
+
+        //스킬
+        triggerObj.transform.position = con.transform.position + (Vector3)con.center;
+        triggerObj.transform.rotation = Quaternion.Euler(0, 0, Utility.Vector2ToDegree(con.targetDir));
+
+        Vector2 startDir = con.targetDir;
+
+        float t = 0;
+        while (t < 1)
+        {
+            triggerObj.transform.position = (Vector2)con.transform.position + con.center
+                + startDir * (startDistance + distance * t);
+
+            t += Time.deltaTime / duration;
+            yield return null;
+        }
+        triggerObj.transform.position = (Vector2)con.transform.position + con.center
+            + startDir * (startDistance + distance);
+    }
+
     public static IEnumerator Throw(Controller con, TriggerObject triggerObj, 
         float spinSpeed, float throwSpeed, float duration,
-        UnityEvent<GameObject, Collider2D> enterEvent = null,
-        UnityEvent<GameObject, Collider2D> stayEvent = null,
-        UnityEvent<GameObject, Collider2D> exitEvent = null,
-        UnityEvent<GameObject> endEvent = null)
+        UnityEvent<GameObject, Collider2D> enterEvent = null, UnityEvent<GameObject, Collider2D> stayEvent = null, UnityEvent<GameObject, Collider2D> exitEvent = null
+        )
     {
         //시작
         triggerObj.gameObject.SetActive(true);
         triggerObj.SetEvent(enterEvent, stayEvent, exitEvent);
         triggerObj.transform.SetParent(null);
+        triggerObj.transform.position = con.transform.position;
 
         Vector3 startVector = con.targetDir;
         float startAngleZ = Mathf.Atan2(startVector.y, startVector.x) * Mathf.Rad2Deg - 90;
@@ -85,13 +109,10 @@ public static class Skill
         //실행 중
         while (time <= duration)
         {
-            triggerObj.transform.position += startVector.normalized * throwSpeed;
+            triggerObj.transform.position += startVector.normalized * throwSpeed * Time.deltaTime;
             triggerObj.transform.rotation = Quaternion.Euler(0, 0, startAngleZ - time * spinSpeed);
             time += Time.deltaTime;
             yield return null;
         }
-
-        //종료
-        if (endEvent != null) endEvent.Invoke(triggerObj.gameObject);
     }
 }

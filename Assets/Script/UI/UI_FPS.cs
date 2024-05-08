@@ -3,16 +3,12 @@ using UnityEngine;
 
 public class UI_FPS : MonoBehaviour
 {
-    TextMeshProUGUI fpsText;
+    [SerializeField] TextMeshProUGUI fpsText;
     public float update = 0.1f;
     public int display = 1;
     float time = 0;
     int frame = 0;
 
-    void Awake()
-    {
-        fpsText = GetComponent<TextMeshProUGUI>();
-    }
     void Update()
     {
         time += Time.deltaTime;

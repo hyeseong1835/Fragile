@@ -1,6 +1,8 @@
 using Sirenix.OdinInspector;
+using System;
 using UnityEngine;
 
+[ExecuteAlways]
 public class PlayerController : Controller
 {
     [Required][PropertyOrder(0)]
@@ -62,12 +64,13 @@ public class PlayerController : Controller
                 [HideInInspector] 
                     public bool mouseWheelClickUp { get { return Input.GetMouseButtonDown(2); } }
 
-            #endregion
-
-        #endregion
-    
     #endregion
 
+    #endregion
+
+    #endregion
+
+    public Weapon nextWeapon;
     Weapon lastNotHandWeapon;
 
     [SerializeField][ReadOnly] bool attackInput = false;
@@ -80,21 +83,37 @@ public class PlayerController : Controller
     }
     void Update()
     {
-        if (Utility.GetEditorStateByType(Utility.StateType.ISPLAY) == false) return;
-
-        if (curWeapon != null)
+        if (Utility.GetEditorStateByType(Utility.StateType.IsPlay))
         {
-            Attack();
-         
-            if (attack) curWeapon.Attack();
-            if (mouse1Down) curWeapon.Special();
+            if (curWeapon != null)
+            {
+                Attack();
+
+                if (attack) curWeapon.Attack();
+                if (mouse1Down) curWeapon.Special();
+            }
+
+            Mouse();
+            Move();
+
+            WheelSelect();
+            if (Input.GetKeyDown(KeyCode.P)) AddWeapon(Weapon.SpawnWeapon("WoodenSword"));
         }
 
-        Mouse();
-        Move();
+        int curWeaponIndex = weapons.IndexOf(curWeapon);
 
-        WheelSelect();
-        if (Input.GetKeyDown(KeyCode.P)) AddWeapon(Weapon.SpawnWeapon("WoodenSword"));
+        if (curWeaponIndex == weapons.Count - 1) //마지막 순서의 무기일 때
+        {
+            if (weapons.Count < 2) //무기가 1개 이하
+            {
+                if (defaultWeapon != null) nextWeapon = defaultWeapon;
+            }
+            else nextWeapon = weapons[0];
+        }
+        else
+        {
+            nextWeapon = weapons[curWeaponIndex + 1];
+        }
     }
     void Mouse()
     {
@@ -192,7 +211,7 @@ public class PlayerController : Controller
         {
             attack = true;
 
-            attackCool = curWeapon.attackCooltime;
+            attackCool = curWeapon.attackFrontDelay + curWeapon.attackDelay + curWeapon.attackBackDelay;
             attackInput = false;
         }
         else attack = false;

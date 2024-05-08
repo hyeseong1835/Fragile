@@ -1,7 +1,6 @@
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -55,9 +54,10 @@ public abstract class Controller : MonoBehaviour
 
         [HorizontalGroup("Stat/HP")]
         #region Horizontal HP  - - - - - - - - - - -|
-            
+            #if UNITY_EDITOR
             [ProgressBar(0, nameof(_maxHp), 
-                ColorGetter = nameof(_hpColor)),]//-|
+                ColorGetter = nameof(_hpColor))]//-|
+            #endif
             public float hp;
 
             [HideInInspector]
@@ -103,18 +103,26 @@ public abstract class Controller : MonoBehaviour
 
         [VerticalGroup("Input/Move")]
         #region Vertical Move - - - - - - - - - - - - - - - - - - - - -|
-
+            #if UNITY_EDITOR
             [HideIf(nameof(inspectorShowLastMoveVector))] 
+            #endif
             public Vector2 moveVector = new Vector3(0.5f, 0, 0);                                             
                                                                         [VerticalGroup("Input/Move")]
+            #if UNITY_EDITOR
             [ShowIf(nameof(inspectorShowLastMoveVector))]
+            #endif
             public Vector2 lastMoveVector = new Vector3(0.5f, 0, 0);//-|
-                                                                        [VerticalGroup("Input/Move")]                                                                                                                
-            [HideIf(nameof(inspectorShowLastMoveVector))]                         
+                 
+            [VerticalGroup("Input/Move")]                 
+            #if UNITY_EDITOR
+            [HideIf(nameof(inspectorShowLastMoveVector))]
+            #endif
             [Range(0f, 360f)]
             public float moveRotate = 0;
                                                                         [VerticalGroup("Input/Move")]
-            [ShowIf(nameof(inspectorShowLastMoveVector))]                      
+            #if UNITY_EDITOR
+            [ShowIf(nameof(inspectorShowLastMoveVector))] 
+            #endif
             [Range(0f, 360f)]                                                                              
             public float lastMoveRotate = 0;
         
@@ -134,8 +142,9 @@ public abstract class Controller : MonoBehaviour
 
         [VerticalGroup("Input/Skill")]
         #region Vertical Skill  - - - - - - - - - - - - - - -|
-    
-            [PropertyRange(0, nameof(attackCoolMax))] 
+            #if UNITY_EDITOR
+            [PropertyRange(0, nameof(attackCoolMax))]
+            #endif
             public float attackCool = 0;
         
             [HideInInspector] 
@@ -154,7 +163,7 @@ public abstract class Controller : MonoBehaviour
         float attackCoolMax {
             get {
                 if (curWeapon == null) return 0;
-                else return curWeapon.attackCooltime;
+                else return curWeapon.attackFrontDelay + curWeapon.attackDelay + curWeapon.attackBackDelay;
             }
         }
 
@@ -462,6 +471,11 @@ public abstract class Controller : MonoBehaviour
     public void TakeDamage(float damage)
     {
         hp -= damage;
+        if (hp <= 0) Die();
+    }
+    void Die()
+    {
+        Destroy(gameObject);
     }
     void LateUpdate()
     {

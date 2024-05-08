@@ -1,11 +1,104 @@
 using System;
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
+#endif
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
-public static class Utility 
+public static class Utility
 {
+    #region Inspector  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+    public const int propertyLabelWidth = 125;
+    public const int shortNoLabelPropertyWidth = 50;
+    public const int propertySpace = 10;
+
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+    #region Editor - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+    public enum EditorState
+    {
+        Unknown, BuildPlay, EditorPlay, EditorPlayPaused, EditorPlayCompiling
+    }
+    public enum StateType
+    {
+        IsPlay, IsEditor, IsBuild
+    }
+    public enum ObjectState
+    {
+        Null, PrefabEdit, Prefab, NotPrefab
+    }
+    public static EditorState GetEditorState()
+    {
+        #if UNITY_EDITOR
+        
+            //플레이
+            if (EditorApplication.isPlaying) return EditorState.EditorPlay;
+
+            //정지
+            if (EditorApplication.isPaused) return EditorState.EditorPlayPaused;
+
+            //컴파일 중
+            if (EditorApplication.isCompiling) return EditorState.EditorPlayCompiling;
+
+            return EditorState.Unknown;
+
+        #else
+            //빌드
+            return EditorState.BUILDPLAY;
+        #endif
+    }
+    public static ObjectState GetObjectState(GameObject gameObject)
+    {
+        #if UNITY_EDITOR
+
+            if (gameObject == null) return ObjectState.Null;
+        
+            if (StageUtility.GetStage(gameObject) != StageUtility.GetMainStage()) return ObjectState.PrefabEdit;
+            
+            return ObjectState.NotPrefab;
+
+        #else
+        
+            return ObjectState.NotPrefab;
+        
+        #endif
+    }
+    public static bool GetEditorStateByType(StateType type)
+    {
+        switch (type)
+        {
+            case StateType.IsPlay:
+                #if UNITY_EDITOR
+                    EditorState state = GetEditorState();
+
+                    return (state == EditorState.EditorPlay 
+                        || state == EditorState.BuildPlay);
+                #else 
+                    return true;
+                #endif
+            case StateType.IsEditor:
+                #if UNITY_EDITOR
+                    return true;
+                #else
+                    return false;
+                #endif
+            case StateType.IsBuild:
+                #if UNITY_EDITOR
+                    return false;
+                #else
+                    return true;
+                #endif
+            default:
+                return false;
+        }
+    }
+
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+    #region Load - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
     /// <summary>
     /// 시작 스프라이트 좌표에서 배열 크기만큼 오른쪽 아래로 불러오는 함수
     /// </summary>
@@ -61,7 +154,9 @@ public static class Utility
     /// <param name="count"></param>
     /// <returns></returns>
 
-    
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+    #region Math - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     public static int FloorRotateToInt(float rotate, int count)
     {   
@@ -91,67 +186,16 @@ public static class Utility
     {
         return new Vector2(Mathf.Cos(radian), Mathf.Sin(radian));
     }
+
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+    #region Other  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    
     public static void Destroy(UnityEngine.Object obj)
     {
-#if UNITY_EDITOR
-        if (EditorApplication.isPlaying) Destroy(obj);
+        if (GetEditorStateByType(StateType.IsPlay)) UnityEngine.Object.Destroy(obj);
         else UnityEngine.Object.DestroyImmediate(obj);
-#else
-            Destroy(obj);
-#endif
     }
-    public enum EditorState
-    {
-        UNKNOWN, BUILDPLAY, EDITORPLAY, EDITORPLAYPAUSE, EDITORPLAYCOMPILING, PREFABEDIT
-    }
-    public enum StateType
-    {
-        ISPLAY, ISEDITOR, ISBUILD
-    }
-    public static EditorState GetEditorState(GameObject gameObject)
-    {
-#if UNITY_EDITOR
-        //플레이
-        if (EditorApplication.isPlaying) return EditorState.EDITORPLAY;
-        
-        //프리팹 수정
-        if (gameObject != null && StageUtility.GetStage(gameObject) != StageUtility.GetMainStage()) return EditorState.PREFABEDIT;
 
-        //정지
-        if (EditorApplication.isPaused) return EditorState.EDITORPLAYPAUSE;
-
-        //컴파일 중
-        if (EditorApplication.isCompiling) return EditorState.EDITORPLAYCOMPILING;
-
-
-        return EditorState.UNKNOWN;
-#else
-        //빌드
-        return EditorState.BUILDPLAY;
-#endif
-    }
-    public static bool GetEditorStateByType(StateType type)
-    {
-        EditorState state = GetEditorState(null);
-        switch (type)
-        {
-            case StateType.ISPLAY:
-                return (state == EditorState.EDITORPLAY 
-                    || state == EditorState.BUILDPLAY);
-            case StateType.ISEDITOR:
-                #if UNITY_EDITOR
-                    return true;
-                #else
-                    return false;
-                #endif
-            case StateType.ISBUILD:
-                #if UNITY_EDITOR
-                    return false;
-                #else
-                    return true;
-                #endif
-            default:
-                return false;
-        }
-    }
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 }

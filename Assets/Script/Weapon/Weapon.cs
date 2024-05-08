@@ -1,9 +1,5 @@
 using Sirenix.OdinInspector;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 using UnityEngine;
-using UnityEngine.UI;
 
 public struct WeaponData
 {
@@ -35,7 +31,6 @@ public enum WeaponState
 public abstract class Weapon : MonoBehaviour
 {
     #region 정적 멤버 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
         public static Weapon SpawnWeapon(string weaponName, Transform parent = null)//-|
         {
             GameObject weaponObj;
@@ -74,63 +69,111 @@ public abstract class Weapon : MonoBehaviour
 
     [Required] public string weaponName;
 
+    [ReadOnly]
     public WeaponState state = WeaponState.NULL;
 
-    [Title("Object")]
-    [Required]
-    public Sprite UI;
-    
-    [SerializeField] protected BreakParticle breakParticle;
+    [FoldoutGroup("Object")]
+    #region Foldout Object  - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
+        [Required]
+        [LabelWidth(Utility.propertyLabelWidth)]
+        public Sprite UI;
+                                                                                [FoldoutGroup("Object")]
+        #if UNITY_EDITOR
+        [SerializeField][ChildGameObjectsOnly][HideIf(nameof(noDurability))]//-|
+        #endif
+        [LabelWidth(Utility.propertyLabelWidth)]
+        protected BreakParticle breakParticle;
+                                                                                [FoldoutGroup("Object")]
+        [SerializeField][ChildGameObjectsOnly]
+        [LabelWidth(Utility.propertyLabelWidth)]
+        protected Transform hand_obj;
 
-    [Title("Stat")]
-    public float damage = 1;
-    public float attackCooltime = 0;
+    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-    [HorizontalGroup("Durability")]
-    #region Horizontal Durability  - - -|
-        
-        public int durability = 1;
-                                         [HorizontalGroup("Durability", width: 150)]
-        [HideLabel] 
-        public int maxDurability = 1;//-|
+    [FoldoutGroup("Stat")]
+    #region Foldout Stat  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-    #endregion - - - - - - - - - - - - -|
+        [LabelWidth(Utility.propertyLabelWidth)]
+        public float damage = 1;
 
-    public float attackFrontDelay;
-    public float attackDelay;
-    public float attackBackDelay;
+        [HorizontalGroup("Stat/Durability")]
+        #region Horizontal Durability - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
+            #if UNITY_EDITOR
+            [DisableIf(nameof(noDurability))]
+            #endif
+            [LabelWidth(Utility.propertyLabelWidth)]
+            [ProgressBar(0, nameof(maxDurability), Segmented = true, R = 1, G = 1, B = 1)]//-|
+            public int durability = 1;
+                                                                                              [HorizontalGroup("Stat/Durability", width: Utility.shortNoLabelPropertyWidth)]
+            [HideLabel][LabelWidth(Utility.shortNoLabelPropertyWidth)]
+            public int maxDurability = 1;
+
+            #if UNITY_EDITOR
+            bool noDurability { get { return maxDurability == -1; } }
+            #endif
+
+        #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+    [FoldoutGroup("Attack")]
+    #region Foldout Attack  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+        [LabelWidth(Utility.propertyLabelWidth)]
+        public float attackFrontDelay;
+                                                                                                                          [FoldoutGroup("Attack")]
+        [LabelWidth(Utility.propertyLabelWidth)]
+        public float attackDelay;
+                                                                                                                          [FoldoutGroup("Attack")]
+        [LabelWidth(Utility.propertyLabelWidth)] 
+        public float attackBackDelay;
+                                                                                                                          [FoldoutGroup("Attack")]
+        [HorizontalGroup("Attack/AttackRange", width: Utility.shortNoLabelPropertyWidth + Utility.propertyLabelWidth)]//-|
+        #region Horizontal Range - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+            [SerializeField][PropertyOrder(0)]
+            [LabelText("AttackRange")][LabelWidth(Utility.propertyLabelWidth)]                                      
+            public float attackMinDistance = 0;                                                     
+                                                                                                
+            #if UNITY_EDITOR                                                                                
+                                                                                     [HorizontalGroup("Attack/AttackRange")]                                              
+            [ShowInInspector][PropertyOrder(1)]
+            [HideLabel]            
+            [MinMaxSlider(0, nameof(attackMaxDistance))]
+            Vector2 attackRange {                                                                               
+                get { return new Vector2(attackMinDistance, attackMaxDistance); }//-|
+                set {
+                    attackMinDistance = value.x;
+                    attackMaxDistance = value.y; 
+                }
+            }
+                                                                                                
+            #endif                                                                      
+                                                                                     [HorizontalGroup("Attack/AttackRange", width: 50)]                                   
+            [SerializeField][HideLabel][PropertyOrder(2)]
+            public float attackMaxDistance = 1;
+
+        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+    [FoldoutGroup("Special")]
+    #region Foldout Special - - - - - - - - - -|
+
+    [LabelWidth(Utility.propertyLabelWidth)]//-|
     public float specialFrontDelay;
+                                                [FoldoutGroup("Special")]
+    [LabelWidth(Utility.propertyLabelWidth)]
     public float specialDelay;
+                                                [FoldoutGroup("Special")]
+    [LabelWidth(Utility.propertyLabelWidth)]
     public float specialBackDelay;
 
-    [HorizontalGroup("AttackRange", width: 50)]
-    #region Horizontal Range - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    #endregion  - - - - - - - - - - - - - - - -|
 
-        [SerializeField][HideLabel][PropertyOrder(0)]                                               
-        public float attackMinDistance = 0;                                                     
-                                                                                                
-        #if UNITY_EDITOR                                                                                
-                                                                                                        
-        [ShowInInspector][HideLabel][PropertyOrder(1)]                           [HorizontalGroup("AttackRange")]
-        [MinMaxSlider(0, nameof(attackMaxDistance))] 
-        Vector2 attackRange {                                                                               
-            get { return new Vector2(attackMinDistance, attackMaxDistance); }//-|
-            set {
-                attackMinDistance = value.x;
-                attackMaxDistance = value.y; 
-            }
-        }
-                                                                                                
-        #endif                                                                      
-                                                                                            
-        [SerializeField][HideLabel][PropertyOrder(2)]                            [HorizontalGroup("AttackRange", width: 50)]
-        public float attackMaxDistance = 1;
-
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
 
     [HideInInspector] 
     public Transform parent = null;
@@ -141,8 +184,7 @@ public abstract class Weapon : MonoBehaviour
     
     void Awake()
     {
-    #if UNITY_EDITOR
-
+#if UNITY_EDITOR
         //최초 생성
         if (con == null)
         {
@@ -161,7 +203,7 @@ public abstract class Weapon : MonoBehaviour
     {
     #if UNITY_EDITOR
 
-        if (Utility.GetEditorState(gameObject) == Utility.EditorState.PREFABEDIT)
+        if (Utility.GetObjectState(gameObject) == Utility.ObjectState.PrefabEdit)
         {
             if (state != WeaponState.PREFAB)
             {
@@ -333,7 +375,7 @@ public abstract class Weapon : MonoBehaviour
             if (state == WeaponState.REMOVED)
             {
                 OnWeaponDestroyed();
-                Utility.Destroy(transform.parent.gameObject);
+                Utility.Destroy(gameObject);
                 return;
             }
 
@@ -347,7 +389,7 @@ public abstract class Weapon : MonoBehaviour
 
         void DropDown()
         {
-            if (Utility.GetEditorState(gameObject) == Utility.EditorState.PREFABEDIT)
+            if (Utility.GetObjectState(gameObject) == Utility.ObjectState.PrefabEdit)
             {
                 state = WeaponState.PREFAB;
             }

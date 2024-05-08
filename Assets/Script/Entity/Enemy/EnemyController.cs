@@ -26,9 +26,11 @@ public class EnemyController : Controller
 
     void Update()
     {
+        if (target == null) return;
+
         targetPos = (Vector2)target.transform.position + target.center;
 
-        if (Utility.GetEditorStateByType(Utility.StateType.ISPLAY) == false) return;
+        if (Utility.GetEditorStateByType(Utility.StateType.IsPlay) == false) return;
 
         Behavior();
     }
@@ -41,7 +43,10 @@ public class EnemyController : Controller
     }
     void Recoil()
     {
+        moveVector = -(target.transform.position - transform.position);
+        moveRotate = Utility.Vector2ToDegree(moveVector);
 
+        transform.position += (Vector3)moveVector.normalized * Time.deltaTime * moveSpeed * 0.5f;
     }
     void Behavior()
     {
@@ -55,6 +60,11 @@ public class EnemyController : Controller
 
                 grafic.animationState = EnemyAnimationState.WALK;
 
+                if (curWeapon == null)
+                {
+                    Recoil();
+                    return;
+                }
                 float distanceBetweenTarget = Vector2.Distance(targetPos, (Vector2)transform.position + center);
                 
                 //최대 거리 만족

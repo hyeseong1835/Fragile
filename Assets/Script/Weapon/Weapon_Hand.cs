@@ -1,15 +1,33 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using Sirenix.OdinInspector;
 
 public class Weapon_Hand : Weapon
 {
-    [SerializeField] TriggerObject swing_obj;
-    [SerializeField] float swing_damage;
-    [SerializeField] float swing_spread;
-    [SerializeField] float swing_duration;
-    UnityEvent<GameObject, Collider2D> swing_enterEvent = new UnityEvent<GameObject, Collider2D>();
-    UnityEvent<GameObject> swing_endEvent = new UnityEvent<GameObject>();
+    [Space(Utility.propertySpace)]
+    [FoldoutGroup("Attack")]
+    #region Override Foldout Attack - - - - - - - - - - - - - -|
+
+        [SerializeField] 
+        [LabelWidth(Utility.propertyLabelWidth)]
+        TriggerObject swing_obj;
+                                                                [FoldoutGroup("Attack")]
+        [SerializeField] 
+        [LabelWidth(Utility.propertyLabelWidth)]
+        float swing_damage;
+                                                                [FoldoutGroup("Attack")]
+        [SerializeField] 
+        [LabelWidth(Utility.propertyLabelWidth)]
+        float swing_spread;
+                                                                [FoldoutGroup("Attack")]
+        [SerializeField] 
+        [LabelWidth(Utility.propertyLabelWidth)]
+        Skill.SwingCurve swing_curve;
+
+        UnityEvent<GameObject, Collider2D> swing_enterEvent;//-|
+
+    #endregion  - - - - - - - - - - - - - - - - - - - - - - - -|
 
     protected override void WeaponAwake()
     {
@@ -36,6 +54,8 @@ public class Weapon_Hand : Weapon
             swing_spread, attackDelay, Skill.SwingCurve.Linear,
             enterEvent: swing_enterEvent)
             );
+        yield return new WaitForSeconds(attackDelay);
+
         yield return new WaitForSeconds(attackBackDelay);
 
         if (state == WeaponState.REMOVED) Destroy();
@@ -46,13 +66,24 @@ public class Weapon_Hand : Weapon
     }
     public void SwingHitEvent(GameObject triggerObj, Collider2D coll)
     {
+        if (coll.gameObject.layer == 19)
+        {
+            if (con is PlayerController) return;
+
+            coll.GetComponent<Controller>().TakeDamage(swing_damage * damage);
+            AddDurability(-1);
+        }
         if (coll.gameObject.layer == 20)
         {
+            if (con is EnemyController) return;
+
             coll.GetComponent<Controller>().TakeDamage(swing_damage * damage);
+            AddDurability(-1);
         }
         else if (coll.gameObject.layer == 21)
         {
             coll.GetComponent<Controller>().TakeDamage(swing_damage * damage);
+            AddDurability(-1);
         }
     }
 

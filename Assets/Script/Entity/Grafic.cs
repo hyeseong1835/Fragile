@@ -1,10 +1,6 @@
 using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
-using System.Collections.Generic;
-using UnityEditor;
-using Sirenix.OdinInspector.Editor;
-using Unity.VisualScripting;
 
 [Serializable]
 public class Animation
@@ -25,16 +21,21 @@ public class Animation
             , HorizontalTitle = "Rotation", VerticalTitle = "Frame")]     
         Sprite[,] animationSprites;
 
+    #if UNITY_EDITOR
+    [VerticalGroup("Animation/Texture")][ShowIf(nameof(isAnimationSpritesNull))]//-|
+    #endif
+    #region Vertical Texture  - - - - - - - - - - - - - - - - - - - - - - - - -|                                                          
 
-        [VerticalGroup("Animation/Texture")][ShowIf(nameof(isAnimationSpritesNull))]//-|
-        #region Vertical Texture  - - - - - - - - - - - - - - - - - - - - - - - - -|                                                          
-            
-            [LabelText("Start Sprite")]                                                 
+    [LabelText("Start Sprite")]                                                 
             public Vector2Int textureAnchor = Vector2Int.zero;                  
-                                                                                    [VerticalGroup("Animation/Texture")][ShowIf(nameof(isAnimationSpritesNull))]                  
+                                                                                    #if UNITY_EDITOR
+                                                                                    [VerticalGroup("Animation/Texture")][ShowIf(nameof(isAnimationSpritesNull))]   
+                                                                                    #endif
             [LabelText("Array Length")]                           
             public Vector2Int textureSize = Vector2Int.zero;                        
-                                                                                    [VerticalGroup("Animation/Texture")][ShowIf(nameof(isAnimationSpritesNull))]                  
+                                                                                    #if UNITY_EDITOR                                                                    
+                                                                                    [VerticalGroup("Animation/Texture")][ShowIf(nameof(isAnimationSpritesNull))]    
+                                                                                    #endif
             [LabelText("Sprite Size ")]                           
             public Vector2Int spriteSize = Vector2Int.zero;
 
