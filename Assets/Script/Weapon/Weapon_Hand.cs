@@ -17,24 +17,24 @@ public class Weapon_Hand : Weapon
 
     [Space(Utility.overrideSpace)]
     [FoldoutGroup("Attack")]
-    #region Override Foldout Attack - - - - - - - - - - - - - -|
+    #region Override Foldout Attack  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
         [SerializeField] 
         [LabelWidth(Utility.propertyLabelWidth)]
         float swing_damage;
-                                                                [FoldoutGroup("Attack")]
+                                                                                                           [FoldoutGroup("Attack")]
         [SerializeField] 
         [LabelWidth(Utility.propertyLabelWidth)]
         float swing_spread;
-                                                                [FoldoutGroup("Attack")]
+                                                                                                           [FoldoutGroup("Attack")]
         [SerializeField] 
         [LabelWidth(Utility.propertyLabelWidth)]
         Skill.SwingCurve swing_curve;
         
 
-        UnityEvent<GameObject, Collider2D> swing_enterEvent;//-|
+        UnityEvent<GameObject, Collider2D> swing_enterEvent = new UnityEvent<GameObject, Collider2D>();//-|
 
-    #endregion  - - - - - - - - - - - - - - - - - - - - - - - -|
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     protected override void WeaponAwake()
     {

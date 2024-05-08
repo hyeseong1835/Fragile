@@ -22,43 +22,43 @@ public class Weapon_SwingAndThrow : Weapon
 
     [Space(Utility.overrideSpace)]
     [FoldoutGroup("Attack")]
-    #region Override Foldout Attack - - - - - - - - - - - - - -|
+    #region Override Foldout Attack  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        [SerializeField] 
+    [SerializeField] 
         [LabelWidth(Utility.propertyLabelWidth)]
         float swing_damage;
-                                                                [FoldoutGroup("Attack")]
+                                                                                                           [FoldoutGroup("Attack")]
         [SerializeField] 
         [LabelWidth(Utility.propertyLabelWidth)]
         float swing_spread;
-                                                                [FoldoutGroup("Attack")]
+                                                                                                           [FoldoutGroup("Attack")]
         [SerializeField] 
         [LabelWidth(Utility.propertyLabelWidth)]
         Skill.SwingCurve swing_curve;
 
-        UnityEvent<GameObject, Collider2D> swing_enterEvent;//-|
+        UnityEvent<GameObject, Collider2D> swing_enterEvent = new UnityEvent<GameObject, Collider2D>();//-|
 
-    #endregion  - - - - - - - - - - - - - - - - - - - - - - - -|
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     [Space(Utility.overrideSpace)]
     [FoldoutGroup("Special")]
-    #region Override Foldout Special  - - - - - - - - - - - - -|
+    #region Override Foldout Special - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        [SerializeField] 
+    [SerializeField] 
         [LabelWidth(Utility.propertyLabelWidth)]
         float throw_damage;
-                                                                [FoldoutGroup("Special")]
+                                                                                                           [FoldoutGroup("Special")]
         [SerializeField] 
         [LabelWidth(Utility.propertyLabelWidth)]
         float throw_throwSpeed;
-                                                                [FoldoutGroup("Special")]
+                                                                                                           [FoldoutGroup("Special")]
         [LabelWidth(Utility.propertyLabelWidth)]
         [SerializeField] 
         float throw_spinSpeed;
 
-        UnityEvent<GameObject, Collider2D> throw_enterEvent;//-|
+        UnityEvent<GameObject, Collider2D> throw_enterEvent = new UnityEvent<GameObject, Collider2D>();//-|
 
-    #endregion  - - - - - - - - - - - - - - - - - - - - - - - -|
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
 
     protected override void WeaponAwake()

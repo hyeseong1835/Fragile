@@ -464,8 +464,8 @@ MonoBehaviour:
   swing_damage: 1
   swing_spread: 120
   swing_curve: 1
-  throw_damage: 5
-  throw_throwSpeed: 1
+  throw_damage: 1
+  throw_throwSpeed: 5
   throw_spinSpeed: 720
 --- !u!1 &8310801394951807032
 GameObject:

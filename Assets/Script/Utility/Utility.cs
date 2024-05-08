@@ -47,7 +47,7 @@ public static class Utility
 
         #else
             //ºôµå
-            return EditorState.BUILDPLAY;
+            return EditorState.BuildPlay;
         #endif
     }
     public static ObjectState GetObjectState(GameObject gameObject)
