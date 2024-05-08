@@ -11,7 +11,8 @@ public static class Utility
 
     public const int propertyLabelWidth = 125;
     public const int shortNoLabelPropertyWidth = 50;
-    public const int propertySpace = 10;
+    public const int overrideSpace = 10;
+    public const int shortFunctionButtonWidth = 150;
 
     #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 

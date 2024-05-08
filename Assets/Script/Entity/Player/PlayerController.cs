@@ -5,24 +5,33 @@ using UnityEngine;
 [ExecuteAlways]
 public class PlayerController : Controller
 {
-    [Required][PropertyOrder(0)]
-        public CameraController camCon;
+    [Space(Utility.overrideSpace)]
+    [BoxGroup("Object")]
+    #region Override Box Object - - - - - - - - - -| 
 
-    [Required][PropertyOrder(0)]
+        [Required][PropertyOrder(0)]
+        [LabelWidth(Utility.propertyLabelWidth)]//-|
+        public CameraController camCon;
+                                                    [BoxGroup("Object")]
+        [Required][PropertyOrder(0)]
+        [LabelWidth(Utility.propertyLabelWidth)]
         public PlayerGrafic grafic;
 
-    #region 입력
+    #endregion  - - - - - - - - - - - - - - - - - -| 
 
-        #region 마우스
+    [FoldoutGroup("Input")]
+    #region Override Input
+
+        #region Mouse
+
+            [HideInInspector] 
+            public Vector2 mousePos { get { return camCon.cam.ScreenToWorldPoint(Input.mousePosition); } }
     
             [HideInInspector] 
-                public Vector2 mousePos { get { return camCon.cam.ScreenToWorldPoint(Input.mousePosition); } }
+            public Vector2 playerToMouse { get { return mousePos - (Vector2)transform.position; } }
     
             [HideInInspector] 
-                public Vector2 playerToMouse { get { return mousePos - (Vector2)transform.position; } }
-    
-            [HideInInspector] 
-                public float viewRotateZ { get { return Mathf.Atan2(playerToMouse.y, playerToMouse.x) * Mathf.Rad2Deg; } }
+            public float viewRotateZ { get { return Mathf.Atan2(playerToMouse.y, playerToMouse.x) * Mathf.Rad2Deg; } }
 
             #region 좌클릭
 
@@ -53,29 +62,45 @@ public class PlayerController : Controller
             #region 마우스 휠
 
                 [HideInInspector] 
-                    public float mouseWheelScroll { get { return Input.GetAxis("Mouse ScrollWheel"); } }
+                public float mouseWheelScroll { get { return Input.GetAxis("Mouse ScrollWheel"); } }
     
                 [HideInInspector] 
-                    public bool mouseWheelClickDown { get { return Input.GetMouseButtonDown(2); } }
+                public bool mouseWheelClickDown { get { return Input.GetMouseButtonDown(2); } }
     
                 [HideInInspector] 
-                    public bool mouseWheelClick{ get { return Input.GetMouseButtonUp(2); } }
+                public bool mouseWheelClick{ get { return Input.GetMouseButtonUp(2); } }
     
                 [HideInInspector] 
-                    public bool mouseWheelClickUp { get { return Input.GetMouseButtonDown(2); } }
+                public bool mouseWheelClickUp { get { return Input.GetMouseButtonDown(2); } }
+
+            #endregion
+
+        #endregion
+
+        [Space(Utility.overrideSpace)]
+        [VerticalGroup("Input/Attack")]
+        #region Override Foldout Attack - - - - - - - -|
+
+            [SerializeField][ReadOnly]
+            [LabelWidth(Utility.propertyLabelWidth)]//-|
+            bool attackInput = false;   
+                                                        [VerticalGroup("Input/Attack")]      
+            [SerializeField] 
+            [LabelWidth(Utility.propertyLabelWidth)]
+            float attackInputAllowTime = 1;
+
+            Coroutine curAttackInputCoroutine;
+
+
+        #endregion  - - - - - - - - - - - - - - - - - -|
 
     #endregion
 
-    #endregion
-
-    #endregion
-
+    [HideInInspector]
     public Weapon nextWeapon;
+
     Weapon lastNotHandWeapon;
 
-    [SerializeField][ReadOnly] bool attackInput = false;
-    [SerializeField] float attackInputAllowTime = 1;
-    Coroutine curAttackInputCoroutine;
 
     void Awake()
     {

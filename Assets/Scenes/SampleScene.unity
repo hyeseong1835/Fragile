@@ -154,9 +154,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f2b5b4f8513afd4da14abac2e5d03be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  center: {x: 0, y: 0.5}
   hand: {fileID: 1313857094}
   weaponHolder: {fileID: 374465424}
-  center: {x: 0, y: 0.5}
   hp: 20
   maxHp: 20
   moveSpeed: 5
@@ -175,9 +175,9 @@ MonoBehaviour:
   inventorySize: 5
   camCon: {fileID: 519420033}
   grafic: {fileID: 1780597530}
-  nextWeapon: {fileID: 1655136533}
   attackInput: 0
   attackInputAllowTime: 0.25
+  nextWeapon: {fileID: 1655136533}
 --- !u!4 &5837738
 Transform:
   m_ObjectHideFlags: 0
@@ -2680,7 +2680,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 7343159
+    m_Bits: 7341111
 --- !u!114 &1835459134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3457,9 +3457,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d6bd3e66a3d3cb449899a8531f9b487, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  center: {x: 0, y: 0.5}
   hand: {fileID: 6553057030171741434}
   weaponHolder: {fileID: 3483696773581803520}
-  center: {x: 0, y: 0.5}
   hp: 5
   maxHp: 5
   moveSpeed: 1
@@ -3477,8 +3477,8 @@ MonoBehaviour:
   - {fileID: 655807899}
   inventorySize: 1
   grafic: {fileID: 4211380931731464729}
-  behaviorState: 2
   target: {fileID: 5837737}
+  behaviorState: 2
 --- !u!50 &7986098150130234028
 Rigidbody2D:
   serializedVersion: 4

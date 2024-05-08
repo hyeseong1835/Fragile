@@ -6,14 +6,24 @@ using UnityEngine.Events;
 
 public class Weapon_SwingAndThrow : Weapon
 {
-    [Space(Utility.propertySpace)]
+    [Space(Utility.overrideSpace)]
+    [BoxGroup("Object")]
+    #region Override Box Object - - - - - - - - - -|
+
+        [SerializeField][Required]
+        [LabelWidth(Utility.propertyLabelWidth)]
+        TriggerObject swing_obj;
+                                                    [BoxGroup("Object")]
+        [SerializeField][Required]
+        [LabelWidth(Utility.propertyLabelWidth)]
+        TriggerObject throw_obj;
+
+    #endregion  - - - - - - - - - - - - - - - - - -|
+
+    [Space(Utility.overrideSpace)]
     [FoldoutGroup("Attack")]
     #region Override Foldout Attack - - - - - - - - - - - - - -|
 
-        [SerializeField] 
-        [LabelWidth(Utility.propertyLabelWidth)]
-        TriggerObject swing_obj;
-                                                                [FoldoutGroup("Attack")]
         [SerializeField] 
         [LabelWidth(Utility.propertyLabelWidth)]
         float swing_damage;
@@ -30,14 +40,10 @@ public class Weapon_SwingAndThrow : Weapon
 
     #endregion  - - - - - - - - - - - - - - - - - - - - - - - -|
 
-    [Space(Utility.propertySpace)]
+    [Space(Utility.overrideSpace)]
     [FoldoutGroup("Special")]
     #region Override Foldout Special  - - - - - - - - - - - - -|
 
-        [SerializeField] 
-        [LabelWidth(Utility.propertyLabelWidth)]
-        TriggerObject throw_obj;
-                                                                [FoldoutGroup("Special")]
         [SerializeField] 
         [LabelWidth(Utility.propertyLabelWidth)]
         float throw_damage;

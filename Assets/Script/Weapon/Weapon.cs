@@ -72,19 +72,19 @@ public abstract class Weapon : MonoBehaviour
     [ReadOnly]
     public WeaponState state = WeaponState.NULL;
 
-    [FoldoutGroup("Object")]
+    [BoxGroup("Object")]
     #region Foldout Object  - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
         [Required]
         [LabelWidth(Utility.propertyLabelWidth)]
         public Sprite UI;
-                                                                                [FoldoutGroup("Object")]
+                                                                                [BoxGroup("Object")]
         #if UNITY_EDITOR
         [SerializeField][ChildGameObjectsOnly][HideIf(nameof(noDurability))]//-|
         #endif
         [LabelWidth(Utility.propertyLabelWidth)]
         protected BreakParticle breakParticle;
-                                                                                [FoldoutGroup("Object")]
+                                                                                [BoxGroup("Object")]
         [SerializeField][ChildGameObjectsOnly]
         [LabelWidth(Utility.propertyLabelWidth)]
         protected Transform hand_obj;

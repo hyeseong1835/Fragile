@@ -39,24 +39,32 @@ public abstract class Controller : MonoBehaviour
 
     #endregion  - - - - - - - - - - - - - - - - - - - - - - -|
 
-
-
-    [Required][PropertyOrder(0)]
-    public HandGrafic hand;
-
-    [Required][PropertyOrder(0)]
-    public Transform weaponHolder;
-
+    [LabelWidth(Utility.propertyLabelWidth)]
     public Vector2 center = new Vector2(0, 0.5f);
+
+    [BoxGroup("Object")]
+    #region Foldout Object  - - - - - - - - - - - -|
+
+        [Required][PropertyOrder(0)]
+        [LabelWidth(Utility.propertyLabelWidth)]
+        public HandGrafic hand;
+                                                    [BoxGroup("Object")]
+        [Required][PropertyOrder(0)]
+        [LabelWidth(Utility.propertyLabelWidth)]//-|
+        public Transform weaponHolder;
+
+    #endregion  - - - - - - - - - - - - - - - - - -|
 
     [FoldoutGroup("Stat")]
     #region Foldout Stat - - - - - - - - - - - - - - - -|                                         
 
         [HorizontalGroup("Stat/HP")]
-        #region Horizontal HP  - - - - - - - - - - -|
+        #region Horizontal HP - - - - - - - - - - - - - - - - - - - - - - - - -|
+        
+            [LabelWidth(Utility.propertyLabelWidth)]
             #if UNITY_EDITOR
             [ProgressBar(0, nameof(_maxHp), 
-                ColorGetter = nameof(_hpColor))]//-|
+                ColorGetter = nameof(_hpColor))]
             #endif
             public float hp;
 
@@ -64,13 +72,14 @@ public abstract class Controller : MonoBehaviour
             public float maxHp;
             
             #if UNITY_EDITOR
-                                                     [HorizontalGroup("Stat/HP", width: 30)]
+                                                                                [HorizontalGroup("Stat/HP", Width = Utility.shortNoLabelPropertyWidth)]
             [ShowInInspector]
             [HideLabel][DelayedProperty]
             float _maxHp { 
                 get { return maxHp; } 
                 set {
-                    if (hp == maxHp || hp > value) hp = value;
+                    if (hp == maxHp 
+                        || hp > value) hp = value;
                     
                     maxHp = value;
                 }
@@ -84,7 +93,7 @@ public abstract class Controller : MonoBehaviour
                             new GradientColorKey(Color.yellow, 0),
                             new GradientColorKey(Color.red, 1)
                         },
-                        new GradientAlphaKey[] { new GradientAlphaKey(1,0) }
+                        new GradientAlphaKey[] { new GradientAlphaKey(1,0) }//-|
                     );
                     return gradient.Evaluate(hp / maxHp);
                 }
@@ -92,8 +101,10 @@ public abstract class Controller : MonoBehaviour
             
             #endif
 
-        #endregion - - - - - - - - - - - -|                         
+        #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|    
+    
                                                [FoldoutGroup("Stat")]
+    [LabelWidth(Utility.propertyLabelWidth)]
     public float moveSpeed = 1;
 
     #endregion - - - - - - - - - - - - - - - -|
@@ -106,68 +117,87 @@ public abstract class Controller : MonoBehaviour
             #if UNITY_EDITOR
             [HideIf(nameof(inspectorShowLastMoveVector))] 
             #endif
+            [LabelWidth(Utility.propertyLabelWidth)]
             public Vector2 moveVector = new Vector3(0.5f, 0, 0);                                             
                                                                         [VerticalGroup("Input/Move")]
             #if UNITY_EDITOR
             [ShowIf(nameof(inspectorShowLastMoveVector))]
             #endif
+            [LabelWidth(Utility.propertyLabelWidth)]
             public Vector2 lastMoveVector = new Vector3(0.5f, 0, 0);//-|
                  
             [VerticalGroup("Input/Move")]                 
             #if UNITY_EDITOR
             [HideIf(nameof(inspectorShowLastMoveVector))]
             #endif
+            [LabelWidth(Utility.propertyLabelWidth)]
             [Range(0f, 360f)]
             public float moveRotate = 0;
                                                                         [VerticalGroup("Input/Move")]
             #if UNITY_EDITOR
             [ShowIf(nameof(inspectorShowLastMoveVector))] 
             #endif
+            [LabelWidth(Utility.propertyLabelWidth)]
             [Range(0f, 360f)]                                                                              
             public float lastMoveRotate = 0;
-        
+
+            #if UNITY_EDITOR
+
+            bool inspectorShowLastMoveVector
+            {
+                get { return (moveVector == Vector2.zero); }
+            }
+
+            #endif
+
         #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - -|
-    
+
         [VerticalGroup("Input/Target")]
         #region Vertical Target  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
     
+            [LabelWidth(Utility.propertyLabelWidth)]
             public Vector2 targetPos;                                                                        
                                                                                                    [VerticalGroup("Input/Target")]
             [ShowInInspector]
+            [LabelWidth(Utility.propertyLabelWidth)]
             public Vector2 targetDir { 
                 get { return (targetPos - ((Vector2)transform.position + center)).normalized; }//-|
             }
 
         #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        [VerticalGroup("Input/Skill")]
-        #region Vertical Skill  - - - - - - - - - - - - - - -|
+        [VerticalGroup("Input/Attack")]
+        #region Vertical Attack  - - - - - - - - - - - -|
+
             #if UNITY_EDITOR
-            [PropertyRange(0, nameof(attackCoolMax))]
+            [PropertyRange(0, nameof(attackCoolMax))]//-|
             #endif
+            [LabelWidth(Utility.propertyLabelWidth)]
             public float attackCool = 0;
         
             [HideInInspector] 
+            [LabelWidth(Utility.propertyLabelWidth)]
             public bool attack = false;
-    
+
+            #if UNITY_EDITOR
+
+            float attackCoolMax {
+                get {
+                    if (curWeapon == null) return 0;
+                    else return curWeapon.attackFrontDelay + curWeapon.attackDelay + curWeapon.attackBackDelay;
+                }
+            }
+
+            #endif
+
+        #endregion - - - - - - - - - - - - - - - - - - -|
+
+        [VerticalGroup("Input/Special")]
+        #region Vertical Special  - - - - - - - - - - - - - -|
+
             [HideInInspector] public bool special = false;//-|
 
         #endregion  - - - - - - - - - - - - - - - - - - - - -|
-
-        #if UNITY_EDITOR
-        
-        bool inspectorShowLastMoveVector{ 
-            get { return (moveVector == Vector2.zero); } 
-        }
-        
-        float attackCoolMax {
-            get {
-                if (curWeapon == null) return 0;
-                else return curWeapon.attackFrontDelay + curWeapon.attackDelay + curWeapon.attackBackDelay;
-            }
-        }
-
-        #endif
 
     #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|     
 
@@ -180,10 +210,11 @@ public abstract class Controller : MonoBehaviour
                 
             [VerticalGroup("Weapon/DefaultWeapon/Horizontal/Vertical", PaddingBottom = 25)]//-|
             [ShowInInspector][ReadOnly][Required]
+            [LabelWidth(Utility.propertyLabelWidth)]
             public Weapon defaultWeapon;
 
             #if UNITY_EDITOR
-                                                                                               [HorizontalGroup("Weapon/DefaultWeapon/Horizontal", width:150)]
+                                                                                               [HorizontalGroup("Weapon/DefaultWeapon/Horizontal", width: Utility.shortFunctionButtonWidth)]
             [Button(name:"Set")]
             void SetDefaultWeapon(int index)
                 {
@@ -227,10 +258,11 @@ public abstract class Controller : MonoBehaviour
 
             [VerticalGroup("Weapon/CurWeapon/Vertical", PaddingBottom = 25)]//-|
             [ReadOnly][Required]
+            [LabelWidth(Utility.propertyLabelWidth)]
             public Weapon curWeapon;
             
             #if UNITY_EDITOR
-                                                                                [HorizontalGroup("Weapon/CurWeapon", width:150)]
+                                                                                [HorizontalGroup("Weapon/CurWeapon", width: Utility.shortFunctionButtonWidth)]
             [Button(name:"Set")]
             void SetCurWeapon(int index)
             {
@@ -255,9 +287,10 @@ public abstract class Controller : MonoBehaviour
         #region Horizontal Inventory - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
             [ReadOnly]
+            [LabelWidth(Utility.propertyLabelWidth)]
             public List<Weapon> weapons = new List<Weapon>();
 
-            [HorizontalGroup("Weapon/Inventory/Horizontal", width: 30)]
+            [HorizontalGroup("Weapon/Inventory/Horizontal", width: Utility.shortNoLabelPropertyWidth)]
             [VerticalGroup("Weapon/Inventory/Horizontal/Manage")]
             #region Vertical Manage  - - - - - - - - - - - - - - - - - - - - - - - - - - - -|       
             
@@ -292,7 +325,7 @@ public abstract class Controller : MonoBehaviour
 
             #if UNITY_EDITOR
 
-            [HorizontalGroup("Weapon/Inventory/Manage")]
+            [HorizontalGroup("Weapon/Inventory/Manage", width: Utility.shortFunctionButtonWidth)]
             #region Horizontal Manage  - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
                 [Button(name: "Add")]
@@ -300,7 +333,7 @@ public abstract class Controller : MonoBehaviour
                 {
                     AddWeapon(Weapon.SpawnWeapon(name));
                 }
-                                                                                               [HorizontalGroup("Weapon/Inventory/Manage")]
+                                                                                               [HorizontalGroup("Weapon/Inventory/Manage", width: Utility.shortFunctionButtonWidth)]
                 [Button(name: "Destroy")]
                 void DestroyWeaponInInspector(int index)
                 {

@@ -5,14 +5,20 @@ using Sirenix.OdinInspector;
 
 public class Weapon_Hand : Weapon
 {
-    [Space(Utility.propertySpace)]
+    [Space(Utility.overrideSpace)]
+    [BoxGroup("Object")]
+    #region Override Box Object - - - - - - - - - -|
+
+        [SerializeField][Required]
+        [LabelWidth(Utility.propertyLabelWidth)]
+        TriggerObject swing_obj;
+
+    #endregion  - - - - - - - - - - - - - - - - - -|
+
+    [Space(Utility.overrideSpace)]
     [FoldoutGroup("Attack")]
     #region Override Foldout Attack - - - - - - - - - - - - - -|
 
-        [SerializeField] 
-        [LabelWidth(Utility.propertyLabelWidth)]
-        TriggerObject swing_obj;
-                                                                [FoldoutGroup("Attack")]
         [SerializeField] 
         [LabelWidth(Utility.propertyLabelWidth)]
         float swing_damage;
@@ -24,6 +30,7 @@ public class Weapon_Hand : Weapon
         [SerializeField] 
         [LabelWidth(Utility.propertyLabelWidth)]
         Skill.SwingCurve swing_curve;
+        
 
         UnityEvent<GameObject, Collider2D> swing_enterEvent;//-|
 

@@ -7,22 +7,30 @@ using System.Reflection.Emit;
 [ExecuteAlways]
 public class EnemyController : Controller
 {
+    [Space(Utility.overrideSpace)]
+    [BoxGroup("Object")]
+    #region Override Box Object - - - - - - - - - -|
+
+        [Required][PropertyOrder(0)]
+        [LabelWidth(Utility.propertyLabelWidth)]//-|
+        public EnemyGrafic grafic;
+                                                    [BoxGroup("Object")]
+        [SerializeField] 
+        [LabelWidth(Utility.propertyLabelWidth)]
+        Controller target;
+
+    #endregion  - - - - - - - - - - - - - - - - - -|
+
     enum BehaviorState
     {
         NULL, None, Idle, Move, Recoil
     }
+    [SerializeField] BehaviorState behaviorState;
+
     enum AnimateState
     {
         NULL, None, Stay, Move
     }
-    [Required][PropertyOrder(0)]
-        public EnemyGrafic grafic;
-
-    [SerializeField] BehaviorState behaviorState;
-    [SerializeField] Controller target;
-
-    //[SerializeField] float attackCoolTime;
-
 
     void Update()
     {
