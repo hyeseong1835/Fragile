@@ -19,7 +19,7 @@ public class UI_Inventory : MonoBehaviour
 
     void Update()
     {
-        curWeaponImage.sprite = pCon.curWeapon.UI;
+        curWeaponImage.sprite = pCon.curWeapon.UISprite;
 
         //내구도가 없을 때
         if (pCon.curWeapon.durability == -1)
@@ -38,7 +38,7 @@ public class UI_Inventory : MonoBehaviour
         {
             nextWeaponImage.gameObject.SetActive(true);
 
-            nextWeaponImage.sprite = pCon.nextWeapon.UI;
+            nextWeaponImage.sprite = pCon.nextWeapon.UISprite;
         }
         
     }

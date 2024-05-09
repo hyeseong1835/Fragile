@@ -7,24 +7,39 @@ public class PlayerController : Controller
 {
     [Space(Editor.overrideSpace)]
     [BoxGroup("Object")]
-    #region Override Box Object - - - - - - - - - -| 
+    #region Override Box Object  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -| 
 
-        [Required][PropertyOrder(0)]
-        [LabelWidth(Editor.propertyLabelWidth)]//-|
-        public CameraController camCon;
-                                                    [BoxGroup("Object")]
-        [Required][PropertyOrder(0)]
-        [LabelWidth(Editor.propertyLabelWidth)]
+    [Required][ChildGameObjectsOnly][PropertyOrder(0)]
+        [LabelText("Player Grafic")][LabelWidth(Editor.propertyLabelWidth - Editor.childGameObjectOnlyWidth)]//-|
         public PlayerGrafic grafic;
+                                                                                [BoxGroup("Object")]
+        [Required][PropertyOrder(0)]
+        [LabelText("Cam Controller")][LabelWidth(Editor.propertyLabelWidth)]
+        public CameraController camCon;
 
-    #endregion  - - - - - - - - - - - - - - - - - -| 
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -| 
 
+    [Space(Editor.overrideSpace)]
     [FoldoutGroup("Input")]
-    #region Override Input
+    #region Override Input  - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+        [VerticalGroup("Input/Attack")]
+        #region Override Foldout Attack - - - - - - - - - - - - - - - - - - - -|
 
-        #region Mouse
+            [SerializeField][ReadOnly]
+            [LabelWidth(Editor.propertyLabelWidth)]
+            bool attackInput = false;   
+                                                                                [VerticalGroup("Input/Attack")]      
+            [SerializeField] 
+            [LabelText("Allow Time")][LabelWidth(Editor.propertyLabelWidth)]//-|
+            float attackInputAllowTime = 1;
 
-            [HideInInspector] 
+            Coroutine curAttackInputCoroutine;
+
+    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+    #region Mouse
+
+    [HideInInspector] 
             public Vector2 mousePos { get { return camCon.cam.ScreenToWorldPoint(Input.mousePosition); } }
     
             [HideInInspector] 
@@ -73,28 +88,11 @@ public class PlayerController : Controller
                 [HideInInspector] 
                 public bool mouseWheelClickUp { get { return Input.GetMouseButtonDown(2); } }
 
-            #endregion
-
-        #endregion
-
-        [Space(Editor.overrideSpace)]
-        [VerticalGroup("Input/Attack")]
-        #region Override Foldout Attack - - - - - - - -|
-
-            [SerializeField][ReadOnly]
-            [LabelWidth(Editor.propertyLabelWidth)]//-|
-            bool attackInput = false;   
-                                                        [VerticalGroup("Input/Attack")]      
-            [SerializeField] 
-            [LabelWidth(Editor.propertyLabelWidth)]
-            float attackInputAllowTime = 1;
-
-            Coroutine curAttackInputCoroutine;
-
-
-        #endregion  - - - - - - - - - - - - - - - - - -|
+    #endregion
 
     #endregion
+
+    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     [HideInInspector]
     public Weapon nextWeapon;

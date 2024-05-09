@@ -28,6 +28,9 @@ public class Editor : MonoBehaviour
     [ShowInInspector]
     public const float shortPropertyWidth = 150;
 
+    [ShowInInspector]
+    public const float childGameObjectOnlyWidth = 16.5f;
+
     #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     #region Editor - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|

@@ -43,17 +43,17 @@ public abstract class Controller : MonoBehaviour
     public Vector2 center = new Vector2(0, 0.5f);
 
     [BoxGroup("Object")]
-    #region Foldout Object  - - - - - - - - - - - -|
+    #region Foldout Object - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        [Required][PropertyOrder(0)]
-        [LabelWidth(Editor.propertyLabelWidth)]
+        [Required][ChildGameObjectsOnly][PropertyOrder(0)]
+        [LabelText("Hand Grafic")][LabelWidth(Editor.propertyLabelWidth - Editor.childGameObjectOnlyWidth)]//-|
         public HandGrafic hand;
                                                     [BoxGroup("Object")]
-        [Required][PropertyOrder(0)]
-        [LabelWidth(Editor.propertyLabelWidth)]//-|
+        [Required][ChildGameObjectsOnly][PropertyOrder(0)]
+        [LabelWidth(Editor.propertyLabelWidth - Editor.childGameObjectOnlyWidth)]
         public Transform weaponHolder;
 
-    #endregion  - - - - - - - - - - - - - - - - - -|
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     [FoldoutGroup("Stat")]
     #region Foldout Stat - - - - - - - - - - - - - - - -|                                         
@@ -115,30 +115,48 @@ public abstract class Controller : MonoBehaviour
         [VerticalGroup("Input/Move")]
         #region Vertical Move - - - - - - - - - - - - - - - - - - - - -|
             #if UNITY_EDITOR
-            [HideIf(nameof(inspectorShowLastMoveVector))] 
+            [DisableInEditorMode][HideIf(nameof(inspectorShowLastMoveVector))]
             #endif
             [LabelWidth(Editor.propertyLabelWidth)]
-            public Vector2 moveVector = new Vector3(0.5f, 0, 0);                                             
+            public Vector2 moveVector = new Vector2(0.5f, 0);                                             
                                                                         [VerticalGroup("Input/Move")]
             #if UNITY_EDITOR
-            [ShowIf(nameof(inspectorShowLastMoveVector))]
+            [DisableInEditorMode][ShowIf(nameof(inspectorShowLastMoveVector))]
             #endif
             [LabelWidth(Editor.propertyLabelWidth)]
-            public Vector2 lastMoveVector = new Vector3(0.5f, 0, 0);//-|
-                 
-            [VerticalGroup("Input/Move")]                 
+            public Vector2 lastMoveVector = new Vector2(0.5f, 0);//-|
+            
             #if UNITY_EDITOR
-            [HideIf(nameof(inspectorShowLastMoveVector))]
-            #endif
+                                                                                       [VerticalGroup("Input/Move")]                 
+            [ShowInInspector][ReadOnly][HideIf(nameof(inspectorShowLastMoveVector))]
             [LabelWidth(Editor.propertyLabelWidth)]
-            [Range(0f, 360f)]
+            [MinMaxSlider(0, 7)]
+            Vector2Int _moveRotate {
+                get {
+                    int intRotate = Utility.FloorRotateToInt(moveRotate, 8);
+
+                    if(intRotate == 7) return new Vector2Int(intRotate, intRotate);
+                    else return new Vector2Int(intRotate, intRotate + 1);
+                }
+            }
+            #endif
+            [HideInInspector]
             public float moveRotate = 0;
                                                                         [VerticalGroup("Input/Move")]
             #if UNITY_EDITOR
-            [ShowIf(nameof(inspectorShowLastMoveVector))] 
-            #endif
+                                                                                       [VerticalGroup("Input/Move")]                 
+            [ShowInInspector][ReadOnly][ShowIf(nameof(inspectorShowLastMoveVector))]
             [LabelWidth(Editor.propertyLabelWidth)]
-            [Range(0f, 360f)]                                                                              
+            [MinMaxSlider(0, 7)]
+            Vector2Int _lastMoveRotate {
+                get {
+                    int intRotate = Utility.FloorRotateToInt(lastMoveRotate, 8);
+                    
+                    if(intRotate == 7) return new Vector2Int(intRotate, intRotate);
+                    else return new Vector2Int(intRotate, intRotate + 1);
+                }
+            }
+            #endif                                                        
             public float lastMoveRotate = 0;
 
             #if UNITY_EDITOR
@@ -299,8 +317,7 @@ public abstract class Controller : MonoBehaviour
 
                 #if UNITY_EDITOR
                                                                                              [VerticalGroup("Weapon/Inventory/Horizontal/Manage")]
-                [HideLabel]
-                [Button(name: "Clear", Stretch = true)]
+                [Button(name: "Clear")]
                 void ClearInventory()
                 {
                     //기본 무기 제거
@@ -325,7 +342,7 @@ public abstract class Controller : MonoBehaviour
 
             #if UNITY_EDITOR
 
-            [HorizontalGroup("Weapon/Inventory/Manage", width: Editor.shortFunctionButtonWidth)]
+            [HorizontalGroup("Weapon/Inventory/Manage")]
             #region Horizontal Manage  - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
                 [Button(name: "Add")]
@@ -333,7 +350,7 @@ public abstract class Controller : MonoBehaviour
                 {
                     AddWeapon(Weapon.SpawnWeapon(name));
                 }
-                                                                                               [HorizontalGroup("Weapon/Inventory/Manage", width: Editor.shortFunctionButtonWidth)]
+                                                                                               [HorizontalGroup("Weapon/Inventory/Manage")]
                 [Button(name: "Destroy")]
                 void DestroyWeaponInInspector(int index)
                 {

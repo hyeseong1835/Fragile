@@ -173,8 +173,8 @@ MonoBehaviour:
   weapons:
   - {fileID: 1655136533}
   inventorySize: 5
-  camCon: {fileID: 519420033}
   grafic: {fileID: 1780597530}
+  camCon: {fileID: 519420033}
   attackInput: 0
   attackInputAllowTime: 0.25
   nextWeapon: {fileID: 1655136533}
@@ -390,7 +390,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 4de065b7691eaa64d8d187fce863b3e3, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1288,7 +1288,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 608a83976b59cec40addcc2aaade0f0a, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

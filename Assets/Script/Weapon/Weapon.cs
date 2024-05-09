@@ -63,8 +63,6 @@ public abstract class Weapon : MonoBehaviour
 
     #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-
-
     [ReadOnly] public Controller con;
 
     [Required] public string weaponName;
@@ -73,17 +71,17 @@ public abstract class Weapon : MonoBehaviour
     public WeaponState state = WeaponState.NULL;
 
     [BoxGroup("Object")]
-    #region Foldout Object  - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    #region Foldout Object - - - - - - - - - - - -|
 
-        [Required]
-        [LabelWidth(Editor.propertyLabelWidth)]
-        public Sprite UI;
-                                                                                [BoxGroup("Object")]
+        [Required]//에셋 경로 지정
+        [LabelWidth(Editor.propertyLabelWidth)]//-|
+        public Sprite UISprite;
+                                                   [BoxGroup("Object")]
         [SerializeField][ChildGameObjectsOnly]
         [LabelWidth(Editor.propertyLabelWidth)]
         protected Transform hand_obj;
 
-    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    #endregion - - - - - - - - - - - - - - - - - -|
 
     [FoldoutGroup("Stat")]
     #region Foldout Stat  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|

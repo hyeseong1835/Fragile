@@ -9,17 +9,17 @@ public class EnemyController : Controller
 {
     [Space(Editor.overrideSpace)]
     [BoxGroup("Object")]
-    #region Override Box Object - - - - - - - - - -|
+    #region Override Box Object  - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        [Required][PropertyOrder(0)]
-        [LabelWidth(Editor.propertyLabelWidth)]//-|
+        [Required][ChildGameObjectsOnly][PropertyOrder(0)]
+        [LabelWidth(Editor.propertyLabelWidth - Editor.childGameObjectOnlyWidth)]//-|
         public EnemyGrafic grafic;
-                                                    [BoxGroup("Object")]
+                                                                                     [BoxGroup("Object")]
         [SerializeField] 
         [LabelWidth(Editor.propertyLabelWidth)]
         Controller target;
 
-    #endregion  - - - - - - - - - - - - - - - - - -|
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     enum BehaviorState
     {
