@@ -187,10 +187,11 @@ public abstract class Controller : MonoBehaviour
         [VerticalGroup("Input/Attack")]
         #region Vertical Attack  - - - - - - - - - - - -|
 
+            [ReadOnly]
+            [LabelWidth(Editor.propertyLabelWidth)]
             #if UNITY_EDITOR
             [PropertyRange(0, nameof(attackCoolMax))]//-|
             #endif
-            [LabelWidth(Editor.propertyLabelWidth)]
             public float attackCool = 0;
         
             [HideInInspector] 

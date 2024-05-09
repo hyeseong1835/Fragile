@@ -10,7 +10,7 @@ public class Weapon_Hand : Weapon
     #region Override Box Object - - - - - - - - - - - - - -|
 
         [SerializeField][Required][ChildGameObjectsOnly]//-|
-        [LabelWidth(Editor.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth - Editor.childGameObjectOnlyWidth)]
         TriggerObject swing_obj;
 
     #endregion  - - - - - - - - - - - - - - - - - - - - - -|

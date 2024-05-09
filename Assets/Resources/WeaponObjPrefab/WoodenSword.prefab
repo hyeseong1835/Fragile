@@ -444,7 +444,7 @@ MonoBehaviour:
   con: {fileID: 0}
   weaponName: WoodenSword
   state: 1
-  UI: {fileID: 21300000, guid: 4de065b7691eaa64d8d187fce863b3e3, type: 3}
+  UISprite: {fileID: 21300000, guid: 4de065b7691eaa64d8d187fce863b3e3, type: 3}
   hand_obj: {fileID: 6925892068553711680}
   damage: 1
   durability: 3

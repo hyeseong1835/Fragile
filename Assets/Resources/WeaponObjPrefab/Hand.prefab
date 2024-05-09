@@ -251,7 +251,7 @@ MonoBehaviour:
   con: {fileID: 0}
   weaponName: Hand
   state: 1
-  UI: {fileID: 21300000, guid: 608a83976b59cec40addcc2aaade0f0a, type: 3}
+  UISprite: {fileID: 21300000, guid: 608a83976b59cec40addcc2aaade0f0a, type: 3}
   hand_obj: {fileID: 8071979658987198518}
   damage: 1
   durability: 0

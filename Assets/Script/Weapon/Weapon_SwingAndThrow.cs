@@ -8,23 +8,23 @@ public class Weapon_SwingAndThrow : Weapon
 {
     [Space(Editor.overrideSpace)]
     [BoxGroup("Object")]
-    #region Override Box Object - - - - - - - - - - - - - -|
+    #region Override Box Object  - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
         #if UNITY_EDITOR
         [SerializeField][ChildGameObjectsOnly]
         #endif
-        [LabelWidth(Editor.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth - Editor.childGameObjectOnlyWidth)]//-|
         BreakParticle breakParticle;
                                                             [BoxGroup("Object")]
-        [SerializeField][Required][ChildGameObjectsOnly]//-|
-        [LabelWidth(Editor.propertyLabelWidth)]
+        [SerializeField][Required][ChildGameObjectsOnly]
+        [LabelWidth(Editor.propertyLabelWidth - Editor.childGameObjectOnlyWidth)]
         TriggerObject swing_obj;
                                                             [BoxGroup("Object")]
         [SerializeField][Required][ChildGameObjectsOnly]
-        [LabelWidth(Editor.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth - Editor.childGameObjectOnlyWidth)]
         TriggerObject throw_obj;
 
-    #endregion  - - - - - - - - - - - - - - - - - - - - - -|
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     [Space(Editor.overrideSpace)]
     [FoldoutGroup("Attack")]

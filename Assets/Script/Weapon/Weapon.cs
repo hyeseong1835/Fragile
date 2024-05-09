@@ -78,7 +78,7 @@ public abstract class Weapon : MonoBehaviour
         public Sprite UISprite;
                                                    [BoxGroup("Object")]
         [SerializeField][ChildGameObjectsOnly]
-        [LabelWidth(Editor.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth - Editor.childGameObjectOnlyWidth)]
         protected Transform hand_obj;
 
     #endregion - - - - - - - - - - - - - - - - - -|

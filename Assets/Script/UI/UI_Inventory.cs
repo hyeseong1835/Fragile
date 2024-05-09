@@ -40,6 +40,5 @@ public class UI_Inventory : MonoBehaviour
 
             nextWeaponImage.sprite = pCon.nextWeapon.UISprite;
         }
-        
     }
 }
