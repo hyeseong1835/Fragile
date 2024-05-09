@@ -39,18 +39,18 @@ public abstract class Controller : MonoBehaviour
 
     #endregion  - - - - - - - - - - - - - - - - - - - - - - -|
 
-    [LabelWidth(Utility.propertyLabelWidth)]
+    [LabelWidth(Editor.propertyLabelWidth)]
     public Vector2 center = new Vector2(0, 0.5f);
 
     [BoxGroup("Object")]
     #region Foldout Object  - - - - - - - - - - - -|
 
         [Required][PropertyOrder(0)]
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth)]
         public HandGrafic hand;
                                                     [BoxGroup("Object")]
         [Required][PropertyOrder(0)]
-        [LabelWidth(Utility.propertyLabelWidth)]//-|
+        [LabelWidth(Editor.propertyLabelWidth)]//-|
         public Transform weaponHolder;
 
     #endregion  - - - - - - - - - - - - - - - - - -|
@@ -61,7 +61,7 @@ public abstract class Controller : MonoBehaviour
         [HorizontalGroup("Stat/HP")]
         #region Horizontal HP - - - - - - - - - - - - - - - - - - - - - - - - -|
         
-            [LabelWidth(Utility.propertyLabelWidth)]
+            [LabelWidth(Editor.propertyLabelWidth)]
             #if UNITY_EDITOR
             [ProgressBar(0, nameof(_maxHp), 
                 ColorGetter = nameof(_hpColor))]
@@ -72,7 +72,7 @@ public abstract class Controller : MonoBehaviour
             public float maxHp;
             
             #if UNITY_EDITOR
-                                                                                [HorizontalGroup("Stat/HP", Width = Utility.shortNoLabelPropertyWidth)]
+                                                                                [HorizontalGroup("Stat/HP", Width = Editor.shortNoLabelPropertyWidth)]
             [ShowInInspector]
             [HideLabel][DelayedProperty]
             float _maxHp { 
@@ -104,7 +104,7 @@ public abstract class Controller : MonoBehaviour
         #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|    
     
                                                [FoldoutGroup("Stat")]
-    [LabelWidth(Utility.propertyLabelWidth)]
+    [LabelWidth(Editor.propertyLabelWidth)]
     public float moveSpeed = 1;
 
     #endregion - - - - - - - - - - - - - - - -|
@@ -117,27 +117,27 @@ public abstract class Controller : MonoBehaviour
             #if UNITY_EDITOR
             [HideIf(nameof(inspectorShowLastMoveVector))] 
             #endif
-            [LabelWidth(Utility.propertyLabelWidth)]
+            [LabelWidth(Editor.propertyLabelWidth)]
             public Vector2 moveVector = new Vector3(0.5f, 0, 0);                                             
                                                                         [VerticalGroup("Input/Move")]
             #if UNITY_EDITOR
             [ShowIf(nameof(inspectorShowLastMoveVector))]
             #endif
-            [LabelWidth(Utility.propertyLabelWidth)]
+            [LabelWidth(Editor.propertyLabelWidth)]
             public Vector2 lastMoveVector = new Vector3(0.5f, 0, 0);//-|
                  
             [VerticalGroup("Input/Move")]                 
             #if UNITY_EDITOR
             [HideIf(nameof(inspectorShowLastMoveVector))]
             #endif
-            [LabelWidth(Utility.propertyLabelWidth)]
+            [LabelWidth(Editor.propertyLabelWidth)]
             [Range(0f, 360f)]
             public float moveRotate = 0;
                                                                         [VerticalGroup("Input/Move")]
             #if UNITY_EDITOR
             [ShowIf(nameof(inspectorShowLastMoveVector))] 
             #endif
-            [LabelWidth(Utility.propertyLabelWidth)]
+            [LabelWidth(Editor.propertyLabelWidth)]
             [Range(0f, 360f)]                                                                              
             public float lastMoveRotate = 0;
 
@@ -155,11 +155,11 @@ public abstract class Controller : MonoBehaviour
         [VerticalGroup("Input/Target")]
         #region Vertical Target  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
     
-            [LabelWidth(Utility.propertyLabelWidth)]
+            [LabelWidth(Editor.propertyLabelWidth)]
             public Vector2 targetPos;                                                                        
                                                                                                    [VerticalGroup("Input/Target")]
             [ShowInInspector]
-            [LabelWidth(Utility.propertyLabelWidth)]
+            [LabelWidth(Editor.propertyLabelWidth)]
             public Vector2 targetDir { 
                 get { return (targetPos - ((Vector2)transform.position + center)).normalized; }//-|
             }
@@ -172,11 +172,11 @@ public abstract class Controller : MonoBehaviour
             #if UNITY_EDITOR
             [PropertyRange(0, nameof(attackCoolMax))]//-|
             #endif
-            [LabelWidth(Utility.propertyLabelWidth)]
+            [LabelWidth(Editor.propertyLabelWidth)]
             public float attackCool = 0;
         
             [HideInInspector] 
-            [LabelWidth(Utility.propertyLabelWidth)]
+            [LabelWidth(Editor.propertyLabelWidth)]
             public bool attack = false;
 
             #if UNITY_EDITOR
@@ -210,11 +210,11 @@ public abstract class Controller : MonoBehaviour
                 
             [VerticalGroup("Weapon/DefaultWeapon/Horizontal/Vertical", PaddingBottom = 25)]//-|
             [ShowInInspector][ReadOnly][Required]
-            [LabelWidth(Utility.propertyLabelWidth)]
+            [LabelWidth(Editor.propertyLabelWidth)]
             public Weapon defaultWeapon;
 
             #if UNITY_EDITOR
-                                                                                               [HorizontalGroup("Weapon/DefaultWeapon/Horizontal", width: Utility.shortFunctionButtonWidth)]
+                                                                                               [HorizontalGroup("Weapon/DefaultWeapon/Horizontal", width: Editor.shortFunctionButtonWidth)]
             [Button(name:"Set")]
             void SetDefaultWeapon(int index)
                 {
@@ -258,11 +258,11 @@ public abstract class Controller : MonoBehaviour
 
             [VerticalGroup("Weapon/CurWeapon/Vertical", PaddingBottom = 25)]//-|
             [ReadOnly][Required]
-            [LabelWidth(Utility.propertyLabelWidth)]
+            [LabelWidth(Editor.propertyLabelWidth)]
             public Weapon curWeapon;
             
             #if UNITY_EDITOR
-                                                                                [HorizontalGroup("Weapon/CurWeapon", width: Utility.shortFunctionButtonWidth)]
+                                                                                [HorizontalGroup("Weapon/CurWeapon", width: Editor.shortFunctionButtonWidth)]
             [Button(name:"Set")]
             void SetCurWeapon(int index)
             {
@@ -287,10 +287,10 @@ public abstract class Controller : MonoBehaviour
         #region Horizontal Inventory - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
             [ReadOnly]
-            [LabelWidth(Utility.propertyLabelWidth)]
+            [LabelWidth(Editor.propertyLabelWidth)]
             public List<Weapon> weapons = new List<Weapon>();
 
-            [HorizontalGroup("Weapon/Inventory/Horizontal", width: Utility.shortNoLabelPropertyWidth)]
+            [HorizontalGroup("Weapon/Inventory/Horizontal", width: Editor.shortNoLabelPropertyWidth)]
             [VerticalGroup("Weapon/Inventory/Horizontal/Manage")]
             #region Vertical Manage  - - - - - - - - - - - - - - - - - - - - - - - - - - - -|       
             
@@ -304,14 +304,14 @@ public abstract class Controller : MonoBehaviour
                 void ClearInventory()
                 {
                     //기본 무기 제거
-                    if (defaultWeapon != null) Utility.Destroy(defaultWeapon.gameObject);//-|
+                    if (defaultWeapon != null) Utility.AutoDestroy(defaultWeapon.gameObject);//-|
 
                     //인벤토리 무기 제거
                     for (int i = weapons.Count - 1; i >= 0; i--)
                     {
                         if (weapons[i] == null) continue;
                             
-                        Utility.Destroy(weapons[i].gameObject);
+                        Utility.AutoDestroy(weapons[i].gameObject);
                     }
 
                     defaultWeapon = null;
@@ -325,7 +325,7 @@ public abstract class Controller : MonoBehaviour
 
             #if UNITY_EDITOR
 
-            [HorizontalGroup("Weapon/Inventory/Manage", width: Utility.shortFunctionButtonWidth)]
+            [HorizontalGroup("Weapon/Inventory/Manage", width: Editor.shortFunctionButtonWidth)]
             #region Horizontal Manage  - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
                 [Button(name: "Add")]
@@ -333,7 +333,7 @@ public abstract class Controller : MonoBehaviour
                 {
                     AddWeapon(Weapon.SpawnWeapon(name));
                 }
-                                                                                               [HorizontalGroup("Weapon/Inventory/Manage", width: Utility.shortFunctionButtonWidth)]
+                                                                                               [HorizontalGroup("Weapon/Inventory/Manage", width: Editor.shortFunctionButtonWidth)]
                 [Button(name: "Destroy")]
                 void DestroyWeaponInInspector(int index)
                 {

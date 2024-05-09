@@ -7,97 +7,6 @@ using UnityEngine;
 
 public static class Utility
 {
-    #region Inspector  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    public const int propertyLabelWidth = 125;
-    public const int shortNoLabelPropertyWidth = 50;
-    public const int overrideSpace = 10;
-    public const int shortFunctionButtonWidth = 150;
-
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    #region Editor - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    public enum EditorState
-    {
-        Unknown, BuildPlay, EditorPlay, EditorPlayPaused, EditorPlayCompiling
-    }
-    public enum StateType
-    {
-        IsPlay, IsEditor, IsBuild
-    }
-    public enum ObjectState
-    {
-        Null, PrefabEdit, Prefab, NotPrefab
-    }
-    public static EditorState GetEditorState()
-    {
-        #if UNITY_EDITOR
-        
-            //플레이
-            if (EditorApplication.isPlaying) return EditorState.EditorPlay;
-
-            //정지
-            if (EditorApplication.isPaused) return EditorState.EditorPlayPaused;
-
-            //컴파일 중
-            if (EditorApplication.isCompiling) return EditorState.EditorPlayCompiling;
-
-            return EditorState.Unknown;
-
-        #else
-            //빌드
-            return EditorState.BuildPlay;
-        #endif
-    }
-    public static ObjectState GetObjectState(GameObject gameObject)
-    {
-        #if UNITY_EDITOR
-
-            if (gameObject == null) return ObjectState.Null;
-        
-            if (StageUtility.GetStage(gameObject) != StageUtility.GetMainStage()) return ObjectState.PrefabEdit;
-            
-            return ObjectState.NotPrefab;
-
-        #else
-        
-            return ObjectState.NotPrefab;
-        
-        #endif
-    }
-    public static bool GetEditorStateByType(StateType type)
-    {
-        switch (type)
-        {
-            case StateType.IsPlay:
-                #if UNITY_EDITOR
-                    EditorState state = GetEditorState();
-
-                    return (state == EditorState.EditorPlay 
-                        || state == EditorState.BuildPlay);
-                #else 
-                    return true;
-                #endif
-            case StateType.IsEditor:
-                #if UNITY_EDITOR
-                    return true;
-                #else
-                    return false;
-                #endif
-            case StateType.IsBuild:
-                #if UNITY_EDITOR
-                    return false;
-                #else
-                    return true;
-                #endif
-            default:
-                return false;
-        }
-    }
-
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
     #region Load - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     /// <summary>
@@ -192,9 +101,9 @@ public static class Utility
 
     #region Other  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
     
-    public static void Destroy(UnityEngine.Object obj)
+    public static void AutoDestroy(UnityEngine.Object obj)
     {
-        if (GetEditorStateByType(StateType.IsPlay)) UnityEngine.Object.Destroy(obj);
+        if (Editor.GetType(Editor.StateType.IsPlay)) UnityEngine.Object.Destroy(obj);
         else UnityEngine.Object.DestroyImmediate(obj);
     }
 

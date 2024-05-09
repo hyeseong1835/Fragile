@@ -6,53 +6,59 @@ using UnityEngine.Events;
 
 public class Weapon_SwingAndThrow : Weapon
 {
-    [Space(Utility.overrideSpace)]
+    [Space(Editor.overrideSpace)]
     [BoxGroup("Object")]
-    #region Override Box Object - - - - - - - - - -|
+    #region Override Box Object - - - - - - - - - - - - - -|
 
-        [SerializeField][Required]
-        [LabelWidth(Utility.propertyLabelWidth)]
+        #if UNITY_EDITOR
+        [SerializeField][ChildGameObjectsOnly]
+        #endif
+        [LabelWidth(Editor.propertyLabelWidth)]
+        BreakParticle breakParticle;
+                                                            [BoxGroup("Object")]
+        [SerializeField][Required][ChildGameObjectsOnly]//-|
+        [LabelWidth(Editor.propertyLabelWidth)]
         TriggerObject swing_obj;
-                                                    [BoxGroup("Object")]
-        [SerializeField][Required]
-        [LabelWidth(Utility.propertyLabelWidth)]
+                                                            [BoxGroup("Object")]
+        [SerializeField][Required][ChildGameObjectsOnly]
+        [LabelWidth(Editor.propertyLabelWidth)]
         TriggerObject throw_obj;
 
-    #endregion  - - - - - - - - - - - - - - - - - -|
+    #endregion  - - - - - - - - - - - - - - - - - - - - - -|
 
-    [Space(Utility.overrideSpace)]
+    [Space(Editor.overrideSpace)]
     [FoldoutGroup("Attack")]
     #region Override Foldout Attack  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     [SerializeField] 
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth)]
         float swing_damage;
                                                                                                            [FoldoutGroup("Attack")]
-        [SerializeField] 
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [SerializeField]
+        [LabelWidth(Editor.propertyLabelWidth)]
         float swing_spread;
                                                                                                            [FoldoutGroup("Attack")]
         [SerializeField] 
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth)]
         Skill.SwingCurve swing_curve;
 
         UnityEvent<GameObject, Collider2D> swing_enterEvent = new UnityEvent<GameObject, Collider2D>();//-|
 
     #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-    [Space(Utility.overrideSpace)]
+    [Space(Editor.overrideSpace)]
     [FoldoutGroup("Special")]
     #region Override Foldout Special - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     [SerializeField] 
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth)]
         float throw_damage;
                                                                                                            [FoldoutGroup("Special")]
         [SerializeField] 
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth)]
         float throw_throwSpeed;
                                                                                                            [FoldoutGroup("Special")]
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth)]
         [SerializeField] 
         float throw_spinSpeed;
 
@@ -185,19 +191,16 @@ public class Weapon_SwingAndThrow : Weapon
     {
         if (swing_obj.gameObject.activeInHierarchy)
         {
-            con.hand.HandLink(null);
-
-            breakParticle.SpawnParticle(swing_obj.transform.position, swing_obj.transform.rotation);
-            con.RemoveWeapon(this);
-            Destroy();
-            return;
+            if (swing_curve == 0) breakParticle.SpawnParticle(swing_obj.transform.position, swing_obj.transform.rotation);
+            else if (swing_spread > 0) breakParticle.SpawnParticle(swing_obj.transform.position, Quaternion.Euler(0, 0, (swing_obj.transform.rotation.z + 90) % 360));
+            else breakParticle.SpawnParticle(swing_obj.transform.position, Quaternion.Euler(0, 0, (swing_obj.transform.rotation.z - 90) % 360));
         }
         if (throw_obj.gameObject.activeInHierarchy)
         {
             breakParticle.SpawnParticle(throw_obj.transform.position, throw_obj.transform.rotation);
-            con.RemoveWeapon(this);
-            Destroy();
-            return;
         }
+
+        if(con.weapons.Contains(this)) con.RemoveWeapon(this);
+        Destroy();
     }
 }

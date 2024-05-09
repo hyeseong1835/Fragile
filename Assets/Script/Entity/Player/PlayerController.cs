@@ -5,16 +5,16 @@ using UnityEngine;
 [ExecuteAlways]
 public class PlayerController : Controller
 {
-    [Space(Utility.overrideSpace)]
+    [Space(Editor.overrideSpace)]
     [BoxGroup("Object")]
     #region Override Box Object - - - - - - - - - -| 
 
         [Required][PropertyOrder(0)]
-        [LabelWidth(Utility.propertyLabelWidth)]//-|
+        [LabelWidth(Editor.propertyLabelWidth)]//-|
         public CameraController camCon;
                                                     [BoxGroup("Object")]
         [Required][PropertyOrder(0)]
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth)]
         public PlayerGrafic grafic;
 
     #endregion  - - - - - - - - - - - - - - - - - -| 
@@ -77,16 +77,16 @@ public class PlayerController : Controller
 
         #endregion
 
-        [Space(Utility.overrideSpace)]
+        [Space(Editor.overrideSpace)]
         [VerticalGroup("Input/Attack")]
         #region Override Foldout Attack - - - - - - - -|
 
             [SerializeField][ReadOnly]
-            [LabelWidth(Utility.propertyLabelWidth)]//-|
+            [LabelWidth(Editor.propertyLabelWidth)]//-|
             bool attackInput = false;   
                                                         [VerticalGroup("Input/Attack")]      
             [SerializeField] 
-            [LabelWidth(Utility.propertyLabelWidth)]
+            [LabelWidth(Editor.propertyLabelWidth)]
             float attackInputAllowTime = 1;
 
             Coroutine curAttackInputCoroutine;
@@ -108,7 +108,7 @@ public class PlayerController : Controller
     }
     void Update()
     {
-        if (Utility.GetEditorStateByType(Utility.StateType.IsPlay))
+        if (Editor.GetType(Editor.StateType.IsPlay))
         {
             if (curWeapon != null)
             {

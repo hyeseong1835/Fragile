@@ -492,6 +492,50 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 1
+--- !u!1 &325918101
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 325918102}
+  - component: {fileID: 325918103}
+  m_Layer: 0
+  m_Name: EditorManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &325918102
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325918101}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 410043944}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &325918103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325918101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed6df38d3f3b94b4fac22bb3517d5db2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &374465423
 GameObject:
   m_ObjectHideFlags: 0
@@ -560,6 +604,7 @@ Transform:
   - {fileID: 1042639048}
   - {fileID: 758728249}
   - {fileID: 661186854}
+  - {fileID: 325918102}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &421564355
@@ -1327,58 +1372,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Rules:
-  - Type: 0
-    Name: 
-    GameObject: {fileID: 1042639047}
-    Ordinal: 0
-    Priority: 0
-    IconType: 125250
-    IconTexture: {fileID: 0}
-    IsIconRecursive: 0
-    BackgroundType: 0
-    BackgroundTexture: {fileID: 0}
-    IsBackgroundRecursive: 0
-    IsHidden: 0
-  - Type: 0
-    Name: 
-    GameObject: {fileID: 758728248}
-    Ordinal: 1
-    Priority: 0
-    IconType: 125250
-    IconTexture: {fileID: 0}
-    IsIconRecursive: 0
-    BackgroundType: 0
-    BackgroundTexture: {fileID: 0}
-    IsBackgroundRecursive: 0
-    IsHidden: 0
-  - Type: 0
-    Name: 
-    GameObject: {fileID: 661186853}
-    Ordinal: 2
-    Priority: 0
-    IconType: 125250
-    IconTexture: {fileID: 0}
-    IsIconRecursive: 0
-    BackgroundType: 0
-    BackgroundTexture: {fileID: 0}
-    IsBackgroundRecursive: 0
-    IsHidden: 0
-  - Type: 0
-    Name: 
-    GameObject: {fileID: 2116888119}
-    Ordinal: 3
-    Priority: 0
-    IconType: 321000
-    IconTexture: {fileID: 0}
-    IsIconRecursive: 0
-    BackgroundType: 12000
-    BackgroundTexture: {fileID: 0}
-    IsBackgroundRecursive: 0
-    IsHidden: 0
-  - Type: 0
-    Name: 
+  - Type: 1
+    Name: Camera
     GameObject: {fileID: 519420028}
-    Ordinal: 4
+    Ordinal: 0
     Priority: 0
     IconType: 290000
     IconTexture: {fileID: 0}
@@ -1390,7 +1387,7 @@ MonoBehaviour:
   - Type: 1
     Name: Sprite
     GameObject: {fileID: 294250558}
-    Ordinal: 5
+    Ordinal: 1
     Priority: 0
     IconType: 302000
     IconTexture: {fileID: 0}
@@ -1402,7 +1399,7 @@ MonoBehaviour:
   - Type: 1
     Name: Grafic
     GameObject: {fileID: 2128805569}
-    Ordinal: 6
+    Ordinal: 2
     Priority: 0
     IconType: 325000
     IconTexture: {fileID: 0}
@@ -1414,7 +1411,7 @@ MonoBehaviour:
   - Type: 1
     Name: Image
     GameObject: {fileID: 790390310}
-    Ordinal: 7
+    Ordinal: 3
     Priority: 0
     IconType: 322000
     IconTexture: {fileID: 0}
@@ -1426,7 +1423,7 @@ MonoBehaviour:
   - Type: 1
     Name: Canvas
     GameObject: {fileID: 1835459132}
-    Ordinal: 8
+    Ordinal: 4
     Priority: 0
     IconType: 161000
     IconTexture: {fileID: 0}
@@ -1436,9 +1433,21 @@ MonoBehaviour:
     IsBackgroundRecursive: 0
     IsHidden: 0
   - Type: 1
+    Name: Text
+    GameObject: {fileID: 2128805569}
+    Ordinal: 5
+    Priority: 0
+    IconType: 330000
+    IconTexture: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 0
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+  - Type: 1
     Name: WeaponHolder
     GameObject: {fileID: 2128805569}
-    Ordinal: 9
+    Ordinal: 6
     Priority: 0
     IconType: 158150
     IconTexture: {fileID: 0}
@@ -1450,7 +1459,7 @@ MonoBehaviour:
   - Type: 0
     Name: 
     GameObject: {fileID: 410043943}
-    Ordinal: 10
+    Ordinal: 7
     Priority: 0
     IconType: 321000
     IconTexture: {fileID: 0}
@@ -1461,8 +1470,20 @@ MonoBehaviour:
     IsHidden: 0
   - Type: 0
     Name: 
+    GameObject: {fileID: 2116888119}
+    Ordinal: 8
+    Priority: 0
+    IconType: 321000
+    IconTexture: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 12000
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+  - Type: 0
+    Name: 
     GameObject: {fileID: 2125075183}
-    Ordinal: 11
+    Ordinal: 9
     Priority: 0
     IconType: 321000
     IconTexture: {fileID: 0}
@@ -1474,7 +1495,7 @@ MonoBehaviour:
   - Type: 0
     Name: 
     GameObject: {fileID: 35060226}
-    Ordinal: 12
+    Ordinal: 10
     Priority: 0
     IconType: 321000
     IconTexture: {fileID: 0}
@@ -1486,7 +1507,7 @@ MonoBehaviour:
   - Type: 0
     Name: 
     GameObject: {fileID: 619394800}
-    Ordinal: 13
+    Ordinal: 11
     Priority: 0
     IconType: 169500
     IconTexture: {fileID: 0}
@@ -1498,7 +1519,7 @@ MonoBehaviour:
   - Type: 0
     Name: 
     GameObject: {fileID: 421564355}
-    Ordinal: 14
+    Ordinal: 12
     Priority: 0
     IconType: 150000
     IconTexture: {fileID: 0}
@@ -1510,7 +1531,7 @@ MonoBehaviour:
   - Type: 0
     Name: 
     GameObject: {fileID: 970506596}
-    Ordinal: 15
+    Ordinal: 13
     Priority: 0
     IconType: 125700
     IconTexture: {fileID: 0}
@@ -1519,12 +1540,60 @@ MonoBehaviour:
     BackgroundTexture: {fileID: 0}
     IsBackgroundRecursive: 0
     IsHidden: 0
-  - Type: 1
-    Name: Text
-    GameObject: {fileID: 2128805569}
+  - Type: 0
+    Name: 
+    GameObject: {fileID: 1042639047}
+    Ordinal: 14
+    Priority: 0
+    IconType: 125250
+    IconTexture: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 0
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+  - Type: 0
+    Name: 
+    GameObject: {fileID: 758728248}
+    Ordinal: 15
+    Priority: 0
+    IconType: 125250
+    IconTexture: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 0
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+  - Type: 0
+    Name: 
+    GameObject: {fileID: 661186853}
     Ordinal: 16
     Priority: 0
-    IconType: 330000
+    IconType: 125250
+    IconTexture: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 0
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+  - Type: 0
+    Name: 
+    GameObject: {fileID: 325918101}
+    Ordinal: 17
+    Priority: 0
+    IconType: 125250
+    IconTexture: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 0
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+  - Type: 1
+    Name: Durability
+    GameObject: {fileID: 2128805569}
+    Ordinal: 18
+    Priority: 0
+    IconType: 322000
     IconTexture: {fileID: 0}
     IsIconRecursive: 0
     BackgroundType: 0
@@ -1534,7 +1603,7 @@ MonoBehaviour:
   - Type: 0
     Name: 
     GameObject: {fileID: 66628952}
-    Ordinal: 17
+    Ordinal: 19
     Priority: 0
     IconType: 158150
     IconTexture: {fileID: 0}
@@ -1546,7 +1615,7 @@ MonoBehaviour:
   - Type: 0
     Name: 
     GameObject: {fileID: 2761943183754294828}
-    Ordinal: 18
+    Ordinal: 20
     Priority: 0
     IconType: 1
     IconTexture: {fileID: 2800000, guid: 9e4b165c7ed0ace43936b5e5b21cb3b2, type: 3}
@@ -1558,22 +1627,10 @@ MonoBehaviour:
   - Type: 0
     Name: 
     GameObject: {fileID: 5837736}
-    Ordinal: 19
+    Ordinal: 21
     Priority: 0
     IconType: 1
     IconTexture: {fileID: 2800000, guid: 9e4b165c7ed0ace43936b5e5b21cb3b2, type: 3}
-    IsIconRecursive: 0
-    BackgroundType: 0
-    BackgroundTexture: {fileID: 0}
-    IsBackgroundRecursive: 0
-    IsHidden: 0
-  - Type: 0
-    Name: 
-    GameObject: {fileID: 2128805569}
-    Ordinal: 20
-    Priority: 0
-    IconType: 322000
-    IconTexture: {fileID: 0}
     IsIconRecursive: 0
     BackgroundType: 0
     BackgroundTexture: {fileID: 0}
@@ -1878,7 +1935,7 @@ Transform:
   m_GameObject: {fileID: 1042639047}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.0988238, y: -1.3110474, z: -0.057472277}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2527,6 +2584,18 @@ PrefabInstance:
     - target: {fileID: 6925892068553711680, guid: 99f5840724a58234084b620c0a9e3f04, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8831772302285814989, guid: 99f5840724a58234084b620c0a9e3f04, type: 3}
+      propertyPath: ShapeModule.m_Rotation.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 8831772302285814989, guid: 99f5840724a58234084b620c0a9e3f04, type: 3}
+      propertyPath: ShapeModule.m_Rotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8831772302285814989, guid: 99f5840724a58234084b620c0a9e3f04, type: 3}
+      propertyPath: ShapeModule.m_Rotation.z
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

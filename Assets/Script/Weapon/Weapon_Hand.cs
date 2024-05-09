@@ -5,30 +5,30 @@ using Sirenix.OdinInspector;
 
 public class Weapon_Hand : Weapon
 {
-    [Space(Utility.overrideSpace)]
+    [Space(Editor.overrideSpace)]
     [BoxGroup("Object")]
-    #region Override Box Object - - - - - - - - - -|
+    #region Override Box Object - - - - - - - - - - - - - -|
 
-        [SerializeField][Required]
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [SerializeField][Required][ChildGameObjectsOnly]//-|
+        [LabelWidth(Editor.propertyLabelWidth)]
         TriggerObject swing_obj;
 
-    #endregion  - - - - - - - - - - - - - - - - - -|
+    #endregion  - - - - - - - - - - - - - - - - - - - - - -|
 
-    [Space(Utility.overrideSpace)]
+    [Space(Editor.overrideSpace)]
     [FoldoutGroup("Attack")]
     #region Override Foldout Attack  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
         [SerializeField] 
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth)]
         float swing_damage;
                                                                                                            [FoldoutGroup("Attack")]
         [SerializeField] 
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth)]
         float swing_spread;
                                                                                                            [FoldoutGroup("Attack")]
         [SerializeField] 
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth)]
         Skill.SwingCurve swing_curve;
         
 

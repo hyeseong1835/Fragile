@@ -9,6 +9,8 @@ public class BreakParticle : MonoBehaviour
 
     public void SpawnParticle(Vector3 pos, Quaternion rot)
     {
+        gameObject.SetActive(true);
+
         ParticleSystem particle = GetComponent<ParticleSystem>();
         ParticleSystem.ShapeModule shapeModule = particle.shape;
         shapeModule.texture = breakTexture;
@@ -17,6 +19,7 @@ public class BreakParticle : MonoBehaviour
         particle.transform.position = pos;
         particle.transform.rotation = rot;
         particle.Play();
+        
         Destroy(gameObject, particle.main.duration);
     }
 }

@@ -76,17 +76,11 @@ public abstract class Weapon : MonoBehaviour
     #region Foldout Object  - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
         [Required]
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth)]
         public Sprite UI;
                                                                                 [BoxGroup("Object")]
-        #if UNITY_EDITOR
-        [SerializeField][ChildGameObjectsOnly][HideIf(nameof(noDurability))]//-|
-        #endif
-        [LabelWidth(Utility.propertyLabelWidth)]
-        protected BreakParticle breakParticle;
-                                                                                [BoxGroup("Object")]
         [SerializeField][ChildGameObjectsOnly]
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth)]
         protected Transform hand_obj;
 
     #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
@@ -94,7 +88,7 @@ public abstract class Weapon : MonoBehaviour
     [FoldoutGroup("Stat")]
     #region Foldout Stat  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth)]
         public float damage = 1;
 
         [HorizontalGroup("Stat/Durability")]
@@ -103,11 +97,11 @@ public abstract class Weapon : MonoBehaviour
             #if UNITY_EDITOR
             [DisableIf(nameof(noDurability))]
             #endif
-            [LabelWidth(Utility.propertyLabelWidth)]
+            [LabelWidth(Editor.propertyLabelWidth)]
             [ProgressBar(0, nameof(maxDurability), Segmented = true, R = 1, G = 1, B = 1)]//-|
             public int durability = 1;
-                                                                                              [HorizontalGroup("Stat/Durability", width: Utility.shortNoLabelPropertyWidth)]
-            [HideLabel][LabelWidth(Utility.shortNoLabelPropertyWidth)]
+                                                                                              [HorizontalGroup("Stat/Durability", width: Editor.shortNoLabelPropertyWidth)]
+            [HideLabel][LabelWidth(Editor.shortNoLabelPropertyWidth)]
             public int maxDurability = 1;
 
             #if UNITY_EDITOR
@@ -121,20 +115,20 @@ public abstract class Weapon : MonoBehaviour
     [FoldoutGroup("Attack")]
     #region Foldout Attack  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth)]
         public float attackFrontDelay;
                                                                                                                           [FoldoutGroup("Attack")]
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth)]
         public float attackDelay;
                                                                                                                           [FoldoutGroup("Attack")]
-        [LabelWidth(Utility.propertyLabelWidth)] 
+        [LabelWidth(Editor.propertyLabelWidth)] 
         public float attackBackDelay;
                                                                                                                           [FoldoutGroup("Attack")]
-        [HorizontalGroup("Attack/AttackRange", width: Utility.shortNoLabelPropertyWidth + Utility.propertyLabelWidth)]//-|
+        [HorizontalGroup("Attack/AttackRange", width: Editor.shortNoLabelPropertyWidth + Editor.propertyLabelWidth)]//-|
         #region Horizontal Range - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
             [SerializeField][PropertyOrder(0)]
-            [LabelText("AttackRange")][LabelWidth(Utility.propertyLabelWidth)]                                      
+            [LabelText("AttackRange")][LabelWidth(Editor.propertyLabelWidth)]                                      
             public float attackMinDistance = 0;                                                     
                                                                                                 
             #if UNITY_EDITOR                                                                                
@@ -151,7 +145,7 @@ public abstract class Weapon : MonoBehaviour
             }
                                                                                                 
             #endif                                                                      
-                                                                                     [HorizontalGroup("Attack/AttackRange", width: 50)]                                   
+                                                                                     [HorizontalGroup("Attack/AttackRange", width: Editor.shortNoLabelPropertyWidth)]                                   
             [SerializeField][HideLabel][PropertyOrder(2)]
             public float attackMaxDistance = 1;
 
@@ -162,13 +156,13 @@ public abstract class Weapon : MonoBehaviour
     [FoldoutGroup("Special")]
     #region Foldout Special - - - - - - - - - -|
 
-    [LabelWidth(Utility.propertyLabelWidth)]//-|
+    [LabelWidth(Editor.propertyLabelWidth)]//-|
     public float specialFrontDelay;
                                                 [FoldoutGroup("Special")]
-    [LabelWidth(Utility.propertyLabelWidth)]
+    [LabelWidth(Editor.propertyLabelWidth)]
     public float specialDelay;
                                                 [FoldoutGroup("Special")]
-    [LabelWidth(Utility.propertyLabelWidth)]
+    [LabelWidth(Editor.propertyLabelWidth)]
     public float specialBackDelay;
 
     #endregion  - - - - - - - - - - - - - - - -|
@@ -203,7 +197,7 @@ public abstract class Weapon : MonoBehaviour
     {
     #if UNITY_EDITOR
 
-        if (Utility.GetObjectState(gameObject) == Utility.ObjectState.PrefabEdit)
+        if (Editor.GetObjectState(gameObject) == Editor.ObjectState.PrefabEdit)
         {
             if (state != WeaponState.PREFAB)
             {
@@ -360,7 +354,7 @@ public abstract class Weapon : MonoBehaviour
             //ITEM >> Destroy(parent) >> return
             if (state == WeaponState.ITEM)
             {
-                Utility.Destroy(transform.parent.gameObject);
+                Utility.AutoDestroy(transform.parent.gameObject);
                 return;
             }
 
@@ -375,7 +369,7 @@ public abstract class Weapon : MonoBehaviour
             if (state == WeaponState.REMOVED)
             {
                 OnWeaponDestroyed();
-                Utility.Destroy(gameObject);
+                Utility.AutoDestroy(gameObject);
                 return;
             }
 
@@ -389,7 +383,7 @@ public abstract class Weapon : MonoBehaviour
 
         void DropDown()
         {
-            if (Utility.GetObjectState(gameObject) == Utility.ObjectState.PrefabEdit)
+            if (Editor.GetObjectState(gameObject) == Editor.ObjectState.PrefabEdit)
             {
                 state = WeaponState.PREFAB;
             }
@@ -414,7 +408,7 @@ public abstract class Weapon : MonoBehaviour
                     {
                         Debug.LogWarning("인벤토리가 가득참.");
 
-                        Utility.Destroy(gameObject);
+                    Editor.Destroy(gameObject);
                     } //LogWarning: 인벤토리가 가득참. >> 제거
 
                     con.AddWeapon(this);

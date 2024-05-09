@@ -8,97 +8,87 @@ using UnityEngine;
 [Serializable]
 public class Pool
 {
-    #region 정적 필드  - - - - - - - - - -|
+    #region 정적 필드  - - - - - - - - - - - -|
 
-    public static Transform poolHolder;//-|
+        public static Transform poolHolder;//-|
 
-    #endregion - - - - - - - - - - - - - -|
-
-
-    [VerticalGroup("Pool")]
-    #region Pool - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    #if UNITY_EDITOR
-    [SerializeField]
-    string name;
-#endif
-
-    [HorizontalGroup("Pool/Info")]
-    #region Horizontal Info
-
-    public GameObject prefab;
-                                                        [HorizontalGroup("Pool/Info", width: 130)]
-    [VerticalGroup("Pool/Info/Vertical")]
-    #region Vertical
-
-    [LabelWidth(100)]
-    public float stayCount;
-                                                    [VerticalGroup("Pool/Info/Vertical")]
-    [LabelWidth(100)]
-    public float destroyDelay;
-
-    #endregion
-                                                                    [VerticalGroup("Pool")]
-    public List<GameObject> pool = new List<GameObject>();
-                                                                                        [VerticalGroup("Pool")]
-    [ShowInInspector]
-    public Dictionary<GameObject, Coroutine> waitDestroy = new Dictionary<GameObject, Coroutine>();
-
-    [HideInInspector]
-    public GameObject lastWaitDestroyObj;
-
-    #endregion
+    #endregion - - - - - - - - - - - - - - - -|
 
 
-    Transform holder;
+
+
     public int count { get { return pool.Count; } }
+    
+    [VerticalGroup("Pool", order: 0)]
+    #region Pool - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-    #endregion
+        [HorizontalGroup("Pool/Info", width: Editor.propertyHeight * 3)]
+        #region Horizontal Info - - - - - - - - - - - - - - - - - - - -|
 
-    public Pool(string _name, GameObject _prefab, float defaultCount, float _destroyDelay)
+            [HideLabel]
+            [PreviewField(height: Editor.propertyHeight * 3)]
+            public GameObject prefab;
+
+            [VerticalGroup("Pool/Info/Vertical")]
+            #region Vertical - - - - - - - - - - - - -|
+
+            [LabelWidth(Editor.propertyLabelWidth)]//-|
+            public GameObject holder;
+                                                       [VerticalGroup("Pool/Info/Vertical")]
+            [LabelWidth(Editor.propertyLabelWidth)]
+            public float stayCount;
+                                                       [VerticalGroup("Pool/Info/Vertical")]
+            [LabelWidth(Editor.propertyLabelWidth)]
+            public float destroyDelay;
+
+            #endregion - - - - - - - - - - - - - - - -|
+
+        #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+        [HorizontalGroup("Pool/Object")]
+        #region Horizontal Object  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    
+            public List<GameObject> pool = new List<GameObject>();
+                                                                                                                     [HorizontalGroup("Pool/Object")]
+            [ShowInInspector]
+            public List<(GameObject obj, Coroutine coroutine)> waitDestroy = new List<(GameObject, Coroutine)>();//-|
+
+        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+
+
+    public Pool(GameObject _prefab, int _stayCount, float _destroyDelay, int defaultCount = 0)
     {
-        //_name
-        #if UNITY_EDITOR
-        name = _name;
-        #endif
-        GameObject holderObj = new GameObject(_name);
-        holderObj.transform.SetParent(poolHolder);
-
         //_prefab
+        holder = new GameObject(_prefab.name);
+        holder.transform.SetParent(poolHolder);
         prefab = _prefab;
-        
-        //defaultCount
-        holder = holderObj.transform;
-        for (int i = 0; i < defaultCount; i++)
-        {
-            GameObject obj = UnityEngine.Object.Instantiate(prefab, holder);
-            pool.Add(obj);
-        }
-        
+
+        //_stayCount
+        stayCount = _stayCount;
+
         //destroyDelay
         destroyDelay = _destroyDelay;
 
-        #if UNITY_EDITOR
+        //defaultCount
+        for (int i = 0; i < defaultCount; i++)
+        {
+            Add();
+        }
+
         PoolManager.pools.Add(this);
-        #endif
     }
     ~Pool()
     {
-        #if UNITY_EDITOR
         PoolManager.pools.Remove(this);
-        #endif
-        Utility.Destroy(holder.gameObject);
+        Utility.AutoDestroy(holder.gameObject);
     }
-    #if UNITY_EDITOR
-    public void Destroy() 
-    {
-        PoolManager.pools.Remove(this);
-        Utility.Destroy(holder.gameObject);
-    }
-    #endif
+
     public GameObject Use()
     {
-        if (waitDestroy.Count > 0) CancelInvokeDestroy(lastWaitDestroyObj);
+        //비활성화 오브젝트 찾기
         foreach(GameObject gameObject in pool)
         {
             if(gameObject.activeInHierarchy == false)
@@ -107,18 +97,22 @@ public class Pool
                 return gameObject;
             }
         }
-        GameObject obj = UnityEngine.Object.Instantiate(prefab, holder);
-        pool.Add(obj);
-        return obj;
+        //파괴 예정 오브젝트가 있을 때
+        if (waitDestroy.Count > 0)
+        {
+            return CancelInvokeDestroy(waitDestroy[0]);
+        }
+        //모두 사용 중일 때
+        return Add();
     }
     public GameObject DeUse(ref GameObject obj)
     {
         //초과 상태일 때
         if (count > stayCount)
         {
-            InvokeDestroy(obj, destroyDelay);
+            InvokeDestroy(obj);
 
-            return null;
+            return null;//?
         }
         else
         {
@@ -128,20 +122,28 @@ public class Pool
             return obj;
         }
     }
-    public void InvokeDestroy(GameObject obj, float time)
+    public GameObject Add()
     {
-        waitDestroy.Add(obj, PoolManager.instance.StartCoroutine(DelayDestroy(obj, time)));
-        lastWaitDestroyObj = obj;
+        GameObject obj = UnityEngine.Object.Instantiate(prefab, holder.transform);
+        pool.Add(obj);
+        return obj;
     }
-    IEnumerator DelayDestroy(GameObject obj, float time)
+    public void InvokeDestroy(GameObject obj)
     {
-        yield return new WaitForSeconds(time);
+        pool.Remove(obj);
+        waitDestroy.Add((obj, PoolManager.instance.StartCoroutine(DelayDestroy(obj))));
+    }
+    IEnumerator DelayDestroy(GameObject obj)
+    {
+        yield return new WaitForSeconds(destroyDelay);
         UnityEngine.Object.Destroy(obj);
     }
-    public void CancelInvokeDestroy(GameObject obj)
+    public GameObject CancelInvokeDestroy((GameObject obj, Coroutine coroutine) invokeDestroy)
     {
-        PoolManager.instance.StopCoroutine(waitDestroy[obj]);
-        waitDestroy.Remove(obj);
+        PoolManager.instance.StopCoroutine(invokeDestroy.coroutine);
+        waitDestroy.Remove(invokeDestroy);
+        pool.Add(invokeDestroy.obj);
+        return invokeDestroy.obj;
     }
 }
 
@@ -150,20 +152,15 @@ public class PoolManager : MonoBehaviour
 {
     public static PoolManager instance;
 
-    #if UNITY_EDITOR
     [ShowInInspector]
     [TableList(HideToolbar = true, AlwaysExpanded = true, ShowPaging = false)]
     public static List<Pool> pools = new List<Pool>();
     
+    #if UNITY_EDITOR
     [Button]
-    void NewPool(string name, GameObject prefab, float defaultCount, float destroyDelay)
+    void NewPool(GameObject prefab, int stayCount, float destroyDelay, int defaultCount)
     {
-        new Pool(name, prefab, defaultCount, destroyDelay);
-    }
-    [Button]
-    void DeletePool(int index)
-    {
-        pools[index].Destroy();
+        new Pool(prefab, stayCount, destroyDelay, defaultCount);
     }
     #endif
 

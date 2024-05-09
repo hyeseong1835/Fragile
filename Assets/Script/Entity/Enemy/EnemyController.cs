@@ -7,16 +7,16 @@ using System.Reflection.Emit;
 [ExecuteAlways]
 public class EnemyController : Controller
 {
-    [Space(Utility.overrideSpace)]
+    [Space(Editor.overrideSpace)]
     [BoxGroup("Object")]
     #region Override Box Object - - - - - - - - - -|
 
         [Required][PropertyOrder(0)]
-        [LabelWidth(Utility.propertyLabelWidth)]//-|
+        [LabelWidth(Editor.propertyLabelWidth)]//-|
         public EnemyGrafic grafic;
                                                     [BoxGroup("Object")]
         [SerializeField] 
-        [LabelWidth(Utility.propertyLabelWidth)]
+        [LabelWidth(Editor.propertyLabelWidth)]
         Controller target;
 
     #endregion  - - - - - - - - - - - - - - - - - -|
@@ -38,7 +38,7 @@ public class EnemyController : Controller
 
         targetPos = (Vector2)target.transform.position + target.center;
 
-        if (Utility.GetEditorStateByType(Utility.StateType.IsPlay) == false) return;
+        if (Editor.GetType(Editor.StateType.IsPlay) == false) return;
 
         Behavior();
     }

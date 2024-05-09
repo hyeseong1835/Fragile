@@ -7,22 +7,25 @@ public enum CameraMove
 }
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] 
-        Transform target;
+    [LabelWidth(Editor.propertyLabelWidth)]
+    public Transform target;
     
-    [Required] 
-        public Camera cam;
+    [Required]
+    [LabelWidth(Editor.propertyLabelWidth)]
+    public Camera cam;
 
     [HorizontalGroup("Move")]
-    #region Move
-    
-            public CameraMove camMove = CameraMove.Stop;
+    #region Move  - - - - - - - - - - - - - - - - - - -| 
 
-        [HorizontalGroup("Move", width:30)]
-            [HideLabel]
-            public float speed;
+        [LabelWidth(Editor.propertyLabelWidth)]
+        public CameraMove camMove = CameraMove.Stop;//-|
+                                                        [HorizontalGroup("Move", width: Editor.shortNoLabelPropertyWidth)]
+        [HideLabel]
+        public float speed;
 
-    #endregion
+    #endregion  - - - - - - - - - - - - - - - - - - - -|
+
+    [LabelWidth(Editor.propertyLabelWidth)]
     public float posZ = -10;
 
     void Update()
