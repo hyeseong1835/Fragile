@@ -129,7 +129,11 @@ public class PlayerController : Controller
         {
             if (weapons.Count < 2) //무기가 1개 이하
             {
-                if (defaultWeapon != null) nextWeapon = defaultWeapon;
+                if (defaultWeapon != null)
+                {
+                    if (curWeapon == defaultWeapon) nextWeapon = null;
+                    else nextWeapon = defaultWeapon;
+                }
             }
             else nextWeapon = weapons[0];
         }

@@ -25,7 +25,7 @@ public struct WeaponData
 /// </summary>
 public enum WeaponState
 {
-    NULL, PREFAB, ITEM, HOLD, INVENTORY, REMOVED
+    NULL, Prefab, Item, Hold, Inventory, Removed
 }
 [ExecuteAlways]
 public abstract class Weapon : MonoBehaviour
@@ -176,13 +176,14 @@ public abstract class Weapon : MonoBehaviour
     
     void Awake()
     {
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
         //최초 생성
         if (con == null)
         {
             DropDown();
         }
-    
+    #else 
+        if (con != null) state = WeaponState.Inventory;
     #endif
 
         WeaponAwake();
@@ -197,34 +198,34 @@ public abstract class Weapon : MonoBehaviour
 
         if (Editor.GetObjectState(gameObject) == Editor.ObjectState.PrefabEdit)
         {
-            if (state != WeaponState.PREFAB)
+            if (state != WeaponState.Prefab)
             {
-                state = WeaponState.PREFAB;
+                state = WeaponState.Prefab;
                 Debug.LogWarning("상태를 변경할 수 없습니다.");
             } //LogWarning: 상태를 변경할 수 없습니다.
         }
         else
         {
-            switch (state)
+            if (state == WeaponState.Prefab && transform.parent != null)
             {
-                case WeaponState.PREFAB:
-                    if (transform.parent != null)
-                    {
-                        transform.parent.position = transform.position;
-                        state = WeaponState.ITEM;
-                    } //드롭다운 >> 부모 위치 수정(1회)
-                    break;
-                case WeaponState.HOLD:
-                    WeaponUpdate();
-                    break;
-                case WeaponState.INVENTORY:
-                    WeaponBackGroundUpdate();
-                    break;
-            }
+                transform.parent.position = transform.position;
+                state = WeaponState.Item;
+            } //드롭다운 >> 부모 위치 수정(1회)
             StateAffix();
             AutoDebug();
         }
+
     #endif
+
+        switch (state)
+        {
+            case WeaponState.Hold:
+                WeaponUpdate();
+                break;
+            case WeaponState.Inventory:
+                WeaponBackGroundUpdate();
+                break;
+        }
     }
     void OnDrawGizmos()
     {
@@ -245,7 +246,7 @@ public abstract class Weapon : MonoBehaviour
         protected virtual void OnDeUse() { }
         protected virtual void Break() { }
         public virtual void OnWeaponRemoved() { }
-        public virtual void OnWeaponDestroyed() { }
+        protected virtual void OnWeaponDestroyed() { }
 
         //입력
         public abstract void Attack();
@@ -281,12 +282,12 @@ public abstract class Weapon : MonoBehaviour
         /// <param name="use"></param>
         public void SetUse(bool use)
         {
-            if (state == WeaponState.PREFAB)
+            if (state == WeaponState.Prefab)
             {
                 Debug.LogError("무기를 활성화할 수 없습니다.");
                 return;
             }// LogError: 무기를 활성화할 수 없습니다. >> return
-            if (state == WeaponState.ITEM)
+            if (state == WeaponState.Item)
             {
                 Debug.LogError("무기를 활성화할 수 없습니다.");
                 return;
@@ -294,77 +295,74 @@ public abstract class Weapon : MonoBehaviour
         
             if (use)
             {
-                if(state == WeaponState.REMOVED)
+                if(state == WeaponState.Removed)
                 {
                     Debug.LogError("무기를 활성화할 수 없습니다.");
                     return;
                 } //LogError: 무기를 활성화할 수 없습니다. >> return
 
-                if (state == WeaponState.HOLD)
+                if (state == WeaponState.Hold)
                 {
                     Debug.LogWarning("이미 활성화되었습니다.");
                 } //LogWarning: 이미 활성화되었습니다.
 
                 OnUse();
          
-                state = WeaponState.HOLD;
+                state = WeaponState.Hold;
             }
             else
             {
-                if (state == WeaponState.INVENTORY)
+                if (state == WeaponState.Inventory)
                 {
                     Debug.LogWarning("이미 비활성화되었습니다.");
                 } //LogWarning: 이미 비활성화되었습니다.
 
                 OnDeUse();
         
-                state = WeaponState.INVENTORY;
+                state = WeaponState.Inventory;
             }
         }
 
         public void AddDurability(int add)
         {
-            if (durability == -1) return;
-
             durability += add;
-            if (durability == 0)
+            if (durability <= 0)
             {
                 Break();
                 return;
             }
         }
-
         /// <summary>
         /// 무기를 파괴하는 함수
         /// INVENTORY -> HOLD -> REMOVED >> OnWeaponDestroy() >> Destroy(gameObject) //
         /// ITEM >> OnWeaponDestroy(item) >> Destroy //
         /// PREFAB >> DestroyImmediate(gameObject) //
         /// </summary>
-        public void Destroy()
+        public void WeaponDestroy()
         {
             //PREFAB >> Destroy(gameObject) >> return
-            if (state == WeaponState.PREFAB)
+            if (state == WeaponState.Prefab)
             {   
                 DestroyImmediate(gameObject);
                 return;
             }
 
             //ITEM >> Destroy(parent) >> return
-            if (state == WeaponState.ITEM)
+            if (state == WeaponState.Item)
             {
                 Utility.AutoDestroy(transform.parent.gameObject);
                 return;
             }
 
             //HOLD -> INVENTORY -> REMOVED ->
-            if (state == WeaponState.HOLD
-                || state == WeaponState.INVENTORY)
+            if (state == WeaponState.Hold
+                || state == WeaponState.Inventory)
             {
                 con.RemoveWeapon(this);
             }
 
             // REMOVED >> OnWeaponDestroy(item) >> Destroy(gameObject) >> return
-            if (state == WeaponState.REMOVED)
+            if (state == WeaponState.Removed)
             {
                 OnWeaponDestroyed();
                 Utility.AutoDestroy(gameObject);
@@ -383,7 +381,7 @@ public abstract class Weapon : MonoBehaviour
         {
             if (Editor.GetObjectState(gameObject) == Editor.ObjectState.PrefabEdit)
             {
-                state = WeaponState.PREFAB;
+                state = WeaponState.Prefab;
             }
             else
             {
@@ -406,7 +404,7 @@ public abstract class Weapon : MonoBehaviour
                     {
                         Debug.LogWarning("인벤토리가 가득참.");
 
-                    Editor.Destroy(gameObject);
+                    Utility.AutoDestroy(gameObject);
                     } //LogWarning: 인벤토리가 가득참. >> 제거
 
                     con.AddWeapon(this);
@@ -420,21 +418,21 @@ public abstract class Weapon : MonoBehaviour
         {
             switch (state)
             {
-                case WeaponState.PREFAB:
+                case WeaponState.Prefab:
                     gameObject.name = weaponName + "[Prefab]";
                     break;
-                case WeaponState.HOLD:
+                case WeaponState.Hold:
                     if (this == con.defaultWeapon) gameObject.name = $"[Hold] {weaponName}({con.gameObject.name}[Default])";
                     else gameObject.name = $"[Hold] {weaponName}({con.gameObject.name})";
                     break;
-                case WeaponState.INVENTORY:
+                case WeaponState.Inventory:
                     if (this == con.defaultWeapon) gameObject.name = $"[Hold] {weaponName}({con.gameObject.name}[Default])";
                     else gameObject.name = $"{weaponName}({con.gameObject.name})"; 
                     break;
-                case WeaponState.ITEM:
+                case WeaponState.Item:
                     gameObject.name = $"[Item] {weaponName}";
                     break;
-                case WeaponState.REMOVED:
+                case WeaponState.Removed:
                     gameObject.name = $"[Removed({con.gameObject.name})] {weaponName}";
                     break;
                 case WeaponState.NULL:
@@ -446,7 +444,7 @@ public abstract class Weapon : MonoBehaviour
         {
             switch (state)
             {
-                case WeaponState.ITEM:
+                case WeaponState.Item:
                     // 부모 검사
                     if (transform.parent == null || transform.parent.gameObject.name != "Item(" + weaponName + ")")
                     {
@@ -465,7 +463,7 @@ public abstract class Weapon : MonoBehaviour
 
                     break;
 
-                case WeaponState.HOLD:
+                case WeaponState.Hold:
                     //부모 변경 억제
                     if (transform.parent != parent)
                     {
@@ -479,7 +477,7 @@ public abstract class Weapon : MonoBehaviour
 
                     break;
 
-                case WeaponState.INVENTORY:
+                case WeaponState.Inventory:
                     //부모 변경 억제
                     if (transform.parent != parent)
                     {

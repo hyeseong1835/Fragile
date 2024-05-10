@@ -10,16 +10,14 @@ public class Weapon_SwingAndThrow : Weapon
     [BoxGroup("Object")]
     #region Override Box Object  - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        #if UNITY_EDITOR
         [SerializeField][ChildGameObjectsOnly]
-        #endif
         [LabelWidth(Editor.propertyLabelWidth - Editor.childGameObjectOnlyWidth)]//-|
         BreakParticle breakParticle;
-                                                            [BoxGroup("Object")]
+                                                                                     [BoxGroup("Object")]
         [SerializeField][Required][ChildGameObjectsOnly]
         [LabelWidth(Editor.propertyLabelWidth - Editor.childGameObjectOnlyWidth)]
         TriggerObject swing_obj;
-                                                            [BoxGroup("Object")]
+                                                                                     [BoxGroup("Object")]
         [SerializeField][Required][ChildGameObjectsOnly]
         [LabelWidth(Editor.propertyLabelWidth - Editor.childGameObjectOnlyWidth)]
         TriggerObject throw_obj;
@@ -108,11 +106,7 @@ public class Weapon_SwingAndThrow : Weapon
         
         yield return new WaitForSeconds(attackBackDelay);
         
-        swing_obj.gameObject.SetActive(false);
-
-        hand_obj.gameObject.SetActive(true);
-
-        if (state == WeaponState.REMOVED) Destroy();
+        if (state == WeaponState.Removed) yield break;
 
         swing_obj.gameObject.SetActive(false);
 
@@ -150,18 +144,19 @@ public class Weapon_SwingAndThrow : Weapon
         {
             StartCoroutine(SpecialCoroutine());
         }
-    IEnumerator SpecialCoroutine()
-    {
-        con.RemoveWeapon(this);
-        StartCoroutine(Skill.Throw(con, throw_obj,
-            throw_spinSpeed, throw_throwSpeed, specialDelay,
-            enterEvent: throw_enterEvent)
-            );
-        yield return new WaitForSeconds(specialDelay);
+        IEnumerator SpecialCoroutine()
+        {
+            con.RemoveWeapon(this);
 
-        Destroy(throw_obj.gameObject);
-        Destroy();
-    }
+            StartCoroutine(Skill.Throw(con, throw_obj,
+                throw_spinSpeed, throw_throwSpeed, specialDelay,
+                enterEvent: throw_enterEvent)
+                );
+            yield return new WaitForSeconds(specialDelay);
+
+            Destroy(throw_obj.gameObject);
+            WeaponDestroy();
+        }
         public void ThrowHitEvent(GameObject triggerObj, Collider2D coll)
         {
         if (coll.gameObject.layer == 19)
@@ -187,20 +182,28 @@ public class Weapon_SwingAndThrow : Weapon
 
     #endregion
 
+    public override void OnWeaponRemoved()
+    {
+        con.hand.HandLink(null);
+        Destroy(hand_obj.gameObject);
+        Destroy(swing_obj.gameObject);
+    }
     protected override void Break()
     {
-        if (swing_obj.gameObject.activeInHierarchy)
+        if (swing_obj != null && swing_obj.gameObject.activeInHierarchy)
         {
-            if (swing_curve == 0) breakParticle.SpawnParticle(swing_obj.transform.position, swing_obj.transform.rotation);
+            if (swing_spread == 0) breakParticle.SpawnParticle(swing_obj.transform.position, swing_obj.transform.rotation);
             else if (swing_spread > 0) breakParticle.SpawnParticle(swing_obj.transform.position, Quaternion.Euler(0, 0, (swing_obj.transform.rotation.z + 90) % 360));
             else breakParticle.SpawnParticle(swing_obj.transform.position, Quaternion.Euler(0, 0, (swing_obj.transform.rotation.z - 90) % 360));
         }
-        if (throw_obj.gameObject.activeInHierarchy)
+        else if (throw_obj != null && throw_obj.gameObject.activeInHierarchy)
         {
             breakParticle.SpawnParticle(throw_obj.transform.position, throw_obj.transform.rotation);
         }
-
-        if(con.weapons.Contains(this)) con.RemoveWeapon(this);
-        Destroy();
+        WeaponDestroy();
+    }
+    protected override void OnWeaponDestroyed()
+    {
+        Destroy(throw_obj.gameObject);
     }
 }

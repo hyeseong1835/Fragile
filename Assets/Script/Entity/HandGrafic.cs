@@ -78,15 +78,21 @@ public class HandGrafic : MonoBehaviour
         switch (handMode)
         {
             case HandMode.ToHand:
-                if (targetTransform == null) Debug.LogError("{TargetTransform} is null");
-
+                if (targetTransform == null)
+                {
+                    Debug.LogError("{TargetTransform} is null");
+                    return;
+                }
                 targetTransform.position = transform.position;
                 targetTransform.rotation = transform.rotation;
                 break;
 
             case HandMode.ToTarget:
-                if (targetTransform == null) Debug.LogError("{TargetTransform} is null");
-
+                if (targetTransform == null)
+                {
+                    Debug.LogError("{TargetTransform} is null");
+                    return;
+                }
                 transform.position = targetTransform.position;
                 transform.rotation = targetTransform.rotation;
                 break;

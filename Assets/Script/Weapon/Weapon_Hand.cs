@@ -44,6 +44,12 @@ public class Weapon_Hand : Weapon
     {
         con.hand.HandLink(null);
     }
+    protected override void OnDeUse()
+    {
+        con.hand.HandLink(null);
+        swing_obj.gameObject.SetActive(false);
+    }
+
     #region Attack
 
     public override void Attack()
@@ -65,8 +71,6 @@ public class Weapon_Hand : Weapon
 
         yield return new WaitForSeconds(attackBackDelay);
 
-        if (state == WeaponState.REMOVED) Destroy();
-
         swing_obj.gameObject.SetActive(false);
 
         con.hand.HandLink(null);
@@ -78,19 +82,16 @@ public class Weapon_Hand : Weapon
             if (con is PlayerController) return;
 
             coll.GetComponent<Controller>().TakeDamage(swing_damage * damage);
-            AddDurability(-1);
         }
         if (coll.gameObject.layer == 20)
         {
             if (con is EnemyController) return;
 
             coll.GetComponent<Controller>().TakeDamage(swing_damage * damage);
-            AddDurability(-1);
         }
         else if (coll.gameObject.layer == 21)
         {
             coll.GetComponent<Controller>().TakeDamage(swing_damage * damage);
-            AddDurability(-1);
         }
     }
 

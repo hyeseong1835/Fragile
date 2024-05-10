@@ -44,7 +44,7 @@ public class ItemManager : MonoBehaviour
 
         weapon.transform.SetParent(item.transform);
 
-        weapon.state = WeaponState.ITEM;
+        weapon.state = WeaponState.Item;
 
         return item;
     }

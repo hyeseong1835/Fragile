@@ -291,7 +291,7 @@ public abstract class Controller : MonoBehaviour
                 //선택 해제
                 if (index == -1)
                 {
-                    curWeapon.state = WeaponState.INVENTORY;
+                    curWeapon.state = WeaponState.Inventory;
                     curWeapon = null;
                 }
                 else SelectWeapon(weaponHolder.GetChild(index).GetComponent<Weapon>());
@@ -372,7 +372,7 @@ public abstract class Controller : MonoBehaviour
                             return;
                         }
 
-                        weapons[index].Destroy();
+                        weapons[index].WeaponDestroy();
                     }
                 }
 
@@ -394,8 +394,8 @@ public abstract class Controller : MonoBehaviour
         /// <param name="weapon">무기 상태에 대해 안전하지 않음</param>
         public void AddWeapon(Weapon weapon)
         {
-            if (weapon.state == WeaponState.HOLD
-                || weapon.state == WeaponState.INVENTORY)
+            if (weapon.state == WeaponState.Hold
+                || weapon.state == WeaponState.Inventory)
             {
                 Debug.LogWarning("먼저 인벤토리에서 제거된 후 추가해야함");
                 return;
@@ -410,18 +410,17 @@ public abstract class Controller : MonoBehaviour
             if (weapons.Count > inventorySize)
             {
                 Debug.LogWarning("인벤토리가 꽉 참");
-                if (weapon.state == WeaponState.PREFAB) weapon.Destroy();
+                Utility.AutoDestroy(weapon.gameObject);
                 return;
             } //LogWarning: 인벤토리가 꽉 참 >> return
-
 
             weapon.con = this;
 
             weapon.transform.parent = weaponHolder;
-        #if UNITY_EDITOR
+            #if UNITY_EDITOR
             weapon.parent = weaponHolder;
-        #endif
-            weapon.state = WeaponState.INVENTORY;
+            #endif
+            weapon.state = WeaponState.Inventory;
 
             weapons.Add(weapon);
         }
@@ -435,7 +434,7 @@ public abstract class Controller : MonoBehaviour
         {
             Item item = null;
 
-            if (weapon.state == WeaponState.ITEM)
+            if (weapon.state == WeaponState.Item)
             {
                 item = weapon.transform.parent.GetComponent<Item>();
             }
@@ -456,6 +455,8 @@ public abstract class Controller : MonoBehaviour
         /// <param name="weapon"></param>
         public void RemoveWeapon(Weapon weapon)
         {
+            weapon.OnWeaponRemoved();
+            
             if (weapon == defaultWeapon)
             {
                 Debug.LogError("기본 무기는 제거할 수 없음");
@@ -468,29 +469,26 @@ public abstract class Controller : MonoBehaviour
                 return;
             } //LogError: {weapon.name}을(를) 인벤토리에서 찾을 수 없어 제거하지 못함. >> return
 
-            if (weapon.state == WeaponState.HOLD)
+            if (weapon.state == WeaponState.Hold)
             {
                 weapon.SetUse(false);
-
             } //HOLD -> INVENTORY
 
-            else if (weapon.state == WeaponState.INVENTORY)
+            else if (weapon.state == WeaponState.Inventory)
             {
 
             } //
 
             int index = weapons.IndexOf(weapon);
-            weapon.OnWeaponRemoved();
-
             weapons.Remove(weapon);
 
             weapon.transform.parent = null;
-            weapon.state = WeaponState.REMOVED;
+            weapon.state = WeaponState.Removed;
 
             //무기 선택
-            if (index == weapons.Count) //마지막 순서의 무기일 때
+            if (index == weapons.Count) //마지막 순서의 무기였을 때
             {
-                if (weapons.Count == 0)
+                if (index == 0)
                 {
                     if (defaultWeapon != null) SelectWeapon(defaultWeapon);
                 }
@@ -511,10 +509,10 @@ public abstract class Controller : MonoBehaviour
                 return;
             } //LogError: {weapon.name}을(를) 인벤토리에서 찾을 수 없어 선택하지 못함. >> return
 
-            if (curWeapon != null && curWeapon.state == WeaponState.HOLD) curWeapon.SetUse(false); //현재 무기 비활성화
+            if (curWeapon != null && curWeapon.state == WeaponState.Hold) curWeapon.SetUse(false); //현재 무기 비활성화
 
             curWeapon = weapon;
-            if (curWeapon.state == WeaponState.INVENTORY) weapon.SetUse(true); //선택한 무기 활성화
+            if (curWeapon.state == WeaponState.Inventory) weapon.SetUse(true); //선택한 무기 활성화
         }
 
     #endregion
