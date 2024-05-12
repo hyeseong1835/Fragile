@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using System.Reflection.Emit;
+using UnityEngine.AI;
 
 [ExecuteAlways]
 public class EnemyController : Controller
@@ -19,7 +20,18 @@ public class EnemyController : Controller
         [LabelWidth(Editor.propertyLabelWidth)]
         Controller target;
 
+
+
     #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+    [FoldoutGroup("NavMeshAgent")]
+    #region Foldout NavMeshAgent
+
+        //public const int agentTypeID = 0;
+
+        NavMeshAgent agent;
+
+    #endregion
 
     enum BehaviorState
     {
@@ -31,16 +43,31 @@ public class EnemyController : Controller
     {
         NULL, None, Stay, Move
     }
-
+    void Awake()
+    {
+        agent = gameObject.AddComponent<NavMeshAgent>();
+        agent.speed = moveSpeed;
+    }
     void Update()
     {
         if (target == null) return;
 
         targetPos = (Vector2)target.transform.position + target.center;
 
-        if (Editor.GetType(Editor.StateType.IsPlay) == false) return;
+        if (Editor.GetType(Editor.StateType.IsPlay))
+        {
+            Behavior();
+        }
+        else
+        {
+            if(TryGetComponent<NavMeshAgent>(out agent))
+            {
+                Debug.LogWarning("\"NavMeshAgent\"는 플레이 시작 시 자동으로 추가됩니다");
+                DestroyImmediate(agent);
+                agent = null;
+            }
+        }
 
-        Behavior();
     }
     void Move()
     {
