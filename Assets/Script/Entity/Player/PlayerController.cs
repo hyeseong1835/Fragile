@@ -1,4 +1,5 @@
 using Sirenix.OdinInspector;
+using Sirenix.Utilities;
 using System;
 using UnityEngine;
 
@@ -112,8 +113,20 @@ public class PlayerController : Controller
             {
                 Attack();
 
-                if (attack) curWeapon.Attack();
-                if (mouse1Down) curWeapon.Special();
+                if (attack)
+                {
+                    foreach(Skill skill in curWeapon.attackSkills)
+                    {
+                        skill.Execute();
+                    }
+                }
+                if (mouse1Down)
+                {
+                    foreach (Skill skill in curWeapon.specialSkills)
+                    {
+                        skill.Execute();
+                    }
+                }
             }
 
             Mouse();

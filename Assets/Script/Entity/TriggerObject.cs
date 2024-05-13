@@ -3,13 +3,13 @@ using UnityEngine.Events;
 
 public class TriggerObject : MonoBehaviour
 {
-    UnityEvent<GameObject, Collider2D> enterEvent;
-    UnityEvent<GameObject, Collider2D> stayEvent;
-    UnityEvent<GameObject, Collider2D> exitEvent;
+    UnityEvent<TriggerObject, Collider2D> enterEvent;
+    UnityEvent<TriggerObject, Collider2D> stayEvent;
+    UnityEvent<TriggerObject, Collider2D> exitEvent;
 
-    public void SetEvent(UnityEvent<GameObject, Collider2D> _enterEvent, 
-        UnityEvent<GameObject, Collider2D> _stayEvent, 
-        UnityEvent<GameObject, Collider2D> _exitEvent)
+    public void SetEvent(UnityEvent<TriggerObject, Collider2D> _enterEvent, 
+        UnityEvent<TriggerObject, Collider2D> _stayEvent, 
+        UnityEvent<TriggerObject, Collider2D> _exitEvent)
     {
         enterEvent = _enterEvent;
         stayEvent = _stayEvent;
@@ -19,18 +19,18 @@ public class TriggerObject : MonoBehaviour
     {
         if (enterEvent == null) return;
 
-        enterEvent.Invoke(gameObject, collider);
+        enterEvent.Invoke(this, collider);
     }
     void OnTriggerStay2D(Collider2D collider)
     {
         if (stayEvent == null) return;
 
-        stayEvent.Invoke(gameObject, collider);
+        stayEvent.Invoke(this, collider);
     }
     void OnTriggerExit2D(Collider2D collider)
     {
         if (exitEvent == null) return;
 
-        exitEvent.Invoke(gameObject, collider);
+        exitEvent.Invoke(this, collider);
     }
 }

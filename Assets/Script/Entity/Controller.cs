@@ -455,6 +455,14 @@ public abstract class Controller : MonoBehaviour
         /// <param name="weapon"></param>
         public void RemoveWeapon(Weapon weapon)
         {
+            foreach (Skill skill in weapon.attackSkills)
+            {
+                skill.Removed();
+            }
+            foreach (Skill skill in weapon.specialSkills)
+            {
+                skill.Removed();
+            }
             weapon.OnWeaponRemoved();
             
             if (weapon == defaultWeapon)
@@ -600,7 +608,6 @@ public abstract class Controller : MonoBehaviour
         SelectWeapon(weapons[data.curWeaponIndex]);
     }
 
-    
     private void OnDrawGizmosSelected()
     {
         //LastMoveVector

@@ -82,6 +82,7 @@ public class Pool
     }
     ~Pool()
     {
+        Debug.Log($"Pool({prefab.name}) ÆÄ±«µÊ");
         PoolManager.pools.Remove(this);
         Utility.AutoDestroy(holder.gameObject);
     }

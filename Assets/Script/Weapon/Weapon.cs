@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -28,7 +29,7 @@ public enum WeaponState
     NULL, Prefab, Item, Hold, Inventory, Removed
 }
 [ExecuteAlways]
-public abstract class Weapon : MonoBehaviour
+public class Weapon : MonoBehaviour
 {
     #region 정적 멤버 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
         public static Weapon SpawnWeapon(string weaponName, Transform parent = null)//-|
@@ -79,7 +80,8 @@ public abstract class Weapon : MonoBehaviour
                                                    [BoxGroup("Object")]
         [SerializeField][ChildGameObjectsOnly]
         [LabelWidth(Editor.propertyLabelWidth - Editor.childGameObjectOnlyWidth)]
-        protected Transform hand_obj;
+        public Transform hand_obj;
+
 
     #endregion - - - - - - - - - - - - - - - - - -|
 
@@ -111,17 +113,22 @@ public abstract class Weapon : MonoBehaviour
     #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     [FoldoutGroup("Attack")]
-    #region Foldout Attack  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    #region Foldout Attack  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
+        public Skill[] attackSkills;
+                                                                                                                        [FoldoutGroup("Attack")]
+        [SerializeField]
+        protected int attackUseDurability;
+                                                                                                                        [FoldoutGroup("Attack")]
         [LabelWidth(Editor.propertyLabelWidth)]
         public float attackFrontDelay;
-                                                                                                                          [FoldoutGroup("Attack")]
+                                                                                                                        [FoldoutGroup("Attack")]
         [LabelWidth(Editor.propertyLabelWidth)]
         public float attackDelay;
-                                                                                                                          [FoldoutGroup("Attack")]
+                                                                                                                        [FoldoutGroup("Attack")]
         [LabelWidth(Editor.propertyLabelWidth)] 
         public float attackBackDelay;
-                                                                                                                          [FoldoutGroup("Attack")]
+                                                                                                                        [FoldoutGroup("Attack")]
         [HorizontalGroup("Attack/AttackRange", width: Editor.shortNoLabelPropertyWidth + Editor.propertyLabelWidth)]//-|
         #region Horizontal Range - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
@@ -147,25 +154,30 @@ public abstract class Weapon : MonoBehaviour
             [SerializeField][HideLabel][PropertyOrder(2)]
             public float attackMaxDistance = 1;
 
-        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     [FoldoutGroup("Special")]
     #region Foldout Special - - - - - - - - - -|
 
-    [LabelWidth(Editor.propertyLabelWidth)]//-|
-    public float specialFrontDelay;
-                                                [FoldoutGroup("Special")]
-    [LabelWidth(Editor.propertyLabelWidth)]
-    public float specialDelay;
-                                                [FoldoutGroup("Special")]
-    [LabelWidth(Editor.propertyLabelWidth)]
-    public float specialBackDelay;
+        public Skill[] specialSkills;
+                                                   [FoldoutGroup("Special")]
+        [SerializeField]
+        protected int specialUseDurability;
+                                                   [FoldoutGroup("Special")]
+        [LabelWidth(Editor.propertyLabelWidth)]//-|
+        public float specialFrontDelay;
+                                                   [FoldoutGroup("Special")]
+        [LabelWidth(Editor.propertyLabelWidth)]
+        public float specialDelay;
+                                                   [FoldoutGroup("Special")]
+        [LabelWidth(Editor.propertyLabelWidth)]
+        public float specialBackDelay;
 
     #endregion  - - - - - - - - - - - - - - - -|
 
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
 
     [HideInInspector] 
     public Transform parent = null;
@@ -221,9 +233,25 @@ public abstract class Weapon : MonoBehaviour
         {
             case WeaponState.Hold:
                 WeaponUpdate();
+                foreach (Skill skill in attackSkills)
+                {
+                    skill.OnUseUpdate();
+                }
+                foreach (Skill skill in specialSkills)
+                {
+                    skill.OnUseUpdate();
+                }
                 break;
             case WeaponState.Inventory:
                 WeaponBackGroundUpdate();
+                foreach (Skill skill in attackSkills)
+                {
+                    skill.DeUseUpdate();
+                }
+                foreach (Skill skill in specialSkills)
+                {
+                    skill.DeUseUpdate();
+                }
                 break;
         }
     }
@@ -247,10 +275,6 @@ public abstract class Weapon : MonoBehaviour
         protected virtual void Break() { }
         public virtual void OnWeaponRemoved() { }
         protected virtual void OnWeaponDestroyed() { }
-
-        //입력
-        public abstract void Attack();
-        public abstract void Special();
 
     #endregion
 
@@ -307,7 +331,16 @@ public abstract class Weapon : MonoBehaviour
                 } //LogWarning: 이미 활성화되었습니다.
 
                 OnUse();
-         
+
+                foreach (Skill skill in attackSkills)
+                {
+                    skill.OnUse();
+                }
+                foreach (Skill skill in specialSkills)
+                {
+                    skill.OnUse();
+                }
+
                 state = WeaponState.Hold;
             }
             else
@@ -317,7 +350,14 @@ public abstract class Weapon : MonoBehaviour
                     Debug.LogWarning("이미 비활성화되었습니다.");
                 } //LogWarning: 이미 비활성화되었습니다.
 
-                OnDeUse();
+                foreach (Skill skill in attackSkills)
+                {
+                    skill.DeUse();
+                }
+                foreach (Skill skill in specialSkills)
+                {
+                    skill.DeUse();
+                }
         
                 state = WeaponState.Inventory;
             }
@@ -328,6 +368,14 @@ public abstract class Weapon : MonoBehaviour
             durability += add;
             if (durability <= 0)
             {
+                foreach (Skill skill in attackSkills)
+                {
+                    skill.Break();
+                }
+                foreach (Skill skill in specialSkills)
+                {
+                    skill.Break();
+                }
                 Break();
                 return;
             }
@@ -364,6 +412,14 @@ public abstract class Weapon : MonoBehaviour
             // REMOVED >> OnWeaponDestroy(item) >> Destroy(gameObject) >> return
             if (state == WeaponState.Removed)
             {
+                foreach (Skill skill in attackSkills)
+                {
+                    skill.Destroyed();
+                }
+                foreach (Skill skill in specialSkills)
+                {
+                    skill.Destroyed();
+                }
                 OnWeaponDestroyed();
                 Utility.AutoDestroy(gameObject);
                 return;
