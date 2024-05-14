@@ -66,7 +66,7 @@ public class Weapon : MonoBehaviour
 
     [ReadOnly] public Controller con;
 
-    [Required] public string weaponName;
+    [ReadOnly] public string weaponName;
 
     [ReadOnly]
     public WeaponState state = WeaponState.NULL;
@@ -117,9 +117,6 @@ public class Weapon : MonoBehaviour
 
         public Skill[] attackSkills;
                                                                                                                         [FoldoutGroup("Attack")]
-        [SerializeField]
-        protected int attackUseDurability;
-                                                                                                                        [FoldoutGroup("Attack")]
         [LabelWidth(Editor.propertyLabelWidth)]
         public float attackFrontDelay;
                                                                                                                         [FoldoutGroup("Attack")]
@@ -162,9 +159,6 @@ public class Weapon : MonoBehaviour
     #region Foldout Special - - - - - - - - - -|
 
         public Skill[] specialSkills;
-                                                   [FoldoutGroup("Special")]
-        [SerializeField]
-        protected int specialUseDurability;
                                                    [FoldoutGroup("Special")]
         [LabelWidth(Editor.propertyLabelWidth)]//-|
         public float specialFrontDelay;
@@ -210,11 +204,8 @@ public class Weapon : MonoBehaviour
 
         if (Editor.GetObjectState(gameObject) == Editor.ObjectState.PrefabEdit)
         {
-            if (state != WeaponState.Prefab)
-            {
-                state = WeaponState.Prefab;
-                Debug.LogWarning("상태를 변경할 수 없습니다.");
-            } //LogWarning: 상태를 변경할 수 없습니다.
+            name = gameObject.name;
+            if (state != WeaponState.Prefab) state = WeaponState.Prefab;
         }
         else
         {
@@ -350,6 +341,8 @@ public class Weapon : MonoBehaviour
                     Debug.LogWarning("이미 비활성화되었습니다.");
                 } //LogWarning: 이미 비활성화되었습니다.
 
+                OnDeUse();
+
                 foreach (Skill skill in attackSkills)
                 {
                     skill.DeUse();
@@ -482,7 +475,7 @@ public class Weapon : MonoBehaviour
                     else gameObject.name = $"[Hold] {weaponName}({con.gameObject.name})";
                     break;
                 case WeaponState.Inventory:
-                    if (this == con.defaultWeapon) gameObject.name = $"[Hold] {weaponName}({con.gameObject.name}[Default])";
+                    if (this == con.defaultWeapon) gameObject.name = $"{weaponName}({con.gameObject.name}[Default])";
                     else gameObject.name = $"{weaponName}({con.gameObject.name})"; 
                     break;
                 case WeaponState.Item:

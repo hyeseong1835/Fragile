@@ -45,8 +45,11 @@ public class EnemyController : Controller
     }
     void Awake()
     {
-        agent = gameObject.AddComponent<NavMeshAgent>();
-        agent.speed = moveSpeed;
+        if (Editor.GetType(Editor.StateType.IsPlay))
+        {
+            agent = gameObject.AddComponent<NavMeshAgent>();
+            agent.speed = moveSpeed;
+        }
     }
     void Update()
     {

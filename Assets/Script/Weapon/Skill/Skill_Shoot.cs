@@ -1,14 +1,10 @@
+using Sirenix.OdinInspector;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class Skill_Shoot : Skill
 {
-    [SerializeField]
-    GameObject prefab;
-
     [SerializeField]
     float spinSpeed;
     [SerializeField]
@@ -16,26 +12,32 @@ public class Skill_Shoot : Skill
     [SerializeField]
     float duration;
 
-    [SerializeField][ReadOnly(true)]
+    [SerializeField]
     Pool pool;
-    [SerializeField]
-    int poolStayCount = 0;
-    [SerializeField]
-    float poolDestroyDelay = 0;
-    [SerializeField]
-    int poolDefaultCount = 0;
 
-    public UnityEvent<TriggerObject> startEvent;
-    public UnityEvent<TriggerObject> updateEvent;
-    public UnityEvent<TriggerObject> endEvent;
+    [FoldoutGroup("Event")]
+    #region Foldout Event - - - - - - - - - - - - - - - - - - - - -|
 
-    public UnityEvent<TriggerObject, Collider2D> enterEvent;
-    public UnityEvent<TriggerObject, Collider2D> stayEvent;
-    public UnityEvent<TriggerObject, Collider2D> exitEvent;
+        public UnityEvent<TriggerObject> startEvent;
+                                                                    [FoldoutGroup("Event")]
+        public UnityEvent<TriggerObject> updateEvent;
+                                                                    [FoldoutGroup("Event")]
+        public UnityEvent<TriggerObject> endEvent;
+                                                                    [FoldoutGroup("Event")]
+        public UnityEvent<TriggerObject, Collider2D> enterEvent;//-|
+                                                                    [FoldoutGroup("Event")]
+        public UnityEvent<TriggerObject, Collider2D> stayEvent;
+                                                                    [FoldoutGroup("Event")]
+        public UnityEvent<TriggerObject, Collider2D> exitEvent;
+
+    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     protected override void Init()
     {
-        pool = new Pool(prefab, poolStayCount, poolDestroyDelay, poolDefaultCount);
+        if (Editor.GetType(Editor.StateType.IsPlay))
+        {
+            pool.Init();
+        }
     }
     public override void Execute()
     {
@@ -45,9 +47,8 @@ public class Skill_Shoot : Skill
     {
         TriggerObject triggerObj = pool.Use().GetComponent<TriggerObject>();
 
-        triggerObj.gameObject.SetActive(true);
         triggerObj.SetEvent(enterEvent, stayEvent, exitEvent);
-        triggerObj.transform.SetParent(null);
+        triggerObj.gameObject.SetActive(true);
         triggerObj.transform.position = con.transform.position;
 
         Vector3 startVector = con.targetDir;

@@ -22,7 +22,16 @@ public class Pool
     [VerticalGroup("Pool", order: 0)]
     #region Pool - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        [HorizontalGroup("Pool/Info", width: Editor.propertyHeight * 3)]
+        [ShowInInspector][PropertyOrder(0)]
+        [HideLabel]
+        string name {
+            get {
+                if (prefab == null) return "";
+                return prefab.name;
+            } 
+        }    
+
+        [HorizontalGroup("Pool/Info", width: Editor.propertyHeight * 3, marginLeft: 5 , order: 1)]
         #region Horizontal Info - - - - - - - - - - - - - - - - - - - -|
 
             [HideLabel]
@@ -32,6 +41,7 @@ public class Pool
             [VerticalGroup("Pool/Info/Vertical")]
             #region Vertical - - - - - - - - - - - - -|
 
+            [ReadOnly]
             [LabelWidth(Editor.propertyLabelWidth)]//-|
             public GameObject holder;
                                                        [VerticalGroup("Pool/Info/Vertical")]
@@ -45,7 +55,7 @@ public class Pool
 
         #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        [HorizontalGroup("Pool/Object")]
+        [HorizontalGroup("Pool/Object", marginLeft: 5, order: 2)]
         #region Horizontal Object  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
     
             public List<GameObject> pool = new List<GameObject>();
@@ -59,24 +69,11 @@ public class Pool
 
 
 
-    public Pool(GameObject _prefab, int _stayCount, float _destroyDelay, int defaultCount = 0)
+    public void Init()
     {
         //_prefab
-        holder = new GameObject(_prefab.name);
+        holder = new GameObject(prefab.name);
         holder.transform.SetParent(poolHolder);
-        prefab = _prefab;
-
-        //_stayCount
-        stayCount = _stayCount;
-
-        //destroyDelay
-        destroyDelay = _destroyDelay;
-
-        //defaultCount
-        for (int i = 0; i < defaultCount; i++)
-        {
-            Add();
-        }
 
         PoolManager.pools.Add(this);
     }
@@ -147,8 +144,6 @@ public class Pool
         return invokeDestroy.obj;
     }
 }
-
-[ExecuteAlways]
 public class PoolManager : MonoBehaviour
 {
     public static PoolManager instance;
@@ -156,14 +151,6 @@ public class PoolManager : MonoBehaviour
     [ShowInInspector]
     [TableList(HideToolbar = true, AlwaysExpanded = true, ShowPaging = false)]
     public static List<Pool> pools = new List<Pool>();
-    
-    #if UNITY_EDITOR
-    [Button]
-    void NewPool(GameObject prefab, int stayCount, float destroyDelay, int defaultCount)
-    {
-        new Pool(prefab, stayCount, destroyDelay, defaultCount);
-    }
-    #endif
 
     void Awake()
     {

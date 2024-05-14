@@ -4,12 +4,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+
 public class Skill_Melee : Skill
 {
     [SerializeField]
     TriggerObject triggerObj;
 
-    [SerializeField]
+    #if UNITY_EDITOR
+    bool isWeaponHasDurability { 
+        get {
+            if (weapon == null) weapon = GetComponent<Weapon>();
+            return weapon.maxDurability != -1; 
+        } 
+    }
+    #endif
+    [SerializeField][Required][ShowIf(nameof(isWeaponHasDurability))]
     protected BreakParticle breakParticle;
 
     [SerializeField]
@@ -17,18 +26,33 @@ public class Skill_Melee : Skill
     [SerializeField]
     float spread;
     [SerializeField]
+    float startSpear;
+    [SerializeField]
     float spear;
-
+     
     public enum SwingCurve { Linear, Quadratic }
     [SerializeField] SwingCurve curve;
 
-    public UnityEvent<TriggerObject> startEvent;
-    public UnityEvent<TriggerObject> updateEvent;
-    public UnityEvent<TriggerObject> endEvent;
+    [FoldoutGroup("Event")]
+    #region Foldout Event - - - - - - - - - - - - - - - - - - - - -|
 
-    public UnityEvent<TriggerObject, Collider2D> enterEvent;
-    public UnityEvent<TriggerObject, Collider2D> stayEvent;
-    public UnityEvent<TriggerObject, Collider2D> exitEvent;
+        public UnityEvent<TriggerObject> startEvent;
+                                                                    [FoldoutGroup("Event")]
+        public UnityEvent<TriggerObject> updateEvent;
+                                                                    [FoldoutGroup("Event")]
+        public UnityEvent<TriggerObject> endEvent;
+
+
+                                                                    [FoldoutGroup("Event")]
+        public UnityEvent<TriggerObject, Collider2D> enterEvent;//-|
+                                                                    [FoldoutGroup("Event")]
+        public UnityEvent<TriggerObject, Collider2D> stayEvent;
+                                                                    [FoldoutGroup("Event")]
+        public UnityEvent<TriggerObject, Collider2D> exitEvent;
+
+    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+        UnityEvent<TriggerObject, Collider2D> _enterEvent;//-|
 
     protected override void Init()
     {
@@ -40,7 +64,7 @@ public class Skill_Melee : Skill
     }
     IEnumerator Swing()
     {
-        weapon.hand_obj.gameObject.SetActive(false);
+        if(weapon.hand_obj != null) weapon.hand_obj.gameObject.SetActive(false);
 
         triggerObj.gameObject.SetActive(true);
         con.hand.HandLink(triggerObj.transform, HandMode.ToTarget);
@@ -67,12 +91,26 @@ public class Skill_Melee : Skill
             triggerObj.transform.position = (Vector2)con.transform.position + con.center
                 + Utility.Vector2TransformToEllipse(
                     Utility.RadianToVector2((rotateZ + 90) * Mathf.Deg2Rad)
-                    , 0.75f, 0.5f) * (1 + spear * t);
+                    , 0.75f, 0.5f) * (startSpear + spear * t);
 
             time += Time.deltaTime / duration;
             endEvent.Invoke(triggerObj);
             yield return null;
         }
+        if (weapon.hand_obj != null) weapon.hand_obj.gameObject.SetActive(false);
+
+        triggerObj.gameObject.SetActive(false);
+        
+        if (weapon.hand_obj != null)
+        {
+            weapon.hand_obj.gameObject.SetActive(true);
+            con.hand.HandLink(weapon.hand_obj, HandMode.ToHand);
+        }
+        else
+        {
+            con.hand.HandLink(null);
+        }
+
     }
     public override void Break()
     {
