@@ -115,7 +115,6 @@ public class Weapon : MonoBehaviour
     [FoldoutGroup("Attack")]
     #region Foldout Attack  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        public Skill[] attackSkills;
                                                                                                                         [FoldoutGroup("Attack")]
         [LabelWidth(Editor.propertyLabelWidth)]
         public float attackFrontDelay;
@@ -158,7 +157,6 @@ public class Weapon : MonoBehaviour
     [FoldoutGroup("Special")]
     #region Foldout Special - - - - - - - - - -|
 
-        public Skill[] specialSkills;
                                                    [FoldoutGroup("Special")]
         [LabelWidth(Editor.propertyLabelWidth)]//-|
         public float specialFrontDelay;
@@ -220,29 +218,15 @@ public class Weapon : MonoBehaviour
 
     #endif
 
+        WeaponUpdate();
+
         switch (state)
         {
             case WeaponState.Hold:
-                WeaponUpdate();
-                foreach (Skill skill in attackSkills)
-                {
-                    skill.OnUseUpdate();
-                }
-                foreach (Skill skill in specialSkills)
-                {
-                    skill.OnUseUpdate();
-                }
+                OnUseUpdate();
                 break;
             case WeaponState.Inventory:
-                WeaponBackGroundUpdate();
-                foreach (Skill skill in attackSkills)
-                {
-                    skill.DeUseUpdate();
-                }
-                foreach (Skill skill in specialSkills)
-                {
-                    skill.DeUseUpdate();
-                }
+                DeUseUpdate();
                 break;
         }
     }
@@ -257,7 +241,8 @@ public class Weapon : MonoBehaviour
         protected virtual void WeaponAwake() { }
         protected virtual void WeaponStart() { }
         protected virtual void WeaponUpdate() { }
-        protected virtual void WeaponBackGroundUpdate() { }
+        protected virtual void OnUseUpdate() { }
+        protected virtual void DeUseUpdate() { }
         protected virtual void WeaponOnDrawGizmos() { }
 
         //무기
@@ -267,10 +252,15 @@ public class Weapon : MonoBehaviour
         public virtual void OnWeaponRemoved() { }
         protected virtual void OnWeaponDestroyed() { }
 
+        //스킬
+        public virtual void Attack() { }
+        public virtual void Special() { }
+
+
     #endregion
 
     #region 데이터
-    
+
     public virtual WeaponData GetData()
     {
         return new WeaponData
@@ -323,15 +313,6 @@ public class Weapon : MonoBehaviour
 
                 OnUse();
 
-                foreach (Skill skill in attackSkills)
-                {
-                    skill.OnUse();
-                }
-                foreach (Skill skill in specialSkills)
-                {
-                    skill.OnUse();
-                }
-
                 state = WeaponState.Hold;
             }
             else
@@ -342,15 +323,6 @@ public class Weapon : MonoBehaviour
                 } //LogWarning: 이미 비활성화되었습니다.
 
                 OnDeUse();
-
-                foreach (Skill skill in attackSkills)
-                {
-                    skill.DeUse();
-                }
-                foreach (Skill skill in specialSkills)
-                {
-                    skill.DeUse();
-                }
         
                 state = WeaponState.Inventory;
             }
@@ -361,14 +333,6 @@ public class Weapon : MonoBehaviour
             durability += add;
             if (durability <= 0)
             {
-                foreach (Skill skill in attackSkills)
-                {
-                    skill.Break();
-                }
-                foreach (Skill skill in specialSkills)
-                {
-                    skill.Break();
-                }
                 Break();
                 return;
             }
@@ -405,14 +369,6 @@ public class Weapon : MonoBehaviour
             // REMOVED >> OnWeaponDestroy(item) >> Destroy(gameObject) >> return
             if (state == WeaponState.Removed)
             {
-                foreach (Skill skill in attackSkills)
-                {
-                    skill.Destroyed();
-                }
-                foreach (Skill skill in specialSkills)
-                {
-                    skill.Destroyed();
-                }
                 OnWeaponDestroyed();
                 Utility.AutoDestroy(gameObject);
                 return;

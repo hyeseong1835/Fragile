@@ -130,10 +130,7 @@ public class EnemyController : Controller
 
         yield return new WaitForSeconds(curWeapon.attackFrontDelay);
 
-        foreach (Skill skill in curWeapon.attackSkills)
-        {
-            skill.Execute();
-        }
+        curWeapon.Attack();
 
         yield return new WaitForSeconds(curWeapon.attackDelay);
 

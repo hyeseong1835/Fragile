@@ -96,11 +96,21 @@ public static class Utility
     {
         return new Vector2(Mathf.Cos(radian), Mathf.Sin(radian));
     }
+    public static int Bigger(int a, int b)
+    {
+        if (a >= b) return a;
+        else return b;
+    }
+    public static int Smaller(int a, int b)
+    {
+        if (a >= b) return b;
+        else return a;
+    }
 
     #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     #region Other  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-    
+
     public static void AutoDestroy(UnityEngine.Object obj)
     {
         if (Editor.GetType(Editor.StateType.IsPlay)) UnityEngine.Object.Destroy(obj);

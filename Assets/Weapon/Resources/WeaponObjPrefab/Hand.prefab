@@ -55,18 +55,19 @@ MonoBehaviour:
   damage: 1
   durability: 1
   maxDurability: -1
-  attackSkills:
-  - {fileID: 7768313213311947675}
   attackFrontDelay: 0
   attackDelay: 0.25
   attackBackDelay: 0
   attackMinDistance: 0
   attackMaxDistance: 1
-  specialSkills: []
   specialFrontDelay: 0
   specialDelay: 0
   specialBackDelay: 0
   parent: {fileID: 0}
+  attackSkills:
+  - {fileID: 7768313213311947675}
+  - {fileID: 7768313213311947675}
+  specialSkills: []
 --- !u!114 &7768313213311947675
 MonoBehaviour:
   m_ObjectHideFlags: 0

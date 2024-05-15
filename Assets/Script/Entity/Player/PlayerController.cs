@@ -113,20 +113,8 @@ public class PlayerController : Controller
             {
                 Attack();
 
-                if (attack)
-                {
-                    foreach(Skill skill in curWeapon.attackSkills)
-                    {
-                        skill.Execute();
-                    }
-                }
-                if (mouse1Down)
-                {
-                    foreach (Skill skill in curWeapon.specialSkills)
-                    {
-                        skill.Execute();
-                    }
-                }
+                if (attack) curWeapon.Attack();
+                if (mouse1Down) curWeapon.Special();
             }
 
             Mouse();

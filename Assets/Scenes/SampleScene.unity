@@ -12565,6 +12565,18 @@ PrefabInstance:
       propertyPath: parent
       value: 
       objectReference: {fileID: 374465424}
+    - target: {fileID: 747978869073295566, guid: f704575d294900749b168635978b116a, type: 3}
+      propertyPath: attackSkills.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 747978869073295566, guid: f704575d294900749b168635978b116a, type: 3}
+      propertyPath: attackSkills.Array.data[2]
+      value: 
+      objectReference: {fileID: 1909071749}
+    - target: {fileID: 747978869073295566, guid: f704575d294900749b168635978b116a, type: 3}
+      propertyPath: attackSkills.Array.data[3]
+      value: 
+      objectReference: {fileID: 1909071749}
     - target: {fileID: 1999246564789099802, guid: f704575d294900749b168635978b116a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -12626,6 +12638,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1999246564789099802, guid: f704575d294900749b168635978b116a, type: 3}
   m_PrefabInstance: {fileID: 1909071746}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1909071749 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7768313213311947675, guid: f704575d294900749b168635978b116a, type: 3}
+  m_PrefabInstance: {fileID: 1909071746}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d73e00c5212d7f4390f4d6ec34de4c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!213 &2026783038
 Sprite:
   m_ObjectHideFlags: 0

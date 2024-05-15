@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public abstract class Skill: MonoBehaviour
 {
     protected Weapon weapon;
@@ -12,8 +14,13 @@ public abstract class Skill: MonoBehaviour
         weapon = gameObject.GetComponent<Weapon>();
         Init();
     }
+    void Update()
+    {
+        SkillUpdate();
+    }
     protected abstract void Init();
     public abstract void Execute();
+    public virtual void SkillUpdate() { }
     public virtual void OnUseUpdate() { }
     public virtual void DeUseUpdate() { }
     public virtual void OnUse() { }
