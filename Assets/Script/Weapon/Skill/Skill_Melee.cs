@@ -1,33 +1,22 @@
 using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
 
 public class Skill_Melee : Skill
 {
-    [SerializeField]
+    protected override string GetModuleName() { return "Melee"; }
+
     TriggerObject triggerObj;
 
-    #if UNITY_EDITOR
-    bool isWeaponHasDurability { 
-        get {
-            if (weapon == null) weapon = GetComponent<Weapon>();
-            return weapon.maxDurability != -1; 
-        } 
-    }
-    #endif
-    [SerializeField][Required][ShowIf(nameof(isWeaponHasDurability))]
     protected BreakParticle breakParticle;
 
-    [SerializeField]
-    float duration;
-    [SerializeField]
+    public float duration;
     float spread;
-    [SerializeField]
     float startSpear;
-    [SerializeField]
     float spear;
      
     public enum SwingCurve { Linear, Quadratic }
@@ -53,6 +42,7 @@ public class Skill_Melee : Skill
     #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
         UnityEvent<TriggerObject, Collider2D> _enterEvent;//-|
+
 
     protected override void Init()
     {
@@ -128,5 +118,22 @@ public class Skill_Melee : Skill
     public override void Destroyed()
     {
 
+    }
+
+    public override void OnWeaponMakerGUI()
+    {
+        Rect rect = EditorGUILayout.BeginVertical();
+
+        //EditorGUI.FloatField(new Rect(300, 300, 100, 100), "Labellllllllll", duration);
+
+        triggerObj = (TriggerObject)EditorGUILayout.ObjectField(triggerObj, typeof(TriggerObject), true, GUILayout.Width(100), GUILayout.Height(100));
+        duration = EditorGUILayout.FloatField(nameof(duration), duration);
+        spread = EditorGUILayout.FloatField(nameof(spread), spread);
+        startSpear = EditorGUILayout.FloatField(nameof(startSpear), startSpear);
+        spear = EditorGUILayout.FloatField(nameof(spear), spear);
+        //curve = GUILayout.
+
+        Debug.Log($"OnWeaponMakerGUI: [{Screen.width}, {Screen.height} || {rect}]");
+        EditorGUILayout.EndVertical();
     }
 }

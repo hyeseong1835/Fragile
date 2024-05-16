@@ -2,34 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SubSkill_TriggerHitAddDurability : MonoBehaviour
+public class Action_TriggerHitTakeDamage : Action
 {
-    Weapon weapon;
-    Controller con { get { return weapon.con; } }
+    protected override string GetModuleName() { return "TakeDamage"; }
 
-    [SerializeField] int durability;
 
-    void Awake()
-    {
-        weapon = GetComponent<Weapon>();
-    }
+    [SerializeField] float damageMultiply;
     public void OnHit(TriggerObject triggerObject, Collider2D coll)
     {
         if (coll.gameObject.layer == 19)
         {
             if (con is PlayerController) return;
 
-            weapon.AddDurability(durability);
+            coll.GetComponent<Controller>().TakeDamage(weapon.damage * damageMultiply);
         }
         if (coll.gameObject.layer == 20)
         {
             if (con is EnemyController) return;
 
-            weapon.AddDurability(durability);
+            coll.GetComponent<Controller>().TakeDamage(weapon.damage * damageMultiply);
         }
         else if (coll.gameObject.layer == 21)
         {
-            weapon.AddDurability(durability);
+            coll.GetComponent<Controller>().TakeDamage(weapon.damage * damageMultiply);
         }
     }
 }

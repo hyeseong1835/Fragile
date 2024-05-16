@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using Sirenix.OdinInspector;
+using System;
 using UnityEngine;
 
 public struct WeaponData
@@ -20,6 +21,19 @@ public struct WeaponData
         durability = _durability;
         weaponData = _weaponData;
     }
+}
+[Serializable]
+public class ActiveSkill
+{
+    public float frontDelay = 0;
+    public float delay = 1;
+    public float backDelay = 0;
+    
+    public float minDistance = 0;
+    public float maxDistance = 1;
+
+    public Skill[] skills = new Skill[0];
+    public bool[,] skillSet = new bool[1, 0];
 }
 /// <summary>
 /// NULL, PREFAB, ITEM, HOLD, INVENTORY, REMOVED
@@ -64,110 +78,24 @@ public class Weapon : MonoBehaviour
 
     #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-    [ReadOnly] public Controller con;
+    public string weaponName;
+    public Controller con;
 
-    [ReadOnly] public string weaponName;
-
-    [ReadOnly]
     public WeaponState state = WeaponState.NULL;
 
-    [BoxGroup("Object")]
-    #region Foldout Object - - - - - - - - - - - -|
+    public Sprite UISprite;
+    public Transform hand_obj;
 
-        [Required]//에셋 경로 지정
-        [LabelWidth(Editor.propertyLabelWidth)]//-|
-        public Sprite UISprite;
-                                                   [BoxGroup("Object")]
-        [SerializeField][ChildGameObjectsOnly]
-        [LabelWidth(Editor.propertyLabelWidth - Editor.childGameObjectOnlyWidth)]
-        public Transform hand_obj;
+    public float damage = 1;
 
+    public int durability = 1;
+    public int maxDurability = 1;
 
-    #endregion - - - - - - - - - - - - - - - - - -|
+    [ShowInInspector]
+    public ActiveSkill attack = new ActiveSkill();
 
-    [FoldoutGroup("Stat")]
-    #region Foldout Stat  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-        [LabelWidth(Editor.propertyLabelWidth)]
-        public float damage = 1;
-
-        [HorizontalGroup("Stat/Durability")]
-        #region Horizontal Durability - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-            #if UNITY_EDITOR
-            [DisableIf(nameof(noDurability))]
-            #endif
-            [LabelWidth(Editor.propertyLabelWidth)]
-            [ProgressBar(0, nameof(maxDurability), Segmented = true, R = 1, G = 1, B = 1)]//-|
-            public int durability = 1;
-                                                                                              [HorizontalGroup("Stat/Durability", width: Editor.shortNoLabelPropertyWidth)]
-            [HideLabel][LabelWidth(Editor.shortNoLabelPropertyWidth)]
-            public int maxDurability = 1;
-
-            #if UNITY_EDITOR
-            bool noDurability { get { return maxDurability == -1; } }
-            #endif
-
-        #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    [FoldoutGroup("Attack")]
-    #region Foldout Attack  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-                                                                                                                        [FoldoutGroup("Attack")]
-        [LabelWidth(Editor.propertyLabelWidth)]
-        public float attackFrontDelay;
-                                                                                                                        [FoldoutGroup("Attack")]
-        [LabelWidth(Editor.propertyLabelWidth)]
-        public float attackDelay;
-                                                                                                                        [FoldoutGroup("Attack")]
-        [LabelWidth(Editor.propertyLabelWidth)] 
-        public float attackBackDelay;
-                                                                                                                        [FoldoutGroup("Attack")]
-        [HorizontalGroup("Attack/AttackRange", width: Editor.shortNoLabelPropertyWidth + Editor.propertyLabelWidth)]//-|
-        #region Horizontal Range - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-            [SerializeField][PropertyOrder(0)]
-            [LabelText("AttackRange")][LabelWidth(Editor.propertyLabelWidth)]                                      
-            public float attackMinDistance = 0;                                                     
-                                                                                                
-            #if UNITY_EDITOR                                                                                
-                                                                                     [HorizontalGroup("Attack/AttackRange")]                                              
-            [ShowInInspector][PropertyOrder(1)]
-            [HideLabel]            
-            [MinMaxSlider(0, nameof(attackMaxDistance))]
-            Vector2 attackRange {                                                                               
-                get { return new Vector2(attackMinDistance, attackMaxDistance); }//-|
-                set {
-                    attackMinDistance = value.x;
-                    attackMaxDistance = value.y; 
-                }
-            }
-                                                                                                
-            #endif                                                                      
-                                                                                     [HorizontalGroup("Attack/AttackRange", width: Editor.shortNoLabelPropertyWidth)]                                   
-            [SerializeField][HideLabel][PropertyOrder(2)]
-            public float attackMaxDistance = 1;
-
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    [FoldoutGroup("Special")]
-    #region Foldout Special - - - - - - - - - -|
-
-                                                   [FoldoutGroup("Special")]
-        [LabelWidth(Editor.propertyLabelWidth)]//-|
-        public float specialFrontDelay;
-                                                   [FoldoutGroup("Special")]
-        [LabelWidth(Editor.propertyLabelWidth)]
-        public float specialDelay;
-                                                   [FoldoutGroup("Special")]
-        [LabelWidth(Editor.propertyLabelWidth)]
-        public float specialBackDelay;
-
-    #endregion  - - - - - - - - - - - - - - - -|
+    [ShowInInspector]
+    public ActiveSkill special = new ActiveSkill();
 
     #if UNITY_EDITOR
 
@@ -202,7 +130,7 @@ public class Weapon : MonoBehaviour
 
         if (Editor.GetObjectState(gameObject) == Editor.ObjectState.PrefabEdit)
         {
-            name = gameObject.name;
+            weaponName = gameObject.name;
             if (state != WeaponState.Prefab) state = WeaponState.Prefab;
         }
         else
@@ -240,17 +168,137 @@ public class Weapon : MonoBehaviour
         //기본
         protected virtual void WeaponAwake() { }
         protected virtual void WeaponStart() { }
-        protected virtual void WeaponUpdate() { }
-        protected virtual void OnUseUpdate() { }
-        protected virtual void DeUseUpdate() { }
+    protected virtual void WeaponUpdate() 
+    { 
+        /*
+        if (Editor.GetType(Editor.StateType.IsEditor))
+        {
+            //AttackSet Resize
+            if (attack.skillSet.GetLength(1) != attack.skills.Length)
+            {
+                bool[,] temp = attack.skillSet;
+                attack.skillSet = new bool[attack.skillSet.GetLength(0), attack.skills.Length];
+
+                for (int x = 0; x < attack.skillSet.GetLength(0); x++)
+                {
+                    for (int y = 0; y < Utility.Smaller(attack.skillSet.GetLength(1), temp.GetLength(1)); y++)
+                    {
+                        attack.skillSet[x, y] = temp[x, y];
+                    }
+                }
+            }
+
+            //SpecialSet Resize
+            if (special.skillSet.GetLength(1) != special.skills.Length)
+            {
+                bool[,] temp = special.skillSet;
+                special.skillSet = new bool[special.skillSet.GetLength(0), special.skills.Length];
+
+                for (int x = 0; x < special.skillSet.GetLength(0); x++)
+                {
+                    for (int y = 0; y < Utility.Smaller(special.skillSet.GetLength(1), temp.GetLength(1)); y++)
+                    {
+                        special.skillSet[x, y] = temp[x, y];
+                    }
+                }
+            }
+        }
+        */
+    }
+    protected virtual void OnUseUpdate() 
+    {
+        foreach (Skill skill in attack.skills)
+        {
+            skill.OnUseUpdate();
+        }
+        foreach (Skill skill in special.skills)
+        {
+            skill.OnUseUpdate();
+        }
+    }
+    protected virtual void DeUseUpdate() 
+    {
+        foreach (Skill skill in attack.skills)
+        {
+            skill.DeUseUpdate();
+        }
+        foreach (Skill skill in special.skills)
+        {
+            skill.DeUseUpdate();
+        }
+    }
         protected virtual void WeaponOnDrawGizmos() { }
 
         //무기
-        protected virtual void OnUse() { }
-        protected virtual void OnDeUse() { }
-        protected virtual void Break() { }
-        public virtual void OnWeaponRemoved() { }
-        protected virtual void OnWeaponDestroyed() { }
+    protected virtual void OnUse()
+    {
+        if (hand_obj != null)
+        {
+            hand_obj.gameObject.SetActive(true);
+            con.hand.HandLink(hand_obj, HandMode.ToHand);
+        }
+        foreach (Skill skill in attack.skills)
+        {
+            skill.OnUse();
+        }
+        foreach (Skill skill in special.skills)
+        {
+            skill.OnUse();
+        }
+    }
+    protected virtual void OnDeUse() 
+    {
+        if (hand_obj != null)
+        {
+            hand_obj.gameObject.SetActive(false);
+            con.hand.HandLink(null);
+        }
+        foreach (Skill skill in attack.skills)
+        {
+            skill.DeUse();
+        }
+        foreach (Skill skill in special.skills)
+        {
+            skill.DeUse();
+        }
+    }
+    protected virtual void Break() 
+    {
+        foreach (Skill skill in attack.skills)
+        {
+            skill.Break();
+        }
+        foreach (Skill skill in special.skills)
+        {
+            skill.Break();
+        }
+        WeaponDestroy();
+    }
+    public virtual void OnWeaponRemoved() 
+    {
+        foreach (Skill skill in attack.skills)
+        {
+            skill.Removed();
+        }
+        foreach (Skill skill in special.skills)
+        {
+            skill.Removed();
+        }
+
+        Destroy(hand_obj.gameObject);
+        con.hand.HandLink(null);
+    }
+    protected virtual void OnWeaponDestroyed() 
+    {
+        foreach (Skill skill in attack.skills)
+        {
+            skill.Destroyed();
+        }
+        foreach (Skill skill in special.skills)
+        {
+            skill.Destroyed();
+        }
+    }
 
         //스킬
         public virtual void Attack() { }

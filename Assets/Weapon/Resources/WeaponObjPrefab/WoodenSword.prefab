@@ -81,29 +81,33 @@ MonoBehaviour:
   m_GameObject: {fileID: 1585939246408524656}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50a99f985fe9dd84fb3a9fb03b73bb1c, type: 3}
+  m_Script: {fileID: 11500000, guid: 1b8ae1c64c8dfbc49b1dd04209c2430e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  con: {fileID: 0}
   weaponName: WoodenSword
+  con: {fileID: 0}
   state: 1
   UISprite: {fileID: 21300000, guid: 4de065b7691eaa64d8d187fce863b3e3, type: 3}
-  hand_obj: {fileID: 9066027808415308706}
+  hand_obj: {fileID: 0}
   damage: 1
-  durability: 3
-  maxDurability: 3
-  attackSkills:
-  - {fileID: 5198395013937180853}
-  attackFrontDelay: 0
-  attackDelay: 0.1
-  attackBackDelay: 0.5
-  attackMinDistance: 0
-  attackMaxDistance: 1
-  specialSkills:
-  - {fileID: 2592309536499102814}
-  specialFrontDelay: 0.5
-  specialDelay: 5
-  specialBackDelay: 0
+  durability: 1
+  maxDurability: 1
+  attack:
+    frontDelay: 0
+    delay: 1
+    backDelay: 0
+    minDistance: 0
+    maxDistance: 1
+    skills:
+    - {fileID: 5198395013937180853}
+  special:
+    frontDelay: 0
+    delay: 1
+    backDelay: 0
+    minDistance: 0
+    maxDistance: 1
+    skills:
+    - {fileID: 2592309536499102814}
   parent: {fileID: 0}
 --- !u!114 &5198395013937180853
 MonoBehaviour:
@@ -117,12 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d73e00c5212d7f4390f4d6ec34de4c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  triggerObj: {fileID: 2747784526370504233}
-  breakParticle: {fileID: 8033446901899226997}
-  duration: 0.25
-  spread: 120
-  startSpear: 1
-  spear: 0
+  damage: 1
   curve: 1
   startEvent:
     m_PersistentCalls:
@@ -204,8 +203,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 931d18f928975c7409ca566ad54dc8a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 1
   spinSpeed: 720
-  throwSpeed: 5
+  throwSpeed: 720
   duration: 5
   pool:
     prefab: {fileID: 1548862860711654611, guid: e7edc26137655ab4aa6ddbe50cd761e4, type: 3}

@@ -14,6 +14,15 @@ public class Editor : MonoBehaviour
     public const float propertyHeight = 20;
 
     [ShowInInspector]
+    public const int propertyFontSize = 12;
+
+    [ShowInInspector]
+    public const int titleFontSize = 20;
+
+    [ShowInInspector]
+    public const float titleHeight = 30;
+
+    [ShowInInspector]
     public const float propertyLabelWidth = 125;
 
     [ShowInInspector]
@@ -30,6 +39,8 @@ public class Editor : MonoBehaviour
 
     [ShowInInspector]
     public const float childGameObjectOnlyWidth = 16.5f;
+
+
 
     #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 

@@ -106,10 +106,10 @@ public class EnemyController : Controller
                 float distanceBetweenTarget = Vector2.Distance(targetPos, (Vector2)transform.position + center);
                 
                 //최대 거리 만족
-                if (distanceBetweenTarget < curWeapon.attackMaxDistance)
+                if (distanceBetweenTarget < curWeapon.attack.maxDistance)
                 {
                     //최소 거리 만족
-                    if (distanceBetweenTarget > curWeapon.attackMinDistance)
+                    if (distanceBetweenTarget > curWeapon.attack.minDistance)
                     {
                         if(curWeapon != null) StartCoroutine(Attack());
                         //무기 없어지면 CancelCoroutine
@@ -128,13 +128,13 @@ public class EnemyController : Controller
         behaviorState = BehaviorState.None;
         grafic.animationState = EnemyAnimationState.NONE;
 
-        yield return new WaitForSeconds(curWeapon.attackFrontDelay);
+        yield return new WaitForSeconds(curWeapon.attack.frontDelay);
 
         curWeapon.Attack();
 
-        yield return new WaitForSeconds(curWeapon.attackDelay);
+        yield return new WaitForSeconds(curWeapon.attack.delay);
 
-        yield return new WaitForSeconds(curWeapon.attackBackDelay);
+        yield return new WaitForSeconds(curWeapon.attack.backDelay);
 
         behaviorState = BehaviorState.Idle;
     }
@@ -143,8 +143,8 @@ public class EnemyController : Controller
         if (curWeapon != null)
         {
             //AttackRange
-            Gizmos.DrawWireSphere(transform.position + (Vector3)center, curWeapon.attackMinDistance);
-            Gizmos.DrawWireSphere(transform.position + (Vector3)center, curWeapon.attackMaxDistance);
+            Gizmos.DrawWireSphere(transform.position + (Vector3)center, curWeapon.attack.minDistance);
+            Gizmos.DrawWireSphere(transform.position + (Vector3)center, curWeapon.attack.maxDistance);
         }
     }
 }

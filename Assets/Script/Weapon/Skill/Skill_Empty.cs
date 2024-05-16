@@ -3,12 +3,15 @@ using UnityEngine.Events;
 
 public class Skill_Empty : Skill
 {
+    protected override string GetModuleName() { return "Empty"; }
+    
     [FoldoutGroup("Event")]
     #region Foldout Event - - - - - - - - - - - - - - - - - - - - -|
 
         public UnityEvent<TriggerObject> startEvent;
 
     #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
 
     protected override void Init()
     {
@@ -31,6 +34,11 @@ public class Skill_Empty : Skill
     }
 
     public override void Removed()
+    {
+
+    }
+
+    public override void OnWeaponMakerGUI()
     {
 
     }

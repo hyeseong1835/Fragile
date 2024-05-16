@@ -239,7 +239,7 @@ public class PlayerController : Controller
         {
             attack = true;
 
-            attackCool = curWeapon.attackFrontDelay + curWeapon.attackDelay + curWeapon.attackBackDelay;
+            attackCool = curWeapon.attack.frontDelay + curWeapon.attack.delay + curWeapon.attack.backDelay;
             attackInput = false;
         }
         else attack = false;

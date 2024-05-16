@@ -19,7 +19,9 @@ public class UI_Inventory : MonoBehaviour
 
     void Update()
     {
-        curWeaponImage.sprite = pCon.curWeapon.UISprite;
+        if (pCon.curWeapon == null) return;
+        
+            curWeaponImage.sprite = pCon.curWeapon.UISprite;
 
         //내구도가 없을 때
         if (pCon.curWeapon.durability == -1)

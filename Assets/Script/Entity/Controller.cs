@@ -103,13 +103,11 @@ public abstract class Controller : MonoBehaviour
 
         #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|    
     
-                                               [FoldoutGroup("Stat")]
     [LabelWidth(Editor.propertyLabelWidth)]
     public float moveSpeed = 1;
 
     #endregion - - - - - - - - - - - - - - - -|
 
-    [FoldoutGroup("Input")]
     #region Foldout Input  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
         [VerticalGroup("Input/Move")]
@@ -126,20 +124,24 @@ public abstract class Controller : MonoBehaviour
             [LabelWidth(Editor.propertyLabelWidth)]
             public Vector2 lastMoveVector = new Vector2(0.5f, 0);//-|
             
-            #if UNITY_EDITOR
-                                                                                       [VerticalGroup("Input/Move")]                 
-            [ShowInInspector][ReadOnly][HideIf(nameof(inspectorShowLastMoveVector))]
+                                                                                       [VerticalGroup("Input/Move")]
+        #if UNITY_EDITOR
+            [ShowInInspector]
+            [ReadOnly]
+            [HideIf(nameof(inspectorShowLastMoveVector))]
+        #endif
             [LabelWidth(Editor.propertyLabelWidth)]
             [MinMaxSlider(0, 7)]
-            Vector2Int _moveRotate {
-                get {
+            Vector2Int _moveRotate
+            {
+                get
+                {
                     int intRotate = Utility.FloorRotateToInt(moveRotate, 8);
 
-                    if(intRotate == 7) return new Vector2Int(intRotate, intRotate);
+                    if (intRotate == 7) return new Vector2Int(intRotate, intRotate);
                     else return new Vector2Int(intRotate, intRotate + 1);
                 }
             }
-            #endif
             [HideInInspector]
             public float moveRotate = 0;
                                                                         [VerticalGroup("Input/Move")]
@@ -151,7 +153,6 @@ public abstract class Controller : MonoBehaviour
             Vector2Int _lastMoveRotate {
                 get {
                     int intRotate = Utility.FloorRotateToInt(lastMoveRotate, 8);
-                    
                     if(intRotate == 7) return new Vector2Int(intRotate, intRotate);
                     else return new Vector2Int(intRotate, intRotate + 1);
                 }
@@ -186,7 +187,6 @@ public abstract class Controller : MonoBehaviour
 
         [VerticalGroup("Input/Attack")]
         #region Vertical Attack  - - - - - - - - - - - -|
-
             [ReadOnly]
             [LabelWidth(Editor.propertyLabelWidth)]
             #if UNITY_EDITOR
@@ -203,13 +203,13 @@ public abstract class Controller : MonoBehaviour
             float attackCoolMax {
                 get {
                     if (curWeapon == null) return 0;
-                    else return curWeapon.attackFrontDelay + curWeapon.attackDelay + curWeapon.attackBackDelay;
+                    else return curWeapon.attack.frontDelay + curWeapon.attack.delay + curWeapon.attack.backDelay;
                 }
             }
 
             #endif
 
-        #endregion - - - - - - - - - - - - - - - - - - -|
+        #endregion - .f- - - - - - - - - - - - - - .d- -|
 
         [VerticalGroup("Input/Special")]
         #region Vertical Special  - - - - - - - - - - - - - -|

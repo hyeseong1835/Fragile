@@ -1,10 +1,13 @@
 using Sirenix.OdinInspector;
 using System.Collections;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class Skill_Shoot : Skill
 {
+    protected override string GetModuleName() { return "Shoot"; }
+
     [SerializeField]
     float spinSpeed;
     [SerializeField]
@@ -85,5 +88,12 @@ public class Skill_Shoot : Skill
     public override void Destroyed()
     {
 
+    }
+
+    public override void OnWeaponMakerGUI()
+    {
+        spinSpeed = EditorGUILayout.FloatField(nameof(spinSpeed), spinSpeed);
+        throwSpeed = EditorGUILayout.FloatField(nameof(throwSpeed), spinSpeed);
+        duration = EditorGUILayout.FloatField(nameof(duration), duration);
     }
 }
