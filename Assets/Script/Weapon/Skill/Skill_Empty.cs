@@ -1,26 +1,17 @@
 using Sirenix.OdinInspector;
+using System;
 using UnityEngine.Events;
 
-public class Skill_Empty : Skill
+public class Skill_Empty : Skill, Input_Empty
 {
-    protected override string GetModuleName() { return "Empty"; }
-    
-    [FoldoutGroup("Event")]
-    #region Foldout Event - - - - - - - - - - - - - - - - - - - - -|
-
-        public UnityEvent<TriggerObject> startEvent;
-
-    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-
-    protected override void Init()
+    protected override void InitSkill()
     {
-
+        
     }
 
-    public override void Execute()
+    public void Empty()
     {
-
+        
     }
 
     public override void Break()
@@ -34,11 +25,6 @@ public class Skill_Empty : Skill
     }
 
     public override void Removed()
-    {
-
-    }
-
-    public override void OnWeaponMakerGUI()
     {
 
     }

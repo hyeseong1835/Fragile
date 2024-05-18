@@ -106,7 +106,7 @@ public class Weapon : MonoBehaviour
     
     #endif
     
-    void Awake()
+    void InitModule()
     {
     #if UNITY_EDITOR
         //置段 持失

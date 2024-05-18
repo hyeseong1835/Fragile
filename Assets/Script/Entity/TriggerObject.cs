@@ -3,34 +3,35 @@ using UnityEngine.Events;
 
 public class TriggerObject : MonoBehaviour
 {
-    UnityEvent<TriggerObject, Collider2D> enterEvent;
-    UnityEvent<TriggerObject, Collider2D> stayEvent;
-    UnityEvent<TriggerObject, Collider2D> exitEvent;
+    System.Action<TriggerObject, Collider2D> enter;
+    System.Action<TriggerObject, Collider2D> stay;
+    System.Action<TriggerObject, Collider2D> exit;
 
-    public void SetEvent(UnityEvent<TriggerObject, Collider2D> _enterEvent, 
-        UnityEvent<TriggerObject, Collider2D> _stayEvent, 
-        UnityEvent<TriggerObject, Collider2D> _exitEvent)
+    public void SetEvent(
+        System.Action<TriggerObject, Collider2D> _enter,
+        System.Action<TriggerObject, Collider2D> _stay,
+        System.Action<TriggerObject, Collider2D> _exit)
     {
-        enterEvent = _enterEvent;
-        stayEvent = _stayEvent;
-        exitEvent = _exitEvent;
+        enter = _enter;
+        stay = _stay;
+        exit = _exit;
     }
     void OnTriggerEnter2D(Collider2D collider)
     {
-        if (enterEvent == null) return;
+        if (enter == null) return;
 
-        enterEvent.Invoke(this, collider);
+        enter(this, collider);
     }
     void OnTriggerStay2D(Collider2D collider)
     {
-        if (stayEvent == null) return;
+        if (stay == null) return;
 
-        stayEvent.Invoke(this, collider);
+        stay(this, collider);
     }
     void OnTriggerExit2D(Collider2D collider)
     {
-        if (exitEvent == null) return;
+        if (exit == null) return;
 
-        exitEvent.Invoke(this, collider);
+        exit.Invoke(this, collider);
     }
 }

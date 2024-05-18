@@ -121,50 +121,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d73e00c5212d7f4390f4d6ec34de4c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moduleName: Skill_Melee
   damage: 1
+  triggerObj: {fileID: 2747784526370504233}
+  duration: 0
   curve: 1
-  startEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  updateEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  endEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  enterEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7508055921039360277}
-        m_TargetAssemblyTypeName: SubSkill_TriggerHitTakeDamage, Assembly-CSharp
-        m_MethodName: OnHit
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 509400277263701862}
-        m_TargetAssemblyTypeName: SubSkill_TriggerHitAddDurability, Assembly-CSharp
-        m_MethodName: OnHit
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  stayEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  exitEvent:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &7508055921039360277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,6 +138,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c90163adf83d1f45ade62cf34020462, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moduleName: Action_TriggerHitTakeDamage
   damageMultiply: 1
 --- !u!114 &509400277263701862
 MonoBehaviour:
@@ -190,6 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faacce9b393f6df4f8473f2e39c827e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moduleName: Action_TriggerHitAddDurability
   durability: -1
 --- !u!114 &2592309536499102814
 MonoBehaviour:
@@ -203,6 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 931d18f928975c7409ca566ad54dc8a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moduleName: Skill_Shoot
   damage: 1
   spinSpeed: 720
   throwSpeed: 720
@@ -213,36 +177,6 @@ MonoBehaviour:
     stayCount: 0
     destroyDelay: 0
     pool: []
-  startEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  updateEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  endEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  enterEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6114238738626415979}
-        m_TargetAssemblyTypeName: SubSkill_TriggerHitTakeDamage, Assembly-CSharp
-        m_MethodName: OnHit
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  stayEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  exitEvent:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &6114238738626415979
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -255,6 +189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c90163adf83d1f45ade62cf34020462, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moduleName: Action_TriggerHitTakeDamage
   damageMultiply: 1
 --- !u!1 &2682048221678672950
 GameObject:

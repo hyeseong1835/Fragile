@@ -6,10 +6,10 @@ public abstract class Action : Module
 {
     protected Weapon weapon;
     protected Controller con { get { return weapon.con; } }
-    private void Awake()
+    protected override void InitModule()
     {
         weapon = GetComponent<Weapon>();
-        Init();
+        InitAction();
     }
-    protected virtual void Init() { }
+    protected virtual void InitAction() { }
 }

@@ -4,9 +4,10 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Skill_Shoot : Skill
+public class Skill_Shoot : Skill, Input_Empty
 {
-    protected override string GetModuleName() { return "Shoot"; }
+    [SerializeField] Input_TriggerHit enter, stay, exit;
+    [SerializeField] Input_TriggerEvent start, update, end;
 
     [SerializeField]
     float spinSpeed;
@@ -18,61 +19,56 @@ public class Skill_Shoot : Skill
     [SerializeField]
     Pool pool;
 
-    [FoldoutGroup("Event")]
-    #region Foldout Event - - - - - - - - - - - - - - - - - - - - -|
-
-        public UnityEvent<TriggerObject> startEvent;
-                                                                    [FoldoutGroup("Event")]
-        public UnityEvent<TriggerObject> updateEvent;
-                                                                    [FoldoutGroup("Event")]
-        public UnityEvent<TriggerObject> endEvent;
-                                                                    [FoldoutGroup("Event")]
-        public UnityEvent<TriggerObject, Collider2D> enterEvent;//-|
-                                                                    [FoldoutGroup("Event")]
-        public UnityEvent<TriggerObject, Collider2D> stayEvent;
-                                                                    [FoldoutGroup("Event")]
-        public UnityEvent<TriggerObject, Collider2D> exitEvent;
-
-    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    protected override void Init()
+    protected override void InitSkill()
     {
         if (Editor.GetType(Editor.StateType.IsPlay))
         {
             pool.Init();
         }
     }
-    public override void Execute()
+    public void Empty()
     {
         StartCoroutine(Shoot());
     }
     IEnumerator Shoot()
     {
-        TriggerObject triggerObj = pool.Use().GetComponent<TriggerObject>();
+        #region Start  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|  
+        
+            TriggerObject triggerObj = pool.Use().GetComponent<TriggerObject>();
 
-        triggerObj.SetEvent(enterEvent, stayEvent, exitEvent);
-        triggerObj.gameObject.SetActive(true);
-        triggerObj.transform.position = con.transform.position;
+            triggerObj.SetEvent
+            (
+                enter.TriggerHit,
+                stay.TriggerHit,
+                exit.TriggerHit
+            );
+            triggerObj.gameObject.SetActive(true);
+            triggerObj.transform.position = con.transform.position;
 
-        Vector3 startVector = con.targetDir;
-        float startAngleZ = Mathf.Atan2(startVector.y, startVector.x) * Mathf.Rad2Deg - 90;
+            Vector3 startVector = con.targetDir;
+            float startAngleZ = Mathf.Atan2(startVector.y, startVector.x) * Mathf.Rad2Deg - 90;//-|
+
+        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -| 
+        start.TriggerEvent(triggerObj);
+
         float time = 0;
-
-        startEvent.Invoke(triggerObj);
-        //½ÇÇà Áß
         while (time <= duration)
         {
-            triggerObj.transform.position += startVector.normalized * throwSpeed * Time.deltaTime;
+            #region Update  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|  
+                
+                triggerObj.transform.position += startVector.normalized * throwSpeed * Time.deltaTime;//-|
 
-            float rotateZ = startAngleZ - time * spinSpeed;
-            triggerObj.transform.rotation = Quaternion.Euler(0, 0, rotateZ);
-            
+                float rotateZ = startAngleZ - time * spinSpeed;
+                triggerObj.transform.rotation = Quaternion.Euler(0, 0, rotateZ);
+
+            #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|  
+            update.TriggerEvent(triggerObj);
+
             time += Time.deltaTime;
-
-            updateEvent.Invoke(triggerObj);
             yield return null;
         }
-        endEvent.Invoke(triggerObj);
+
+        end.TriggerEvent(triggerObj);
     }
     
     public override void Break()
@@ -88,12 +84,5 @@ public class Skill_Shoot : Skill
     public override void Destroyed()
     {
 
-    }
-
-    public override void OnWeaponMakerGUI()
-    {
-        spinSpeed = EditorGUILayout.FloatField(nameof(spinSpeed), spinSpeed);
-        throwSpeed = EditorGUILayout.FloatField(nameof(throwSpeed), spinSpeed);
-        duration = EditorGUILayout.FloatField(nameof(duration), duration);
     }
 }

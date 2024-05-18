@@ -4,6 +4,7 @@ using Sirenix.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -18,7 +19,10 @@ public class WeaponMaker : EditorWindow
     Texture tex;
     Weapon weapon;
     int weaponTabIndex = 0;
-    int skillTabIndex = 0;
+    int activeSkillTabIndex = 0;
+    int selectionIndex = 0;
+
+    UnityEditor.Editor skillEditor;
 
     void Awake()
     {
@@ -29,17 +33,25 @@ public class WeaponMaker : EditorWindow
     void Update()
     {
         //if (//Selection.count == 1 
-          //   Editor.GetObjectState(Selection.objects[0].GetComponent<GameObject>()) == Editor.ObjectState.PrefabEdit)
-            weapon = Selection.objects[0].GetComponent<Weapon>();
+        //   Editor.GetObjectState(Selection.objects[0].GetComponent<GameObject>()) == Editor.ObjectState.PrefabEdit)
+        if (Selection.count == 1 && (Selection.objects[0] as UnityEngine.GameObject).TryGetComponent<Weapon>(out weapon))
+        {
+
+        }
+        else weapon = null;
     }
     [MenuItem("Window/WeaponMaker")]
     public static void ShowWindow()
     {
         GetWindow(typeof(WeaponMaker));
     }
-
     void OnGUI()
     {
+        if (weapon == null)
+        {
+            GUILayout.Label("Select Weapon");
+            return;
+        }
         EditorGUILayout.BeginHorizontal();
         #region Horizontal Default
 
@@ -74,8 +86,8 @@ public class WeaponMaker : EditorWindow
                 ShowActiveSkill(ref weapon.special);
                 break;
         }
-        Event current = Event.current;
 
+        /*
         if (new Rect(0, 0, Screen.width, Screen.height).Contains(current.mousePosition) && current.type == EventType.ContextClick)
         {
             GenericMenu menu = new GenericMenu();
@@ -90,111 +102,123 @@ public class WeaponMaker : EditorWindow
         {
             Debug.Log("Hi there");
         }
-    }
-    void ShowActiveSkill(ref ActiveSkill activeSkill)
-    {
-        EditorGUILayout.BeginHorizontal();
-        #region Horizontal Delay
+        */
 
-        EditorGUILayout.LabelField("Delay", GUILayout.Width(Editor.propertyLabelWidth));
-        activeSkill.maxDistance = EditorGUILayout.FloatField(activeSkill.maxDistance);
-        activeSkill.delay = EditorGUILayout.FloatField(activeSkill.delay);
-        activeSkill.backDelay = EditorGUILayout.FloatField(activeSkill.backDelay);
-
-        EditorGUILayout.EndHorizontal();
-        #endregion
-
-        Rect range = EditorGUILayout.BeginHorizontal();
-        #region Range
-
-        EditorGUILayout.LabelField("Range", GUILayout.Width(Editor.propertyLabelWidth));
-
-        float attackMaxDistance = activeSkill.maxDistance;
-        EditorGUILayout.MinMaxSlider(ref activeSkill.minDistance, ref activeSkill.maxDistance, 0, activeSkill.maxDistance);
-        activeSkill.maxDistance = attackMaxDistance;
-
-        activeSkill.minDistance = EditorGUI.DelayedFloatField(
-                new Rect(Editor.propertyLabelWidth - Editor.shortNoLabelPropertyWidth
-                    + (range.size.x - Editor.propertyLabelWidth - Editor.shortNoLabelPropertyWidth - 20) * (activeSkill.minDistance / activeSkill.maxDistance)
-                    , range.position.y, Editor.shortNoLabelPropertyWidth, Editor.propertyHeight
-                ), activeSkill.minDistance);
-
-        activeSkill.maxDistance = EditorGUILayout.FloatField(activeSkill.maxDistance, GUILayout.Width(Editor.shortNoLabelPropertyWidth));
-
-        EditorGUILayout.EndHorizontal();
-        #endregion
-
-        Rect skillsTitle = EditorGUILayout.BeginHorizontal();
-        #region Horizontal SkillsTitle
-
-        if (activeSkill.skills != null)
+        void ShowActiveSkill(ref ActiveSkill activeSkill)
         {
-            string[] attackSkillTitles = new string[activeSkill.skills.Length];
-            for (int titleIndex = 0; titleIndex < attackSkillTitles.Length; titleIndex++)
+            activeSkill.skills[activeSkillTabIndex].moduleName = activeSkill.skills[activeSkillTabIndex].GetType().Name;
+
+            EditorGUILayout.BeginHorizontal();
+            #region Horizontal Delay
+
+            EditorGUILayout.LabelField("Delay", GUILayout.Width(Editor.propertyLabelWidth));
+            activeSkill.maxDistance = EditorGUILayout.FloatField(activeSkill.maxDistance);
+            activeSkill.delay = EditorGUILayout.FloatField(activeSkill.delay);
+            activeSkill.backDelay = EditorGUILayout.FloatField(activeSkill.backDelay);
+
+            EditorGUILayout.EndHorizontal();
+            #endregion
+
+            Rect range = EditorGUILayout.BeginHorizontal();
+            #region Range
+
+            EditorGUILayout.LabelField("Range", GUILayout.Width(Editor.propertyLabelWidth));
+
+            float attackMaxDistance = activeSkill.maxDistance;
+            EditorGUILayout.MinMaxSlider(ref activeSkill.minDistance, ref activeSkill.maxDistance, 0, activeSkill.maxDistance);
+            activeSkill.maxDistance = attackMaxDistance;
+
+            activeSkill.minDistance = EditorGUI.DelayedFloatField(
+                    new Rect(Editor.propertyLabelWidth - Editor.shortNoLabelPropertyWidth
+                        + (range.size.x - Editor.propertyLabelWidth - Editor.shortNoLabelPropertyWidth - 20) * (activeSkill.minDistance / activeSkill.maxDistance)
+                        , range.position.y, Editor.shortNoLabelPropertyWidth, Editor.propertyHeight
+                    ), activeSkill.minDistance);
+
+            activeSkill.maxDistance = EditorGUILayout.FloatField(activeSkill.maxDistance, GUILayout.Width(Editor.shortNoLabelPropertyWidth));
+
+            EditorGUILayout.EndHorizontal();
+            #endregion
+
+            Rect skillsTitle = EditorGUILayout.BeginHorizontal();
+            #region Horizontal SkillsTitle
+
+            if (activeSkill.skills != null)
             {
-                attackSkillTitles[titleIndex] = activeSkill.skills[titleIndex].moduleName;
-            }
-
-            skillTabIndex = GUILayout.Toolbar(weaponTabIndex, attackSkillTitles);
-        }
-
-        if (GUILayout.Button(tex))
-        {
-            // Get all files in the specified directory
-            string[] scriptFiles = Directory.GetFiles(skillScriptsFolderPath, "*.cs", SearchOption.TopDirectoryOnly);
-
-            string[] skillNameArray = new string[scriptFiles.Length];
-
-            for (int i = 0; i < scriptFiles.Length; i++)
-            {
-                skillNameArray[i] = scriptFiles[i];//.Substring(skillScriptsFolderPath.Length, scriptFiles[i].Length - 1);
-            }
-            int selectionIndex = EditorGUI.Popup(new Rect(skillsTitle.position.x, skillsTitle.position.y, 100, 500), 0, skillNameArray);
-
-            Debug.Log(skillNameArray[selectionIndex]);
-
-            /*
-                // Load the script asset
-                MonoScript script = AssetDatabase.LoadAssetAtPath<MonoScript>(filePath);
-
-                if (script != null)
+                string[] activeSkillTitles = new string[activeSkill.skills.Length];
+                for (int titleIndex = 0; titleIndex < activeSkillTitles.Length; titleIndex++)
                 {
-                    // Get the System.Type from the script
-                    Type type = ;
+                    activeSkillTitles[titleIndex] = activeSkill.skills[titleIndex].moduleName;
+                }
 
-                    if (type != null)
+                activeSkillTabIndex = GUILayout.Toolbar(activeSkillTabIndex, activeSkillTitles);
+            }
+
+            if (GUILayout.Button(tex))
+            {
+                EditorGUILayout.EndHorizontal();
+                
+                string[] scriptFiles = Directory.GetFiles(skillScriptsFolderPath, "*.cs", SearchOption.TopDirectoryOnly);
+
+                string[] skillNameArray = new string[scriptFiles.Length];
+
+                for (int i = 0; i < scriptFiles.Length; i++)
+                {
+                    skillNameArray[i] = scriptFiles[i];//.Substring(skillScriptsFolderPath.Length, scriptFiles[i].Length - 1);
+                    Debug.Log($"{i}.{scriptFiles[i]}");
+                }
+                selectionIndex = EditorGUILayout.Popup("laalbeel", selectionIndex, skillNameArray);
+                /*
+                    // Load the script asset
+                    MonoScript script = AssetDatabase.LoadAssetAtPath<MonoScript>(filePath);
+
+                    if (script != null)
                     {
-                        // Check if the type is a MonoBehaviour
-                        if (typeof(Skill).IsAssignableFrom(type))
+                        // Get the System.Type from the script
+                        Type type = ;
+
+                        if (type != null)
                         {
-                            // Add component if it's a MonoBehaviour
-                            weapon.AddComponent(System.Type.GetType(script.GetClass()));
-                            Debug.Log($"Added component of type {type.Name} to GameObject.");
+                            // Check if the type is a MonoBehaviour
+                            if (typeof(Skill).IsAssignableFrom(type))
+                            {
+                                // Add component if it's a MonoBehaviour
+                                weapon.AddComponent(System.Type.GetType(script.GetClass()));
+                                Debug.Log($"Added component of type {type.Name} to GameObject.");
+                            }
+                            else
+                            {
+                                Debug.LogWarning($"Type {type.Name} in script {Path.GetFileName(filePath)} is not a MonoBehaviour.");
+                            }
                         }
                         else
                         {
-                            Debug.LogWarning($"Type {type.Name} in script {Path.GetFileName(filePath)} is not a MonoBehaviour.");
+                            Debug.LogWarning($"Failed to load type from script {Path.GetFileName(filePath)}");
                         }
                     }
                     else
                     {
-                        Debug.LogWarning($"Failed to load type from script {Path.GetFileName(filePath)}");
+                        Debug.LogWarning($"Failed to load script at path {filePath}");
                     }
-                }
-                else
+
+                Array.Resize(ref activeSkill.skills, activeSkill.skills.Length + 1);
+                */
+            } else EditorGUILayout.EndHorizontal();
+            #endregion
+
+            if (activeSkillTabIndex < activeSkill.skills.Length)
+            {
+                if (skillEditor == null || skillEditor.target != activeSkill.skills[activeSkillTabIndex])
                 {
-                    Debug.LogWarning($"Failed to load script at path {filePath}");
+                    skillEditor = UnityEditor.Editor.CreateEditor(activeSkill.skills[activeSkillTabIndex]);
                 }
-            */
-            Array.Resize(ref activeSkill.skills, activeSkill.skills.Length + 1);
-        }
-
-        EditorGUILayout.EndHorizontal();
-        #endregion
-
-        if (skillTabIndex < activeSkill.skills.Length)
-        {
-            activeSkill.skills[skillTabIndex].OnWeaponMakerGUI();
+                if (skillEditor != null)
+                {
+                    skillEditor.OnInspectorGUI();
+                }
+            }
         }
     }
+
+    
+    
 }

@@ -2,14 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Action_TriggerHitAddDurability : Action
+public class Action_TriggerHitAddDurability : Action, Input_TriggerHit
 {
-    protected override string GetModuleName() { return "AddDurability"; }
-    
-    
     [SerializeField] int durability;
 
-    public void OnHit(TriggerObject triggerObject, Collider2D coll)
+    public void TriggerHit(TriggerObject triggerObject, Collider2D coll)
     {
         if (coll.gameObject.layer == 19)
         {
