@@ -1,37 +1,61 @@
+using System;
 using UnityEngine;
+using System.Linq;
 using UnityEngine.Events;
+using WeaponSystem;
 
 public class TriggerObject : MonoBehaviour
 {
-    System.Action<TriggerObject, Collider2D> enter;
-    System.Action<TriggerObject, Collider2D> stay;
-    System.Action<TriggerObject, Collider2D> exit;
+    public Controller con;
+    IController[] selfEnter,   selfStay,   selfExit;
+    IController[] friendEnter, friendStay, friendExit;
+    IController[] enemyEnter,  enemyStay,  enemyExit;
+    IController[] objectEnter, objectStay, objectExit;
 
-    public void SetEvent(
-        System.Action<TriggerObject, Collider2D> _enter,
-        System.Action<TriggerObject, Collider2D> _stay,
-        System.Action<TriggerObject, Collider2D> _exit)
+    public void Init(
+        Controller _con,
+        IController[] _selfEnter,   IController[] _selfStay,   IController[] _selfExit,
+        IController[] _friendEnter, IController[] _friendStay, IController[] _friendExit,
+        IController[] _enemyEnter,  IController[] _enemyStay,  IController[] _enemyExit,
+        IController[] _objectEnter, IController[] _objectStay, IController[] _objectExit)
     {
-        enter = _enter;
-        stay = _stay;
-        exit = _exit;
+        con = _con;
+        selfEnter = _selfEnter;     selfStay = _selfStay;     selfExit = _selfExit;
+        friendEnter = _friendEnter; friendStay = _friendStay; friendExit = _friendExit;
+        enemyEnter = _enemyEnter;   enemyStay = _enemyStay;   enemyExit = _enemyExit;
+        objectEnter = _objectEnter; objectStay = _objectStay; objectExit = _objectExit;
     }
-    void OnTriggerEnter2D(Collider2D collider)
+    void OnTriggerEnter2D(Collider2D coll)
     {
-        if (enter == null) return;
+        SendEvent(coll, selfEnter, friendEnter, enemyEnter, objectEnter);
 
-        enter(this, collider);
     }
-    void OnTriggerStay2D(Collider2D collider)
+    void OnTriggerStay2D(Collider2D coll)
     {
-        if (stay == null) return;
-
-        stay(this, collider);
+        SendEvent(coll, selfStay, friendStay, enemyStay, objectStay);
     }
-    void OnTriggerExit2D(Collider2D collider)
+    void OnTriggerExit2D(Collider2D coll)
     {
-        if (exit == null) return;
-
-        exit.Invoke(this, collider);
+        SendEvent(coll, selfExit, friendExit, enemyExit, objectExit);
+    }
+    void SendEvent(Collider2D coll, IController[] selfEvent, IController[] friendEvent, IController[] enemyEvent, IController[] objectEvent)
+    {
+        Controller hitCon = coll.GetComponent<Controller>();
+        if (hitCon == null)
+        {
+            IController.Invoke(objectEvent, hitCon);
+        }
+        else if (hitCon == con)
+        {
+            IController.Invoke(selfEvent, hitCon);
+        }
+        else if (hitCon.gameObject.layer == con.gameObject.layer)
+        {
+            IController.Invoke(friendEvent, hitCon);
+        }
+        else
+        {
+            IController.Invoke(enemyEvent, hitCon);
+        }
     }
 }

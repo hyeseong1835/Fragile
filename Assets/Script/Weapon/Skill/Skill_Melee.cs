@@ -2,37 +2,65 @@ using Sirenix.OdinInspector;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
-
-public class Skill_Melee : Skill, Input_Empty
+using WeaponSystem;
+public class Skill_Melee : Skill, IVoid
 {
-    [SerializeField] Input_TriggerHit enter, stay, exit;
-    [SerializeField] Input_TriggerEvent start, update, end;
+    [SerializeField] IVoid[] start, update, end;
 
-    [SerializeField] TriggerObject triggerObj;
+    [SerializeField] IController[] selfEnter, selfStay, selfExit;
+    [SerializeField] IController[] friendEnter, friendStay, friendExit;
+    [SerializeField] IController[] enemyEnter, enemyStay, enemyExit;
+    [SerializeField] IController[] objectEnter, objectStay, objectExit;
 
-    protected BreakParticle breakParticle;
 
+    [ReadOnly][Required]
+    TriggerObject triggerObj;
+
+    [HorizontalGroup("BreakParticle")]
+    #region BreakParticle - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    [SerializeField] 
+    protected BreakParticle breakParticle;//-|
+                                              [HorizontalGroup("BreakParticle")]
+    [Button("Add")]
+    void AddBreakParticle()
+    {
+        //프리팹으로 변경
+        breakParticle = new GameObject("BreakParticle").AddComponent<BreakParticle>();
+        breakParticle.AddComponent<ParticleSystem>();
+        breakParticle.transform.parent = transform;
+    }
+
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     public float duration;
-    float spread;
-    float startSpear;
-    float spear;
+    [SerializeField] float spread;
+    [SerializeField] float startSpear;
+    [SerializeField] float spear;
      
     public enum SwingCurve { Linear, Quadratic }
     [SerializeField] SwingCurve curve;
 
-    protected override void InitSkill()
+    public override void SpawnModule()
     {
-        triggerObj.SetEvent
+        triggerObj = Instantiate(triggerObj, transform);
+        triggerObj.Init
         (
-            enter.TriggerHit,
-            stay.TriggerHit,
-            exit.TriggerHit
+            con,
+            selfEnter, selfStay, selfExit,
+            friendEnter, friendStay, friendExit,
+            enemyEnter, enemyStay, enemyExit,
+            objectEnter, objectStay, objectExit
         );
     }
-    public void Empty()
+    protected override void InitSkill()
+    {
+        
+    }
+    public void InputVoid()
     {
         StartCoroutine(Swing());
     }
@@ -50,7 +78,7 @@ public class Skill_Melee : Skill, Input_Empty
             float startRotateZ = Utility.Vector2ToDegree(con.targetDir);
 
         #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-        start.TriggerEvent(triggerObj);
+        IVoid.Invoke(start);
 
         float time = 0;
         float t = 0;
@@ -76,7 +104,7 @@ public class Skill_Melee : Skill, Input_Empty
                         , 0.75f, 0.5f) * (startSpear + spear * t);
 
             #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -| 
-            update.TriggerEvent(triggerObj);
+            IVoid.Invoke(update);
 
             time += Time.deltaTime / duration;
             yield return null;
@@ -99,7 +127,7 @@ public class Skill_Melee : Skill, Input_Empty
             }
 
         #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-        end.TriggerEvent(triggerObj);
+        IVoid.Invoke(end);
     }
 
     public override void Break()

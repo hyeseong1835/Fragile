@@ -1,4 +1,5 @@
 using UnityEngine;
+using WeaponSystem;
 
 [ExecuteAlways]
 public class ItemManager : MonoBehaviour
@@ -39,7 +40,7 @@ public class ItemManager : MonoBehaviour
     /// <returns></returns>
     public static Item WrapWeaponInItem(Weapon weapon)
     {
-        Item item = InstantiateEmptyItem(weapon.weaponName);
+        Item item = InstantiateEmptyItem(weapon.moduleName);
         item.weapon = weapon;
 
         weapon.transform.SetParent(item.transform);

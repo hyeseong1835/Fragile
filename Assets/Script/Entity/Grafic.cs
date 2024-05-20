@@ -1,6 +1,7 @@
 using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
+using WeaponSystem;
 
 [Serializable]
 public class Animation

@@ -4,6 +4,7 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using System.Reflection.Emit;
 using UnityEngine.AI;
+using WeaponSystem;
 
 [ExecuteAlways]
 public class EnemyController : Controller

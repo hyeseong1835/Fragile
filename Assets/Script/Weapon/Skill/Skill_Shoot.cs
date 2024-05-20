@@ -1,13 +1,15 @@
-using Sirenix.OdinInspector;
 using System.Collections;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Events;
+using WeaponSystem;
 
-public class Skill_Shoot : Skill, Input_Empty
+public class Skill_Shoot : Skill, IVoid
 {
-    [SerializeField] Input_TriggerHit enter, stay, exit;
-    [SerializeField] Input_TriggerEvent start, update, end;
+    [SerializeField] IVoid[] start, update, end;
+
+    [SerializeField] IController[] selfEnter, selfStay, selfExit;
+    [SerializeField] IController[] friendEnter, friendStay, friendExit;
+    [SerializeField] IController[] enemyEnter, enemyStay, enemyExit;
+    [SerializeField] IController[] objectEnter, objectStay, objectExit;
 
     [SerializeField]
     float spinSpeed;
@@ -26,7 +28,8 @@ public class Skill_Shoot : Skill, Input_Empty
             pool.Init();
         }
     }
-    public void Empty()
+    
+    public void InputVoid()
     {
         StartCoroutine(Shoot());
     }
@@ -35,21 +38,21 @@ public class Skill_Shoot : Skill, Input_Empty
         #region Start  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|  
         
             TriggerObject triggerObj = pool.Use().GetComponent<TriggerObject>();
-
-            triggerObj.SetEvent
+            triggerObj.Init
             (
-                enter.TriggerHit,
-                stay.TriggerHit,
-                exit.TriggerHit
+                con,
+                selfEnter, selfStay, selfExit,
+                friendEnter, friendStay, friendExit,
+                enemyEnter, enemyStay, enemyExit,
+                objectEnter, objectStay, objectExit
             );
-            triggerObj.gameObject.SetActive(true);
             triggerObj.transform.position = con.transform.position;
 
             Vector3 startVector = con.targetDir;
             float startAngleZ = Mathf.Atan2(startVector.y, startVector.x) * Mathf.Rad2Deg - 90;//-|
 
         #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -| 
-        start.TriggerEvent(triggerObj);
+        IVoid.Invoke(start);
 
         float time = 0;
         while (time <= duration)
@@ -62,13 +65,13 @@ public class Skill_Shoot : Skill, Input_Empty
                 triggerObj.transform.rotation = Quaternion.Euler(0, 0, rotateZ);
 
             #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|  
-            update.TriggerEvent(triggerObj);
+            IVoid.Invoke(update);
 
             time += Time.deltaTime;
             yield return null;
         }
 
-        end.TriggerEvent(triggerObj);
+        IVoid.Invoke(end);
     }
     
     public override void Break()

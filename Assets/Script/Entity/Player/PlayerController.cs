@@ -2,6 +2,7 @@ using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using System;
 using UnityEngine;
+using WeaponSystem;
 
 [ExecuteAlways]
 public class PlayerController : Controller
@@ -41,7 +42,7 @@ public class PlayerController : Controller
     #region Mouse
 
     [HideInInspector] 
-            public Vector2 mousePos { get { return camCon.cam.ScreenToWorldPoint(Input.mousePosition); } }
+            public Vector2 mousePos { get { return camCon.cam.ScreenToWorldPoint(UnityEngine.Input.mousePosition); } }
     
             [HideInInspector] 
             public Vector2 playerToMouse { get { return mousePos - (Vector2)transform.position; } }
@@ -52,42 +53,42 @@ public class PlayerController : Controller
             #region 좌클릭
 
                 [HideInInspector] 
-                    public bool mouse0Down { get { return Input.GetMouseButtonDown(0); } }
+                    public bool mouse0Down { get { return UnityEngine.Input.GetMouseButtonDown(0); } }
     
                 [HideInInspector] 
-                    public bool mouse0Stay { get { return Input.GetMouseButton(0); } }
+                    public bool mouse0Stay { get { return UnityEngine.Input.GetMouseButton(0); } }
     
                 [HideInInspector] 
-                    public bool mouse0Up { get { return Input.GetMouseButtonUp(0); } }
+                    public bool mouse0Up { get { return UnityEngine.Input.GetMouseButtonUp(0); } }
     
             #endregion
     
             #region 우클릭
 
                 [HideInInspector] 
-                    public bool mouse1Down { get { return Input.GetMouseButtonDown(1); } }
+                    public bool mouse1Down { get { return UnityEngine.Input.GetMouseButtonDown(1); } }
     
                 [HideInInspector] 
-                    public bool mouse1 { get { return Input.GetMouseButton(1); } }
+                    public bool mouse1 { get { return UnityEngine.Input.GetMouseButton(1); } }
     
                 [HideInInspector] 
-                    public bool mouse1Up { get { return Input.GetMouseButtonUp(1); } }
+                    public bool mouse1Up { get { return UnityEngine.Input.GetMouseButtonUp(1); } }
     
             #endregion
     
             #region 마우스 휠
 
                 [HideInInspector] 
-                public float mouseWheelScroll { get { return Input.GetAxis("Mouse ScrollWheel"); } }
+                public float mouseWheelScroll { get { return UnityEngine.Input.GetAxis("Mouse ScrollWheel"); } }
     
                 [HideInInspector] 
-                public bool mouseWheelClickDown { get { return Input.GetMouseButtonDown(2); } }
+                public bool mouseWheelClickDown { get { return UnityEngine.Input.GetMouseButtonDown(2); } }
     
                 [HideInInspector] 
-                public bool mouseWheelClick{ get { return Input.GetMouseButtonUp(2); } }
+                public bool mouseWheelClick{ get { return UnityEngine.Input.GetMouseButtonUp(2); } }
     
                 [HideInInspector] 
-                public bool mouseWheelClickUp { get { return Input.GetMouseButtonDown(2); } }
+                public bool mouseWheelClickUp { get { return UnityEngine.Input.GetMouseButtonDown(2); } }
 
     #endregion
 
@@ -121,7 +122,7 @@ public class PlayerController : Controller
             Move();
 
             WheelSelect();
-            if (Input.GetKeyDown(KeyCode.P)) AddWeapon(Weapon.SpawnWeapon("WoodenSword"));
+            if (UnityEngine.Input.GetKeyDown(KeyCode.P)) AddWeapon(Weapon.SpawnWeapon("WoodenSword"));
         }
 
         int curWeaponIndex = weapons.IndexOf(curWeapon);
@@ -150,7 +151,7 @@ public class PlayerController : Controller
     void Move()
     {
         //입력이 있을 때
-        if (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
+        if (UnityEngine.Input.GetButton("Horizontal") || UnityEngine.Input.GetButton("Vertical"))
         {
             //처음
             if (grafic.animationState == PlayerAnimationState.STAY)
@@ -160,7 +161,7 @@ public class PlayerController : Controller
             //계속
             else
             {
-                moveVector = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
+                moveVector = new Vector3(UnityEngine.Input.GetAxis("Horizontal"), UnityEngine.Input.GetAxis("Vertical"), 0);
                 moveRotate = Utility.Vector2ToDegree(moveVector);
 
                 transform.position += (Vector3)moveVector.normalized * Time.deltaTime * moveSpeed;

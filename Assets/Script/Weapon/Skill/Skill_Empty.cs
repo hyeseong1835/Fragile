@@ -1,31 +1,13 @@
 using Sirenix.OdinInspector;
 using System;
+using UnityEngine;
 using UnityEngine.Events;
+using WeaponSystem;
 
-public class Skill_Empty : Skill, Input_Empty
+public class Skill_Empty : Skill, WeaponSystem.IVoid
 {
-    protected override void InitSkill()
+    public void InputVoid()
     {
         
-    }
-
-    public void Empty()
-    {
-        
-    }
-
-    public override void Break()
-    {
-
-    }
-
-    public override void Destroyed()
-    {
-
-    }
-
-    public override void Removed()
-    {
-
     }
 }
