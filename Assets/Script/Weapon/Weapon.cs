@@ -109,15 +109,24 @@ namespace WeaponSystem
 
         public override void SpawnModule()
         {
-            Transform Event = new GameObject("Event").transform;
-            Event.parent = transform;
-            Transform Passive = new GameObject("Passive").transform;
-            Passive.parent = Event;
-            Transform Attack = new GameObject("Attack").transform;
-            Attack.parent = Event;
-            Transform Special = new GameObject("Special").transform;
-            Special.parent = Event;
+            Transform weaponEvent = Spawn("Event", transform);
+                Transform passive = Spawn("Passive", weaponEvent);
+                    Spawn("Event", passive);
+                Transform attack = Spawn("Attack", weaponEvent);
+                    Spawn("Event", attack);
+                Transform special = Spawn("Special", weaponEvent);
+                    Spawn("Event", special);
+
+            Spawn("NULL", transform);
+
+            static Transform Spawn(string name, Transform parent)
+            {
+                Transform spawn = new GameObject(name).transform;
+                spawn.parent = parent;
+                return spawn;
+            }
         }
+
         protected override void InitModule()
         {
 #if UNITY_EDITOR

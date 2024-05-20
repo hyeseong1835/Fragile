@@ -15,11 +15,11 @@ using UnityEngine.UI;
 using static Codice.Client.Common.Connection.AskCredentialsToUser;
 using static UnityEditor.PlayerSettings;
 using WeaponSystem;
+using System.Linq;
+using System.Threading;
 public class WeaponEditor : EditorWindow
 {
     /*
-     * 
-     * 
     const string skillScriptsFolderPath = "Assets/Script/Weapon/Skill/";
 
     int weaponTabIndex = 0;
@@ -99,20 +99,7 @@ public class WeaponEditor : EditorWindow
                 break;
         }
 
-        //if (new Rect(0, 0, Screen.width, Screen.height).Contains(current.mousePosition) && current.type == EventType.ContextClick)
-        {
-            GenericMenu menu = new GenericMenu();
-
-            menu.AddDisabledItem(new GUIContent("I clicked on a thing"));
-            menu.AddItem(new GUIContent("Do a thing"), false, YourCallback);
-            menu.ShowAsContext();
-
-            current.Use();
-        }
-        void YourCallback()
-        {
-            Debug.Log("Hi there");
-        //}
+        
 
     void ShowActiveSkill(ref ActiveSkill activeSkill)
         {
@@ -167,15 +154,7 @@ public class WeaponEditor : EditorWindow
             {
                 EditorGUILayout.EndHorizontal();
                 
-                string[] scriptFiles = Directory.GetFiles(skillScriptsFolderPath, "*.cs", SearchOption.TopDirectoryOnly);
-
-                string[] skillNameArray = new string[scriptFiles.Length];
-
-                for (int i = 0; i < scriptFiles.Length; i++)
-                {
-                    skillNameArray[i] = scriptFiles[i];//.Substring(skillScriptsFolderPath.Length, scriptFiles[i].Length - 1);
-                    Debug.Log($"{i}.{scriptFiles[i]}");
-                }
+                
                 selectionIndex = EditorGUILayout.Popup("laalbeel", selectionIndex, skillNameArray);
                 /*
                     // Load the script asset
@@ -214,34 +193,23 @@ public class WeaponEditor : EditorWindow
                 //*
             } else EditorGUILayout.EndHorizontal();
             #endregion
-
-            if (activeSkillTabIndex < activeSkill.skills.Length)
-            {
-                if (skillEditor == null || skillEditor.target != activeSkill.skills[activeSkillTabIndex])
-                {
-                    skillEditor = UnityEditor.Editor.CreateEditor(activeSkill.skills[activeSkillTabIndex]);
-                }
-                if (skillEditor != null)
-                {
-                    skillEditor.OnInspectorGUI();
-                }
-            }
         }
     }
 */
 
     const string weaponObjPrefabFolderPath = "Assets/Weapon/Resources/WeaponObjPrefab";
+    const string skillScriptsFolderPath = "Assets/Script/Weapon/Skill";
 
     Texture weaponIcon;
     Texture errorIcon;
 
     Weapon weapon;
-    UnityEditor.Editor skillEditor;
-
+    List<Skill> skills = new List<Skill>();
+    List<UnityEditor.Editor> skillEditors = new List<UnityEditor.Editor>();
 
     string newWeaponName;
 
-    List<Weapon> weaponFiles;
+    List<Weapon> weaponFiles = new List<Weapon>();
 
     bool showSelectWeapon = true;
 
@@ -260,6 +228,7 @@ public class WeaponEditor : EditorWindow
         weaponIcon = EditorGUIUtility.Load("WeaponIcon16.png") as Texture;
         errorIcon = EditorGUIUtility.Load("WeaponIcon16.png") as Texture;
         EditorGUIUtility.labelWidth = Editor.propertyLabelWidth;
+        SkillRefresh();
     }
     [MenuItem("Window/WeaponEditor")]
     public static void ShowWindow()
@@ -270,17 +239,9 @@ public class WeaponEditor : EditorWindow
     {
 
     }
+    
     void OnGUI()
     {
-        void WeaponFileRefresh()
-        {
-            string[] weaponFileAddresses = Directory.GetFiles(weaponObjPrefabFolderPath, "*.prefab", SearchOption.AllDirectories);
-            weaponFiles = new List<Weapon>();
-            for (int i = 0; i < weaponFileAddresses.Length; i++)
-            {
-                weaponFiles.Add(AssetDatabase.LoadAssetAtPath<UnityEngine.GameObject>(weaponFileAddresses[i]).GetComponent<Weapon>());
-            }
-        }
         if (showSelectWeapon)
         {
             if (weaponFiles == null) WeaponFileRefresh();
@@ -339,6 +300,10 @@ public class WeaponEditor : EditorWindow
         if (weapon == null) showSelectWeapon = true;
         else
         {
+            if (GUILayout.Button("Refresh"))
+            {
+                SkillRefresh();
+            }
             GUILayout.Toggle(showSelectWeapon, "Show");
 
             Rect HorizontalDefault = EditorGUILayout.BeginHorizontal();
@@ -370,8 +335,32 @@ public class WeaponEditor : EditorWindow
                 Screen.height - (HorizontalDefault.position.y + HorizontalDefault.size.y + 20) - 20
                 );
             scrollPosition = GUI.BeginScrollView(scrollRect, scrollPosition, new Rect(0, 0, scrollSize.x, scrollSize.y));
+            
+            Event e = Event.current;
+            if (scrollRect.Contains(e.mousePosition) && e.type == EventType.ContextClick)
+            {
+                GenericMenu menu = new GenericMenu();
 
-            BeginModule("Attack", 4, new Vector2(0, 0));
+                string[] scriptFiles = Directory.GetFiles(skillScriptsFolderPath, "*.cs", SearchOption.TopDirectoryOnly);
+
+                for (int i = 0; i < scriptFiles.Length; i++)
+                {
+                    string scriptName = scriptFiles[i].Substring(skillScriptsFolderPath.Length, scriptFiles[i].Length - skillScriptsFolderPath.Length - ".cs".Length);
+                    menu.AddItem(new GUIContent(scriptName.Substring("Skill_".Length, scriptName.Length - "Skill_".Length)), false, () => CreateSkill(scriptName));
+                }
+                menu.ShowAsContext();
+
+                e.Use();
+            }
+            void CreateSkill(string name)
+            {
+                UnityEngine.GameObject skillObject = new UnityEngine.GameObject();
+                skillObject.transform.parent = weapon.transform.Find("NULL");
+                Skill skill = (Skill)skillObject.AddComponent(System.Type.GetType($"Skill_{name}"));
+                Debug.Log(skill);
+            }
+
+                BeginModule("Attack", 4, new Vector2(0, 0));
                 ShowActiveSkill("Attack", ref weapon.attack);
             EndModule();
 
@@ -379,6 +368,16 @@ public class WeaponEditor : EditorWindow
                 ShowActiveSkill("Special", ref weapon.special);
             EndModule();
 
+            for (int i = 0; i < skills.Count; i++)
+            {
+                if (skills[i] == null || skillEditors[i].target != skills[i])
+                {
+                    skillEditors[i] = UnityEditor.Editor.CreateEditor(skills[i]);
+                }
+                BeginModule("Special", 4, new Vector2(205, 0));
+                    skillEditors[i].OnInspectorGUI();
+                EndModule();
+            }
             GUI.EndScrollView();
 
             //if (new Rect(0, 0, Screen.width, Screen.height).Contains(current.mousePosition) && current.type == EventType.ContextClick)
@@ -452,6 +451,8 @@ public class WeaponEditor : EditorWindow
 
                 EditorGUILayout.EndHorizontal();
                 #endregion
+
+                
             }
 
             void BeginModule(string name, int width, Vector2 pos)
@@ -470,7 +471,35 @@ public class WeaponEditor : EditorWindow
             }
         }
     }
-    
+    void WeaponFileRefresh()
+    {
+        string[] weaponFileAddresses = Directory.GetFiles(weaponObjPrefabFolderPath, "*.prefab", SearchOption.AllDirectories);
+        weaponFiles.Clear();
+        for (int i = 0; i < weaponFileAddresses.Length; i++)
+        {
+            weaponFiles.Add(AssetDatabase.LoadAssetAtPath<UnityEngine.GameObject>(weaponFileAddresses[i]).GetComponent<Weapon>());
+        }
+    }
+    void SkillRefresh()
+    {
+        skills.Clear();
+        
+        List<Transform> openHolder = new List<Transform> { weapon.transform.Find("Event"), weapon.transform.Find("NULL")};
+
+        for (; ;)
+        {
+            for (int readIndex = 0; readIndex < weapon.transform.childCount; readIndex++)
+            {
+                for (int childIndex = 0; childIndex < openHolder[readIndex].childCount; childIndex++)
+                {
+                    Skill skill = openHolder[readIndex].GetChild(childIndex).GetComponent<Skill>();
+                    skills.Add(skill);
+                    Transform holder = skill.transform.Find("Event");
+                    if (holder != null) openHolder.Add(holder);
+                }
+            }
+        }
+    }
 }
 /*
 if (GUILayout.Button(weaponIcon))
