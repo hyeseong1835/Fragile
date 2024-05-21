@@ -6,14 +6,11 @@ using UnityEngine.Events;
 
 public abstract class Skill : Module
 {
-    protected Weapon weapon;
-    protected Controller con { get { return weapon.con; } }
-
-    public UnityEditor.Editor skillEditor;
+    public Weapon weapon;
+    public Controller con { get { return weapon.con; } }
 
     protected override void InitModule()
     {
-        weapon = gameObject.GetComponent<Weapon>();
 
         InitSkill();
     }
