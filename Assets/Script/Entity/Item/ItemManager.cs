@@ -1,5 +1,4 @@
 using UnityEngine;
-using WeaponSystem;
 
 [ExecuteAlways]
 public class ItemManager : MonoBehaviour

@@ -6,8 +6,6 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using static UnityEngine.Rendering.DebugUI;
 
-namespace WeaponSystem
-{
     public struct ControllerData
     {
         //ÁÂÇ¥
@@ -647,4 +645,3 @@ namespace WeaponSystem
         }
         protected virtual void ControllerOnDrawGizmosSelected() { }
     }
-}

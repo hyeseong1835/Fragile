@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.Events;
-using WeaponSystem;
 
 public class TriggerObject : MonoBehaviour
 {

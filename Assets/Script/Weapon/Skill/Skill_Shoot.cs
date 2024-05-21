@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using WeaponSystem;
 
 public class Skill_Shoot : Skill, IVoid
 {

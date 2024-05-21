@@ -3,8 +3,6 @@ using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
 
-namespace WeaponSystem
-{
     public struct WeaponData
     {
         public string name;
@@ -110,14 +108,10 @@ namespace WeaponSystem
         public override void SpawnModule()
         {
             Transform weaponEvent = Spawn("Event", transform);
-                Transform passive = Spawn("Passive", weaponEvent);
-                    Spawn("Event", passive);
-                Transform attack = Spawn("Attack", weaponEvent);
-                    Spawn("Event", attack);
-                Transform special = Spawn("Special", weaponEvent);
-                    Spawn("Event", special);
-
-            Spawn("NULL", transform);
+                Spawn("Passive", weaponEvent);
+                Spawn("Attack", weaponEvent);
+                Spawn("Special", weaponEvent);
+                Spawn("NULL", weaponEvent);
 
             static Transform Spawn(string name, Transform parent)
             {
@@ -129,6 +123,7 @@ namespace WeaponSystem
 
         protected override void InitModule()
         {
+            /*
 #if UNITY_EDITOR
             //최초 생성
             if (con == null)
@@ -139,7 +134,7 @@ namespace WeaponSystem
         if (con != null) state = WeaponState.Inventory;
         //수정 필요
 #endif
-
+            */
             WeaponAwake();
         }
         void Start()
@@ -571,4 +566,3 @@ namespace WeaponSystem
         #endregion
 #endif
     }
-}

@@ -1,11 +1,10 @@
 using UnityEngine;
-using WeaponSystem;
 
-public class Skill_AddDurability : Skill, IVoid
-{
-    [SerializeField] int durability;
-    public void InputVoid()
+    public class Skill_AddDurability : Skill, IVoid
     {
-        weapon.AddDurability(durability);
+        [SerializeField] int durability;
+        public void InputVoid()
+        {
+            weapon.AddDurability(durability);
+        }
     }
-}

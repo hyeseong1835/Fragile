@@ -1,5 +1,4 @@
 using UnityEngine;
-using WeaponSystem;
 
 public class Skill_TakeDamage : Skill, IController
 {

@@ -2,7 +2,6 @@
 using UnityEditor;
 #endif
 using UnityEngine;
-using WeaponSystem;
 
 public struct ItemData
 {

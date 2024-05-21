@@ -2,7 +2,6 @@ using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using System;
 using UnityEngine;
-using WeaponSystem;
 
 [ExecuteAlways]
 public class PlayerController : Controller
