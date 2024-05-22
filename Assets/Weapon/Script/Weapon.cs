@@ -99,8 +99,8 @@ using UnityEngine;
 
 #endif
 
-        void Awake()
-        {
+    void Awake()
+    {
             /*
         #if UNITY_EDITOR
             //최초 생성
@@ -113,14 +113,17 @@ using UnityEngine;
             //수정 필요
         #endif
             */
-        }
-        void Start()
-        {
+    }
+    void Start()
+    {
 
-        }
-    
-        void Update()
-        {
+    }
+
+    void Update()
+    {
+        Attack();
+
+        /*
 #if UNITY_EDITOR
 
             if (Editor.GetObjectState(gameObject) == Editor.ObjectState.PrefabEdit)
@@ -139,23 +142,19 @@ using UnityEngine;
             }
 
 #endif
+            */
+        WeaponUpdate();
 
-            WeaponUpdate();
-
-            switch (state)
-            {
-                case WeaponState.Hold:
-                    OnUseUpdate();
-                    break;
-                case WeaponState.Inventory:
-                    DeUseUpdate();
-                    break;
-            }
-        }
-        void OnDrawGizmos()
+        switch (state)
         {
-            WeaponOnDrawGizmos();
+            case WeaponState.Hold:
+                OnUseUpdate();
+                break;
+            case WeaponState.Inventory:
+                DeUseUpdate();
+                break;
         }
+    }
 
         #region 이벤트
 
@@ -196,7 +195,6 @@ using UnityEngine;
             */ }
         protected virtual void OnUseUpdate() { }
         protected virtual void DeUseUpdate() { }
-        protected virtual void WeaponOnDrawGizmos() { }
 
         //무기
         protected virtual void OnUse()
@@ -226,22 +224,22 @@ using UnityEngine;
         }
         protected virtual void OnWeaponDestroyed() { }
 
-        //스킬
-        public void Attack()
-        {
-            
-        }
-        public virtual void Special() 
-        { 
-    
-        }
+    //스킬
+    public void Attack()
+    {
+        Debug.Log($"{gameObject}: Attack");
+        CustomEvent.Trigger(gameObject, "Attack");
+    }
+    public virtual void Special() 
+    { 
+        CustomEvent.Trigger(gameObject, "Special");
+    }
 
+    #endregion
 
-        #endregion
+    #region 데이터
 
-        #region 데이터
-
-        public virtual WeaponSaveData GetData()
+    public virtual WeaponSaveData GetData()
         {
             return new WeaponSaveData
                 (

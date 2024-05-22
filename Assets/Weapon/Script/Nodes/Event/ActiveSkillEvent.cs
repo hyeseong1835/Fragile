@@ -7,31 +7,29 @@ using System;
 public abstract class ActiveSkillEvent : GameObjectEventUnit<int>
 {
     [DoNotSerialize] public ValueOutput Ov_index;
-
     public override Type MessageListenerType => null;
-    protected override string hookName => eventName;
-
-    public abstract string eventName { get; }
 
     protected override void Definition()
     {
         base.Definition();
         Ov_index = ValueOutput<int>("Index");
+        Debug.Log("Definition");
     }
     protected override void AssignArguments(Flow flow, int _count)
     {
         flow.SetValue(Ov_index, _count);
+        Debug.Log("AssignArguments");
     }
 }
 [UnitTitle("Attack")]
 [UnitCategory("Events/WeaponEvents")]
 public class AttackEventNode : ActiveSkillEvent
 {
-    public override string eventName => "Attack";
+    protected override string hookName => "Attack";
 }
 [UnitTitle("Special")]
 [UnitCategory("Events/WeaponEvents")]
 public class SpecialEventNode : ActiveSkillEvent
 {
-    public override string eventName => "Special";
+    protected override string hookName => "Special";
 }
