@@ -122,6 +122,7 @@ using UnityEngine;
     void Update()
     {
         Attack();
+        EventBus.Trigger("Update", gameObject, state);
 
         /*
 #if UNITY_EDITOR
@@ -143,9 +144,9 @@ using UnityEngine;
 
 #endif
             */
-        WeaponUpdate();
 
-        switch (state)
+
+        /*switch (state)
         {
             case WeaponState.Hold:
                 OnUseUpdate();
@@ -153,13 +154,13 @@ using UnityEngine;
             case WeaponState.Inventory:
                 DeUseUpdate();
                 break;
-        }
+        }*/
     }
 
-        #region 이벤트
+    #region 이벤트
 
-        //기본
-        protected virtual void WeaponUpdate() { /*
+    //기본
+    protected virtual void WeaponUpdate() { /*
             if (Editor.GetType(Editor.StateType.IsEditor))
             {
                 //AttackSet Resize
@@ -227,12 +228,11 @@ using UnityEngine;
     //스킬
     public void Attack()
     {
-        Debug.Log($"{gameObject}: Attack");
-        CustomEvent.Trigger(gameObject, "Attack");
+        EventBus.Trigger("Attack", gameObject, 2);
     }
-    public virtual void Special() 
-    { 
-        CustomEvent.Trigger(gameObject, "Special");
+    public virtual void Special()
+    {
+        EventBus.Trigger("Attack", gameObject, 2);
     }
 
     #endregion

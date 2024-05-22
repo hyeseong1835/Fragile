@@ -46,7 +46,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b8ae1c64c8dfbc49b1dd04209c2430e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moduleName: 
   con: {fileID: 0}
   state: 0
   UISprite: {fileID: 0}
@@ -60,14 +59,12 @@ MonoBehaviour:
     backDelay: 0
     minDistance: 0
     maxDistance: 1
-    skills: []
   special:
     frontDelay: 0
     delay: 1
     backDelay: 0
     minDistance: 0
     maxDistance: 1
-    skills: []
   parent: {fileID: 0}
 --- !u!114 &276419018362641117
 MonoBehaviour:
