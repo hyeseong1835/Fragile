@@ -88,16 +88,7 @@ using UnityEngine;
         [ShowInInspector]
         public ActiveSkill special = new ActiveSkill();
 
-        public string moduleName { get { return gameObject.name; } }
-
-#if UNITY_EDITOR
-
-    [HideInInspector]
-        public Transform parent = null;
-
-        int prevChildIndex;
-
-#endif
+        public string Name { get { return gameObject.name; } }
 
     void Awake()
     {
@@ -121,11 +112,10 @@ using UnityEngine;
 
     void Update()
     {
-        Attack();
         EventBus.Trigger("Update", gameObject, state);
 
         /*
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
 
             if (Editor.GetObjectState(gameObject) == Editor.ObjectState.PrefabEdit)
             {
@@ -142,60 +132,11 @@ using UnityEngine;
                 AutoDebug();
             }
 
-#endif
+        #endif
             */
-
-
-        /*switch (state)
-        {
-            case WeaponState.Hold:
-                OnUseUpdate();
-                break;
-            case WeaponState.Inventory:
-                DeUseUpdate();
-                break;
-        }*/
     }
 
     #region 이벤트
-
-    //기본
-    protected virtual void WeaponUpdate() { /*
-            if (Editor.GetType(Editor.StateType.IsEditor))
-            {
-                //AttackSet Resize
-                if (attack.skillSet.GetLength(1) != attack.skills.Length)
-                {
-                    bool[,] temp = attack.skillSet;
-                    attack.skillSet = new bool[attack.skillSet.GetLength(0), attack.skills.Length];
-
-                    for (int x = 0; x < attack.skillSet.GetLength(0); x++)
-                    {
-                        for (int y = 0; y < Utility.Smaller(attack.skillSet.GetLength(1), temp.GetLength(1)); y++)
-                        {
-                            attack.skillSet[x, y] = temp[x, y];
-                        }
-                    }
-                }
-
-                //SpecialSet Resize
-                if (special.skillSet.GetLength(1) != special.skills.Length)
-                {
-                    bool[,] temp = special.skillSet;
-                    special.skillSet = new bool[special.skillSet.GetLength(0), special.skills.Length];
-
-                    for (int x = 0; x < special.skillSet.GetLength(0); x++)
-                    {
-                        for (int y = 0; y < Utility.Smaller(special.skillSet.GetLength(1), temp.GetLength(1)); y++)
-                        {
-                            special.skillSet[x, y] = temp[x, y];
-                        }
-                    }
-                }
-            }
-            */ }
-        protected virtual void OnUseUpdate() { }
-        protected virtual void DeUseUpdate() { }
 
         //무기
         protected virtual void OnUse()
@@ -243,7 +184,7 @@ using UnityEngine;
         {
             return new WeaponSaveData
                 (
-                    moduleName,
+                    Name,
                     durability,
                     null
                 );
@@ -356,7 +297,7 @@ using UnityEngine;
 
         #endregion
 
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
         #region 에디터 편의
 
         void DropDown()
@@ -391,90 +332,11 @@ using UnityEngine;
 
                     con.AddWeapon(this);
 
-                    parent = transform.parent;
-                    prevChildIndex = transform.GetSiblingIndex();
+                    //parent = transform.parent;
+                    //prevChildIndex = transform.GetSiblingIndex();
                 }
             }
         }
-        void StateAffix()
-        {
-            switch (state)
-            {
-                case WeaponState.Prefab:
-                    gameObject.name = moduleName + "[Prefab]";
-                    break;
-                case WeaponState.Hold:
-                    if (this == con.defaultWeapon) gameObject.name = $"[Hold] {moduleName}({con.gameObject.name}[Default])";
-                    else gameObject.name = $"[Hold] {moduleName}({con.gameObject.name})";
-                    break;
-                case WeaponState.Inventory:
-                    if (this == con.defaultWeapon) gameObject.name = $"{moduleName}({con.gameObject.name}[Default])";
-                    else gameObject.name = $"{moduleName}({con.gameObject.name})";
-                    break;
-                case WeaponState.Item:
-                    gameObject.name = $"[Item] {moduleName}";
-                    break;
-                case WeaponState.Removed:
-                    gameObject.name = $"[Removed({con.gameObject.name})] {moduleName}";
-                    break;
-                case WeaponState.NULL:
-                    gameObject.name = $"[NULL] {moduleName}";
-                    break;
-            }
-        }
-        public void AutoDebug()
-        {
-            switch (state)
-            {
-                case WeaponState.Item:
-                    // 부모 검사
-                    if (transform.parent == null || transform.parent.gameObject.name != "Item(" + moduleName + ")")
-                    {
-                        Debug.LogError("부모가 유효하지 않습니다.");
-                        break;
-                    } //LogError: 부모의 이름이 올바르지 않습니다.
-
-                    //위치 고정
-                    if (transform.localPosition != Vector3.zero)
-                    {
-                        transform.localPosition = Vector3.zero;
-
-                        Debug.LogWarning("무기의 위치는 변경될 수 없습니다.");
-                        return;
-                    } //LogWarning: 무기의 위치는 변경될 수 없습니다.
-
-                    break;
-
-                case WeaponState.Hold:
-                    //부모 변경 억제
-                    if (transform.parent != parent)
-                    {
-                        Debug.LogWarning("하이어라키에서 무기를 다른 오브젝트로 옮길 수 없습니다.");
-
-                        transform.parent = parent;
-                        transform.SetSiblingIndex(prevChildIndex);
-                    } //LogWarning: 하이어라키에서 무기를 다른 오브젝트로 옮길 수 없습니다.
-
-                    prevChildIndex = transform.GetSiblingIndex();
-
-                    break;
-
-                case WeaponState.Inventory:
-                    //부모 변경 억제
-                    if (transform.parent != parent)
-                    {
-                        Debug.LogWarning("하이어라키에서 무기를 다른 오브젝트로 옮길 수 없습니다.");
-
-                        transform.parent = parent;
-                        transform.SetSiblingIndex(prevChildIndex);
-                    } //LogWarning: 하이어라키에서 무기를 다른 오브젝트로 옮길 수 없습니다.
-
-                    prevChildIndex = transform.GetSiblingIndex();
-
-                    break;
-            }
-        }
-
         #endregion
-#endif
+        #endif
     }

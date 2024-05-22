@@ -440,9 +440,6 @@ using static UnityEngine.Rendering.DebugUI;
             weapon.con = this;
 
             weapon.transform.parent = weaponHolder;
-#if UNITY_EDITOR
-            weapon.parent = weaponHolder;
-#endif
             weapon.state = WeaponState.Inventory;
 
             weapons.Add(weapon);
