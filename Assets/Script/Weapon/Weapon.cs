@@ -26,9 +26,6 @@ using UnityEngine;
 
         public float minDistance = 0;
         public float maxDistance = 1;
-
-        public Skill[] skills = new Skill[0];
-        public bool[,] skillSet = new bool[1, 0];
     }
     /// <summary>
     /// NULL, PREFAB, ITEM, HOLD, INVENTORY, REMOVED
@@ -38,7 +35,7 @@ using UnityEngine;
         NULL, Prefab, Item, Hold, Inventory, Removed
     }
     [ExecuteAlways]
-    public class Weapon : Module
+    public class Weapon : MonoBehaviour
     {
         #region 정적 멤버 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
         public static Weapon SpawnWeapon(string weaponName, Transform parent = null)//-|
@@ -91,7 +88,7 @@ using UnityEngine;
         [ShowInInspector]
         public ActiveSkill special = new ActiveSkill();
 
-    
+        public string moduleName { get { return gameObject.name; } }
 
 #if UNITY_EDITOR
 
@@ -102,49 +99,32 @@ using UnityEngine;
 
 #endif
 
-        public override void SpawnModule()
-        {
-            Transform weaponEvent = Spawn("Event", transform);
-                Spawn("Passive", weaponEvent);
-                Spawn("Attack", weaponEvent);
-                Spawn("Special", weaponEvent);
-                Spawn("NULL", weaponEvent);
-
-            static Transform Spawn(string name, Transform parent)
-            {
-                Transform spawn = new GameObject(name).transform;
-                spawn.parent = parent;
-                return spawn;
-            }
-        }
-
-        protected override void InitModule()
+        void Awake()
         {
             /*
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
             //최초 생성
             if (con == null)
             {
                 DropDown();
             }
-#else
-        if (con != null) state = WeaponState.Inventory;
-        //수정 필요
-#endif
+            #else
+            if (con != null) state = WeaponState.Inventory;
+            //수정 필요
+        #endif
             */
-            WeaponAwake();
         }
         void Start()
         {
-            WeaponStart();
+
         }
+    
         void Update()
         {
 #if UNITY_EDITOR
 
             if (Editor.GetObjectState(gameObject) == Editor.ObjectState.PrefabEdit)
             {
-                moduleName = gameObject.name;
                 if (state != WeaponState.Prefab) state = WeaponState.Prefab;
             }
             else
@@ -180,11 +160,7 @@ using UnityEngine;
         #region 이벤트
 
         //기본
-        protected virtual void WeaponAwake() { }
-        protected virtual void WeaponStart() { }
-        protected virtual void WeaponUpdate()
-        {
-            /*
+        protected virtual void WeaponUpdate() { /*
             if (Editor.GetType(Editor.StateType.IsEditor))
             {
                 //AttackSet Resize
@@ -217,30 +193,9 @@ using UnityEngine;
                     }
                 }
             }
-            */
-        }
-        protected virtual void OnUseUpdate()
-        {
-            foreach (Skill skill in attack.skills)
-            {
-                skill.OnUseUpdate();
-            }
-            foreach (Skill skill in special.skills)
-            {
-                skill.OnUseUpdate();
-            }
-        }
-        protected virtual void DeUseUpdate()
-        {
-            foreach (Skill skill in attack.skills)
-            {
-                skill.DeUseUpdate();
-            }
-            foreach (Skill skill in special.skills)
-            {
-                skill.DeUseUpdate();
-            }
-        }
+            */ }
+        protected virtual void OnUseUpdate() { }
+        protected virtual void DeUseUpdate() { }
         protected virtual void WeaponOnDrawGizmos() { }
 
         //무기
@@ -251,14 +206,6 @@ using UnityEngine;
                 hand_obj.gameObject.SetActive(true);
                 con.hand.HandLink(hand_obj, HandMode.ToHand);
             }
-            foreach (Skill skill in attack.skills)
-            {
-                skill.OnUse();
-            }
-            foreach (Skill skill in special.skills)
-            {
-                skill.OnUse();
-            }
         }
         protected virtual void OnDeUse()
         {
@@ -267,52 +214,17 @@ using UnityEngine;
                 hand_obj.gameObject.SetActive(false);
                 con.hand.HandLink(null);
             }
-            foreach (Skill skill in attack.skills)
-            {
-                skill.DeUse();
-            }
-            foreach (Skill skill in special.skills)
-            {
-                skill.DeUse();
-            }
         }
         protected virtual void Break()
         {
-            foreach (Skill skill in attack.skills)
-            {
-                skill.Break();
-            }
-            foreach (Skill skill in special.skills)
-            {
-                skill.Break();
-            }
             WeaponDestroy();
         }
         public virtual void OnWeaponRemoved()
         {
-            foreach (Skill skill in attack.skills)
-            {
-                skill.Removed();
-            }
-            foreach (Skill skill in special.skills)
-            {
-                skill.Removed();
-            }
-
             Destroy(hand_obj.gameObject);
             con.hand.HandLink(null);
         }
-        protected virtual void OnWeaponDestroyed()
-        {
-            foreach (Skill skill in attack.skills)
-            {
-                skill.Destroyed();
-            }
-            foreach (Skill skill in special.skills)
-            {
-                skill.Destroyed();
-            }
-        }
+        protected virtual void OnWeaponDestroyed() { }
 
         //스킬
         public void Attack()
@@ -340,7 +252,6 @@ using UnityEngine;
         }
         public virtual void SetData(WeaponSaveData data)
         {
-            moduleName = data.name;
             durability = data.durability;
         }
 

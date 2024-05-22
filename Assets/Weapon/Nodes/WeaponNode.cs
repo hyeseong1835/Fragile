@@ -35,13 +35,9 @@ public class WeaponData : ScriptableObject
         }
     */
 }
+[UnitCategory("WeaponEvents")]
 public class WeaponNode : Unit
 {
-
-    //Input
-    [DoNotSerialize]
-    public ControlInput input;
-
     //Output
     [DoNotSerialize] public ControlOutput Init;
     [DoNotSerialize] public ControlOutput OnUse;

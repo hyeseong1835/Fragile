@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e66c6366d904e98bc83428217d4fd7, type: 3}
+  m_Name: WeaponGraph
+  m_EditorClassIdentifier: 
+  _data:
+    _json: '{"graph":{"variables":{"Kind":"Flow","collection":{"$content":[],"$version":"A"},"$version":"A"},"controlInputDefinitions":[],"controlOutputDefinitions":[],"valueInputDefinitions":[],"valueOutputDefinitions":[],"title":null,"summary":null,"pan":{"x":-488.3751,"y":37.55693},"zoom":1.0,"elements":[{"coroutine":false,"defaultValues":{"target":null},"position":{"x":-576.0,"y":-252.0},"guid":"a473a4a3-35c3-4105-abc8-f82c1f9e4590","$version":"A","$type":"AttackEventNode"},{"coroutine":false,"defaultValues":{"target":null},"position":{"x":-576.0,"y":72.0},"guid":"36dc6a42-ad57-4be2-b1a6-9849acbf3453","$version":"A","$type":"SpecialEventNode"},{"position":{"xMin":-587.0,"yMin":-290.0,"xMax":-96.0,"yMax":24.0},"label":"Attack","comment":null,"color":{"r":1.0,"g":0.4901961,"b":0.4901961,"a":1.0},"guid":"6c315f4c-7c14-490d-817b-016a7e7d20a5","$version":"A","$type":"Unity.VisualScripting.GraphGroup"},{"position":{"xMin":-588.0,"yMin":36.0,"xMax":-96.0,"yMax":276.0},"label":"Special","comment":null,"color":{"r":0.4901961,"g":0.4901961,"b":1.0,"a":1.0},"guid":"0cff11aa-fe11-47f0-be34-f8b98daf8c89","$version":"A","$type":"Unity.VisualScripting.GraphGroup"}],"$version":"A"}}'
+    _objectReferences: []
