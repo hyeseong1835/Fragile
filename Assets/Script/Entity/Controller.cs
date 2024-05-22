@@ -11,16 +11,16 @@ using static UnityEngine.Rendering.DebugUI;
         //좌표
         public Vector2 pos;
         //기본 무기(데이터)
-        public WeaponData defaultWeaponData;
+        public WeaponSaveData defaultWeaponData;
         //현재 무기(인덱스)
         public int curWeaponIndex;
         //인벤토리(무기(데이터))
-        public WeaponData[] weaponDatas;
+        public WeaponSaveData[] weaponDatas;
 
         public ControllerData(
             Vector2 _pos,
-            WeaponData _defaultWeaponData,
-            WeaponData[] _weaponDatas,
+            WeaponSaveData _defaultWeaponData,
+            WeaponSaveData[] _weaponDatas,
             int _curWeaponIndex
             )
         {
@@ -593,7 +593,7 @@ using static UnityEngine.Rendering.DebugUI;
         }
         public ControllerData GetData()
         {
-            WeaponData[] weaponDatas = new WeaponData[weapons.Count];
+            WeaponSaveData[] weaponDatas = new WeaponSaveData[weapons.Count];
 
             for (int weaponIndex = 0; weaponIndex < weapons.Count; weaponIndex++)
             {
@@ -616,7 +616,7 @@ using static UnityEngine.Rendering.DebugUI;
         {
             transform.position = data.pos;
             defaultWeapon = Weapon.LoadWeapon(data.defaultWeaponData);
-            foreach (WeaponData weaponData in data.weaponDatas)
+            foreach (WeaponSaveData weaponData in data.weaponDatas)
             {
                 AddWeapon(Weapon.LoadWeapon(weaponData));
             }

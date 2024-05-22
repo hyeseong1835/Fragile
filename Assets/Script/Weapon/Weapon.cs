@@ -1,21 +1,16 @@
 using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
-    public struct WeaponData
+    public struct WeaponSaveData
     {
         public string name;
         public int durability;
         public string weaponData;
 
-        public WeaponData(string _name, int _durability)
-        {
-            name = _name;
-            durability = _durability;
-            weaponData = null;
-        }
-        public WeaponData(string _name, int _durability, string _weaponData)
+        public WeaponSaveData(string _name, int _durability, string _weaponData = null)
         {
             name = _name;
             durability = _durability;
@@ -68,7 +63,7 @@ using UnityEngine;
 
             return weapon;
         }
-        public static Weapon LoadWeapon(WeaponData data)
+        public static Weapon LoadWeapon(WeaponSaveData data)
         {
             Weapon weapon = SpawnWeapon(data.name);
             weapon.SetData(data);
@@ -84,7 +79,7 @@ using UnityEngine;
 
         public Sprite UISprite;
         [Required] public Transform hand_obj;
-
+        
         public float damage = 1;
 
         public int durability = 1;
@@ -96,9 +91,11 @@ using UnityEngine;
         [ShowInInspector]
         public ActiveSkill special = new ActiveSkill();
 
+    
+
 #if UNITY_EDITOR
 
-        [HideInInspector]
+    [HideInInspector]
         public Transform parent = null;
 
         int prevChildIndex;
@@ -318,24 +315,30 @@ using UnityEngine;
         }
 
         //스킬
-        public virtual void Attack() { }
-        public virtual void Special() { }
+        public void Attack()
+        {
+            
+        }
+        public virtual void Special() 
+        { 
+    
+        }
 
 
         #endregion
 
         #region 데이터
 
-        public virtual WeaponData GetData()
+        public virtual WeaponSaveData GetData()
         {
-            return new WeaponData
+            return new WeaponSaveData
                 (
                     moduleName,
                     durability,
                     null
                 );
         }
-        public virtual void SetData(WeaponData data)
+        public virtual void SetData(WeaponSaveData data)
         {
             moduleName = data.name;
             durability = data.durability;

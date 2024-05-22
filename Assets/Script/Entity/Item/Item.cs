@@ -7,9 +7,9 @@ public struct ItemData
 {
     public Vector2 pos;
 
-    public WeaponData weaponData;
+    public WeaponSaveData weaponData;
 
-    public ItemData(Vector2 _pos, WeaponData _weaponData)
+    public ItemData(Vector2 _pos, WeaponSaveData _weaponData)
     {
         pos = _pos;
         weaponData = _weaponData;
