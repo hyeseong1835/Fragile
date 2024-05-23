@@ -51,8 +51,10 @@ public class EnemyController : Controller
             agent.speed = moveSpeed;
         }
     }
-    void Update()
+    new void Update()
     {
+        base.Update();
+
         if (target == null) return;
 
         targetPos = (Vector2)target.transform.position + target.center;
@@ -138,8 +140,9 @@ public class EnemyController : Controller
 
         behaviorState = BehaviorState.Idle;
     }
-    protected override void ControllerOnDrawGizmosSelected()
+    new void OnDrawGizmosSelected()
     {
+        base.OnDrawGizmosSelected();
         if (curWeapon != null)
         {
             //AttackRange

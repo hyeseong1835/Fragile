@@ -141,7 +141,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &5837737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,11 +165,8 @@ MonoBehaviour:
   moveRotate: 0
   lastMoveRotate: 0
   targetPos: {x: 0, y: 0.5}
-  attackCool: 0
-  attack: 0
-  special: 0
-  defaultWeapon: {fileID: 0}
-  curWeapon: {fileID: 0}
+  defaultWeapon: {fileID: 335852135}
+  curWeapon: {fileID: 335852135}
   weapons: []
   inventorySize: 5
   grafic: {fileID: 1780597530}
@@ -262,8 +259,12 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 374465424}
     m_Modifications:
+    - target: {fileID: -6174916905901087415, guid: c4c56f6825812e545acbb2190f93b80e, type: 3}
+      propertyPath: con
+      value: 
+      objectReference: {fileID: 5837737}
     - target: {fileID: -6174916905901087415, guid: c4c56f6825812e545acbb2190f93b80e, type: 3}
       propertyPath: state
       value: 3
@@ -290,15 +291,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6873082329837806271, guid: c4c56f6825812e545acbb2190f93b80e, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 6873082329837806271, guid: c4c56f6825812e545acbb2190f93b80e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 6873082329837806271, guid: c4c56f6825812e545acbb2190f93b80e, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 6873082329837806271, guid: c4c56f6825812e545acbb2190f93b80e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -596,6 +597,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed6df38d3f3b94b4fac22bb3517d5db2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &335852135 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -6174916905901087415, guid: c4c56f6825812e545acbb2190f93b80e, type: 3}
+  m_PrefabInstance: {fileID: 28950914}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b8ae1c64c8dfbc49b1dd04209c2430e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &335852136 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6873082329837806271, guid: c4c56f6825812e545acbb2190f93b80e, type: 3}
+  m_PrefabInstance: {fileID: 28950914}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &374465423
 GameObject:
   m_ObjectHideFlags: 0
@@ -624,7 +641,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 335852136}
   m_Father: {fileID: 5837738}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &410043943
@@ -12788,7 +12806,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
-  m_FillAmount: NaN
+  m_FillAmount: 1
   m_FillClockwise: 0
   m_FillOrigin: 2
   m_UseSpriteMesh: 0
@@ -13101,9 +13119,6 @@ MonoBehaviour:
   moveRotate: 0
   lastMoveRotate: 0
   targetPos: {x: 0, y: 0.5}
-  attackCool: 0
-  attack: 0
-  special: 0
   defaultWeapon: {fileID: 0}
   curWeapon: {fileID: 0}
   weapons: []
@@ -13251,4 +13266,3 @@ SceneRoots:
   - {fileID: 2125075184}
   - {fileID: 35060227}
   - {fileID: 1201319996}
-  - {fileID: 28950914}

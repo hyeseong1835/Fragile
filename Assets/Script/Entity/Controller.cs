@@ -1,6 +1,7 @@
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -120,124 +121,148 @@ using static UnityEngine.Rendering.DebugUI;
 
         #region Foldout Input  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        [VerticalGroup("Input/Move")]
-        #region Vertical Move - - - - - - - - - - - - - - - - - - - - -|
-#if UNITY_EDITOR
-        [DisableInEditorMode]
-        [HideIf(nameof(inspectorShowLastMoveVector))]
-#endif
-        [LabelWidth(Editor.propertyLabelWidth)]
-        public Vector2 moveVector = new Vector2(0.5f, 0);
-        [VerticalGroup("Input/Move")]
-#if UNITY_EDITOR
-        [DisableInEditorMode]
-        [ShowIf(nameof(inspectorShowLastMoveVector))]
-#endif
-        [LabelWidth(Editor.propertyLabelWidth)]
-        public Vector2 lastMoveVector = new Vector2(0.5f, 0);//-|
+            [VerticalGroup("Input/Move")]
+            #region Vertical Move - - - - - - - - - - - - - - - - - - - - -|
+    #if UNITY_EDITOR
+            [DisableInEditorMode]
+            [HideIf(nameof(inspectorShowLastMoveVector))]
+    #endif
+            [LabelWidth(Editor.propertyLabelWidth)]
+            public Vector2 moveVector = new Vector2(0.5f, 0);
+            [VerticalGroup("Input/Move")]
+    #if UNITY_EDITOR
+            [DisableInEditorMode]
+            [ShowIf(nameof(inspectorShowLastMoveVector))]
+    #endif
+            [LabelWidth(Editor.propertyLabelWidth)]
+            public Vector2 lastMoveVector = new Vector2(0.5f, 0);//-|
 
-        [VerticalGroup("Input/Move")]
-#if UNITY_EDITOR
-        [ShowInInspector]
-        [ReadOnly]
-        [HideIf(nameof(inspectorShowLastMoveVector))]
-#endif
-        [LabelWidth(Editor.propertyLabelWidth)]
-        [MinMaxSlider(0, 7)]
-        Vector2Int _moveRotate
-        {
-            get
+            [VerticalGroup("Input/Move")]
+    #if UNITY_EDITOR
+            [ShowInInspector]
+            [ReadOnly]
+            [HideIf(nameof(inspectorShowLastMoveVector))]
+    #endif
+            [LabelWidth(Editor.propertyLabelWidth)]
+            [MinMaxSlider(0, 7)]
+            Vector2Int _moveRotate
             {
-                int intRotate = Utility.FloorRotateToInt(moveRotate, 8);
+                get
+                {
+                    int intRotate = Utility.FloorRotateToInt(moveRotate, 8);
 
-                if (intRotate == 7) return new Vector2Int(intRotate, intRotate);
-                else return new Vector2Int(intRotate, intRotate + 1);
+                    if (intRotate == 7) return new Vector2Int(intRotate, intRotate);
+                    else return new Vector2Int(intRotate, intRotate + 1);
+                }
             }
-        }
-        [HideInInspector]
-        public float moveRotate = 0;
-        [VerticalGroup("Input/Move")]
-#if UNITY_EDITOR
-        [VerticalGroup("Input/Move")]
-        [ShowInInspector]
-        [ReadOnly]
-        [ShowIf(nameof(inspectorShowLastMoveVector))]
-        [LabelWidth(Editor.propertyLabelWidth)]
-        [MinMaxSlider(0, 7)]
-        Vector2Int _lastMoveRotate
-        {
-            get
+            [HideInInspector]
+            public float moveRotate = 0;
+            [VerticalGroup("Input/Move")]
+    #if UNITY_EDITOR
+            [VerticalGroup("Input/Move")]
+            [ShowInInspector]
+            [ReadOnly]
+            [ShowIf(nameof(inspectorShowLastMoveVector))]
+            [LabelWidth(Editor.propertyLabelWidth)]
+            [MinMaxSlider(0, 7)]
+            Vector2Int _lastMoveRotate
             {
-                int intRotate = Utility.FloorRotateToInt(lastMoveRotate, 8);
-                if (intRotate == 7) return new Vector2Int(intRotate, intRotate);
-                else return new Vector2Int(intRotate, intRotate + 1);
+                get
+                {
+                    int intRotate = Utility.FloorRotateToInt(lastMoveRotate, 8);
+                    if (intRotate == 7) return new Vector2Int(intRotate, intRotate);
+                    else return new Vector2Int(intRotate, intRotate + 1);
+                }
             }
-        }
-#endif
-        public float lastMoveRotate = 0;
+    #endif
+            public float lastMoveRotate = 0;
 
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
 
-        bool inspectorShowLastMoveVector
-        {
-            get { return (moveVector == Vector2.zero); }
-        }
-
-#endif
-
-        #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-        [VerticalGroup("Input/Target")]
-        #region Vertical Target  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-        [LabelWidth(Editor.propertyLabelWidth)]
-        public Vector2 targetPos;
-        [VerticalGroup("Input/Target")]
-        [ShowInInspector]
-        [LabelWidth(Editor.propertyLabelWidth)]
-        public Vector2 targetDir
-        {
-            get { return (targetPos - ((Vector2)transform.position + center)).normalized; }//-|
-        }
-
-        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-        [VerticalGroup("Input/Attack")]
-        #region Vertical Attack  - - - - - - - - - - - -|
-        [ReadOnly]
-        [LabelWidth(Editor.propertyLabelWidth)]
-#if UNITY_EDITOR
-        [PropertyRange(0, nameof(attackCoolMax))]//-|
-#endif
-        public float attackCool = 0;
-
-        [HideInInspector]
-        [LabelWidth(Editor.propertyLabelWidth)]
-        public bool attack = false;
-
-#if UNITY_EDITOR
-
-        float attackCoolMax
-        {
-            get
+            bool inspectorShowLastMoveVector
             {
-                if (curWeapon == null) return 0;
-                else return curWeapon.attack.frontDelay + curWeapon.attack.delay + curWeapon.attack.backDelay;
+                get { return (moveVector == Vector2.zero); }
             }
-        }
 
-#endif
+    #endif
 
-        #endregion - .f- - - - - - - - - - - - - - .d- -|
+            #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        [VerticalGroup("Input/Special")]
-        #region Vertical Special  - - - - - - - - - - - - - -|
+            [VerticalGroup("Input/Target")]
+            #region Vertical Target  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        [HideInInspector] public bool special = false;//-|
+            [LabelWidth(Editor.propertyLabelWidth)]
+            public Vector2 targetPos;
+            [VerticalGroup("Input/Target")]
+            [ShowInInspector]
+            [LabelWidth(Editor.propertyLabelWidth)]
+            public Vector2 targetDir
+            {
+                get { return (targetPos - ((Vector2)transform.position + center)).normalized; }//-|
+            }
 
-        #endregion  - - - - - - - - - - - - - - - - - - - - -|
+            #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|     
+            [VerticalGroup("Input/Attack")]
+            #region Vertical Attack - - - - - - - - - - - - - - - - -|
+            public bool attack { 
+                get { return _attack; }
+                set 
+                {
+                    if(_attack = false && value == true)
+                    {
+                        EventBus.Trigger("Attack", gameObject, 0);//-|
+
+                        _attack = value;
+                        attackCharge += Time.deltaTime;
+                    }
+                    else if (_attack = true && value == false)
+                    {
+                        _attack = value;
+                        attackCharge = 0;
+                    }
+                }
+            } bool _attack = false;
+            public bool isAttack { get; private set; } = false;
+            public void EndAttack()
+            {
+                isAttack = false;
+            }
+            float attackCharge;
+
+            #endregion  - - - - - - - - - - - - - - - - - - - - - - -|
+
+            [VerticalGroup("Input/Special")]
+            #region Vertical Special - - - - - - - - - - - - - - - - -|
+            public bool special { 
+                get { return _special; }
+                set 
+                {
+                    if(_special = false && value == true)
+                    {
+                        EventBus.Trigger("Attack", gameObject, 0);//-|
+
+                        _special = value;
+                        specialCharge += Time.deltaTime;
+                    }
+                    else if (_special = true && value == false)
+                    {
+                        _special = value;
+                        specialCharge = 0;
+                    }
+                }
+            } bool _special = false;
+            public bool isSpecial { get; private set; } = false;
+            public void EndSpecial()
+            {
+                Debug.Log(this);
+                isAttack = false;
+            }
+            float specialCharge;
+
+            #endregion  - - - - - - - - - - - - - - - - - - - - - - -|   
+
+        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
         [FoldoutGroup("Weapon")]
         #region Foldout Weapon - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|     
@@ -546,9 +571,10 @@ using static UnityEngine.Rendering.DebugUI;
         {
             Destroy(gameObject);
         }
-        void LateUpdate()
+        protected void Update()
         {
-            AutoDebug();
+            if (attack) EventBus.Trigger("Attack", curWeapon.gameObject, attackCharge);
+            if (special) EventBus.Trigger("Special", curWeapon.gameObject, specialCharge);
         }
         public void AutoDebug()
         {
@@ -619,8 +645,7 @@ using static UnityEngine.Rendering.DebugUI;
             }
             SelectWeapon(weapons[data.curWeaponIndex]);
         }
-
-        private void OnDrawGizmosSelected()
+        protected void OnDrawGizmosSelected()
         {
             //LastMoveVector
             if (moveVector == Vector2.zero)
@@ -637,8 +662,5 @@ using static UnityEngine.Rendering.DebugUI;
             Gizmos.color = Color.red;
             Gizmos.DrawLine(transform.position + (Vector3)center, targetPos);
             Gizmos.DrawWireSphere(targetPos, 0.1f);
-
-            ControllerOnDrawGizmosSelected();
         }
-        protected virtual void ControllerOnDrawGizmosSelected() { }
     }

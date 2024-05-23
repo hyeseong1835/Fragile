@@ -8,11 +8,11 @@ public abstract class GameObjectEvent<T> : GameObjectEventUnit<T>
 {
     [DoNotSerialize] public ValueOutput OutValue;
     static T v { get { return default; } }
+    public virtual string argumentName { get { return v.GetType().Name; } }
 
     public override Type MessageListenerType => null;
     protected override string hookName => eventName;
     public abstract string eventName { get; }
-    public virtual string argumentName { get { return v.GetType().Name; } }
     protected override void Definition()
     {
         base.Definition();
@@ -43,16 +43,16 @@ public class UpdateEventNode : GameObjectEvent<WeaponState>
 }
 [UnitTitle("Attack")]
 [UnitCategory("Events/WeaponEvents")]
-public class AttackEventNode : GameObjectEvent<int>
+public class AttackEventNode : GameObjectEvent<float>
 {
     public override string eventName => "Attack";
-    public override string argumentName => "Index";
+    public override string argumentName => "Time";
 
 }
 [UnitTitle("Special")]
 [UnitCategory("Events/WeaponEvents")]
-public class SpecialEventNode : GameObjectEvent<int>
+public class SpecialEventNode : GameObjectEvent<float>
 {
     public override string eventName => "Special";
-    public override string argumentName => "Index";
+    public override string argumentName => "Time";
 }

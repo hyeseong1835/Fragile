@@ -70,7 +70,7 @@ using UnityEngine;
 
         #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        [ReadOnly] public Controller con;
+        public Controller con;
 
         public WeaponState state = WeaponState.NULL;
 
@@ -169,7 +169,7 @@ using UnityEngine;
     //½ºÅ³
     public void Attack()
     {
-        EventBus.Trigger("Attack", gameObject, 2);
+
     }
     public virtual void Special()
     {

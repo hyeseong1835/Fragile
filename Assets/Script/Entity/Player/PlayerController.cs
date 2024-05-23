@@ -105,8 +105,10 @@ public class PlayerController : Controller
     {
 
     }
-    void Update()
+    new void Update()
     {
+        base.Update();
+
         if (Editor.GetType(Editor.StateType.IsPlay))
         {
             if (curWeapon != null)
@@ -235,17 +237,13 @@ public class PlayerController : Controller
             Invoke(nameof(AttackInputCancel), attackInputAllowTime);
         }
 
-        if ((attackInput) && attackCool == 0)
+        if ((attackInput) && isAttack == false)
         {
             attack = true;
 
-            attackCool = curWeapon.attack.frontDelay + curWeapon.attack.delay + curWeapon.attack.backDelay;
             attackInput = false;
         }
         else attack = false;
-        
-        if (attackCool > 0) attackCool -= Time.deltaTime;
-        if (attackCool < 0) attackCool = 0;
     }
     void AttackInputCancel()
     {
