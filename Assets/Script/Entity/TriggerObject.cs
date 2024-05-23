@@ -2,59 +2,89 @@ using System;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.Events;
+using Unity.VisualScripting;
 
 public class TriggerObject : MonoBehaviour
 {
-    public Controller con;
-    IController[] selfEnter,   selfStay,   selfExit;
-    IController[] friendEnter, friendStay, friendExit;
-    IController[] enemyEnter,  enemyStay,  enemyExit;
-    IController[] objectEnter, objectStay, objectExit;
-
-    public void Init(
-        Controller _con,
-        IController[] _selfEnter,   IController[] _selfStay,   IController[] _selfExit,
-        IController[] _friendEnter, IController[] _friendStay, IController[] _friendExit,
-        IController[] _enemyEnter,  IController[] _enemyStay,  IController[] _enemyExit,
-        IController[] _objectEnter, IController[] _objectStay, IController[] _objectExit)
+    public static TriggerObject Spawn()
     {
-        con = _con;
-        selfEnter = _selfEnter;     selfStay = _selfStay;     selfExit = _selfExit;
-        friendEnter = _friendEnter; friendStay = _friendStay; friendExit = _friendExit;
-        enemyEnter = _enemyEnter;   enemyStay = _enemyStay;   enemyExit = _enemyExit;
-        objectEnter = _objectEnter; objectStay = _objectStay; objectExit = _objectExit;
+        GameObject obj = new GameObject();
+        TriggerObject triggerObject = obj.AddComponent<TriggerObject>();
+
+        return triggerObject;
+    }
+    TriggerObjectUnit unit;
+
+    public enum TriggerType
+    {
+        Self, Friend, Enemy, Object
     }
     void OnTriggerEnter2D(Collider2D coll)
     {
-        SendEvent(coll, selfEnter, friendEnter, enemyEnter, objectEnter);
-
+        unit.OnTriggerEnter(coll);
     }
     void OnTriggerStay2D(Collider2D coll)
     {
-        SendEvent(coll, selfStay, friendStay, enemyStay, objectStay);
+        unit.OnTriggerStay(coll);
     }
     void OnTriggerExit2D(Collider2D coll)
     {
-        SendEvent(coll, selfExit, friendExit, enemyExit, objectExit);
+        unit.OnTriggerExit(coll);
     }
-    void SendEvent(Collider2D coll, IController[] selfEvent, IController[] friendEvent, IController[] enemyEvent, IController[] objectEvent)
+}
+[UnitTitle("TriggerObjectEvent")]
+[UnitCategory("Events/Weapon/Action")]
+public class TriggerObjectUnit : Unit
+{
+    GraphReference reference;
+
+    GameObject gameObject;
+    Weapon weapon;
+
+    public ControlInput In;
+    public ValueInput triggerObject;
+
+    public ControlOutput Out;
+    public ControlOutput Enter;
+    public ControlOutput Stay;
+    public ControlOutput Exit;
+    public ValueOutput coll;
+    public ValueOutput triggerType;
+
+    protected override void Definition()
     {
-        Controller hitCon = coll.GetComponent<Controller>();
-        if (hitCon == null)
+        In = ControlInput("In", (flow) =>
         {
-            IController.Invoke(objectEvent, hitCon);
-        }
-        else if (hitCon == con)
-        {
-            IController.Invoke(selfEvent, hitCon);
-        }
-        else if (hitCon.gameObject.layer == con.gameObject.layer)
-        {
-            IController.Invoke(friendEvent, hitCon);
-        }
-        else
-        {
-            IController.Invoke(enemyEvent, hitCon);
-        }
+            gameObject = flow.stack.gameObject;
+            reference = GraphReference.New(flow.stack.machine, true);
+            if (weapon == null) weapon = gameObject.GetComponent<Weapon>();
+            return Out;
+        });
+        triggerObject = ValueInput<TriggerObject>("Trigger");
+        
+        Out = ControlOutput("Out");
+        Enter = ControlOutput("Enter");
+        Stay = ControlOutput("Stay");
+        Exit = ControlOutput("Exit");
+        coll = ValueOutput<Collider2D>("Collider");
+        triggerType = ValueOutput<TriggerObject.TriggerType>("Type");
+    }
+    public void OnTriggerEnter(Collider2D coll)
+    {
+        Flow flow = Flow.New(reference);
+
+        flow.Run(Enter);
+    }
+    public void OnTriggerStay(Collider2D coll)
+    {
+        Flow flow = Flow.New(reference);
+
+        flow.Run(Stay);
+    }
+    public void OnTriggerExit(Collider2D coll)
+    {
+        Flow flow = Flow.New(reference);
+
+        flow.Run(Exit);
     }
 }

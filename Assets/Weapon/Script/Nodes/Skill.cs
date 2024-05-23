@@ -1,32 +1,30 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
-public abstract class Skill : Module
+public abstract class Skill : Unit
 {
-    public Weapon weapon;
-    public Controller con { get { return weapon.con; } }
+    GameObject gameObject;
+    Weapon weapon;
 
-    protected override void InitModule()
+    [DoNotSerialize][NullMeansSelf] public ValueInput target;
+    [DoNotSerialize] public ControlInput In;
+    [DoNotSerialize] public ControlOutput Out;
+
+    protected override void Definition()
     {
-
-        InitSkill();
+        target = ValueInput<Weapon>("", null).NullMeansSelf();
+        In = ControlInput("Time", (flow) => {
+            gameObject = flow.stack.gameObject;
+            if (weapon == null) weapon = gameObject.GetComponent<Weapon>();
+            return default;
+        });
     }
-    protected virtual void InitSkill() { }
+}
+public abstract class Skill<TData> : Skill
+{
 
-    void Update()
-    {
-        SkillUpdate();
-    }
-    public virtual void SkillInit() { }
-    public virtual void SkillUpdate() { }
-    public virtual void OnUseUpdate() { }
-    public virtual void DeUseUpdate() { }
-    public virtual void OnUse() { }
-    public virtual void DeUse() { }
-    public virtual void Break() { }
-    public virtual void Removed() { }
-    public virtual void Destroyed() { }
 }

@@ -8,30 +8,31 @@ using static UnityEngine.GraphicsBuffer;
 
 public abstract class SkillEndEvent : Unit
 {
-    [DoNotSerialize][NullMeansSelf] public ValueInput target;
     [DoNotSerialize] public ControlInput In;
+    [DoNotSerialize] public ControlOutput Out;
 
-    public Weapon weapon { get; private set; }
+    protected Weapon weapon;
+
     protected abstract Action End { get; }
 
     protected override void Definition()
     {
-        target = ValueInput<Weapon>("", null).NullMeansSelf();
-        In = ControlInput("Time", (flow) => {
-            if (weapon == null) weapon = flow.GetValue<Weapon>(target);
+        In = ControlInput(String.Empty, (flow) => {
+            if (weapon == null) weapon = flow.stack.gameObject.GetComponent<Weapon>();
             End();
-            return default;
+            return Out;
         });
+        Out = ControlOutput(String.Empty);
     }
 }
-[UnitTitle("Attack")]
-[UnitCategory("Events/WeaponEvents")]
+[UnitTitle("Attack End")]
+[UnitCategory("Events/Weapon/Action")]
 public class AttackEndEvent : SkillEndEvent
 {
     protected override Action End => weapon.con.EndAttack;
 }
-[UnitTitle("Special")]
-[UnitCategory("Events/WeaponEvents")]
+[UnitTitle("Special End")]
+[UnitCategory("Events/Weapon/Action")]
 public class SpecialEndEvent : SkillEndEvent
 {
     protected override Action End => weapon.con.EndAttack;

@@ -209,18 +209,23 @@ using static UnityEngine.Rendering.DebugUI;
                 get { return _attack; }
                 set 
                 {
-                    if(_attack = false && value == true)
-                    {
-                        EventBus.Trigger("Attack", gameObject, 0);//-|
+            if(_attack != value)
+            {
+                if (value)
+                {
+                    Debug.Log("Down");
+                    EventBus.Trigger("Attack", gameObject, 0);//-|
 
-                        _attack = value;
-                        attackCharge += Time.deltaTime;
-                    }
-                    else if (_attack = true && value == false)
-                    {
-                        _attack = value;
-                        attackCharge = 0;
-                    }
+                    _attack = value;
+                }
+                else
+                {
+                    Debug.Log("Up");
+                    _attack = value;
+                    attackCharge = 0;
+                }
+            }
+            else _attack = value;
                 }
             } bool _attack = false;
             public bool isAttack { get; private set; } = false;
@@ -573,9 +578,17 @@ using static UnityEngine.Rendering.DebugUI;
         }
         protected void Update()
         {
-            if (attack) EventBus.Trigger("Attack", curWeapon.gameObject, attackCharge);
-            if (special) EventBus.Trigger("Special", curWeapon.gameObject, specialCharge);
+        if (attack)
+        {
+            EventBus.Trigger("Attack", curWeapon.gameObject, attackCharge);
+            attackCharge += Time.deltaTime;
         }
+            if (special)
+        {
+            EventBus.Trigger("Special", curWeapon.gameObject, specialCharge); 
+            attackCharge += Time.deltaTime;
+        }
+    }
         public void AutoDebug()
         {
             //개수 비교 >? 초기화

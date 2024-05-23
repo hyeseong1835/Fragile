@@ -47,18 +47,18 @@ public class PlayerController : Controller
             public Vector2 playerToMouse { get { return mousePos - (Vector2)transform.position; } }
     
             [HideInInspector] 
-            public float viewRotateZ { get { return Mathf.Atan2(playerToMouse.y, playerToMouse.x) * Mathf.Rad2Deg; } }
+            float viewRotateZ { get { return Mathf.Atan2(playerToMouse.y, playerToMouse.x) * Mathf.Rad2Deg; } }
 
             #region 좌클릭
 
                 [HideInInspector] 
-                    public bool mouse0Down { get { return UnityEngine.Input.GetMouseButtonDown(0); } }
+                    bool mouse0Down { get { return UnityEngine.Input.GetMouseButtonDown(0); } }
+    
+                [ShowInInspector]
+                    bool mouse0Stay { get { return UnityEngine.Input.GetMouseButton(0); } }
     
                 [HideInInspector] 
-                    public bool mouse0Stay { get { return UnityEngine.Input.GetMouseButton(0); } }
-    
-                [HideInInspector] 
-                    public bool mouse0Up { get { return UnityEngine.Input.GetMouseButtonUp(0); } }
+                    bool mouse0Up { get { return UnityEngine.Input.GetMouseButtonUp(0); } }
     
             #endregion
     
@@ -67,7 +67,7 @@ public class PlayerController : Controller
                 [HideInInspector] 
                     public bool mouse1Down { get { return UnityEngine.Input.GetMouseButtonDown(1); } }
     
-                [HideInInspector] 
+                [ShowInInspector]
                     public bool mouse1 { get { return UnityEngine.Input.GetMouseButton(1); } }
     
                 [HideInInspector] 
@@ -83,7 +83,7 @@ public class PlayerController : Controller
                 [HideInInspector] 
                 public bool mouseWheelClickDown { get { return UnityEngine.Input.GetMouseButtonDown(2); } }
     
-                [HideInInspector] 
+                [ShowInInspector]
                 public bool mouseWheelClick{ get { return UnityEngine.Input.GetMouseButtonUp(2); } }
     
                 [HideInInspector] 
@@ -113,10 +113,9 @@ public class PlayerController : Controller
         {
             if (curWeapon != null)
             {
-                Attack();
+                attack = mouse0Stay;
 
-                if (attack) curWeapon.Attack();
-                if (mouse1Down) curWeapon.Special();
+                if (mouse1Down) special = true;
             }
 
             Mouse();
@@ -232,18 +231,18 @@ public class PlayerController : Controller
     {
         if (mouse0Down)
         {
-            CancelInvoke(nameof(AttackInputCancel));
-            attackInput = true;
-            Invoke(nameof(AttackInputCancel), attackInputAllowTime);
+            //CancelInvoke(nameof(AttackInputCancel));
+            //attackInput = true;
+            //Invoke(nameof(AttackInputCancel), attackInputAllowTime);
         }
 
-        if ((attackInput) && isAttack == false)
+        /*if ((attackInput) && isAttack == false)
         {
             attack = true;
 
             attackInput = false;
         }
-        else attack = false;
+        else attack = false;*/
     }
     void AttackInputCancel()
     {

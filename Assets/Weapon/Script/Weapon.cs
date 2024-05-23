@@ -166,16 +166,6 @@ using UnityEngine;
         }
         protected virtual void OnWeaponDestroyed() { }
 
-    //스킬
-    public void Attack()
-    {
-
-    }
-    public virtual void Special()
-    {
-        EventBus.Trigger("Attack", gameObject, 2);
-    }
-
     #endregion
 
     #region 데이터

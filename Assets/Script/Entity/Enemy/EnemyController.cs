@@ -132,7 +132,7 @@ public class EnemyController : Controller
 
         yield return new WaitForSeconds(curWeapon.attack.frontDelay);
 
-        curWeapon.Attack();
+        attack = true;
 
         yield return new WaitForSeconds(curWeapon.attack.delay);
 
