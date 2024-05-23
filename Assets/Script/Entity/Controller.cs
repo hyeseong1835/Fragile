@@ -209,23 +209,22 @@ using static UnityEngine.Rendering.DebugUI;
                 get { return _attack; }
                 set 
                 {
-            if(_attack != value)
-            {
-                if (value)
-                {
-                    Debug.Log("Down");
-                    EventBus.Trigger("Attack", gameObject, 0);//-|
+                    if(_attack != value)
+                    {
+                        if (value)
+                        {
+                            EventBus.Trigger("AttackDown", curWeapon.gameObject, -1);
 
-                    _attack = value;
-                }
-                else
-                {
-                    Debug.Log("Up");
-                    _attack = value;
-                    attackCharge = 0;
-                }
-            }
-            else _attack = value;
+                            _attack = value;
+                        }
+                        else
+                        {
+                            EventBus.Trigger("AttackUp", curWeapon.gameObject, attackCharge);
+                            _attack = value;
+                            attackCharge = 0;
+                        }
+                    }
+                    else _attack = value;
                 }
             } bool _attack = false;
             public bool isAttack { get; private set; } = false;
@@ -245,7 +244,7 @@ using static UnityEngine.Rendering.DebugUI;
                 {
                     if(_special = false && value == true)
                     {
-                        EventBus.Trigger("Attack", gameObject, 0);//-|
+                        //EventBus.Trigger("AttackHold", gameObject, specialCharge);
 
                         _special = value;
                         specialCharge += Time.deltaTime;
@@ -580,13 +579,13 @@ using static UnityEngine.Rendering.DebugUI;
         {
         if (attack)
         {
-            EventBus.Trigger("Attack", curWeapon.gameObject, attackCharge);
+            EventBus.Trigger("AttackHold", curWeapon.gameObject, specialCharge);
             attackCharge += Time.deltaTime;
         }
             if (special)
         {
-            EventBus.Trigger("Special", curWeapon.gameObject, specialCharge); 
-            attackCharge += Time.deltaTime;
+            //EventBus.Trigger("Special", curWeapon.gameObject, specialCharge); 
+            specialCharge += Time.deltaTime;
         }
     }
         public void AutoDebug()

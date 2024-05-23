@@ -17,7 +17,11 @@ public class TriggerObject : MonoBehaviour
 
     public enum TriggerType
     {
-        Self, Friend, Enemy, Object
+        None, Enter, Stay, Exit
+    }
+    public enum ColliderType
+    {
+        None, Self, Friend, Enemy, Object
     }
     void OnTriggerEnter2D(Collider2D coll)
     {
@@ -32,59 +36,70 @@ public class TriggerObject : MonoBehaviour
         unit.OnTriggerExit(coll);
     }
 }
-[UnitTitle("TriggerObjectEvent")]
-[UnitCategory("Events/Weapon/Action")]
+[UnitTitle("TriggerObjectOut")]
+[UnitCategory("Weapon")]
 public class TriggerObjectUnit : Unit
 {
-    GraphReference reference;
-
+    Flow flow;
     GameObject gameObject;
     Weapon weapon;
+    Controller con;
 
     public ControlInput In;
     public ValueInput triggerObject;
 
     public ControlOutput Out;
-    public ControlOutput Enter;
-    public ControlOutput Stay;
-    public ControlOutput Exit;
+    public ControlOutput Hit;
+
     public ValueOutput coll;
     public ValueOutput triggerType;
+    public ValueOutput colliderType;
 
     protected override void Definition()
     {
-        In = ControlInput("In", (flow) =>
+        In = ControlInput(String.Empty, (_flow) =>
         {
-            gameObject = flow.stack.gameObject;
-            reference = GraphReference.New(flow.stack.machine, true);
+            flow = _flow;
+            gameObject = _flow.stack.gameObject;
             if (weapon == null) weapon = gameObject.GetComponent<Weapon>();
             return Out;
         });
         triggerObject = ValueInput<TriggerObject>("Trigger");
         
-        Out = ControlOutput("Out");
-        Enter = ControlOutput("Enter");
-        Stay = ControlOutput("Stay");
-        Exit = ControlOutput("Exit");
+        Out = ControlOutput(String.Empty);
+        Hit = ControlOutput("Hit");
+
         coll = ValueOutput<Collider2D>("Collider");
-        triggerType = ValueOutput<TriggerObject.TriggerType>("Type");
+        triggerType = ValueOutput<TriggerObject.TriggerType>("TriggerType");
+        colliderType = ValueOutput<TriggerObject.ColliderType>("ColliderType");
     }
-    public void OnTriggerEnter(Collider2D coll)
+    public void OnTriggerEnter(Collider2D coll) { SendEvent(coll, TriggerObject.TriggerType.Enter); }
+    public void OnTriggerStay(Collider2D coll) { SendEvent(coll, TriggerObject.TriggerType.Stay); }
+    public void OnTriggerExit(Collider2D coll) { SendEvent(coll,TriggerObject.TriggerType.Exit); }
+    void SendEvent(Collider2D _coll, TriggerObject.TriggerType _triggerType)
     {
-        Flow flow = Flow.New(reference);
+        flow.SetValue(coll, _coll);
 
-        flow.Run(Enter);
-    }
-    public void OnTriggerStay(Collider2D coll)
-    {
-        Flow flow = Flow.New(reference);
+        Controller hitCon = _coll.GetComponent<Controller>();
+        if (hitCon == null)
+        {
+            flow.SetValue(colliderType, TriggerObject.ColliderType.Object);
+        }
+        else if (hitCon == con)
+        {
+            flow.SetValue(colliderType, TriggerObject.ColliderType.Self);
+        }
+        else if (hitCon.gameObject.layer == hitCon.gameObject.layer)
+        {
+            flow.SetValue(colliderType, TriggerObject.ColliderType.Friend);
+        }
+        else flow.SetValue(colliderType, TriggerObject.ColliderType.Enemy);
 
-        flow.Run(Stay);
-    }
-    public void OnTriggerExit(Collider2D coll)
-    {
-        Flow flow = Flow.New(reference);
+        flow.SetValue(triggerType, _triggerType);
 
-        flow.Run(Exit);
+        flow.Run(Hit);
+
+        flow.SetValue(colliderType, TriggerObject.ColliderType.None);
+        flow.SetValue(triggerType, TriggerObject.TriggerType.None);
     }
 }
