@@ -90,8 +90,7 @@ public class Editor : MonoBehaviour
                 #if UNITY_EDITOR
                     EditorState editorState = state;
 
-                    return (editorState == EditorState.EditorPlay 
-                        || editorState == EditorState.BuildPlay);
+                    return (editorState == EditorState.EditorPlay);
                 #else 
                     return true;
                 #endif

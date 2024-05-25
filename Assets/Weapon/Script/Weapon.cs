@@ -32,26 +32,26 @@ using UnityEngine;
     /// </summary>
     public enum WeaponState
     {
-        NULL, Prefab, Item, Hold, Inventory, Removed
+        NULL, Item, Hold, Inventory, Removed
     }
-    [ExecuteAlways]
+    //[ExecuteAlways]
     public class Weapon : MonoBehaviour
     {
         #region 정적 멤버 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-        public static Weapon SpawnWeapon(string weaponName, Transform parent = null)//-|
+        public static Weapon Spawn(string weaponName, Transform parent = null)//-|
         {
             GameObject weaponObj;
             if (parent != null)
             {
                 weaponObj = Instantiate(
-                Resources.Load<GameObject>("WeaponObjPrefab/" + weaponName),
+                Resources.Load<GameObject>($"{weaponName}/{weaponName}"),
                     parent
                 );
             }
             else
             {
                 weaponObj = Instantiate(
-                Resources.Load<GameObject>("WeaponObjPrefab/" + weaponName)
+                Resources.Load<GameObject>($"{weaponName}/{weaponName}")
                 );
             }
 
@@ -62,7 +62,7 @@ using UnityEngine;
         }
         public static Weapon LoadWeapon(WeaponSaveData data)
         {
-            Weapon weapon = SpawnWeapon(data.name);
+            Weapon weapon = Spawn(data.name);
             weapon.SetData(data);
 
             return weapon;
@@ -186,55 +186,24 @@ using UnityEngine;
 
         #endregion
 
-        #region 무기 관리
+    #region 무기 관리
 
-        /// <summary>
-        /// true: INVENTORY -> HOLD //
-        /// false: HOLD -> INVENTORY //
-        /// </summary>
-        /// <param name="use"></param>
-        public void SetUse(bool use)
+    public void SetUse(bool use)
+    {
+        if (use)
         {
-            if (state == WeaponState.Prefab)
+            if (state != WeaponState.Hold)
             {
-                Debug.LogError("무기를 활성화할 수 없습니다.");
-                return;
-            }// LogError: 무기를 활성화할 수 없습니다. >> return
-            if (state == WeaponState.Item)
-            {
-                Debug.LogError("무기를 활성화할 수 없습니다.");
-                return;
-            } //LogError: 무기를 활성화할 수 없습니다 >> return
-
-            if (use)
-            {
-                if (state == WeaponState.Removed)
-                {
-                    Debug.LogError("무기를 활성화할 수 없습니다.");
-                    return;
-                } //LogError: 무기를 활성화할 수 없습니다. >> return
-
-                if (state == WeaponState.Hold)
-                {
-                    Debug.LogWarning("이미 활성화되었습니다.");
-                } //LogWarning: 이미 활성화되었습니다.
-
                 OnUse();
-
                 state = WeaponState.Hold;
             }
-            else
-            {
-                if (state == WeaponState.Inventory)
-                {
-                    Debug.LogWarning("이미 비활성화되었습니다.");
-                } //LogWarning: 이미 비활성화되었습니다.
-
-                OnDeUse();
-
-                state = WeaponState.Inventory;
-            }
         }
+        else
+        {
+            OnDeUse();
+            state = WeaponState.Inventory;
+        }
+    }
 
         public void AddDurability(int add)
         {
@@ -254,7 +223,7 @@ using UnityEngine;
         public void WeaponDestroy()
         {
             //PREFAB >> Destroy(gameObject) >> return
-            if (state == WeaponState.Prefab)
+            if (state == WeaponState.NULL)
             {
                 DestroyImmediate(gameObject);
                 return;
@@ -294,7 +263,7 @@ using UnityEngine;
         {
             if (Editor.GetObjectState(gameObject) == Editor.ObjectState.PrefabEdit)
             {
-                state = WeaponState.Prefab;
+                //state = WeaponState.Prefab;
             }
             else
             {

@@ -32,5 +32,22 @@ public abstract class EventNode<T> : BaseEventNode<T>
         flow.SetValue(OutValue, value);
     }
 }
+public abstract class DefiniteEventNode<T> : EventNode<T>
+{
+    [DoNotSerialize] public ValueInput Iv_definite;
+
+    protected override void Definition()
+    {
+        base.Definition();
+        Iv_definite = ValueInput<string>("definite");
+    }
+    public override EventHook GetHook(GraphReference reference)
+    {
+        if (Iv_definite == null) { UnityEngine.Debug.Log("Fail: " + eventName); return new EventHook(eventName); }
+
+        UnityEngine.Debug.Log(eventName + Iv_definite);
+        return new EventHook(eventName + Iv_definite);
+    }
+}
 
 

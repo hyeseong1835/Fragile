@@ -30,7 +30,7 @@ public class ItemManager : MonoBehaviour
     /// <returns></returns>
     public static Item SpawnItem(string weaponName)
     {
-        return WrapWeaponInItem(Weapon.SpawnWeapon(weaponName));
+        return WrapWeaponInItem(Weapon.Spawn(weaponName));
     }
     /// <summary>
     /// {weapon} -> Item

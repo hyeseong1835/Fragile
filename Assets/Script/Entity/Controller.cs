@@ -119,7 +119,7 @@ using static UnityEngine.Rendering.DebugUI;
 
         #endregion - - - - - - - - - - - - - - - -|
 
-        #region Foldout Input  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+        #region Input  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
             [VerticalGroup("Input/Move")]
             #region Vertical Move - - - - - - - - - - - - - - - - - - - - -|
@@ -205,64 +205,25 @@ using static UnityEngine.Rendering.DebugUI;
 
             [VerticalGroup("Input/Attack")]
             #region Vertical Attack - - - - - - - - - - - - - - - - -|
-            public bool attack { 
-                get { return _attack; }
-                set 
-                {
-                    if(_attack != value)
-                    {
-                        if (value)
-                        {
-                            EventBus.Trigger("AttackDown", curWeapon.gameObject, -1);
 
-                            _attack = value;
-                        }
-                        else
-                        {
-                            EventBus.Trigger("AttackUp", curWeapon.gameObject, attackCharge);
-                            _attack = value;
-                            attackCharge = 0;
-                        }
-                    }
-                    else _attack = value;
-                }
-            } bool _attack = false;
-            public bool isAttack { get; private set; } = false;
-            public void EndAttack()
-            {
-                isAttack = false;
-            }
-            float attackCharge;
+                public bool attack = false;
+                bool prevAttack = false;
+
+                float attackCharge;
+                public bool isAttack { get; private set; } = false;
+                public void EndAttack() { isAttack = false; }
 
             #endregion  - - - - - - - - - - - - - - - - - - - - - - -|
 
             [VerticalGroup("Input/Special")]
             #region Vertical Special - - - - - - - - - - - - - - - - -|
-            public bool special { 
-                get { return _special; }
-                set 
-                {
-                    if(_special = false && value == true)
-                    {
-                        //EventBus.Trigger("AttackHold", gameObject, specialCharge);
 
-                        _special = value;
-                        specialCharge += Time.deltaTime;
-                    }
-                    else if (_special = true && value == false)
-                    {
-                        _special = value;
-                        specialCharge = 0;
-                    }
-                }
-            } bool _special = false;
-            public bool isSpecial { get; private set; } = false;
-            public void EndSpecial()
-            {
-                Debug.Log(this);
-                isAttack = false;
-            }
-            float specialCharge;
+                public bool special;
+                bool prevSpecial = false;
+
+                float specialCharge;
+                public bool isSpecial { get; private set; } = false;
+                public void EndSpecial() { isAttack = false; }
 
             #endregion  - - - - - - - - - - - - - - - - - - - - - - -|   
 
@@ -401,7 +362,8 @@ using static UnityEngine.Rendering.DebugUI;
         [Button(name: "Add")]
         void AddWeaponInInspector(string name)
         {
-            AddWeapon(Weapon.SpawnWeapon(name));
+            AddWeapon(Weapon.Spawn(name, weaponHolder));
+            if(defaultWeapon == null) SetDefaultWeapon(weaponHolder.childCount - 1);
         }
         [HorizontalGroup("Weapon/Inventory/Manage")]
         [Button(name: "Destroy")]
@@ -411,8 +373,7 @@ using static UnityEngine.Rendering.DebugUI;
             {
                 if (defaultWeapon == null) return;
 
-                if (EditorApplication.isPlaying) Destroy(defaultWeapon.gameObject);//-|
-                else DestroyImmediate(defaultWeapon.gameObject);
+                DestroyImmediate(defaultWeapon.gameObject);
 
                 defaultWeapon = null;
             }
@@ -444,34 +405,37 @@ using static UnityEngine.Rendering.DebugUI;
         /// 무기 추가 >> INVENTORY
         /// </summary>
         /// <param name="weapon">무기 상태에 대해 안전하지 않음</param>
-        public void AddWeapon(Weapon weapon)
+        public Weapon AddWeapon(Weapon weapon)
         {
             if (weapon.state == WeaponState.Hold
                 || weapon.state == WeaponState.Inventory)
             {
                 Debug.LogWarning("먼저 인벤토리에서 제거된 후 추가해야함");
-                return;
+                return weapon;
             } //LogWarning: 먼저 인벤토리에서 제거된 후 추가해야함 >> return
 
             if (weapons.Contains(weapon))
             {
                 Debug.LogWarning("이미 인벤토리에 있음");
-                return;
+                return weapon;
             } //LogWarning: 이미 인벤토리에 있음 >> return
 
             if (weapons.Count > inventorySize)
             {
                 Debug.LogWarning("인벤토리가 꽉 참");
                 Utility.AutoDestroy(weapon.gameObject);
-                return;
+                return weapon;
             } //LogWarning: 인벤토리가 꽉 참 >> return
 
             weapon.con = this;
 
             weapon.transform.parent = weaponHolder;
-            weapon.state = WeaponState.Inventory;
+
+            if (curWeapon == null) weapon.SetUse(true);
+            else weapon.SetUse(false);
 
             weapons.Add(weapon);
+            return weapon;
         }
 
         /// <summary>
@@ -575,16 +539,49 @@ using static UnityEngine.Rendering.DebugUI;
         {
             Destroy(gameObject);
         }
-        protected void Update()
+    protected void Update()
+    {
+        //Attack
+        if (attack != prevAttack)
         {
+            if (attack)
+            {
+                Debug.Log("AttackDown");
+                EventBus.Trigger("AttackDown", curWeapon.gameObject);
+            }
+            else
+            {
+                Debug.Log("AttackUp");
+                EventBus.Trigger("AttackUp", curWeapon.gameObject, attackCharge);
+                attackCharge = 0;
+            }
+            prevAttack = attack;
+        }
         if (attack)
         {
             EventBus.Trigger("AttackHold", curWeapon.gameObject, specialCharge);
             attackCharge += Time.deltaTime;
         }
-            if (special)
+
+        //Special
+        if (special != prevSpecial)
         {
-            //EventBus.Trigger("Special", curWeapon.gameObject, specialCharge); 
+            if (special)
+            {
+                Debug.Log("SpecialDown");
+                EventBus.Trigger("SpecialDown", curWeapon.gameObject);
+            }
+            else
+            {
+                Debug.Log("SpecialUp");
+                EventBus.Trigger("SpecialUp", curWeapon.gameObject, specialCharge);
+                specialCharge = 0;
+            }
+            prevSpecial = special;
+        }
+        if (special)
+        {
+            EventBus.Trigger("Special", curWeapon.gameObject, specialCharge); 
             specialCharge += Time.deltaTime;
         }
     }

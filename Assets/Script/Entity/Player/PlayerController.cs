@@ -3,7 +3,7 @@ using Sirenix.Utilities;
 using System;
 using UnityEngine;
 
-[ExecuteAlways]
+//[ExecuteAlways]
 public class PlayerController : Controller
 {
     [Space(Editor.overrideSpace)]
@@ -68,7 +68,7 @@ public class PlayerController : Controller
                     public bool mouse1Down { get { return UnityEngine.Input.GetMouseButtonDown(1); } }
     
                 [ShowInInspector]
-                    public bool mouse1 { get { return UnityEngine.Input.GetMouseButton(1); } }
+                    public bool mouse1Stay { get { return UnityEngine.Input.GetMouseButton(1); } }
     
                 [HideInInspector] 
                     public bool mouse1Up { get { return UnityEngine.Input.GetMouseButtonUp(1); } }
@@ -107,23 +107,16 @@ public class PlayerController : Controller
     }
     new void Update()
     {
+        attack = mouse0Stay;
+        special = mouse1Stay;
+        
         base.Update();
+        
+        Mouse();
+        Move();
 
-        if (Editor.GetType(Editor.StateType.IsPlay))
-        {
-            if (curWeapon != null)
-            {
-                attack = mouse0Stay;
-
-                if (mouse1Down) special = true;
-            }
-
-            Mouse();
-            Move();
-
-            WheelSelect();
-            if (UnityEngine.Input.GetKeyDown(KeyCode.P)) AddWeapon(Weapon.SpawnWeapon("WoodenSword"));
-        }
+        WheelSelect();
+        if (UnityEngine.Input.GetKeyDown(KeyCode.P)) AddWeapon(Weapon.Spawn("WoodenSword"));
 
         int curWeaponIndex = weapons.IndexOf(curWeapon);
 
