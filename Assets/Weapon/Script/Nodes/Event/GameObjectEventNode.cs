@@ -1,38 +1,42 @@
 using Unity.VisualScripting;
 using System;
 
-public abstract class BaseEventNode<T> : EventUnit<T>
+public abstract class BaseGameObjectEventNode<T> : GameObjectEventUnit<T>
 {
     [DoNotSerialize] public ControlOutput Out;
-    protected override bool register => true;
-    public abstract string eventName { get; }
+    [DoNotSerialize] public abstract string eventName { get; }
+    protected override string hookName => eventName;
+    [DoNotSerialize] public override Type MessageListenerType => null;
     public override EventHook GetHook(GraphReference reference)
     {
         return new EventHook(eventName);
     }
 }
-public abstract class EventNode : BaseEventNode<int>
+public abstract class GameObjectEventNode : BaseGameObjectEventNode<int>
 {
 
 }
-public abstract class EventNode<T> : BaseEventNode<T>
+public abstract class GameObjectEventNode<T> : BaseGameObjectEventNode<T>
 {
     [DoNotSerialize] public ValueOutput OutValue;
 
-    static T v { get { return default; } }
-    public virtual string argumentName { get { return v.GetType().Name; } }
+    public virtual string argumentName { get { return typeof(T).Name; } }
 
     protected override void Definition()
     {
+        base.Definition();
+
         Out = ControlOutput(String.Empty);
         OutValue = ValueOutput<T>(argumentName);
     }
     protected override void AssignArguments(Flow flow, T value)
     {
+        base.AssignArguments(flow, value);
+
         flow.SetValue(OutValue, value);
     }
 }
-public abstract class DefiniteEventNode<T> : EventNode<T>
+public abstract class DefiniteEventNode<T> : GameObjectEventNode<T>
 {
     [DoNotSerialize] public ValueInput Iv_definite;
 

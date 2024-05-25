@@ -112,7 +112,7 @@ using UnityEngine;
 
     void Update()
     {
-        EventBus.Trigger("Update", gameObject, state);
+        UpdateEventNode.Trigger(gameObject, state);
 
         /*
         #if UNITY_EDITOR

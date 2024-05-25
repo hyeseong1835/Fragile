@@ -546,20 +546,18 @@ using static UnityEngine.Rendering.DebugUI;
         {
             if (attack)
             {
-                Debug.Log("AttackDown");
-                EventBus.Trigger("AttackDown", curWeapon.gameObject);
+                AttackDownEventNode.Trigger(curWeapon.gameObject);
             }
             else
             {
-                Debug.Log("AttackUp");
-                EventBus.Trigger("AttackUp", curWeapon.gameObject, attackCharge);
+                AttackUpEventNode.Trigger(curWeapon.gameObject, attackCharge);
                 attackCharge = 0;
             }
             prevAttack = attack;
         }
         if (attack)
         {
-            EventBus.Trigger("AttackHold", curWeapon.gameObject, specialCharge);
+            AttackHoldEventNode.Trigger(curWeapon.gameObject, specialCharge);
             attackCharge += Time.deltaTime;
         }
 
@@ -568,20 +566,18 @@ using static UnityEngine.Rendering.DebugUI;
         {
             if (special)
             {
-                Debug.Log("SpecialDown");
-                EventBus.Trigger("SpecialDown", curWeapon.gameObject);
+                SpecialDownEventNode.Trigger(curWeapon.gameObject);
             }
             else
             {
-                Debug.Log("SpecialUp");
-                EventBus.Trigger("SpecialUp", curWeapon.gameObject, specialCharge);
+                SpecialUpEventNode.Trigger(curWeapon.gameObject, specialCharge);
                 specialCharge = 0;
             }
             prevSpecial = special;
         }
         if (special)
         {
-            EventBus.Trigger("Special", curWeapon.gameObject, specialCharge); 
+            SpecialHoldEventNode.Trigger(curWeapon.gameObject, specialCharge);
             specialCharge += Time.deltaTime;
         }
     }
