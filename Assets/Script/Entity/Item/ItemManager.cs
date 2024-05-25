@@ -39,7 +39,7 @@ public class ItemManager : MonoBehaviour
     /// <returns></returns>
     public static Item WrapWeaponInItem(Weapon weapon)
     {
-        Item item = InstantiateEmptyItem(weapon.Name);
+        Item item = InstantiateEmptyItem(weapon.weaponName);
         item.weapon = weapon;
 
         weapon.transform.SetParent(item.transform);

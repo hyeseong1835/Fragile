@@ -3,7 +3,7 @@ using UnityEngine;
 
 [UnitTitle("Update")]
 [UnitCategory("Events/Weapon")]
-public class UpdateEventNode : GameObjectEventNode<WeaponState>
+public class UpdateEventNode : EventNode<WeaponState>
 {
     public static string name = "Update";
     public static void Trigger(GameObject gameObject, WeaponState state)
@@ -18,7 +18,7 @@ public class UpdateEventNode : GameObjectEventNode<WeaponState>
 
 [UnitTitle("Attack Down")]
 [UnitCategory("Events/Weapon/Action")]
-public class AttackDownEventNode : GameObjectEventNode
+public class AttackDownEventNode : EventNode
 {
     public static string name = "AttackDown";
     public static void Trigger(GameObject gameObject)
@@ -31,7 +31,7 @@ public class AttackDownEventNode : GameObjectEventNode
 
 [UnitTitle("Attack Hold")]
 [UnitCategory("Events/Weapon/Action")]
-public class AttackHoldEventNode : GameObjectEventNode<float>
+public class AttackHoldEventNode : EventNode<float>
 {
     public static string name = "AttackHold";
     public static void Trigger(GameObject gameObject, float time)
@@ -45,7 +45,7 @@ public class AttackHoldEventNode : GameObjectEventNode<float>
 
 [UnitTitle("Attack Up")]
 [UnitCategory("Events/Weapon/Action")]
-public class AttackUpEventNode : GameObjectEventNode<float>
+public class AttackUpEventNode : EventNode<float>
 {
     public static string name = "AttackUp";
     public static void Trigger(GameObject gameObject, float time)
@@ -63,7 +63,7 @@ public class AttackUpEventNode : GameObjectEventNode<float>
 
 [UnitTitle("Special Down")]
 [UnitCategory("Events/Weapon/Action")]
-public class SpecialDownEventNode : GameObjectEventNode
+public class SpecialDownEventNode : EventNode
 {
     public static string name = "SpecialDown";
     public static void Trigger(GameObject gameObject)
@@ -76,7 +76,7 @@ public class SpecialDownEventNode : GameObjectEventNode
 
 [UnitTitle("Special Hold")]
 [UnitCategory("Events/Weapon/Action")]
-public class SpecialHoldEventNode : GameObjectEventNode<float>
+public class SpecialHoldEventNode : EventNode<float>
 {
     public static string name = "SpecialHold";
     public static void Trigger(GameObject gameObject, float time)
@@ -90,7 +90,7 @@ public class SpecialHoldEventNode : GameObjectEventNode<float>
 
 [UnitTitle("Special Up")]
 [UnitCategory("Events/Weapon/Action")]
-public class SpecialUpEventNode : GameObjectEventNode<float>
+public class SpecialUpEventNode : EventNode<float>
 {
     public static string name = "SpecialUp";
     public override string eventName => name;

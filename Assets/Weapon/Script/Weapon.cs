@@ -88,7 +88,7 @@ using UnityEngine;
         [ShowInInspector]
         public ActiveSkill special = new ActiveSkill();
 
-        public string Name { get { return gameObject.name; } }
+        public string weaponName { get { return gameObject.name; } }
 
     void Awake()
     {
@@ -174,7 +174,7 @@ using UnityEngine;
         {
             return new WeaponSaveData
                 (
-                    Name,
+                    weaponName,
                     durability,
                     null
                 );
