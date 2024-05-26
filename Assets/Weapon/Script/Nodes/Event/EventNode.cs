@@ -29,26 +29,40 @@ public abstract class EventNode<T> : BaseEventNode<T>
 
         OutValue = ValueOutput<T>(argumentName);
     }
-    protected override void AssignArguments(Flow flow, T value)
-    {
-        flow.SetValue(OutValue, value);
-    }
 }
-public abstract class DefiniteEventNode<T> : EventNode<T>
+public abstract class DefiniteEventNode : EventNode
 {
-    [DoNotSerialize] public ValueInput Iv_definite;
+    public static string GetEventName(string eventName, string id)
+    {
+        return $"{eventName}({id})";
+    }
+    [DoNotSerialize] public ValueInput Iv_id;
+    public string id;
 
     protected override void Definition()
     {
         base.Definition();
-        Iv_definite = ValueInput<string>("definite");
+
+        Iv_id = ValueInput<string>("ID");
     }
     public override EventHook GetHook(GraphReference reference)
     {
-        if (Iv_definite == null) { UnityEngine.Debug.Log("Fail: " + eventName); return new EventHook(eventName); }
+        return new EventHook(GetEventName(eventName, Flow.New(reference).GetValue<string>(Iv_id)), reference.gameObject);
+    }
+}
+public abstract class DefiniteEventNode<T> : EventNode<T>
+{
+    [DoNotSerialize] public ValueInput Iv_id;
 
-        UnityEngine.Debug.Log(eventName + Iv_definite);
-        return new EventHook(eventName + Iv_definite, reference.gameObject);
+    protected override void Definition()
+    {
+        base.Definition();
+
+        Iv_id = ValueInput<string>("ID");
+    }
+    public override EventHook GetHook(GraphReference reference)
+    {
+        return new EventHook(DefiniteEventNode.GetEventName(eventName, Flow.New(reference).GetValue<string>(Iv_id)), reference.gameObject);
     }
 }
 

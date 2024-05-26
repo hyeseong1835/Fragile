@@ -1,4 +1,4 @@
-using JetBrains.Annotations;
+ï»¿using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using System;
 using Unity.VisualScripting;
@@ -37,7 +37,7 @@ using UnityEngine;
     //[ExecuteAlways]
     public class Weapon : MonoBehaviour
     {
-        #region Á¤Àû ¸â¹ö - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+        #region ì •ì  ë©¤ë²„ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
         public static Weapon Spawn(string weaponName, Transform parent = null)//-|
         {
             GameObject weaponObj;
@@ -75,6 +75,7 @@ using UnityEngine;
         public WeaponState state = WeaponState.NULL;
 
         public Sprite UISprite;
+        public Texture2D breakTexture;
         [Required] public Transform hand_obj;
         
         public float damage = 1;
@@ -94,14 +95,14 @@ using UnityEngine;
     {
             /*
         #if UNITY_EDITOR
-            //ÃÖÃÊ »ı¼º
+            //ìµœì´ˆ ìƒì„±
             if (con == null)
             {
                 DropDown();
             }
             #else
             if (con != null) state = WeaponState.Inventory;
-            //¼öÁ¤ ÇÊ¿ä
+            //ìˆ˜ì • í•„ìš”
         #endif
             */
     }
@@ -127,7 +128,7 @@ using UnityEngine;
                 {
                     transform.parent.position = transform.position;
                     state = WeaponState.Item;
-                } //µå·Ó´Ù¿î >> ºÎ¸ğ À§Ä¡ ¼öÁ¤(1È¸)
+                } //ë“œë¡­ë‹¤ìš´ >> ë¶€ëª¨ ìœ„ì¹˜ ìˆ˜ì •(1íšŒ)
                 StateAffix();
                 AutoDebug();
             }
@@ -136,9 +137,9 @@ using UnityEngine;
             */
     }
 
-    #region ÀÌº¥Æ®
+    #region ì´ë²¤íŠ¸
 
-        //¹«±â
+        //ë¬´ê¸°
         protected virtual void OnUse()
         {
             if (hand_obj != null)
@@ -155,8 +156,12 @@ using UnityEngine;
                 con.hand.HandLink(null);
             }
         }
-        protected virtual void Break()
+        protected virtual void Break(Vector2 breakPos)
         {
+            BreakParticle breakParticle = new GameObject("BreakParticle").AddComponent<BreakParticle>();
+            breakParticle.AddComponent<ParticleSystem>();
+            breakParticle.transform.parent = transform;
+
             WeaponDestroy();
         }
         public virtual void OnWeaponRemoved()
@@ -168,7 +173,7 @@ using UnityEngine;
 
     #endregion
 
-    #region µ¥ÀÌÅÍ
+    #region ë°ì´í„°
 
     public virtual WeaponSaveData GetData()
         {
@@ -186,7 +191,7 @@ using UnityEngine;
 
         #endregion
 
-    #region ¹«±â °ü¸®
+    #region ë¬´ê¸° ê´€ë¦¬
 
     public void SetUse(bool use)
     {
@@ -205,17 +210,17 @@ using UnityEngine;
         }
     }
 
-        public void AddDurability(int add)
+        public void AddDurability(int add, Vector2 breakPos)
         {
             durability += add;
             if (durability <= 0)
             {
-                Break();
+                Break(breakPos);
                 return;
             }
         }
         /// <summary>
-        /// ¹«±â¸¦ ÆÄ±«ÇÏ´Â ÇÔ¼ö
+        /// ë¬´ê¸°ë¥¼ íŒŒê´´í•˜ëŠ” í•¨ìˆ˜
         /// INVENTORY -> HOLD -> REMOVED >> OnWeaponDestroy() >> Destroy(gameObject) //
         /// ITEM >> OnWeaponDestroy(item) >> Destroy //
         /// PREFAB >> DestroyImmediate(gameObject) //
@@ -251,13 +256,13 @@ using UnityEngine;
                 return;
             }
 
-            Debug.LogError("¹«±â »óÅÂ°¡ À¯È¿ÇÏÁö ¾Ê½À´Ï´Ù.");
+            Debug.LogError("ë¬´ê¸° ìƒíƒœê°€ ìœ íš¨í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
         }
 
         #endregion
 
         #if UNITY_EDITOR
-        #region ¿¡µğÅÍ ÆíÀÇ
+        #region ì—ë””í„° í¸ì˜
 
         void DropDown()
         {
@@ -267,27 +272,27 @@ using UnityEngine;
             }
             else
             {
-                //¾Àºä¿¡ ÇÃ·ÎÆÃ ½ÃÀÛ >> ¾ÆÀÌÅÛÈ­
+                //ì”¬ë·°ì— í”Œë¡œíŒ… ì‹œì‘ >> ì•„ì´í…œí™”
                 if (transform.parent == null) ItemManager.WrapWeaponInItem(this);
 
-                //ÇÏÀÌ¾î¶óÅ°¿¡ µå·Ó´Ù¿î >> Controller¿¡ Ãß°¡
+                //í•˜ì´ì–´ë¼í‚¤ì— ë“œë¡­ë‹¤ìš´ >> Controllerì— ì¶”ê°€
                 else
                 {
                     if (transform.parent.gameObject.name != Controller.weaponHolderName)
                     {
-                        Debug.LogError("¾ÆÀÌÅÛÀÌ ¾Æ´Ñ ¹«±â´Â Ç×»ó \"" + Controller.weaponHolderName + "\" ¾È¿¡ ÀÖ¾î¾ß ÇÕ´Ï´Ù.");
+                        Debug.LogError("ì•„ì´í…œì´ ì•„ë‹Œ ë¬´ê¸°ëŠ” í•­ìƒ \"" + Controller.weaponHolderName + "\" ì•ˆì— ìˆì–´ì•¼ í•©ë‹ˆë‹¤.");
                         return;
-                    } //LogError: ¾ÆÀÌÅÛÀÌ ¾Æ´Ñ ¹«±â´Â Ç×»ó "{Controller.weaponHolderName}" ¾È¿¡ ÀÖ¾î¾ß ÇÕ´Ï´Ù. >> return
+                    } //LogError: ì•„ì´í…œì´ ì•„ë‹Œ ë¬´ê¸°ëŠ” í•­ìƒ "{Controller.weaponHolderName}" ì•ˆì— ìˆì–´ì•¼ í•©ë‹ˆë‹¤. >> return
 
 
                     con = transform.parent.parent.GetComponent<Controller>();
 
                     if (con.weapons.Count >= con.inventorySize)
                     {
-                        Debug.LogWarning("ÀÎº¥Åä¸®°¡ °¡µæÂü.");
+                        Debug.LogWarning("ì¸ë²¤í† ë¦¬ê°€ ê°€ë“ì°¸.");
 
                         Utility.AutoDestroy(gameObject);
-                    } //LogWarning: ÀÎº¥Åä¸®°¡ °¡µæÂü. >> Á¦°Å
+                    } //LogWarning: ì¸ë²¤í† ë¦¬ê°€ ê°€ë“ì°¸. >> ì œê±°
 
                     con.AddWeapon(this);
 

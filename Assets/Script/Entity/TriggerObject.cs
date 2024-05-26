@@ -12,28 +12,27 @@ public enum TriggerType
 }
 public class TriggerObject : MonoBehaviour
 {
-    public static TriggerObject Spawn(GameObject obj)
-    {
-        TriggerObject triggerObject = new GameObject().AddComponent<TriggerObject>();
-        triggerObject.returnObject = obj;
-        triggerObject.returnObjectCon = obj.GetComponent<Controller>();
-
-        return triggerObject;
-    }
-    GameObject returnObject;
-    Controller returnObjectCon;
+    public GameObject returnObject;
+    public Controller returnObjectCon;
+    public string ID;
     
+    public void Set(GameObject obj, string id)
+    {
+        returnObject = obj;
+        returnObjectCon = obj.GetComponent<Weapon>().con;
+        ID = id;
+    }
     void OnTriggerEnter2D(Collider2D coll)
     {
-        EventBus.Trigger("TriggerObjectEnter", returnObject, GetTriggerType(coll));
+        TriggerObjectEnterEvent.Trigger(returnObject, ID, GetTriggerType(coll));
     }
     void OnTriggerStay2D(Collider2D coll)
     {
-        EventBus.Trigger("TriggerObjectStay", returnObject, GetTriggerType(coll));
+        TriggerObjectStayEvent.Trigger(returnObject, ID, GetTriggerType(coll));
     }
     void OnTriggerExit2D(Collider2D coll)
     {
-        EventBus.Trigger("TriggerObjectExit", returnObject, GetTriggerType(coll));
+        TriggerObjectExitEvent.Trigger(returnObject, ID, GetTriggerType(coll));
     }
     TriggerType GetTriggerType(Collider2D _coll)
     {
@@ -53,24 +52,71 @@ public class TriggerObject : MonoBehaviour
         else return TriggerType.Enemy;
     }
 }
+[UnitTitle("TriggerObject Spawn")]
+[UnitCategory("Events/Weapon")]
+public class TriggerObjectSpawn : Unit
+{
+    [DoNotSerialize] public ControlInput In;
 
-[UnitTitle("TriggerObjectEnter")]
+    [DoNotSerialize] public ValueInput Iv_prefab;
+
+    [DoNotSerialize] public ValueInput Iv_id;
+    
+    [DoNotSerialize] public ControlOutput Out;
+    
+    [DoNotSerialize] public ValueOutput Ov_triggerObject;
+
+    protected override void Definition()
+    {
+        In = ControlInput(string.Empty, 
+            (flow) => {
+                TriggerObject triggerObject = GameObject.Instantiate(flow.GetValue<GameObject>(Iv_prefab)).AddComponent<TriggerObject>();
+                flow.SetValue(Ov_triggerObject, triggerObject);
+                triggerObject.Set(flow.stack.gameObject, flow.GetValue<string>(Iv_id));
+
+                return Out;
+            }
+        );
+        Iv_prefab = ValueInput<GameObject>("Prefab");
+        Iv_id = ValueInput<string>("ID");
+
+        Out = ControlOutput(string.Empty);
+        Ov_triggerObject = ValueOutput<TriggerObject>("TriggerObject");
+    }
+}
+
+[UnitTitle("TriggerObject Enter")]
 [UnitCategory("Events/Weapon")]
 public class TriggerObjectEnterEvent : DefiniteEventNode<TriggerType>
 {
-    public override string eventName => "TriggerObjectEnter";
+    public static string name = "TriggerObjectEnter";
+    public override string eventName => name;
+    public static void Trigger(GameObject gameObject, string id, TriggerType type)
+    {
+        EventBus.Trigger(DefiniteEventNode.GetEventName(name, id), gameObject, type);
+    }
 }
 
-[UnitTitle("TriggerObjectStay")]
+[UnitTitle("TriggerObject Stay")]
 [UnitCategory("Events/Weapon")]
 public class TriggerObjectStayEvent : DefiniteEventNode<TriggerType>
 {
-    public override string eventName => "TriggerObjectStay";
+    public static string name = "TriggerObjectStay";
+    public override string eventName => name;
+    public static void Trigger(GameObject gameObject, string id, TriggerType type)
+    {
+        EventBus.Trigger(DefiniteEventNode.GetEventName(name, id), gameObject, type);
+    }
 }
 
-[UnitTitle("TriggerObjectExit")]
+[UnitTitle("TriggerObject Exit")]
 [UnitCategory("Events/Weapon")]
 public class TriggerObjectExitEvent : DefiniteEventNode<TriggerType>
 {
-    public override string eventName => "TriggerObjectExit";
+    public static string name = "TriggerObjectExit";
+    public override string eventName => name;
+    public static void Trigger(GameObject gameObject, string id, TriggerType type)
+    {
+        EventBus.Trigger(DefiniteEventNode.GetEventName(name, id), gameObject, type);
+    }
 }

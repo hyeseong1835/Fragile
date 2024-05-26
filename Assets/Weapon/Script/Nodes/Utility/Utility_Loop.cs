@@ -41,5 +41,4 @@ public class Utility_Loop : Unit
 
         time = ValueOutput<float>("Time");
     }
-    
 }
