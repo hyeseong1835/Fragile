@@ -557,7 +557,7 @@ using static UnityEngine.Rendering.DebugUI;
         }
         if (attack)
         {
-            AttackHoldEventNode.Trigger(curWeapon.gameObject, specialCharge);
+            AttackHoldEventNode.Trigger(curWeapon.gameObject, attackCharge);
             attackCharge += Time.deltaTime;
         }
 

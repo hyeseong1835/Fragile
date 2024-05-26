@@ -1,16 +1,16 @@
 using System;
 using Unity.VisualScripting;
+using UnityEngine;
 
-public abstract class BaseEventNode<T> : EventUnit<T>, IGameObjectEventUnit
+public abstract class BaseEventNode<T> : EventUnit<T>
 {
-    public Type MessageListenerType => null;
+    public Type MessageListenerType => GetType(); 
     protected override bool register => true;
-    
-    [DoNotSerialize] public abstract string eventName { get; }
+    public abstract string eventName { get; }
     
     public override EventHook GetHook(GraphReference reference)
     {
-        return new EventHook(eventName);
+        return new EventHook(eventName, reference.gameObject);
     }
 }
 public abstract class EventNode : BaseEventNode<int>
@@ -31,8 +31,6 @@ public abstract class EventNode<T> : BaseEventNode<T>
     }
     protected override void AssignArguments(Flow flow, T value)
     {
-        base.AssignArguments(flow, value);
-
         flow.SetValue(OutValue, value);
     }
 }
@@ -50,7 +48,7 @@ public abstract class DefiniteEventNode<T> : EventNode<T>
         if (Iv_definite == null) { UnityEngine.Debug.Log("Fail: " + eventName); return new EventHook(eventName); }
 
         UnityEngine.Debug.Log(eventName + Iv_definite);
-        return new EventHook(eventName + Iv_definite);
+        return new EventHook(eventName + Iv_definite, reference.gameObject);
     }
 }
 

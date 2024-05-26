@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using System;
 
 [UnitTitle("Update")]
 [UnitCategory("Events/Weapon")]
@@ -25,7 +26,6 @@ public class AttackDownEventNode : EventNode
     {
         EventBus.Trigger(name, gameObject, -1);
     }
-
     public override string eventName => name;
 }
 
