@@ -27,7 +27,7 @@ public class PlayerGrafic : Grafic
                 
                 body.sprite = animations[stayIndex].GetSprite(ref texture, Utility.FloorRotateToInt(con.lastMoveRotate, 8));
 
-                animations[stayIndex].AnimationUpdate();
+                animations[stayIndex].Update();
 
                 //Hand
                 if (hand.handMode == HandMode.NONE || hand.handMode == HandMode.ToHand)
@@ -41,7 +41,7 @@ public class PlayerGrafic : Grafic
 
                 body.sprite = animations[walkIndex].GetSprite(ref texture, Utility.FloorRotateToInt(con.moveRotate, 8));
                 
-                animations[walkIndex].AnimationUpdate();
+                animations[walkIndex].Update();
 
                 //Hand
                 if (hand.handMode == HandMode.NONE || hand.handMode == HandMode.ToHand)
