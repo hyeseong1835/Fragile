@@ -1,10 +1,5 @@
-using System;
 using UnityEngine;
-using System.Linq;
-using UnityEngine.Events;
 using Unity.VisualScripting;
-using static UnityEngine.Tilemaps.Tile;
-using Unity.Burst.CompilerServices;
 
 public enum TriggerType
 {
@@ -70,7 +65,11 @@ public class TriggerObjectSpawn : Unit
     {
         In = ControlInput(string.Empty, 
             (flow) => {
-                TriggerObject triggerObject = GameObject.Instantiate(flow.GetValue<GameObject>(Iv_prefab)).AddComponent<TriggerObject>();
+                TriggerObject triggerObject = GameObject.Instantiate(
+                    flow.GetValue<GameObject>(Iv_prefab), 
+                    flow.stack.gameObject.transform
+                    ).AddComponent<TriggerObject>();
+                Debug.Log(triggerObject);
                 flow.SetValue(Ov_triggerObject, triggerObject);
                 triggerObject.Set(flow.stack.gameObject, flow.GetValue<string>(Iv_id));
 
@@ -79,7 +78,7 @@ public class TriggerObjectSpawn : Unit
         );
         Iv_prefab = ValueInput<GameObject>("Prefab");
         Iv_id = ValueInput<string>("ID");
-
+        
         Out = ControlOutput(string.Empty);
         Ov_triggerObject = ValueOutput<TriggerObject>("TriggerObject");
     }

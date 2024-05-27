@@ -107,9 +107,12 @@ public class PlayerController : Controller
     }
     new void Update()
     {
-        attack = mouse0Stay;
-        special = mouse1Stay;
-        
+        if (preventAttackInput) attack = false;
+        else attack = mouse0Stay;
+
+        if (preventSpecialInput) special = false;
+        else special = mouse1Stay;
+
         base.Update();
         
         Mouse();

@@ -474,7 +474,7 @@ MonoBehaviour:
     Ordinal: 38
     Priority: 0
     IconType: 1
-    SmallIcon: {fileID: 2800000, guid: 3525378a201cdb946867a78a36422058, type: 3}
+    SmallIcon: {fileID: 2800000, guid: 33a6c692c9dfd594583f8577fd304c76, type: 3}
     LargeIcon: {fileID: 0}
     IsIconRecursive: 0
     BackgroundType: 0

@@ -21,8 +21,6 @@ public class Skill_Melee : CoroutineSkill
         base.Definition();
 
         Iv_triggerObj = ValueInput<TriggerObject>("TriggerObj");
-        Requirement(Iv_triggerObj, In);
-
         Iv_duration = ValueInput<float>("Duration", 1);
         Iv_spread = ValueInput<float>("Spread", 0);
         Iv_startSpear = ValueInput<float>("Start Spear", 1);
@@ -83,7 +81,7 @@ public class Skill_Melee : CoroutineSkill
 
         #region End  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        UseEnd(flow);
+        UseEnd();
 
         if (weapon.hand_obj != null) weapon.hand_obj.gameObject.SetActive(false);//-|
 

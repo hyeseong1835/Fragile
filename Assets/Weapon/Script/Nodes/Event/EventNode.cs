@@ -7,7 +7,7 @@ public abstract class BaseEventNode<T> : EventUnit<T>
     public Type MessageListenerType => GetType(); 
     protected override bool register => true;
     public abstract string eventName { get; }
-    
+
     public override EventHook GetHook(GraphReference reference)
     {
         return new EventHook(eventName, reference.gameObject);
@@ -28,6 +28,10 @@ public abstract class EventNode<T> : BaseEventNode<T>
         base.Definition();
 
         OutValue = ValueOutput<T>(argumentName);
+    }
+    protected override void AssignArguments(Flow flow, T args)
+    {
+        flow.SetValue(OutValue, args);
     }
 }
 public abstract class DefiniteEventNode : EventNode

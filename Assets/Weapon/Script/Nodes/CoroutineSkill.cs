@@ -11,6 +11,8 @@ public abstract class CoroutineSkill : Unit
     [DoNotSerialize] public ControlOutput Out;
     [DoNotSerialize] public ControlOutput End;
 
+    public GraphReference reference;
+
     protected override void Definition()
     {
         In = ControlInput(string.Empty, 
@@ -22,6 +24,7 @@ public abstract class CoroutineSkill : Unit
                 gameObject = flow.stack.gameObject;
                 weapon = gameObject.GetComponent<Weapon>();
                 weapon.StartCoroutine(Use(flow, gameObject, weapon));
+                reference = GraphReference.New(flow.stack.machine, true);
 
                 return Out;
             }
@@ -30,8 +33,5 @@ public abstract class CoroutineSkill : Unit
         End = ControlOutput("End");
     }
     protected abstract IEnumerator Use(Flow flow, GameObject gameObject, Weapon weapon);
-    protected void UseEnd(Flow flow)
-    {
-        flow.Invoke(End);
-    }
+    protected void UseEnd() => Flow.New(reference).Run(End);
 }
