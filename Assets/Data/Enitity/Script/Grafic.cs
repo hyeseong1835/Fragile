@@ -9,10 +9,10 @@ public enum GraficState
     Idle, Move,
 
     //Attack
-    ChargeAttack, StartAttack, Attack, EndAttack,
+    ChargeAttack, Attack, 
 
     //Special
-    ChargeSpecial, StartSpecial, Special, EndSpecial
+    ChargeSpecial, Special
 }
 public enum GraficMoveStyle
 {
