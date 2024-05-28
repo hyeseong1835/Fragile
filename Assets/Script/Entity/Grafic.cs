@@ -1,6 +1,7 @@
 using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 [Serializable]
 public class Animation
@@ -12,11 +13,12 @@ public class Animation
 
     public void Update()
     {
-        time += Time.deltaTime;
-        if (time > length)
+        time -= Time.deltaTime;
+
+        if (time < 0)
         {
-            time = 0;
-            if (!isRepeat) 
+            if (isRepeat) time = length;
+            else time = 0;
         }
     }
     public Animation(bool _isRepeat)
@@ -27,13 +29,13 @@ public class Animation
 public enum AnimationType
 {
     //Default
-    None, Stay, Walk, Run//, Crawl, Jump, Fall, Land, Dead,
+    None, Stay, Walk, Run, Crawl, Jump, Fall, Land, Dead, 
 
     //Skill Prepare
-    //Cast, 
+    //Cast, Charge, Aim, Ready, Hold, Draw, Sheath, Load, Unload, Equip, UnEquip,
 
     //Skill
-    //Front, Back
+    //Front, Back,
 
     //Skill End
 
@@ -41,16 +43,22 @@ public enum AnimationType
 public abstract class Grafic : MonoBehaviour
 {
     public Animation curAnimation;
-    public Animation[] animations { get; private set; } =
+    public Animation[] animations { get; private set; } = 
     {
-
+        
     };
+    #if UNITY_EDITOR
+    public string[] animationName;
+    #endif
+
+    public int[] animationIndex;
 
     void Update()
     {
         curAnimation.Update();
+        if (curAnimation.time == 0) Run(AnimationType.None, 0);
     }
-    public void Run(AnimationType type)
+    public void Run(AnimationType type, float time)
     {
         curAnimation = animations[(int)type];
     }
