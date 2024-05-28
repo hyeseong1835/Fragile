@@ -156,15 +156,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   center: {x: 0, y: 0.5}
   hand: {fileID: 1313857094}
+  grafic: {fileID: 1780597530}
   weaponHolder: {fileID: 374465424}
   hp: 20
   maxHp: 20
   moveSpeed: 5
   moveVector: {x: 0, y: 0}
-  lastMoveVector: {x: 0.5, y: 0}
+  lastMoveVector: {x: 0, y: 0}
   moveRotate: 0
   lastMoveRotate: 0
-  targetPos: {x: 18.863955, y: 24.98199}
+  targetPos: {x: -8.888889, y: -5}
   attack: 0
   prevAttack: 0
   preventAttackInput: 0
@@ -177,7 +178,6 @@ MonoBehaviour:
   curWeapon: {fileID: 1213235845}
   weapons: []
   inventorySize: 5
-  grafic: {fileID: 1780597530}
   camCon: {fileID: 519420033}
   attackInput: 0
   attackInputAllowTime: 0.25
@@ -12258,6 +12258,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1780597529}
   - component: {fileID: 1780597530}
+  - component: {fileID: 1780597532}
+  - component: {fileID: 1780597531}
   m_Layer: 6
   m_Name: Grafic
   m_TagString: Untagged
@@ -12291,27 +12293,45 @@ MonoBehaviour:
   m_GameObject: {fileID: 1780597528}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: effb1856fa3862c418799eb97678a146, type: 3}
+  m_Script: {fileID: 11500000, guid: 41b477cfd2e414f40b2948c7c8acc505, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hand: {fileID: 1313857094}
-  con: {fileID: 5837737}
-  texture: {fileID: 2800000, guid: 443482d6e712f1844ad2b17f68b3a8c6, type: 3}
-  body: {fileID: 1613293454}
-  animations:
-  - name: Stay
-    textureAnchor: {x: 0, y: 0}
-    textureSize: {x: 8, y: 2}
-    spriteSize: {x: 16, y: 16}
-    time: 0
-    timeScale: 0.5
-  - name: Walk
-    textureAnchor: {x: 0, y: 2}
-    textureSize: {x: 8, y: 4}
-    spriteSize: {x: 16, y: 16}
-    time: 0
-    timeScale: 0.5
-  animationState: 0
+  state: 0
+  moveStyle: 0
+  move: {x: 0, y: 0}
+  view: {x: 0, y: 0}
+  body: {x: 0, y: 0}
+--- !u!114 &1780597531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1780597528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2fe5546f775c47d2820aa5e8a715f53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _data:
+    _json: '{"nest":{"source":"Macro","macro":0,"embed":null}}'
+    _objectReferences:
+    - {fileID: 11400000, guid: a42ef79bda82c1d4582172581c168986, type: 2}
+--- !u!114 &1780597532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1780597528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e741851cba3ad425c91ecf922cc6b379, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _data:
+    _json: '{"declarations":{"Kind":"Object","collection":{"$content":[],"$version":"A"},"$version":"A"}}'
+    _objectReferences: []
 --- !u!1 &1835459132
 GameObject:
   m_ObjectHideFlags: 0

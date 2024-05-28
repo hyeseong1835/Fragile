@@ -76,13 +76,12 @@ public static class Utility
 
     #region Math - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-    public static int FloorRotateToInt(float rotate, int count)
-    {   
+    public static int FloorRotateToInt(float rotate, float offset, int count)
+    {
+        rotate += offset;
         int intRotate = Mathf.FloorToInt((rotate / 360) * count);
 
-        if (intRotate == count) return 0;
-
-        return intRotate;
+        return intRotate % count;
     }
     /// <summary>
     /// {vector}를 각도로 변환
