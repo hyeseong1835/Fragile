@@ -9,6 +9,22 @@ public static class Utility
 {
     #region Load - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
+    public static Sprite GetSprite(Texture2D spriteSheet, int posX, int posY, int spritePixelWidth, int spritePixelHeight = -1)
+    {
+        Texture2D tex = new Texture2D(spritePixelWidth, spritePixelHeight);
+        tex.SetPixels(
+            spriteSheet.GetPixels(posX * spritePixelWidth, posY * spritePixelHeight, spritePixelWidth, spritePixelHeight)
+        );
+        tex.filterMode = FilterMode.Point;
+        tex.Apply();
+
+        return Sprite.Create(
+            tex,
+            new Rect(0, 0, spritePixelWidth, spritePixelHeight),
+            new Vector2(0.5f, 0)
+        );
+    }
+
     /// <summary>
     /// 시작 스프라이트 좌표에서 배열 크기만큼 오른쪽 아래로 불러오는 함수
     /// </summary>

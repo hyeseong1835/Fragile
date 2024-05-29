@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEngine.UIElements;
 
 public enum GraficState
 {
@@ -24,7 +25,10 @@ public class Grafic : MonoBehaviour
 {
     public Controller con;
     public Texture2D spriteSheet { get; private set; }
+    public int spritePixelWidth = 16;
+    public int spritePixelHeight = 16;
     public HandGrafic hand;
+    public SpriteRenderer body;
 
     public GraficState state = GraficState.Idle;
     public GraficMoveStyle moveStyle = GraficMoveStyle.None;
@@ -32,18 +36,30 @@ public class Grafic : MonoBehaviour
     public int rotation = 0;
 
     public Vector2 view = new Vector2(0, 0);
-    public Vector2 body = new Vector2(0, 0);
+    public Vector2 bodyPos = new Vector2(0, 0);
 
-    public int currentAnimationOrder = int.MinValue;
+    public int curAnimationOrder = int.MinValue;
+    public float t = 0;
+    public float curAnimationlength = 1;
+    public int curAnimationSize = 1;
+    public int curAnimationLine = 0;
+    public bool curAnimationRepeat = true;
 
     void Awake()
     {
-        con = transform.parent.GetComponent<Controller>();
-        spriteSheet = Resources.Load<Texture2D>(con.data.name);
+        spriteSheet = Resources.Load<Texture2D>($"{con.data.FilePath}/BodySpriteSheet");
+        body = transform.Find("Body").Find("Sprite").GetComponent<SpriteRenderer>();
     }
-    public void Run(int index, float time, bool repeat)
+    void Update()
     {
-
+        t += Time.deltaTime / curAnimationlength;
+        if (t >= 1) t--;
+        body.sprite = Utility.GetSprite(
+            spriteSheet, 
+            Mathf.FloorToInt(t * curAnimationSize) * curAnimationSize, 
+            curAnimationLine, 
+            spritePixelWidth, spritePixelHeight
+        );
     }
 }
 [UnitTitle("Run Line")]
@@ -51,8 +67,10 @@ public class Grafic : MonoBehaviour
 public class AnimationRun : Node
 {
     public ValueInput Iv_line;
+    public ValueInput Iv_count;
     public ValueInput Iv_time;
     public ValueInput Iv_repeat;
+    public ValueInput Iv_order;
 
     Grafic grafic;
 
@@ -66,7 +84,13 @@ public class AnimationRun : Node
     }
     protected override void Act(Flow flow)
     {
-        grafic.Run(flow.GetValue<int>(Iv_line), flow.GetValue<float>(Iv_time), flow.GetValue<bool>(Iv_repeat));
+        if (flow.GetValue<int>(Iv_order) > grafic.curAnimationOrder)
+        {
+            grafic.curAnimationLine = flow.GetValue<int>(Iv_line);
+            grafic.curAnimationSize = flow.GetValue<int>(Iv_count);
+            grafic.curAnimationlength = flow.GetValue<float>(Iv_time);
+            grafic.curAnimationRepeat = flow.GetValue<bool>(Iv_repeat);
+        }
     }
 }
 [UnitTitle("Run Line By Rotation")]
@@ -74,6 +98,7 @@ public class AnimationRun : Node
 public class AnimationRunByRotation : Node
 {
     public ValueInput Iv_startLine;
+    public ValueInput Iv_count;
     public ValueInput Iv_time;
     public ValueInput Iv_repeat;
     public ValueInput Iv_order;
@@ -93,14 +118,12 @@ public class AnimationRunByRotation : Node
     {
         if (grafic == null) grafic = flow.stack.gameObject.GetComponent<Grafic>();
 
-        int startLine = flow.GetValue<int>(Iv_startLine);
-        float time = flow.GetValue<float>(Iv_time);
-        bool repeat = flow.GetValue<bool>(Iv_repeat);
-        int order = flow.GetValue<int>(Iv_order);
-
-        if(order > grafic.currentAnimationOrder)
+        if(flow.GetValue<int>(Iv_order) > grafic.curAnimationOrder)
         {
-            grafic.Run(startLine + grafic.rotation, time, repeat);
+            grafic.curAnimationLine = flow.GetValue<int>(Iv_startLine) + grafic.rotation;
+            grafic.curAnimationSize = flow.GetValue<int>(Iv_count);
+            grafic.curAnimationlength = flow.GetValue<float>(Iv_time);
+            grafic.curAnimationRepeat = flow.GetValue<bool>(Iv_repeat);
         }
     }
 }

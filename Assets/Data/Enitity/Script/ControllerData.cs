@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class ControllerData : ScriptableObject
 {
+    public string FilePath => $"{Controller.entityFolderPath}/{name}";
+
     new public string name;
 
     [LabelWidth(Editor.propertyLabelWidth)]
