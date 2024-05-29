@@ -5,7 +5,6 @@ using Sirenix.OdinInspector;
 using System.Reflection.Emit;
 using UnityEngine.AI;
 
-[ExecuteAlways]
 public class EnemyController : Controller
 {
     [Space(Editor.overrideSpace)]
@@ -42,7 +41,7 @@ public class EnemyController : Controller
         if (Editor.GetType(Editor.StateType.IsPlay))
         {
             agent = gameObject.AddComponent<NavMeshAgent>();
-            agent.speed = moveSpeed;
+            agent.speed = data.moveSpeed;
         }
     }
     new void Update()
@@ -51,7 +50,7 @@ public class EnemyController : Controller
 
         if (target == null) return;
 
-        targetPos = (Vector2)target.transform.position + target.center;
+        targetPos = (Vector2)target.transform.position + target.data.center;
 
         if (Editor.GetType(Editor.StateType.IsPlay))
         {
@@ -72,13 +71,13 @@ public class EnemyController : Controller
     {
         moveVector = target.transform.position - transform.position;
 
-        transform.position += (Vector3)moveVector.normalized * Time.deltaTime * moveSpeed;
+        transform.position += (Vector3)moveVector.normalized * Time.deltaTime * data.moveSpeed;
     }
     void Recoil()
     {
         moveVector = -(target.transform.position - transform.position);
 
-        transform.position += (Vector3)moveVector.normalized * Time.deltaTime * moveSpeed * 0.5f;
+        transform.position += (Vector3)moveVector.normalized * Time.deltaTime * data.moveSpeed * 0.5f;
     }
     void Behavior()
     {
@@ -95,7 +94,7 @@ public class EnemyController : Controller
                     Recoil();
                     return;
                 }
-                float distanceBetweenTarget = Vector2.Distance(targetPos, (Vector2)transform.position + center);
+                float distanceBetweenTarget = Vector2.Distance(targetPos, (Vector2)transform.position + data.center);
                 
                 //최대 거리 만족
                 if (distanceBetweenTarget < curWeapon.attack.maxDistance)
@@ -135,8 +134,8 @@ public class EnemyController : Controller
         if (curWeapon != null)
         {
             //AttackRange
-            Gizmos.DrawWireSphere(transform.position + (Vector3)center, curWeapon.attack.minDistance);
-            Gizmos.DrawWireSphere(transform.position + (Vector3)center, curWeapon.attack.maxDistance);
+            Gizmos.DrawWireSphere(transform.position + (Vector3)data.center, curWeapon.attack.minDistance);
+            Gizmos.DrawWireSphere(transform.position + (Vector3)data.center, curWeapon.attack.maxDistance);
         }
     }
 }

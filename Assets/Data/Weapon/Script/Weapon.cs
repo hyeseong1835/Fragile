@@ -145,7 +145,7 @@ using UnityEngine;
             if (hand_obj != null)
             {
                 hand_obj.gameObject.SetActive(true);
-                con.hand.HandLink(hand_obj, HandMode.ToHand);
+                con.grafic.hand.HandLink(hand_obj, HandMode.ToHand);
             }
         }
         protected virtual void OnDeUse()
@@ -153,7 +153,7 @@ using UnityEngine;
             if (hand_obj != null)
             {
                 hand_obj.gameObject.SetActive(false);
-                con.hand.HandLink(null);
+                con.grafic.hand.HandLink(null);
             }
         }
         protected virtual void Break(Vector2 breakPos)
@@ -167,7 +167,7 @@ using UnityEngine;
         public virtual void OnWeaponRemoved()
         {
             Destroy(hand_obj.gameObject);
-            con.hand.HandLink(null);
+            con.grafic.hand.HandLink(null);
         }
         protected virtual void OnWeaponDestroyed() { }
 
@@ -278,16 +278,10 @@ using UnityEngine;
                 //하이어라키에 드롭다운 >> Controller에 추가
                 else
                 {
-                    if (transform.parent.gameObject.name != Controller.weaponHolderName)
-                    {
-                        Debug.LogError("아이템이 아닌 무기는 항상 \"" + Controller.weaponHolderName + "\" 안에 있어야 합니다.");
-                        return;
-                    } //LogError: 아이템이 아닌 무기는 항상 "{Controller.weaponHolderName}" 안에 있어야 합니다. >> return
-
-
+                    //위치 자동 수정-----------------------------------------------필요
                     con = transform.parent.parent.GetComponent<Controller>();
 
-                    if (con.weapons.Count >= con.inventorySize)
+                    if (con.weapons.Count >= con.data.inventorySize)
                     {
                         Debug.LogWarning("인벤토리가 가득참.");
 

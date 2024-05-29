@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using static UnityEngine.Rendering.DebugUI;
 
-public struct ControllerData
+public struct ControllerSave
 {
     //좌표
     public Vector2 pos;
@@ -18,7 +18,7 @@ public struct ControllerData
     //인벤토리(무기(데이터))
     public WeaponSaveData[] weaponDatas;
 
-    public ControllerData(
+    public ControllerSave(
         Vector2 _pos,
         WeaponSaveData _defaultWeaponData,
         WeaponSaveData[] _weaponDatas,
@@ -31,38 +31,46 @@ public struct ControllerData
         curWeaponIndex = _curWeaponIndex;
     }
 }
-[ExecuteAlways]
 public abstract class Controller : MonoBehaviour
 {
     #region 정적 멤버 - - - - - - - - - - - - - - - - - - - -|
 
-    public const string weaponHolderName = "WeaponHolder";//-|
+    public const string controllerFolderPath = "Assets/Data/Enitity/Script/Controller";
+    public const string entityFolderPath = "Assets/Data/Enitity/Resources";
 
     #endregion  - - - - - - - - - - - - - - - - - - - - - - -|
 
     [LabelWidth(Editor.propertyLabelWidth)]
-    public Vector2 center = new Vector2(0, 0.5f);
+    public ControllerData data;
 
     [BoxGroup("Object")]
-    #region Foldout Object - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    #region Foldout Object - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        [Required][ChildGameObjectsOnly][PropertyOrder(0)]
-        [LabelText("Hand Grafic")][LabelWidth(Editor.propertyLabelWidth - Editor.childGameObjectOnlyWidth)]//-|
-        public HandGrafic hand;
-                                                                                                               [BoxGroup("Object")]
-    
-        [Required][ChildGameObjectsOnly][PropertyOrder(0)]
-        [LabelText("Player Grafic")][LabelWidth(Editor.propertyLabelWidth - Editor.childGameObjectOnlyWidth)]//-|
+        [ReadOnly][Required][PropertyOrder(0)]
+        [LabelText("Grafic")][LabelWidth(Editor.propertyLabelWidth)]//-|
         public Grafic grafic;
-                                                                                [BoxGroup("Object")]    
-        [Required][ChildGameObjectsOnly][PropertyOrder(0)]
-        [LabelWidth(Editor.propertyLabelWidth - Editor.childGameObjectOnlyWidth)]
+                                                                                                                 [BoxGroup("Object")]    
+        [ReadOnly][Required][PropertyOrder(0)]
+        [LabelWidth(Editor.propertyLabelWidth)]
         public Transform weaponHolder;
 
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+        #if UNITY_EDITOR
+                                                                                                                 [BoxGroup("Object")]    
+        [ShowInInspector]
+        [LabelText("Center")][LabelWidth(Editor.propertyLabelWidth)]
+        Vector2 showCenter { 
+            get { 
+                if (data == null) return default;
+                return data.center; 
+            } 
+            set { data.center = value; } 
+        }
+        #endif
+
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     [FoldoutGroup("Stat")]
-    #region Foldout Stat - - - - - - - - - - - - - - - -|                                         
+    #region Foldout Stat - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|                                         
 
         [HorizontalGroup("Stat/HP")]
         #region Horizontal HP - - - - - - - - - - - - - - - - - - - - - - - - -|
@@ -73,23 +81,26 @@ public abstract class Controller : MonoBehaviour
             #endif
             public float hp = 1;
 
-            [HideInInspector]
-            public float maxHp = 1;
-
             #if UNITY_EDITOR
-                                                                                [HorizontalGroup("Stat/HP", Width = Editor.shortNoLabelPropertyWidth)]
+                                                                                 [HorizontalGroup("Stat/HP", Width = Editor.shortNoLabelPropertyWidth)]
             [ShowInInspector][HideLabel]
             [DelayedProperty]
             float _maxHp{
-                get { return maxHp; }
+                get { 
+                    if(data == null) return default;
+                    return data.maxHp; 
+                }
                 set {
-                    if (hp == maxHp || hp > value) hp = value;
-                    maxHp = value;
+                    if (hp == data.maxHp || hp > value) hp = value;
+                    data.maxHp = value;
                 }
             }
 
+//          HideInInspector_____________________________________________________|
             Color _hpColor {
                 get {
+                    if(data == null) return default;
+                    
                     Gradient gradient = new Gradient();
                     gradient.SetKeys(
                         new GradientColorKey[] {
@@ -98,7 +109,7 @@ public abstract class Controller : MonoBehaviour
                         },
                         new GradientAlphaKey[] { new GradientAlphaKey(1, 0) }//-|
                     );
-                    return gradient.Evaluate(hp / maxHp);
+                    return gradient.Evaluate(hp / data.maxHp);
                 }
             }
 
@@ -106,16 +117,25 @@ public abstract class Controller : MonoBehaviour
 
         #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|    
 
-        [LabelWidth(Editor.propertyLabelWidth)]
-        public float moveSpeed = 1;
-
     #endregion - - - - - - - - - - - - - - - - - - - - -|
 
     #region Input  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     [VerticalGroup("Input/Move")]
-    #region Vertical Move - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    #region Vertical Move - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
+        #if UNITY_EDITOR
+        [ShowInInspector]
+        [LabelText("Speed")][LabelWidth(Editor.propertyLabelWidth)]
+        float showMoveSpeed { 
+            get { 
+                if (data == null) return default;
+                return data.moveSpeed; 
+            } 
+            set { data.moveSpeed = value; } 
+        }
+        #endif
+                                                                                                    [VerticalGroup("Input/Move")]
         [ShowInInspector]
         [LabelWidth(Editor.propertyLabelWidth)]
         public Vector2 lastMoveVector { get { return _lastMoveVector; }
@@ -123,7 +143,7 @@ public abstract class Controller : MonoBehaviour
                 if (_lastMoveVector != value) 
                 {
                     moveRotate = Utility.Vector2ToDegree(moveVector);
-                    moveRotate4 = Utility.FloorRotateToInt(moveRotate, 45, 4);
+                    moveRotate4 = Utility.FloorRotateToInt(moveRotate, 45, 4);//-|
                     moveRotate8 = Utility.FloorRotateToInt(moveRotate, 45, 8);
                     _lastMoveVector = value;
                 }
@@ -133,8 +153,7 @@ public abstract class Controller : MonoBehaviour
         [LabelWidth(Editor.propertyLabelWidth)]
         public float moveRotate { get; private set; }
 
-
-//      인스펙터에 표시하지 않음_________________________________________________________________|
+//      HideInInspector__________________________________________________________|
 
         [HideInInspector]
         public Vector2 moveVector = new Vector2(0.5f, 0);
@@ -150,27 +169,29 @@ public abstract class Controller : MonoBehaviour
     [VerticalGroup("Input/Target")]
     #region Vertical Target  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-    [LabelWidth(Editor.propertyLabelWidth)]
-    public Vector2 targetPos;
-    [VerticalGroup("Input/Target")]
-    [ShowInInspector]
-    [LabelWidth(Editor.propertyLabelWidth)]
-    public Vector2 targetDir
-    {
-        get { return (targetPos - ((Vector2)transform.position + center)).normalized; }//-|
-    }
+        [LabelWidth(Editor.propertyLabelWidth)]
+        public Vector2 targetPos;
+                                                                                                    [VerticalGroup("Input/Target")]
+        [ShowInInspector]
+        [LabelWidth(Editor.propertyLabelWidth)]
+        public Vector2 targetDir{
+            get {
+                if (data == null) return default;
+                return (targetPos - ((Vector2)transform.position + data.center)).normalized; 
+            }
+        }
 
     #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     [VerticalGroup("Input/Attack")]
     #region Vertical Attack - - - - - - - - - - - - - - - - -|
 
-    public bool attack = false;
-    public bool prevAttack = false;
+        [HideInInspector] public bool attack = false;
+        [HideInInspector] public bool prevAttack = false;
 
-    float attackCharge;
-    public bool preventAttackInput = false;
-    public bool readyPreventAttackInput = false;
+        [HideInInspector] float attackCharge;
+        [HideInInspector] public bool preventAttackInput = false;
+        [HideInInspector] public bool readyPreventAttackInput = false;
 
 
     #endregion  - - - - - - - - - - - - - - - - - - - - - - -|
@@ -178,14 +199,13 @@ public abstract class Controller : MonoBehaviour
     [VerticalGroup("Input/Special")]
     #region Vertical Special - - - - - - - - - - - - - - - - -|
 
-    public bool special;
-    public bool prevSpecial = false;
+        [HideInInspector] public bool special;
+        [HideInInspector] public bool prevSpecial = false;
 
-    float specialCharge;
-    public bool isSpecial { get; private set; } = false;
-    public bool preventSpecialInput = false;
-    public bool readyPreventSpecialInput = false;
-
+        [HideInInspector] float specialCharge;
+        [HideInInspector] public bool isSpecial { get; private set; } = false;
+        [HideInInspector] public bool preventSpecialInput = false;
+        [HideInInspector] public bool readyPreventSpecialInput = false;
 
     #endregion  - - - - - - - - - - - - - - - - - - - - - - -|   
 
@@ -194,172 +214,173 @@ public abstract class Controller : MonoBehaviour
     [FoldoutGroup("Weapon")]
     #region Foldout Weapon - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|     
 
-    [VerticalGroup("Weapon/DefaultWeapon")]
-    [HorizontalGroup("Weapon/DefaultWeapon/Horizontal")]
-    #region Horizontal DefaultWeapon - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+        [VerticalGroup("Weapon/DefaultWeapon")]
+        [HorizontalGroup("Weapon/DefaultWeapon/Horizontal")]
+        #region Horizontal DefaultWeapon - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-    [VerticalGroup("Weapon/DefaultWeapon/Horizontal/Vertical", PaddingBottom = 25)]//-|
-    [ShowInInspector]
-    [ReadOnly]
-    [Required]
-    [LabelWidth(Editor.propertyLabelWidth)]
-    public Weapon defaultWeapon;
+            [VerticalGroup("Weapon/DefaultWeapon/Horizontal/Vertical", PaddingBottom = 25)]//-|
+            [ShowInInspector][ReadOnly][Required]
+            [LabelWidth(Editor.propertyLabelWidth)]
+            public Weapon defaultWeapon;
 
-#if UNITY_EDITOR
-    [HorizontalGroup("Weapon/DefaultWeapon/Horizontal", width: Editor.shortFunctionButtonWidth)]
-    [Button(name: "Set")]
-    void SetDefaultWeapon(int index)
-    {
-        // 제거(-1)
-        if (index == -1)
-        {
-            if (curWeapon == defaultWeapon)
+            #if UNITY_EDITOR
+                                                                                                    [HorizontalGroup("Weapon/DefaultWeapon/Horizontal", width: Editor.shortFunctionButtonWidth)]
+            [Button(name: "Set")]
+            void SetDefaultWeapon(int index)
             {
-                curWeapon = null;
-            }
-            weapons.Add(defaultWeapon);
-            defaultWeapon = null;
-        }
-        else
-        {
-            Weapon weapon = weaponHolder.GetChild(index).GetComponent<Weapon>();
+                // 제거(-1)
+                if (index == -1)
+                {
+                    if (curWeapon == defaultWeapon)
+                    {
+                        curWeapon = null;
+                    }
+                    weapons.Add(defaultWeapon);
+                    defaultWeapon = null;
+                }
+                else
+                {
+                    Weapon weapon = weaponHolder.GetChild(index).GetComponent<Weapon>();
 
-            //현재 무기가 없으면 자동 선택
-            if (curWeapon == null)
-            {
-                curWeapon = weapon;
-                SelectWeapon(weapon);
-            }
+                    //현재 무기가 없으면 자동 선택
+                    if (curWeapon == null)
+                    {
+                        curWeapon = weapon;
+                        SelectWeapon(weapon);
+                    }
 
-            //인벤토리에서 자동 제거
-            if (weapons.Contains(weapon))
-            {
-                weapons.Remove(weapon);
-            }
-            defaultWeapon = weapon;
-            defaultWeapon.transform.SetAsFirstSibling();
-        }
-    }
-
-#endif
-
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    [HorizontalGroup("Weapon/CurWeapon")]
-    #region Horizontal CurWeapon  - - - - - - - - - - - - - - - - - - - - -|
-
-    [VerticalGroup("Weapon/CurWeapon/Vertical", PaddingBottom = 25)]//-|
-    [ReadOnly]
-    [Required]
-    [LabelWidth(Editor.propertyLabelWidth)]
-    public Weapon curWeapon;
-
-#if UNITY_EDITOR
-    [HorizontalGroup("Weapon/CurWeapon", width: Editor.shortFunctionButtonWidth)]
-    [Button(name: "Set")]
-    void SetCurWeapon(int index)
-    {
-        //무기 없음
-        if (transform.childCount == 0) return;
-
-        //선택 해제
-        if (index == -1)
-        {
-            curWeapon.state = WeaponState.Inventory;
-            curWeapon = null;
-        }
-        else SelectWeapon(weaponHolder.GetChild(index).GetComponent<Weapon>());
-    }
-
-#endif
-
-    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    [VerticalGroup("Weapon/Inventory")]
-    [HorizontalGroup("Weapon/Inventory/Horizontal")]
-    #region Horizontal Inventory - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    [ReadOnly]
-    [LabelWidth(Editor.propertyLabelWidth)]
-    public List<Weapon> weapons = new List<Weapon>();
-
-    [HorizontalGroup("Weapon/Inventory/Horizontal", width: Editor.shortNoLabelPropertyWidth)]
-    [VerticalGroup("Weapon/Inventory/Horizontal/Manage")]
-    #region Vertical Manage  - - - - - - - - - - - - - - - - - - - - - - - - - - - -|       
-
-    [DelayedProperty]
-    [HideLabel]
-    public int inventorySize = 0;
-
-#if UNITY_EDITOR
-    [VerticalGroup("Weapon/Inventory/Horizontal/Manage")]
-    [Button(name: "Clear")]
-    void ClearInventory()
-    {
-        //기본 무기 제거
-        if (defaultWeapon != null) Utility.AutoDestroy(defaultWeapon.gameObject);//-|
-
-        //인벤토리 무기 제거
-        for (int i = weapons.Count - 1; i >= 0; i--)
-        {
-            if (weapons[i] == null) continue;
-
-            Utility.AutoDestroy(weapons[i].gameObject);
-        }
-
-        defaultWeapon = null;
-        curWeapon = null;
-        weapons.Clear();
-    }
-
-#endif
-
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-#if UNITY_EDITOR
-
-    [HorizontalGroup("Weapon/Inventory/Manage")]
-    #region Horizontal Manage  - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    [Button(name: "Add")]
-    void AddWeaponInInspector(string name)
-    {
-        AddWeapon(Weapon.Spawn(name, weaponHolder));
-        if (defaultWeapon == null) SetDefaultWeapon(weaponHolder.childCount - 1);
-    }
-    [HorizontalGroup("Weapon/Inventory/Manage")]
-    [Button(name: "Destroy")]
-    void DestroyWeaponInInspector(int index)
-    {
-        if (index == -1)
-        {
-            if (defaultWeapon == null) return;
-
-            DestroyImmediate(defaultWeapon.gameObject);
-
-            defaultWeapon = null;
-        }
-        else
-        {
-            if (weapons[index] == null)
-            {
-                weapons.RemoveAt(index);
-                return;
+                    //인벤토리에서 자동 제거
+                    if (weapons.Contains(weapon))
+                    {
+                        weapons.Remove(weapon);
+                    }
+                    defaultWeapon = weapon;
+                    defaultWeapon.transform.SetAsFirstSibling();
+                }
             }
 
-            weapons[index].WeaponDestroy();
-        }
-    }
+            #endif
 
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-#endif
+        [HorizontalGroup("Weapon/CurWeapon")]
+        #region Horizontal CurWeapon  - - - - - - - - - - - - - - - - - - - - -|
 
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|     
+            [VerticalGroup("Weapon/CurWeapon/Vertical", PaddingBottom = 25)]//-|
+            [ReadOnly][Required]
+            [LabelWidth(Editor.propertyLabelWidth)]
+            public Weapon curWeapon;
 
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+            #if UNITY_EDITOR
+
+            [HorizontalGroup("Weapon/CurWeapon", width: Editor.shortFunctionButtonWidth)]
+            [Button(name: "Set")]
+            void SetCurWeapon(int index)
+            {
+                //무기 없음
+                if (transform.childCount == 0) return;
+
+                //선택 해제
+                if (index == -1)
+                {
+                    curWeapon.state = WeaponState.Inventory;
+                    curWeapon = null;
+                }
+                else SelectWeapon(weaponHolder.GetChild(index).GetComponent<Weapon>());
+            }
+
+            #endif
+
+        #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+        [VerticalGroup("Weapon/Inventory")]
+        [HorizontalGroup("Weapon/Inventory/Horizontal")]
+        #region Horizontal Inventory - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+            [ReadOnly]
+            [LabelWidth(Editor.propertyLabelWidth)]
+            public List<Weapon> weapons = new List<Weapon>();
+
+            #if UNITY_EDITOR
+
+            [HorizontalGroup("Weapon/Inventory/Horizontal", width: Editor.shortNoLabelPropertyWidth)]
+            [VerticalGroup("Weapon/Inventory/Horizontal/Manage")]
+            #region Vertical Manage  - - - - - - - - - - - - - - - - - - - - - - - - - - - -|       
+    
+    
+                [ShowInInspector][DelayedProperty]
+                [HideLabel]
+                public int showInventorySize { 
+                    get { return data.inventorySize; } 
+                    set { data.inventorySize = value; } 
+                }
+                                                                                                    [VerticalGroup("Weapon/Inventory/Horizontal/Manage")]
+                [Button(name: "Clear")]
+                void ClearInventory()
+                {
+                    //기본 무기 제거
+                    if (defaultWeapon != null)
+                    {
+                        Utility.AutoDestroy(defaultWeapon.gameObject);//-|
+                    }
+
+                    //인벤토리 무기 제거
+                    for (int i = weapons.Count - 1; i >= 0; i--)
+                    {
+                        if (weapons[i] == null) continue;
+
+                        Utility.AutoDestroy(weapons[i].gameObject);
+                    }
+
+                    defaultWeapon = null;
+                    curWeapon = null;
+                    weapons.Clear();
+                }
 
 
+            #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+
+            [HorizontalGroup("Weapon/Inventory/Manage")]
+            #region Horizontal Manage  - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+            [Button(name: "Add")]
+            void AddWeaponInInspector(string name)
+            {
+                AddWeapon(Weapon.Spawn(name, weaponHolder));
+                if (defaultWeapon == null) SetDefaultWeapon(weaponHolder.childCount - 1);
+            }
+            [HorizontalGroup("Weapon/Inventory/Manage")]
+            [Button(name: "Destroy")]
+            void DestroyWeaponInInspector(int index)
+            {
+                if (index == -1)
+                {
+                    if (defaultWeapon == null) return;
+
+                    DestroyImmediate(defaultWeapon.gameObject);
+
+                    defaultWeapon = null;
+                }
+                else
+                {
+                    if (weapons[index] == null)
+                    {
+                        weapons.RemoveAt(index);
+                        return;
+                    }
+
+                    weapons[index].WeaponDestroy();
+                }
+            }
+
+        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+    #endif
+
+        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+    #endregion
 
     #region 무기 관리
 
@@ -382,7 +403,7 @@ public abstract class Controller : MonoBehaviour
             return weapon;
         } //LogWarning: 이미 인벤토리에 있음 >> return
 
-        if (weapons.Count > inventorySize)
+        if (weapons.Count > data.inventorySize)
         {
             Debug.LogWarning("인벤토리가 꽉 참");
             Utility.AutoDestroy(weapon.gameObject);
@@ -492,6 +513,18 @@ public abstract class Controller : MonoBehaviour
 
     #endregion
 
+
+    public virtual void Create()
+    {
+        grafic = new GameObject("Grafic").AddComponent<Grafic>();
+        grafic.transform.parent = transform;
+            grafic.hand = new GameObject("Hand").AddComponent<HandGrafic>();
+            grafic.hand.transform.parent = grafic.transform;
+            grafic.con = this;
+        weaponHolder = new GameObject("WeaponHolder").transform;
+            weaponHolder.parent = transform;
+    }
+
     public void TakeDamage(float damage)
     {
         hp -= damage;
@@ -588,7 +621,7 @@ public abstract class Controller : MonoBehaviour
             }
         }
     }
-    public ControllerData GetData()
+    public ControllerSave GetData()
     {
         WeaponSaveData[] weaponDatas = new WeaponSaveData[weapons.Count];
 
@@ -600,7 +633,7 @@ public abstract class Controller : MonoBehaviour
             }
         }
 
-        return new ControllerData
+        return new ControllerSave
             (
                 (Vector2)transform.position,
                 defaultWeapon.GetData(),
@@ -609,7 +642,7 @@ public abstract class Controller : MonoBehaviour
             );
 
     }
-    public void SetData(ControllerData data)
+    public void SetData(ControllerSave data)
     {
         transform.position = data.pos;
         defaultWeapon = Weapon.LoadWeapon(data.defaultWeaponData);
@@ -621,6 +654,8 @@ public abstract class Controller : MonoBehaviour
     }
     protected void OnDrawGizmosSelected()
     {
+        if (data == null) return;
+
         //LastMoveVector
         if (moveVector == Vector2.zero)
         {
@@ -634,7 +669,7 @@ public abstract class Controller : MonoBehaviour
 
         //Target
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position + (Vector3)center, targetPos);
+        Gizmos.DrawLine(transform.position + (Vector3)data.center, targetPos);
         Gizmos.DrawWireSphere(targetPos, 0.1f);
     }
 }

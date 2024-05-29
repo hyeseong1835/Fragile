@@ -5,14 +5,6 @@ using UnityEditor.SceneManagement;
 #endif
 using UnityEngine;
 
-[AttributeUsage(AttributeTargets.Field)]
-public class AutoSetTriggerObjectAttribute : Attribute
-{
-    public AutoSetTriggerObjectAttribute(ref TriggerObject triggerObj)
-    {
-
-    }
-}
 public static class Utility
 {
     #region Load - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|

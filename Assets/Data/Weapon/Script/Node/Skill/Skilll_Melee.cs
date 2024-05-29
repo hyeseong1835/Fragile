@@ -41,9 +41,9 @@ public class Skill_Melee : CoroutineSkill
         if (weapon.hand_obj != null) weapon.hand_obj.gameObject.SetActive(false);
 
         triggerObj.gameObject.SetActive(true);
-        weapon.con.hand.HandLink(triggerObj.transform, HandMode.ToTarget);
+        weapon.con.grafic.hand.HandLink(triggerObj.transform, HandMode.ToTarget);
 
-        triggerObj.transform.position = weapon.con.transform.position + (Vector3)weapon.con.center;//-|
+        triggerObj.transform.position = weapon.con.transform.position + (Vector3)weapon.con.data.center;//-|
 
         float startRotateZ = Utility.Vector2ToDegree(weapon.con.targetDir);
 
@@ -67,7 +67,7 @@ public class Skill_Melee : CoroutineSkill
 
             float rotateZ = startRotateZ + spread * 0.5f - t * spread - 90;
             triggerObj.transform.rotation = Quaternion.Euler(0, 0, rotateZ);
-            triggerObj.transform.position = (Vector2)weapon.con.transform.position + weapon.con.center//-|
+            triggerObj.transform.position = (Vector2)weapon.con.transform.position + weapon.con.data.center//-|
               + Utility.Vector2TransformToEllipse(
                   Utility.RadianToVector2((rotateZ + 90) * Mathf.Deg2Rad),
                     0.75f, 0.5f
@@ -90,11 +90,11 @@ public class Skill_Melee : CoroutineSkill
         if (weapon.hand_obj != null)
         {
             weapon.hand_obj.gameObject.SetActive(true);
-            weapon.con.hand.HandLink(weapon.hand_obj, HandMode.ToHand);
+            weapon.con.grafic.hand.HandLink(weapon.hand_obj, HandMode.ToHand);
         }
         else
         {
-            weapon.con.hand.HandLink(null);
+            weapon.con.grafic.hand.HandLink(null);
         }
 
         #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
