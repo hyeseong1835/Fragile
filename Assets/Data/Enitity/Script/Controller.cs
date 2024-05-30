@@ -516,13 +516,24 @@ public abstract class Controller : MonoBehaviour
 
     public virtual void Create()
     {
+        //Grafic
         grafic = new GameObject("Grafic").AddComponent<Grafic>();
         grafic.transform.parent = transform;
+        grafic.spriteSheet = Resources.Load<Texture2D>($"{data.name}/BodySpriteSheet");
+            //Hand
             grafic.hand = new GameObject("Hand").AddComponent<HandGrafic>();
             grafic.hand.transform.parent = grafic.transform;
             grafic.con = this;
+            //Body
+            GameObject body = new GameObject("Body");
+            body.transform.parent = grafic.transform;
+                //Sprite
+                GameObject bodySprite = new GameObject("Sprite");
+                bodySprite.transform.parent = grafic.body.transform;
+                grafic.body = bodySprite.GetComponent<SpriteRenderer>();
+        //WeaponHolder
         weaponHolder = new GameObject("WeaponHolder").transform;
-            weaponHolder.parent = transform;
+        weaponHolder.parent = transform;
     }
 
     public void TakeDamage(float damage)

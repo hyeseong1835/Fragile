@@ -9,11 +9,11 @@ public static class Utility
 {
     #region Load - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-    public static Sprite GetSprite(Texture2D spriteSheet, int posX, int posY, int spritePixelWidth, int spritePixelHeight = -1)
+    public static Sprite GetSprite(Texture2D spriteSheet, int posX, int posY, int spritePixelWidth, int spritePixelHeight)
     {
         Texture2D tex = new Texture2D(spritePixelWidth, spritePixelHeight);
         tex.SetPixels(
-            spriteSheet.GetPixels(posX * spritePixelWidth, posY * spritePixelHeight, spritePixelWidth, spritePixelHeight)
+            spriteSheet.GetPixels(posX * spritePixelWidth, (spriteSheet.height - spritePixelHeight) - posY * spritePixelHeight, spritePixelWidth, spritePixelHeight)
         );
         tex.filterMode = FilterMode.Point;
         tex.Apply();
@@ -21,7 +21,8 @@ public static class Utility
         return Sprite.Create(
             tex,
             new Rect(0, 0, spritePixelWidth, spritePixelHeight),
-            new Vector2(0.5f, 0)
+            new Vector2(0.5f, 0),
+            16
         );
     }
 

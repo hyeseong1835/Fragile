@@ -24,12 +24,57 @@ public enum GraficMoveStyle
 public class Grafic : MonoBehaviour
 {
     public Controller con;
-    public Texture2D spriteSheet { get; private set; }
-    public int spritePixelWidth = 16;
-    public int spritePixelHeight = 16;
     public HandGrafic hand;
     public SpriteRenderer body;
+    public Texture2D spriteSheet;
 
+    [Button]
+    void Refresh()
+    {
+        con = transform.parent.GetComponent<Controller>();
+        if (spriteSheet == null) spriteSheet = Resources.Load<Texture2D>($"{con.data.name}/BodySpriteSheet");
+            //Hand
+            Transform handTransform = transform.Find("Hand");
+            if (handTransform == null)
+            { 
+                GameObject handObj = new GameObject("Hand");
+                handObj.transform.parent = transform;
+                handTransform = handObj.transform; 
+            }
+            if (handTransform.TryGetComponent<HandGrafic>(out hand) == false)
+            {
+                hand = handTransform.AddComponent<HandGrafic>();
+            }
+            hand.transform.parent = transform;
+            //Body
+            Transform bodyTransform = transform.Find("Body");
+            if (bodyTransform == null)
+            { 
+                GameObject bodyObj = new GameObject("Body"); 
+                bodyObj.transform.parent = transform;
+                bodyTransform = bodyObj.transform; 
+            }
+                //Sprite
+                Transform bodySpriteTransform = bodyTransform.Find("Body");
+                if (bodySpriteTransform == null)
+                {        
+                    GameObject bodySpriteObj = new GameObject("Sprite");
+                    bodySpriteObj.transform.parent = bodyTransform;
+                    bodySpriteTransform = bodySpriteObj.transform;
+                }
+                if (bodySpriteTransform.TryGetComponent<SpriteRenderer>(out body) == false)
+                {
+                    body = bodySpriteTransform.AddComponent<SpriteRenderer>();
+                }
+    }
+
+    [ShowInInspector][DisableInEditorMode]
+    [TableMatrix(IsReadOnly = true, SquareCells = true, HorizontalTitle = "Frame", VerticalTitle = "Index")]
+    public Sprite[,] sprites;
+
+    public int spritePixelWidth = 16;
+    public int spritePixelHeight = 16;
+    
     public GraficState state = GraficState.Idle;
     public GraficMoveStyle moveStyle = GraficMoveStyle.None;
 
@@ -40,26 +85,35 @@ public class Grafic : MonoBehaviour
 
     public int curAnimationOrder = int.MinValue;
     public float t = 0;
-    public float curAnimationlength = 1;
-    public int curAnimationSize = 1;
+    public float curAnimationTime = 1;
+    public int curAnimationCount = 1;
     public int curAnimationLine = 0;
     public bool curAnimationRepeat = true;
 
     void Awake()
     {
-        spriteSheet = Resources.Load<Texture2D>($"{con.data.FilePath}/BodySpriteSheet");
-        body = transform.Find("Body").Find("Sprite").GetComponent<SpriteRenderer>();
+        sprites = new Sprite[spriteSheet.width / spritePixelWidth, spriteSheet.height / spritePixelHeight];
+        for(int x = 0; x < sprites.GetLength(0); x++)
+        {
+            for(int y = 0; y < sprites.GetLength(1); y++)
+            {
+                sprites[x, y] = Utility.GetSprite(spriteSheet, x, y, spritePixelWidth, spritePixelHeight);
+            }
+        }
+
     }
     void Update()
     {
-        t += Time.deltaTime / curAnimationlength;
-        if (t >= 1) t--;
-        body.sprite = Utility.GetSprite(
-            spriteSheet, 
-            Mathf.FloorToInt(t * curAnimationSize) * curAnimationSize, 
-            curAnimationLine, 
-            spritePixelWidth, spritePixelHeight
-        );
+        if (curAnimationTime * (1 - t) > Time.deltaTime)
+        {
+            t += Time.deltaTime / curAnimationTime;
+            if (t >= 1) t--;
+        }
+        else t = 0;
+
+        int frameIndex = Mathf.FloorToInt(t * curAnimationCount);
+      
+        body.sprite = sprites[frameIndex, curAnimationLine];
     }
 }
 [UnitTitle("Run Line")]
@@ -78,38 +132,8 @@ public class AnimationRun : Node
     {
         base.Definition();
 
-        Iv_line = ValueInput<int>("Line");
-        Iv_time = ValueInput<float>("Time");
-        Iv_repeat = ValueInput<bool>("Repeat");
-    }
-    protected override void Act(Flow flow)
-    {
-        if (flow.GetValue<int>(Iv_order) > grafic.curAnimationOrder)
-        {
-            grafic.curAnimationLine = flow.GetValue<int>(Iv_line);
-            grafic.curAnimationSize = flow.GetValue<int>(Iv_count);
-            grafic.curAnimationlength = flow.GetValue<float>(Iv_time);
-            grafic.curAnimationRepeat = flow.GetValue<bool>(Iv_repeat);
-        }
-    }
-}
-[UnitTitle("Run Line By Rotation")]
-[UnitCategory("Animation")]
-public class AnimationRunByRotation : Node
-{
-    public ValueInput Iv_startLine;
-    public ValueInput Iv_count;
-    public ValueInput Iv_time;
-    public ValueInput Iv_repeat;
-    public ValueInput Iv_order;
-
-    Grafic grafic;
-
-    protected override void Definition()
-    {
-        base.Definition();
-
-        Iv_startLine = ValueInput<int>("StartLine", 0);
+        Iv_line = ValueInput<int>("Line", 0);
+        Iv_count = ValueInput<int>("Count", 4);
         Iv_time = ValueInput<float>("Time", 1);
         Iv_repeat = ValueInput<bool>("Repeat", false);
         Iv_order = ValueInput<int>("Order", 1);
@@ -118,12 +142,13 @@ public class AnimationRunByRotation : Node
     {
         if (grafic == null) grafic = flow.stack.gameObject.GetComponent<Grafic>();
 
-        if(flow.GetValue<int>(Iv_order) > grafic.curAnimationOrder)
-        {
-            grafic.curAnimationLine = flow.GetValue<int>(Iv_startLine) + grafic.rotation;
-            grafic.curAnimationSize = flow.GetValue<int>(Iv_count);
-            grafic.curAnimationlength = flow.GetValue<float>(Iv_time);
+        //if (flow.GetValue<int>(Iv_order) >= grafic.curAnimationOrder)
+        //{
+            grafic.curAnimationOrder = flow.GetValue<int>(Iv_order);
+            grafic.curAnimationLine = flow.GetValue<int>(Iv_line);
+            grafic.curAnimationCount = flow.GetValue<int>(Iv_count);
+            grafic.curAnimationTime = flow.GetValue<float>(Iv_time);
             grafic.curAnimationRepeat = flow.GetValue<bool>(Iv_repeat);
-        }
+        //}
     }
 }
