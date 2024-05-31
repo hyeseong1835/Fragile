@@ -92,6 +92,16 @@ public static class Utility
 
         return intRotate % count;
     }
+    public static int Rotate4X(float rotate)
+    {
+        // 1 1 0
+        // 2 X 3
+        // 2 3 3
+        if (rotate < 90) return 0;
+        if (rotate < 180) return 1;
+        if (rotate < 270) return 2;
+        return 3;
+    }
     /// <summary>
     /// {vector}를 각도로 변환
     /// </summary>

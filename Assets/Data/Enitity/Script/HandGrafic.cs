@@ -44,17 +44,27 @@ public class HandGrafic : MonoBehaviour
                 case HandMode.ToHand:
                     if (target == null) Debug.LogError("Parameter: {TargetTransform} is null");
                     targetTransform = target;
+                    handle = target.Find("Handle");
                     break;
 
                 case HandMode.ToTarget:
                     if (target == null) Debug.LogError("Parameter: {TargetTransform} is null");
                     targetTransform = target;
+                    handle = target.Find("Handle");
                     break;
             }
             handMode = mode;
         }
 
     #endregion
+
+    [DisableInEditorMode] 
+    public Transform handle;
+
+    void Awake()
+    {
+        handle = transform.Find("Handle");
+    }
 
     void Update()
     {
@@ -83,7 +93,7 @@ public class HandGrafic : MonoBehaviour
                     Debug.LogError("{TargetTransform} is null");
                     return;
                 }
-                targetTransform.position = transform.position;
+                targetTransform.position = transform.position - handle.localPosition;
                 targetTransform.rotation = transform.rotation;
                 break;
 
@@ -93,7 +103,7 @@ public class HandGrafic : MonoBehaviour
                     Debug.LogError("{TargetTransform} is null");
                     return;
                 }
-                transform.position = targetTransform.position;
+                transform.position = targetTransform.position + handle.localPosition;
                 transform.rotation = targetTransform.rotation;
                 break;
         }

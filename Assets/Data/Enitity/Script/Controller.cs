@@ -143,7 +143,7 @@ public abstract class Controller : MonoBehaviour
                 if (_lastMoveVector != value) 
                 {
                     moveRotate = Utility.Vector2ToDegree(moveVector);
-                    moveRotate4 = Utility.FloorRotateToInt(moveRotate, 45, 4);//-|
+                    moveRotate4 = Utility.Rotate4X(moveRotate);//-|
                     moveRotate8 = Utility.FloorRotateToInt(moveRotate, 45, 8);
                     _lastMoveVector = value;
                 }

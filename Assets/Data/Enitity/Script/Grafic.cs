@@ -5,21 +5,13 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine.UIElements;
 
-public enum GraficState
-{
-    //Default
-    Idle, Move,
-
-    //Attack
-    ChargeAttack, Attack, 
-
-    //Special
-    ChargeSpecial, Special
-}
 public enum GraficMoveStyle
 {
-    None, Walk, 
-    Jump, Dash, Charge
+    Walk, Jump, Dash, Charge
+}
+public enum GraficSkillStyle
+{
+
 }
 public class Grafic : MonoBehaviour
 {
@@ -75,8 +67,7 @@ public class Grafic : MonoBehaviour
     public int spritePixelWidth = 16;
     public int spritePixelHeight = 16;
     
-    public GraficState state = GraficState.Idle;
-    public GraficMoveStyle moveStyle = GraficMoveStyle.None;
+    public GraficMoveStyle moveStyle = GraficMoveStyle.Walk;
 
     public int rotation = 0;
 

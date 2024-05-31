@@ -5,6 +5,19 @@ using UnityEngine;
 
 public class PlayerController : Controller
 {
+    public enum BehaviorState
+    {
+        //Default
+        Idle, Move,
+
+        //Attack
+        ChargeAttack, Attack,
+
+        //Special
+        ChargeSpecial, Special
+    }
+    public BehaviorState behaviorState;
+
     [Space(Editor.overrideSpace)]
     [BoxGroup("Object")]
     #region Override Box Object  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -| 
@@ -143,12 +156,16 @@ public class PlayerController : Controller
             grafic.rotation = moveRotate4;
 
             transform.position += (Vector3)moveVector.normalized * Time.deltaTime * data.moveSpeed;
+
+            behaviorState = BehaviorState.Move;
         }
         //입력이 없을 때
         else
         {
             moveVector = Vector2.zero;
             grafic.rotation = moveRotate4;
+
+            behaviorState = BehaviorState.Idle;
         }
     }
     void WheelSelect()

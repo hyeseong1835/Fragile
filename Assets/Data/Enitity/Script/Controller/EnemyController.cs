@@ -7,6 +7,13 @@ using UnityEngine.AI;
 
 public class EnemyController : Controller
 {
+    public enum BehaviorState
+    {
+        Move, Recoil,
+        ChargeAttack, Attack
+    }
+    public BehaviorState behaviorState;
+
     [Space(Editor.overrideSpace)]
     [BoxGroup("Object")]
     #region Override Box Object  - - - - - - - - - - - - - - - - - - - - - - - - - -|
@@ -26,16 +33,6 @@ public class EnemyController : Controller
 
     #endregion
 
-    enum BehaviorState
-    {
-        NULL, None, Idle, Move, Recoil
-    }
-    [SerializeField] BehaviorState behaviorState;
-
-    enum AnimateState
-    {
-        NULL, None, Stay, Move
-    }
     void Awake()
     {
         if (Editor.GetType(Editor.StateType.IsPlay))
@@ -44,79 +41,106 @@ public class EnemyController : Controller
             agent.speed = data.moveSpeed;
         }
     }
+    void Start()
+    {
+        if (target == null) return;
+
+        if (curWeapon == null)
+        {
+            Recoil();
+            return;
+        }
+        Move();
+        return;
+    }
     new void Update()
     {
         base.Update();
 
-        if (target == null) return;
-
         targetPos = (Vector2)target.transform.position + target.data.center;
 
-        if (Editor.GetType(Editor.StateType.IsPlay))
+        if (Editor.GetType(Editor.StateType.IsEditor))
         {
-            Behavior();
-        }
-        else
-        {
-            if(TryGetComponent<NavMeshAgent>(out agent))
+            if (TryGetComponent<NavMeshAgent>(out agent))
             {
                 Debug.LogWarning("\"NavMeshAgent\"는 플레이 시작 시 자동으로 추가됩니다");
                 DestroyImmediate(agent);
                 agent = null;
             }
         }
-
     }
     void Move()
     {
+        behaviorState = BehaviorState.Move;
+
         moveVector = target.transform.position - transform.position;
 
         transform.position += (Vector3)moveVector.normalized * Time.deltaTime * data.moveSpeed;
+
+        float distanceBetweenTarget = Vector2.Distance(targetPos, (Vector2)transform.position + data.center);
+
+
+        //최대 거리 만족
+        if (distanceBetweenTarget < curWeapon.attack.maxDistance)
+        {
+            //최소 거리 만족
+            if (distanceBetweenTarget > curWeapon.attack.minDistance)
+            {
+                if (curWeapon != null)
+                {
+                    StartCoroutine(Attack());
+                    return;
+                }
+                //무기 없어지면 CancelCoroutine
+            }
+            //최소 거리 미만 >> 도주
+            else
+            {
+                Recoil();
+                return;
+            }
+        }
+        // 최대 거리 초과 >> 추적
+        else
+        {
+            Move();
+            return;
+        }
     }
     void Recoil()
     {
+        behaviorState = BehaviorState.Recoil;
+
         moveVector = -(target.transform.position - transform.position);
 
         transform.position += (Vector3)moveVector.normalized * Time.deltaTime * data.moveSpeed * 0.5f;
-    }
-    void Behavior()
-    {
-        switch (behaviorState)
+        
+        float distanceBetweenTarget = Vector2.Distance(targetPos, (Vector2)transform.position + data.center);
+
+        //최대 거리 만족
+        if (distanceBetweenTarget < curWeapon.attack.maxDistance)
         {
-            case BehaviorState.Idle:
-                behaviorState = BehaviorState.Move;
-                break;
-
-            case BehaviorState.Move:
-
-                if (curWeapon == null)
+            //최소 거리 만족
+            if (distanceBetweenTarget > curWeapon.attack.minDistance)
+            {
+                if (curWeapon != null)
                 {
-                    Recoil();
+                    StartCoroutine(Attack());
                     return;
                 }
-                float distanceBetweenTarget = Vector2.Distance(targetPos, (Vector2)transform.position + data.center);
-                
-                //최대 거리 만족
-                if (distanceBetweenTarget < curWeapon.attack.maxDistance)
-                {
-                    //최소 거리 만족
-                    if (distanceBetweenTarget > curWeapon.attack.minDistance)
-                    {
-                        if(curWeapon != null) StartCoroutine(Attack());
-                        //무기 없어지면 CancelCoroutine
-                    }
-                    //최소 거리 미만 >> 도주
-                    else Recoil();
-                }
-                // 최대 거리 초과 >> 추적
-                else Move();
-
-                break;
+                //무기 없어지면 CancelCoroutine
+            }
+            //최소 거리 미만 >> 도주
+            else
+            {
+                Recoil();
+                return;
+            }
         }
     }
     IEnumerator Attack()
     {
-        behaviorState = BehaviorState.None;
+        behaviorState = BehaviorState.Attack;
 
         yield return new WaitForSeconds(curWeapon.attack.frontDelay);
 
@@ -126,7 +150,7 @@ public class EnemyController : Controller
 
         yield return new WaitForSeconds(curWeapon.attack.backDelay);
 
-        behaviorState = BehaviorState.Idle;
+        Move();
     }
     new void OnDrawGizmosSelected()
     {
