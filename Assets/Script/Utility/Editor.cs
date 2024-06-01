@@ -32,7 +32,7 @@ public class Editor : MonoBehaviour
     public const float overrideSpace = 10;
     
     [ShowInInspector]
-    public const float shortFunctionButtonWidth = 150;
+    public const float shortButtonWidth = 150;
 
     [ShowInInspector]
     public const float shortPropertyWidth = 150;

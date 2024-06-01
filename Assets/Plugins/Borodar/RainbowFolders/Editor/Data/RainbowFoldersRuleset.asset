@@ -517,3 +517,39 @@ MonoBehaviour:
     BackgroundTexture: {fileID: 0}
     IsBackgroundRecursive: 0
     IsHidden: 0
+  - Type: 1
+    Key: Assets/Data/Entity/Script
+    Ordinal: 42
+    Priority: 0
+    IconType: 2160
+    SmallIcon: {fileID: 0}
+    LargeIcon: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 0
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+  - Type: 1
+    Key: Assets/Data/Entity/Resources/Controller
+    Ordinal: 43
+    Priority: 0
+    IconType: 1
+    SmallIcon: {fileID: 2800000, guid: 9e4b165c7ed0ace43936b5e5b21cb3b2, type: 3}
+    LargeIcon: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 0
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+  - Type: 1
+    Key: Assets/Data/Entity/Script/Controller
+    Ordinal: 44
+    Priority: 0
+    IconType: 1
+    SmallIcon: {fileID: 2800000, guid: 9e4b165c7ed0ace43936b5e5b21cb3b2, type: 3}
+    LargeIcon: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 0
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0

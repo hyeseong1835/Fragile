@@ -282,7 +282,7 @@ using UnityEngine;
                     //위치 자동 수정-----------------------------------------------필요
                     con = transform.parent.parent.GetComponent<Controller>();
 
-                    if (con.weapons.Count >= con.conData.inventorySize)
+                    if (con.weapons.Count >= con.ControllerData.inventorySize)
                     {
                         Debug.LogWarning("인벤토리가 가득참.");
 

@@ -74,12 +74,26 @@ public static class Utility
         }
         return frames;
     }
-    /// <summary>
-    /// {count}개의 각도 범위 중 {rotate}가 있는 범위
-    /// </summary>
-    /// <param name="rotate">(0 <= rotate <= 360)</param>
-    /// <param name="count"></param>
-    /// <returns></returns>
+   
+    public static Type LoadType(string name)
+    {
+        System.Type result = System.Type.GetType(name);
+        if (result == null)
+        {
+            var currentAssembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var referencedAssemblies = currentAssembly.GetReferencedAssemblies();
+            foreach (var assemblyName in referencedAssemblies)
+            {
+                var assembly = System.Reflection.Assembly.Load(assemblyName);
+                if (assembly != null)
+                {
+                    result = assembly.GetType(name);
+                    if (result != null) break;
+                }
+            }
+        }
+        return result;
+    }
 
     #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 

@@ -1,16 +1,29 @@
 using UnityEngine;
 using Unity.VisualScripting;
-
+using System;
 public enum TriggerType
 {
     Self, Friend, Enemy, Object
 }
+public class TriggerObjectData : EntityData
+{
+
+}
 public class TriggerObject : Entity
 {
-    public GameObject returnObject;
-    public ControllerData returnObjectCon;
-    public string ID;
+    public override EntityData EntityData
+    {
+        get => data;
+        set { data = (TriggerObjectData)value; }
+    }
+    public TriggerObjectData data;
+    public override Type DataType => typeof(TriggerObjectData);
     
+
+    public GameObject returnObject;
+    public Controller returnObjectCon;
+    public string ID;
+
     public void Set(GameObject obj, string id)
     {
         returnObject = obj;
@@ -31,7 +44,7 @@ public class TriggerObject : Entity
     }
     TriggerType GetTriggerType(Collider2D _coll)
     {
-        ControllerData hitCon = _coll.GetComponent<ControllerData>();
+        Controller hitCon = _coll.GetComponent<Controller>();
         if (hitCon == null)
         {
             return TriggerType.Object;
