@@ -31,18 +31,10 @@ public struct ControllerSave
         curWeaponIndex = _curWeaponIndex;
     }
 }
-public abstract class Controller : MonoBehaviour
+public abstract class Controller<ConT, DataT> : Entity<ConT, DataT>
+    where ConT : Controller<ConT, DataT> 
+    where DataT : ControllerData<ConT, DataT>
 {
-    #region Á¤Àû ¸â¹ö - - - - - - - - - - - - - - - - - - - -|
-
-    public const string controllerFolderPath = "Assets/Data/Enitity/Script/Controller";
-    public const string entityFolderPath = "Assets/Data/Enitity/Resources";
-
-    #endregion  - - - - - - - - - - - - - - - - - - - - - - -|
-
-    [LabelWidth(Editor.propertyLabelWidth)]
-    public ControllerData data;
-
     [BoxGroup("Object")]
     #region Foldout Object - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
@@ -143,7 +135,7 @@ public abstract class Controller : MonoBehaviour
                 if (_lastMoveVector != value) 
                 {
                     moveRotate = Utility.Vector2ToDegree(moveVector);
-                    moveRotate4 = Utility.Rotate4X(moveRotate);//-|
+                    moveRotate4 = Utility.Rotate4X(moveRotate4, moveRotate);//-|
                     moveRotate8 = Utility.FloorRotateToInt(moveRotate, 45, 8);
                     _lastMoveVector = value;
                 }

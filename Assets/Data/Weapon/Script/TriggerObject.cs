@@ -5,10 +5,10 @@ public enum TriggerType
 {
     Self, Friend, Enemy, Object
 }
-public class TriggerObject : MonoBehaviour
+public class TriggerObject : Entity
 {
     public GameObject returnObject;
-    public Controller returnObjectCon;
+    public ControllerData returnObjectCon;
     public string ID;
     
     public void Set(GameObject obj, string id)
@@ -31,7 +31,7 @@ public class TriggerObject : MonoBehaviour
     }
     TriggerType GetTriggerType(Collider2D _coll)
     {
-        Controller hitCon = _coll.GetComponent<Controller>();
+        ControllerData hitCon = _coll.GetComponent<ControllerData>();
         if (hitCon == null)
         {
             return TriggerType.Object;
@@ -69,7 +69,6 @@ public class TriggerObjectSpawn : Unit
                     flow.GetValue<GameObject>(Iv_prefab), 
                     flow.stack.gameObject.transform
                     ).AddComponent<TriggerObject>();
-                Debug.Log(triggerObject);
                 flow.SetValue(Ov_triggerObject, triggerObject);
                 triggerObject.Set(flow.stack.gameObject, flow.GetValue<string>(Iv_id));
 

@@ -24,7 +24,7 @@ public class Grafic : MonoBehaviour
     void Refresh()
     {
         con = transform.parent.GetComponent<Controller>();
-        if (spriteSheet == null) spriteSheet = Resources.Load<Texture2D>($"{con.data.name}/BodySpriteSheet");
+        if (spriteSheet == null) spriteSheet = Resources.Load<Texture2D>($"{con.conData.name}/BodySpriteSheet");
             //Hand
             Transform handTransform = transform.Find("Hand");
             if (handTransform == null)

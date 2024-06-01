@@ -103,7 +103,7 @@ public class HandGrafic : MonoBehaviour
                     Debug.LogError("{TargetTransform} is null");
                     return;
                 }
-                transform.position = targetTransform.position + handle.localPosition;
+                transform.position = handle.position;
                 transform.rotation = targetTransform.rotation;
                 break;
         }

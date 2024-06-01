@@ -21,17 +21,17 @@ public class CreateAsset : EditorWindow
         newControllerName = EditorGUILayout.TextField(newControllerName);
         if (GUILayout.Button("Create Controller"))
         {
-            AssetDatabase.CreateFolder(Controller.entityFolderPath, newControllerName);
+            AssetDatabase.CreateFolder(ControllerData.folderPath, newControllerName);
 
-            string folderPath = $"{Controller.entityFolderPath}/{newControllerName}";
+            string folderPath = $"{ControllerData.folderPath}/{newControllerName}";
             ControllerData data = ScriptableObject.CreateInstance<ControllerData>();
             data.name = newControllerName;
             AssetDatabase.CreateAsset(data, $"{folderPath}/ControllerData.asset");
 
-            string[] scriptFiles = Directory.GetFiles(Controller.controllerFolderPath, "*.cs", SearchOption.TopDirectoryOnly);
+            string[] scriptFiles = Directory.GetFiles(ControllerData.folderPath, "*.cs", SearchOption.TopDirectoryOnly);
 
             int index = 1;
-            string scriptName = scriptFiles[index].Substring(Controller.controllerFolderPath.Length + 1, scriptFiles[index].Length - Controller.controllerFolderPath.Length - 4);
+            string scriptName = scriptFiles[index].Substring(ControllerData.folderPath.Length + 1, scriptFiles[index].Length - ControllerData.folderPath.Length - 4);
 
             GameObject prefab = new GameObject("Prefab");
 
@@ -51,7 +51,7 @@ public class CreateAsset : EditorWindow
                 }
             }
 
-            Controller con = (Controller)prefab.AddComponent(ConT);
+            ControllerData con = (ControllerData)prefab.AddComponent(ConT);
 
             if (con != null) Debug.Log($"Add: {scriptName}");
             else Debug.LogError($"Fail: {scriptName}");

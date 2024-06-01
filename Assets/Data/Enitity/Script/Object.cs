@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteAlways]
-public class PreviewController : ControllerData
+public class Object : Entity<Object, ObjectData>
 {
 
 }

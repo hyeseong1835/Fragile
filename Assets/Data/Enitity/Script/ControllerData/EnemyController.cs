@@ -5,8 +5,10 @@ using Sirenix.OdinInspector;
 using System.Reflection.Emit;
 using UnityEngine.AI;
 
-public class EnemyController : Controller
+public abstract class EnemyController : ControllerData
 {
+    public EnemyControllerData data;
+
     public enum BehaviorState
     {
         Move, Recoil,
@@ -20,7 +22,7 @@ public class EnemyController : Controller
     
         [SerializeField] 
         [LabelWidth(Editor.propertyLabelWidth)]
-        Controller target;
+        ControllerData target;
 
     #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
@@ -57,7 +59,7 @@ public class EnemyController : Controller
     {
         base.Update();
 
-        targetPos = (Vector2)target.transform.position + target.data.center;
+        targetPos = (Vector2)target.transform.position + target.conData.center;
 
         if (Editor.GetType(Editor.StateType.IsEditor))
         {

@@ -54,6 +54,7 @@ using UnityEngine;
                 Resources.Load<GameObject>($"{weaponName}/{weaponName}")
                 );
             }
+            weaponObj.name = weaponName;
 
             Weapon weapon = weaponObj.GetComponent<Weapon>();
             weapon.state = WeaponState.NULL;
@@ -281,7 +282,7 @@ using UnityEngine;
                     //위치 자동 수정-----------------------------------------------필요
                     con = transform.parent.parent.GetComponent<Controller>();
 
-                    if (con.weapons.Count >= con.data.inventorySize)
+                    if (con.weapons.Count >= con.conData.inventorySize)
                     {
                         Debug.LogWarning("인벤토리가 가득참.");
 

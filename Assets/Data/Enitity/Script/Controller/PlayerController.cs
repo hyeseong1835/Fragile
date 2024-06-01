@@ -1,10 +1,13 @@
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class PlayerController : Controller
+public class PlayerController : Controller<PlayerController, PlayerControllerData>
 {
+    public static PlayerController instance;
+
     public enum BehaviorState
     {
         //Default
@@ -19,12 +22,8 @@ public class PlayerController : Controller
     public BehaviorState behaviorState;
 
     [Space(Editor.overrideSpace)]
-    [BoxGroup("Object")]
+    //[BoxGroup("Object")]
     #region Override Box Object  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -| 
-
-        [Required][PropertyOrder(0)]
-        [LabelText("Cam Controller")][LabelWidth(Editor.propertyLabelWidth)]
-        public CameraController camCon;
 
     #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -| 
 
@@ -49,7 +48,7 @@ public class PlayerController : Controller
         #region Mouse
 
             [HideInInspector] 
-            public Vector2 mousePos { get { return camCon.cam.ScreenToWorldPoint(Input.mousePosition); } }
+            public Vector2 mousePos { get { return data.camCon.cam.ScreenToWorldPoint(Input.mousePosition); } }
     
             [HideInInspector] 
             public Vector2 playerToMouse { get { return mousePos - (Vector2)transform.position; } }

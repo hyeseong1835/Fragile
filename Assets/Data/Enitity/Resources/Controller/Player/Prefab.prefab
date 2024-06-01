@@ -131,6 +131,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetTransform: {fileID: 0}
   handMode: 0
+  handle: {fileID: 0}
 --- !u!1 &3146047878328526398
 GameObject:
   m_ObjectHideFlags: 0
@@ -524,6 +525,7 @@ MonoBehaviour:
   defaultWeapon: {fileID: 8026664733042950024}
   curWeapon: {fileID: 8026664733042950024}
   weapons: []
+  behaviorState: 0
   camCon: {fileID: 0}
   attackInput: 0
   attackInputAllowTime: 1
@@ -583,7 +585,6 @@ MonoBehaviour:
   spriteSheet: {fileID: 2800000, guid: 0d5b5a74d4dd44c45ba32d2650af8463, type: 3}
   spritePixelWidth: 16
   spritePixelHeight: 16
-  state: 0
   moveStyle: 0
   rotation: 0
   view: {x: 0, y: 0}

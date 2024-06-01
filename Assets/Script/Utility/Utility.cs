@@ -92,11 +92,23 @@ public static class Utility
 
         return intRotate % count;
     }
-    public static int Rotate4X(float rotate)
+    public static int Rotate4X(int prevRotate, float rotate)
     {
         // 1 1 0
         // 2 X 3
         // 2 3 3
+        if (rotate == 0) return 3;
+        if (rotate == 180) return 2;
+        if (rotate == 90)
+        {
+            if (prevRotate == 0 || prevRotate == 3) return 0;
+            else return 1;
+        }
+        if (rotate == 270)
+        {
+            if (prevRotate == 0 || prevRotate == 3) return 3;
+            else return 2;
+        }
         if (rotate < 90) return 0;
         if (rotate < 180) return 1;
         if (rotate < 270) return 2;
