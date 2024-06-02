@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.Timeline;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.Windows;
@@ -34,7 +35,6 @@ public struct ControllerSave
 }
 public abstract class Controller : Entity
 {
-    public const string scriptFolderPath = Entity.folderPath + "/Script/Controller";
     public abstract ControllerData ControllerData { get; set; }
     public override EntityData EntityData
     {
@@ -512,17 +512,17 @@ public abstract class Controller : Entity
     #endregion
 
 
-    public virtual void Create()
+    public virtual void CreateAsset()
     {
         //Grafic
         grafic = new GameObject("Grafic").AddComponent<Grafic>();
         grafic.transform.parent = transform;
-        if (Directory.Exists($"{ControllerData.folderPath}/{ControllerData.name}/BodySpriteSheet.png"))
+        if (Directory.Exists($"{ControllerData.FolderPath}/BodySpriteSheet.png"))
         {
             grafic.spriteSheet = Resources.Load<Texture2D>($"{ControllerData.name}/BodySpriteSheet");
         }
-        //Hand
-        grafic.hand = new GameObject("Hand").AddComponent<HandGrafic>();
+            //Hand
+            grafic.hand = new GameObject("Hand").AddComponent<HandGrafic>();
             grafic.hand.transform.parent = grafic.transform;
             grafic.con = this;
             //Body

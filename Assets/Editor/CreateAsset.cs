@@ -31,13 +31,13 @@ public class CreateAsset : EditorWindow
     void RefreshControllerTypeNameArray()
     {
         //로드
-        string[] controllerTypePathArray = Directory.GetFiles(Controller.scriptFolderPath, "*.cs", SearchOption.TopDirectoryOnly);
+        string[] controllerTypePathArray = Directory.GetFiles(Controller.scriptsFolderPath, "*.cs", SearchOption.TopDirectoryOnly);
 
         //할당
         controllerTypeNameArray = new string[controllerTypePathArray.Length];
         for (int i = 0; i < controllerTypePathArray.Length; i++)
         {
-            controllerTypeNameArray[i] = controllerTypePathArray[i].Substring(Controller.scriptFolderPath.Length + 1, controllerTypePathArray[i].Length - Controller.scriptFolderPath.Length - 4);
+            controllerTypeNameArray[i] = controllerTypePathArray[i].Substring(Controller.scriptsFolderPath.Length + 1, controllerTypePathArray[i].Length - Controller.scriptsFolderPath.Length - 4);
         }
 
         //임시 값 지정
@@ -89,7 +89,8 @@ public class CreateAsset : EditorWindow
 
             if (GUILayout.Button("Create", GUILayout.Width(Editor.shortButtonWidth)))
             {
-                Debug.Log($"Create Controller : {newControllerName}");
+                Debug.Log($"Create Controller : {newControllerName}({newControllerTypeName})");
+
                 //Folder
                 string folderPath = $"{ControllerData.folderPath}/{newControllerName}";
                 if (AssetDatabase.IsValidFolder(folderPath) == false)
@@ -99,48 +100,59 @@ public class CreateAsset : EditorWindow
                 }
 
                 //Prefab
-                Controller con;
+                GameObject prefabInstance;
                 string prefabPath = $"{folderPath}/Prefab.prefab";
+                Controller con;
 
                 //Data
                 ControllerData data;
                 string dataPath = $"{folderPath}/ControllerData.asset";
 
-                if (Directory.Exists(prefabPath) == false)
+                if (Directory.Exists(prefabPath))
                 {
-                    GameObject prefab = new GameObject("Prefab");
+                    prefabInstance = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath));
+                    con = prefabInstance.GetComponent<Controller>();
 
-                    con = (Controller)prefab.AddComponent(Utility.LoadType(newControllerTypeName));
-                
                     LoadData();
-
-                    con.Create();
-
-                    PrefabUtility.SaveAsPrefabAsset(prefab, prefabPath);
-                    DestroyImmediate(prefab);
-
-                    Debug.Log($"Create Prefab : {prefabPath}");
                 } 
                 else
                 { 
-                    con = AssetDatabase.LoadAssetAtPath<Controller>(prefabPath);
-
+                    prefabInstance = new GameObject("Prefab");
+                    con = (Controller)prefabInstance.AddComponent(Utility.LoadType(newControllerTypeName));
+                
                     LoadData();
+
+                    con.CreateAsset();
+
+                    PrefabUtility.SaveAsPrefabAsset(prefabInstance, prefabPath);
+                    DestroyImmediate(prefabInstance);
+
+                    Debug.Log($"Create Prefab : {prefabPath}");
                 }
                 void LoadData()
                 {
-                    if (Directory.Exists(dataPath) == false)
+                    if (con.ControllerData != null)
                     {
-                        data = (ControllerData)ScriptableObject.CreateInstance(con.DataType.Name);
-                        AssetDatabase.CreateAsset(data, dataPath);
-                        Debug.Log($"Create Data : {dataPath}");
+                        data = con.ControllerData;
                     }
-                    else data = AssetDatabase.LoadAssetAtPath<ControllerData>(dataPath);
-
+                    else
+                    {
+                        if (Directory.Exists(dataPath))
+                        {
+                            data = ScriptableObject.Instantiate(AssetDatabase.LoadAssetAtPath<ControllerData>(dataPath));
+                            AssetDatabase.DeleteAsset(dataPath);
+                        }
+                        else
+                        {
+                            data = (ControllerData)ScriptableObject.CreateInstance(con.DataType.Name);
+                            Debug.Log($"Create Data : {con.DataType.Name} at {dataPath}");
+                        }
+                    }
                     data.name = newControllerName;
                     con.ControllerData = data;
-                }
+                    AssetDatabase.CreateAsset(data, dataPath);
             }
+        }
         
         GUILayout.EndHorizontal();
         #endregion

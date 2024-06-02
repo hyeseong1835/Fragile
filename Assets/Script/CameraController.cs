@@ -5,8 +5,11 @@ public enum CameraMove
 {
     Stop, Perfect, MoveTo
 }
+[ExecuteAlways]
 public class CameraController : MonoBehaviour
 {
+    public static CameraController instance;
+
     [LabelWidth(Editor.propertyLabelWidth)]
     public Transform target;
     
@@ -28,6 +31,14 @@ public class CameraController : MonoBehaviour
     [LabelWidth(Editor.propertyLabelWidth)]
     public float posZ = -10;
 
+    void Awake()
+    {
+        instance = this;
+    }
+    void Start()
+    {
+        target = PlayerController.instance.transform;
+    }
     void Update()
     {
         if (target == null) return;

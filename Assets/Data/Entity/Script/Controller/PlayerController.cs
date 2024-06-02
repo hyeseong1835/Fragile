@@ -6,15 +6,23 @@ using UnityEngine;
 
 public class PlayerController : Controller
 {
-    public static PlayerController instance;
+    public static PlayerController instance { get; private set; }
 
-    public PlayerControllerData data = null;
+    public PlayerControllerData data;
     public override ControllerData ControllerData
     {
         get => data; 
         set { data = (PlayerControllerData)value; }
     }
-    public override Type DataType => typeof(EnemyControllerData);
+    public override Type DataType => typeof(PlayerControllerData);
+
+    public override void CreateAsset()
+    {
+        base.CreateAsset();
+
+        instance = this;
+        data.camCon = CameraController.instance;
+    }
 
     public enum BehaviorState
     {
@@ -118,6 +126,8 @@ public class PlayerController : Controller
 
     new void Update()
     {
+        //if (Editor.GetType(Editor.StateType.IsEditor)) return;
+
         if (preventAttackInput) attack = false;
         else attack = mouse0Stay;
 
