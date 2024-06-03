@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class Object : Entity
 {
-    
     public ObjectData data;
     public override EntityData EntityData
     {

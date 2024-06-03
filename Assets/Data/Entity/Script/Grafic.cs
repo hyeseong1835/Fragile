@@ -4,6 +4,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine.UIElements;
+using UnityEngine.UI;
+using UnityEngine.Windows;
 
 public enum GraficMoveStyle
 {
@@ -81,6 +83,32 @@ public class Grafic : MonoBehaviour
     public int curAnimationLine = 0;
     public bool curAnimationRepeat = true;
 
+    public void CreateAsset()
+    {
+        transform.parent = con.transform;
+        string graphDataPath = $"{ControllerData.resourceFolderPath}/{con.ControllerData.name}.asset";
+        if (Directory.Exists(graphDataPath))
+        {
+            gameObject.AddComponent<ScriptMachine>().graphData = (IGraphData)Resources.Load(graphDataPath);
+        }
+
+        if (Directory.Exists($"{ControllerData.resourceFolderPath}/{con.ControllerData.name}/BodySpriteSheet.png"))
+        {
+            spriteSheet = Resources.Load<Texture2D>($"{con.ControllerData.name}/BodySpriteSheet");
+        }
+            //Hand
+            hand = new GameObject("Hand").AddComponent<HandGrafic>();
+            hand.transform.parent = con.transform;
+
+            //Body
+            GameObject bodyObj = new GameObject("Body");
+            bodyObj.transform.parent = con.transform;
+                //Sprite
+                GameObject bodySpriteObj = new GameObject("Sprite");
+                bodySpriteObj.transform.parent = body.transform;
+                body = bodySpriteObj.AddComponent<SpriteRenderer>();
+    }
+
     void Awake()
     {
         sprites = new Sprite[spriteSheet.width / spritePixelWidth, spriteSheet.height / spritePixelHeight];
@@ -91,7 +119,6 @@ public class Grafic : MonoBehaviour
                 sprites[x, y] = Utility.GetSprite(spriteSheet, x, y, spritePixelWidth, spritePixelHeight);
             }
         }
-
     }
     void Update()
     {

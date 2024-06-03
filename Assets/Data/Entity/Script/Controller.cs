@@ -516,22 +516,9 @@ public abstract class Controller : Entity
     {
         //Grafic
         grafic = new GameObject("Grafic").AddComponent<Grafic>();
-        grafic.transform.parent = transform;
-        if (Directory.Exists($"{ControllerData.FolderPath}/BodySpriteSheet.png"))
-        {
-            grafic.spriteSheet = Resources.Load<Texture2D>($"{ControllerData.name}/BodySpriteSheet");
-        }
-            //Hand
-            grafic.hand = new GameObject("Hand").AddComponent<HandGrafic>();
-            grafic.hand.transform.parent = grafic.transform;
-            grafic.con = this;
-            //Body
-            GameObject body = new GameObject("Body");
-            body.transform.parent = grafic.transform;
-                //Sprite
-                GameObject bodySprite = new GameObject("Sprite");
-                bodySprite.transform.parent = body.transform;
-                grafic.body = bodySprite.AddComponent<SpriteRenderer>();
+        grafic.con = this;
+        grafic.CreateAsset();
+
         //WeaponHolder
         weaponHolder = new GameObject("WeaponHolder").transform;
         weaponHolder.parent = transform;

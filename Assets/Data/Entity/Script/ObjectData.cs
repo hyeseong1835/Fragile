@@ -13,8 +13,9 @@ public class ObjectData : EntityData
     /// </summary>
     public const string objectResourceFolderPath = EntityData.entityResourceFolderPath + "/" + objectResourcePath;
 
-    public override string ResourceFolderPath => $"{entityResourceFolderPath}/{objectResourcePath}";
-    public override string FolderResourcePath { get => $"{objectResourcePath}/{name}"; }
-    public override string DataResourcePath { get => $"{FolderResourcePath}/ObjectData"; }
+    public const string resourceFolderPath = entityResourceFolderPath + "/" + objectResourcePath;
+
+    public string FolderResourcePath { get => $"{objectResourcePath}/{name}"; }
+    public string DataResourcePath { get => $"{FolderResourcePath}/{objectResourcePath}"; }
 
 }

@@ -31,13 +31,13 @@ public class CreateAsset : EditorWindow
     void RefreshControllerTypeNameArray()
     {
         //로드
-        string[] controllerTypePathArray = Directory.GetFiles(Controller.scriptsFolderPath, "*.cs", SearchOption.TopDirectoryOnly);
+        string[] controllerTypePathArray = Directory.GetFiles(ControllerData.scriptsFolderPath, "*.cs", SearchOption.TopDirectoryOnly);
 
         //할당
         controllerTypeNameArray = new string[controllerTypePathArray.Length];
         for (int i = 0; i < controllerTypePathArray.Length; i++)
         {
-            controllerTypeNameArray[i] = controllerTypePathArray[i].Substring(Controller.scriptsFolderPath.Length + 1, controllerTypePathArray[i].Length - Controller.scriptsFolderPath.Length - 4);
+            controllerTypeNameArray[i] = controllerTypePathArray[i].Substring(ControllerData.scriptsFolderPath.Length + 1, controllerTypePathArray[i].Length - ControllerData.scriptsFolderPath.Length - 4);
         }
 
         //임시 값 지정
@@ -92,10 +92,10 @@ public class CreateAsset : EditorWindow
                 Debug.Log($"Create Controller : {newControllerName}({newControllerTypeName})");
 
                 //Folder
-                string folderPath = $"{ControllerData.folderPath}/{newControllerName}";
+                string folderPath = $"{ControllerData.controllersFolderPath}/{newControllerName}";
                 if (AssetDatabase.IsValidFolder(folderPath) == false)
                 {
-                    AssetDatabase.CreateFolder(ControllerData.folderPath, newControllerName);
+                    AssetDatabase.CreateFolder(ControllerData.controllersFolderPath, newControllerName);
                     Debug.Log($"Create Folder : {folderPath}");
                 }
 
