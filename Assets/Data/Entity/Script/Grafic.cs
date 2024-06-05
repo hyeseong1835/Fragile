@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine.UIElements;
 using UnityEngine.UI;
 using UnityEngine.Windows;
+using UnityEditor;
 
 public enum GraficMoveStyle
 {
@@ -90,6 +91,12 @@ public class Grafic : MonoBehaviour
         if (Directory.Exists(graphDataPath))
         {
             gameObject.AddComponent<ScriptMachine>().graphData = (IGraphData)Resources.Load(graphDataPath);
+        }
+        else
+        {
+            ScriptMachine scriptMachine = gameObject.AddComponent<ScriptMachine>();
+            //scriptMachine.gra
+            AssetDatabase.CreateAsset((Object)scriptMachine.graphData, graphDataPath);
         }
 
         if (Directory.Exists($"{ControllerData.resourceFolderPath}/{con.ControllerData.name}/BodySpriteSheet.png"))

@@ -5,9 +5,6 @@ using UnityEngine.UI;
 [ExecuteAlways]
 public class UI_Inventory : MonoBehaviour
 {
-    [SerializeField][Required]
-    PlayerController pCon;
-    
     [SerializeField][Required][ChildGameObjectsOnly] 
     Image curWeaponImage;
     
@@ -19,7 +16,9 @@ public class UI_Inventory : MonoBehaviour
 
     void Update()
     {
-        if (pCon.curWeapon == null) return;
+        PlayerController pCon = PlayerController.instance;
+
+        if (pCon == null || pCon.curWeapon == null) return;
         
             curWeaponImage.sprite = pCon.curWeapon.UISprite;
 
