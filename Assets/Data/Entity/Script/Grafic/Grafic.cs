@@ -87,11 +87,6 @@ public class Grafic : MonoBehaviour
     [LabelWidth(Editor.propertyLabelWidth)]
     public float time = 0;
 
-    public AnimationType animationType;
-    public MoveAnimationType moveAnimationType;
-    public SkillAnimationType skillAnimationType;
-
-
     void Awake()
     {
         if (data.sprites == null)

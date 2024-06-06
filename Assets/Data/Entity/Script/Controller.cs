@@ -386,6 +386,10 @@ public abstract class Controller : Entity
     [LabelWidth(Editor.propertyLabelWidth)]
     public Vector2 bodyPos = new Vector2(0, 0);
 
+    public AnimationType animationType;
+    public MoveAnimationType moveAnimationType;
+    public SkillAnimationType skillAnimationType;
+
     #region 무기 관리
 
     /// <summary>
