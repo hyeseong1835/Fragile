@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02c52386cb62548458ea52c3472ffa2a, type: 3}
   m_Name: ControllerData
   m_EditorClassIdentifier: 
-  name: 
+  name: Player
   maxHp: 1
   center: {x: 0, y: 0.5}
   moveSpeed: 1
   inventorySize: 0
-  camCon: {fileID: 0}

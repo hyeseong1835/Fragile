@@ -8,7 +8,7 @@ public enum CameraMove
 [ExecuteAlways]
 public class CameraController : MonoBehaviour
 {
-    public static CameraController instance;
+    public static CameraController instance { get; private set; }
 
     [LabelWidth(Editor.propertyLabelWidth)]
     public Transform target;

@@ -40,7 +40,7 @@ public class Skill_Melee : CoroutineSkill
 
         if (weapon.hand_obj != null) weapon.hand_obj.gameObject.SetActive(false);
 
-        weapon.con.grafic.hand.HandLink(triggerObj.transform, HandMode.ToTarget);
+        weapon.con.hand.HandLink(triggerObj.transform, HandMode.ToTarget);
 
         triggerObj.transform.position = weapon.con.transform.position + (Vector3)weapon.con.ControllerData.center;//-|
 
@@ -89,11 +89,11 @@ public class Skill_Melee : CoroutineSkill
         if (weapon.hand_obj != null)
         {
             weapon.hand_obj.gameObject.SetActive(true);
-            weapon.con.grafic.hand.HandLink(weapon.hand_obj, HandMode.ToHand);
+            weapon.con.hand.HandLink(weapon.hand_obj, HandMode.ToHand);
         }
         else
         {
-            weapon.con.grafic.hand.HandLink(null);
+            weapon.con.hand.HandLink(null);
         }
 
         #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|

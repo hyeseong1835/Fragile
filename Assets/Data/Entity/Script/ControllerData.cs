@@ -14,15 +14,10 @@ public abstract class ControllerData : EntityData
     /// <summary>
     /// 컨트롤러 폴더 경로
     /// </summary>
-    public const string controllersFolderPath = entityResourceFolderPath + "/" + controllersFolderResourcePath;
-
-    public const string resourceFolderPath = entityResourceFolderPath + "/" +controllersFolderResourcePath;
+    public const string controllersFolderPath = EntityData.entityResourceFolderPath + "/" + controllersFolderResourcePath;
 
     public string FolderPath { get => $"{controllersFolderPath}/{name}"; }
     public string FolderResourcePath { get => $"{controllersFolderResourcePath}/{name}"; }
-    public string DataPath { get => $"{FolderPath}/{controllersFolderResourcePath}"; }
-    public string DataResourcePath { get => $"{FolderResourcePath}/{controllersFolderResourcePath}"; }
-
     
     [LabelWidth(Editor.propertyLabelWidth)]
     public Vector2 center = new Vector2(0, 0.5f);

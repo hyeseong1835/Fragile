@@ -15,14 +15,7 @@ public class PlayerController : Controller
         set { data = (PlayerControllerData)value; }
     }
     public override Type DataType => typeof(PlayerControllerData);
-
-    public override void CreateAsset()
-    {
-        base.CreateAsset();
-
-        instance = this;
-        data.camCon = CameraController.instance;
-    }
+    public CameraController camCon { get => CameraController.instance; }
 
     public enum BehaviorState
     {
@@ -36,12 +29,6 @@ public class PlayerController : Controller
         ChargeSpecial, Special
     }
     public BehaviorState behaviorState;
-
-    [Space(Editor.overrideSpace)]
-    //[BoxGroup("Object")]
-    #region Override Box Object  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -| 
-
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -| 
 
     [Space(Editor.overrideSpace)]
     [FoldoutGroup("Input")]
@@ -65,7 +52,7 @@ public class PlayerController : Controller
         #region Mouse
 
             [HideInInspector] 
-            public Vector2 mousePos { get { return data.camCon.cam.ScreenToWorldPoint(Input.mousePosition); } }
+            public Vector2 mousePos { get { return camCon.cam.ScreenToWorldPoint(Input.mousePosition); } }
     
             [HideInInspector] 
             public Vector2 playerToMouse { get { return mousePos - (Vector2)transform.position; } }
@@ -124,6 +111,10 @@ public class PlayerController : Controller
 
     Weapon lastNotHandWeapon;
 
+    void Awake()
+    {
+        instance = this;
+    }
     new void Update()
     {
         //if (Editor.GetType(Editor.StateType.IsEditor)) return;
@@ -140,7 +131,7 @@ public class PlayerController : Controller
         Move();
 
         WheelSelect();
-        if (UnityEngine.Input.GetKeyDown(KeyCode.P)) AddWeapon(Weapon.Spawn("WoodenSword"));
+        if (Input.GetKeyDown(KeyCode.P)) AddWeapon(Weapon.Spawn("WoodenSword"));
 
         int curWeaponIndex = weapons.IndexOf(curWeapon);
 
@@ -171,7 +162,6 @@ public class PlayerController : Controller
         if (UnityEngine.Input.GetButton("Horizontal") || UnityEngine.Input.GetButton("Vertical"))
         {
             moveVector = new Vector3(UnityEngine.Input.GetAxis("Horizontal"), UnityEngine.Input.GetAxis("Vertical"), 0);
-            grafic.rotation = moveRotate4;
 
             transform.position += (Vector3)moveVector.normalized * Time.deltaTime * data.moveSpeed;
 
@@ -181,7 +171,6 @@ public class PlayerController : Controller
         else
         {
             moveVector = Vector2.zero;
-            grafic.rotation = moveRotate4;
 
             behaviorState = BehaviorState.Idle;
         }

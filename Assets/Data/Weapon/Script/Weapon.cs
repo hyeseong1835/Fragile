@@ -146,7 +146,7 @@ using UnityEngine;
             if (hand_obj != null)
             {
                 hand_obj.gameObject.SetActive(true);
-                con.grafic.hand.HandLink(hand_obj, HandMode.ToHand);
+                con.hand.HandLink(hand_obj, HandMode.ToHand);
             }
         }
         protected virtual void OnDeUse()
@@ -154,7 +154,7 @@ using UnityEngine;
             if (hand_obj != null)
             {
                 hand_obj.gameObject.SetActive(false);
-                con.grafic.hand.HandLink(null);
+                con.hand.HandLink(null);
             }
         }
         protected virtual void Break(Vector2 breakPos)
@@ -168,7 +168,7 @@ using UnityEngine;
         public virtual void OnWeaponRemoved()
         {
             Destroy(hand_obj.gameObject);
-            con.grafic.hand.HandLink(null);
+            con.hand.HandLink(null);
         }
         protected virtual void OnWeaponDestroyed() { }
 

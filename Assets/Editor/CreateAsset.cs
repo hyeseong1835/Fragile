@@ -1,62 +1,59 @@
-using DG.DemiEditor;
 using Sirenix.Utilities;
 using Sirenix.Utilities.Editor;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
-using UnityEditor.Experimental.GraphView;
+using UnityEditor.Experimental;
 using UnityEngine;
 
 public class CreateAsset : EditorWindow
 {
+    const string presetFolderPath = "Assets/Editor Default Resources/Preset";
     string newControllerName;
 
-    string[] controllerTypeNameArray;
-    string newControllerTypeName;
+    string[] controllerPresetNameArray;
+    string newControllerPresetName;
 
     bool showControllerTypeNameDropDown = false;
 
     void Awake()
     {
-        RefreshControllerTypeNameArray();
+        RefreshControllerPresetNameArray();
     }
+
     [MenuItem("Window/CreateAsset")]
     public static void CreateController()
     {
         CreateAsset window = GetWindow<CreateAsset>();
         window.Show();
     }
-    void RefreshControllerTypeNameArray()
+
+    void RefreshControllerPresetNameArray()
     {
+        const string controllerPresetPath = presetFolderPath + "/Controller";
+
         //로드
-        string[] controllerTypePathArray = Directory.GetFiles(ControllerData.scriptsFolderPath, "*.cs", SearchOption.TopDirectoryOnly);
+        string[] controllerPresetPathArray = Directory.GetFiles(controllerPresetPath, "*.prefab", SearchOption.TopDirectoryOnly);
 
         //할당
-        controllerTypeNameArray = new string[controllerTypePathArray.Length];
-        for (int i = 0; i < controllerTypePathArray.Length; i++)
+        controllerPresetNameArray = new string[controllerPresetPathArray.Length];
+        for (int i = 0; i < controllerPresetPathArray.Length; i++)
         {
-            controllerTypeNameArray[i] = controllerTypePathArray[i].Substring(ControllerData.scriptsFolderPath.Length + 1, controllerTypePathArray[i].Length - ControllerData.scriptsFolderPath.Length - 4);
+            controllerPresetNameArray[i] = controllerPresetPathArray[i].Substring(controllerPresetPath.Length + 1, controllerPresetPathArray[i].Length - controllerPresetPath.Length - 8);
         }
 
         //임시 값 지정
         if (newControllerName == default)
         {
-            if (controllerTypePathArray.Length > 0)
+            if (controllerPresetPathArray.Length > 0)
             {
-                newControllerTypeName = controllerTypeNameArray[0];
+                newControllerPresetName = controllerPresetNameArray[0];
             }
-            else newControllerTypeName = string.Empty;
+            else newControllerPresetName = string.Empty;
         }
     }
     
     void OnGUI()
     {
-        if (GUILayout.Button("Refresh")) RefreshControllerTypeNameArray();
-
-        GUILayout.Space(Editor.propertyHeight);
-
         GUILayout.Label("Controller");
 
         GUILayout.BeginHorizontal();
@@ -64,20 +61,20 @@ public class CreateAsset : EditorWindow
 
             newControllerName = EditorGUILayout.TextField(newControllerName);
             
-            if (GUILayout.Button(newControllerTypeName, GUILayout.Width(Editor.shortButtonWidth), GUILayout.Height(Editor.propertyHeight)))
+            if (GUILayout.Button(newControllerPresetName, GUILayout.Width(Editor.shortButtonWidth), GUILayout.Height(Editor.propertyHeight)))
             {
-                RefreshControllerTypeNameArray();
+                RefreshControllerPresetNameArray();
                 showControllerTypeNameDropDown = true;
             }
             
             int selectIndex = DropDown(GUILayoutUtility.GetLastRect().AddY(Editor.propertyHeight),
-                showControllerTypeNameDropDown, controllerTypeNameArray
+                showControllerTypeNameDropDown, controllerPresetNameArray
             );
 
             Event prevEvent = new Event(Event.current);
             if (selectIndex != -1)
             {
-                newControllerTypeName = controllerTypeNameArray[selectIndex];
+                newControllerPresetName = controllerPresetNameArray[selectIndex];
                 showControllerTypeNameDropDown = false;
             }
             else if (Event.current.OnMouseDown(0) || Event.current.OnMouseDown(1) || Event.current.isKey)
@@ -86,78 +83,42 @@ public class CreateAsset : EditorWindow
                 Event.current = prevEvent;
             }
 
-
             if (GUILayout.Button("Create", GUILayout.Width(Editor.shortButtonWidth)))
             {
-                Debug.Log($"Create Controller : {newControllerName}({newControllerTypeName})");
-
-                //Folder
-                string folderPath = $"{ControllerData.controllersFolderPath}/{newControllerName}";
-                if (AssetDatabase.IsValidFolder(folderPath) == false)
-                {
-                    AssetDatabase.CreateFolder(ControllerData.controllersFolderPath, newControllerName);
-                    Debug.Log($"Create Folder : {folderPath}");
-                }
-
-                //Prefab
-                GameObject prefabInstance;
-                string prefabPath = $"{folderPath}/Prefab.prefab";
-                Controller con;
-
-                //Data
-                ControllerData data;
-                string dataPath = $"{folderPath}/ControllerData.asset";
-
-                if (Directory.Exists(prefabPath))
-                {
-                    prefabInstance = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath));
-                    con = prefabInstance.GetComponent<Controller>();
-
-                    LoadData();
-                } 
-                else
-                { 
-                    prefabInstance = new GameObject("Prefab");
-                    con = (Controller)prefabInstance.AddComponent(Utility.LoadType(newControllerTypeName));
-                
-                    LoadData();
-
-                    con.CreateAsset();
-
-                    PrefabUtility.SaveAsPrefabAsset(prefabInstance, prefabPath);
-                    DestroyImmediate(prefabInstance);
-
-                    Debug.Log($"Create Prefab : {prefabPath}");
-                }
-                void LoadData()
-                {
-                    if (con.ControllerData != null)
-                    {
-                        data = con.ControllerData;
-                    }
-                    else
-                    {
-                        if (Directory.Exists(dataPath))
-                        {
-                            data = ScriptableObject.Instantiate(AssetDatabase.LoadAssetAtPath<ControllerData>(dataPath));
-                            AssetDatabase.DeleteAsset(dataPath);
-                        }
-                        else
-                        {
-                            data = (ControllerData)ScriptableObject.CreateInstance(con.DataType.Name);
-                            Debug.Log($"Create Data : {con.DataType.Name} at {dataPath}");
-                        }
-                    }
-                    data.name = newControllerName;
-                    con.ControllerData = data;
-                    AssetDatabase.CreateAsset(data, dataPath);
+                CreateController();
             }
-        }
         
         GUILayout.EndHorizontal();
         #endregion
-    }
 
+
+
+        void CreateController()
+        {
+            //Folder
+            string folderPath = $"{ControllerData.controllersFolderPath}/{newControllerName}";
+            if (AssetDatabase.IsValidFolder(folderPath))
+            {
+                Debug.LogWarning($"Already Exist : {folderPath}");
+                return;
+            }
+
+            AssetDatabase.CreateFolder(ControllerData.controllersFolderPath, newControllerName);
+
+            GameObject prefabInstance = Instantiate(EditorResources.Load<GameObject>($"Preset/Controller/{newControllerPresetName}.prefab"));
+            Controller con = prefabInstance.GetComponent<Controller>();
+
+            con.ControllerData = (ControllerData)ScriptableObject.CreateInstance(con.DataType);
+            AssetDatabase.CreateAsset(con.ControllerData, $"{folderPath}/ControllerData.asset");
+
+            con.ControllerData.name = newControllerName;
+
+            PrefabUtility.SaveAsPrefabAsset(prefabInstance, $"{folderPath}/{newControllerName}.prefab");
+            DestroyImmediate(prefabInstance);
+
+            Debug.Log($"Create Controller : {newControllerName}({newControllerPresetName})");
+        }
+    }
 
     int DropDown(Rect firstItemRect, bool show, string[] items)
     {

@@ -45,8 +45,8 @@ public abstract class Controller : Entity
     #region Foldout Object - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
         [ReadOnly][Required][PropertyOrder(0)]
-        [LabelText("Grafic")][LabelWidth(Editor.propertyLabelWidth)]//-|
-        public Grafic grafic;
+        [LabelText("Hand")][LabelWidth(Editor.propertyLabelWidth)]//-|
+        public HandGrafic hand;
                                                                                                                  [BoxGroup("Object")]    
         [ReadOnly][Required][PropertyOrder(0)]
         [LabelWidth(Editor.propertyLabelWidth)]
@@ -372,13 +372,19 @@ public abstract class Controller : Entity
                 }
             }
 
-        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-    #endif
+#endif
 
-        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     #endregion
+
+    [LabelWidth(Editor.propertyLabelWidth)]
+    public Vector2 view = new Vector2(0, 0);
+
+    [LabelWidth(Editor.propertyLabelWidth)]
+    public Vector2 bodyPos = new Vector2(0, 0);
 
     #region 무기 관리
 
@@ -510,19 +516,6 @@ public abstract class Controller : Entity
     }
 
     #endregion
-
-
-    public virtual void CreateAsset()
-    {
-        //Grafic
-        grafic = new GameObject("Grafic").AddComponent<Grafic>();
-        grafic.con = this;
-        grafic.CreateAsset();
-
-        //WeaponHolder
-        weaponHolder = new GameObject("WeaponHolder").transform;
-        weaponHolder.parent = transform;
-    }
 
     public void TakeDamage(float damage)
     {
