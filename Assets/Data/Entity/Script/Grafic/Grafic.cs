@@ -96,7 +96,7 @@ public class Grafic : MonoBehaviour
             {
                 for (int y = 0; y < data.sprites.GetLength(1); y++)
                 {
-                    data.sprites[x, y] = Utility.GetSprite(data.spriteSheet, x, y, data.spritePixelWidth, data.spritePixelHeight);
+                    data.sprites[x, y] = data.spriteSheet.GetSprite(x, y, data.spritePixelWidth, data.spritePixelHeight);
                 }
             }
         }

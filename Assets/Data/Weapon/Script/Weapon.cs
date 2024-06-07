@@ -238,7 +238,7 @@ using UnityEngine;
             //ITEM >> Destroy(parent) >> return
             if (state == WeaponState.Item)
             {
-                Utility.AutoDestroy(transform.parent.gameObject);
+                transform.parent.gameObject.AutoDestroy();
                 return;
             }
 
@@ -253,7 +253,7 @@ using UnityEngine;
             if (state == WeaponState.Removed)
             {
                 OnWeaponDestroyed();
-                Utility.AutoDestroy(gameObject);
+                gameObject.AutoDestroy();
                 return;
             }
 
@@ -286,7 +286,7 @@ using UnityEngine;
                     {
                         Debug.LogWarning("인벤토리가 가득참.");
 
-                        Utility.AutoDestroy(gameObject);
+                        gameObject.AutoDestroy();
                     } //LogWarning: 인벤토리가 가득참. >> 제거
 
                     con.AddWeapon(this);

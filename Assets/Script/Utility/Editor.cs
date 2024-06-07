@@ -1,57 +1,38 @@
 using UnityEngine;
-using Sirenix.OdinInspector;
 
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
 #endif
 
-public class Editor : MonoBehaviour
+public static class Editor
 {
-    #region Inspector  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    [ShowInInspector]
     public const float propertyHeight = 20;
 
-    [ShowInInspector]
     public const int propertyFontSize = 12;
 
-    [ShowInInspector]
     public const int titleFontSize = 20;
 
-    [ShowInInspector]
     public const float titleHeight = 30;
 
-    [ShowInInspector]
     public const float propertyLabelWidth = 125;
 
-    [ShowInInspector]
     public const float shortNoLabelPropertyWidth = 50;
     
-    [ShowInInspector]
     public const float overrideSpace = 10;
     
-    [ShowInInspector]
     public const float shortButtonWidth = 150;
 
-    [ShowInInspector]
     public const float shortPropertyWidth = 150;
 
-    [ShowInInspector]
     public const float childGameObjectOnlyWidth = 16.5f;
-
-
-
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    #region Editor - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     public enum EditorState
     {
         Unknown, BuildPlay, Editor, EditorPlay, EditorPlayPaused, EditorPlayCompiling
     }
-    [ShowInInspector]
-    public static EditorState state { 
+    public static EditorState state 
+    { 
         get { 
             #if UNITY_EDITOR
         
@@ -72,7 +53,6 @@ public class Editor : MonoBehaviour
             #endif 
         } 
     }
-
    
     public enum StateType
     {
@@ -82,7 +62,7 @@ public class Editor : MonoBehaviour
     {
         Null, PrefabEdit, Prefab, NotPrefab
     }
-    public static bool GetType(StateType type)
+    public static bool GetApplicationType(StateType type)
     {
         switch (type)
         {
@@ -127,7 +107,4 @@ public class Editor : MonoBehaviour
         
         #endif
     }
-    
-
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 }

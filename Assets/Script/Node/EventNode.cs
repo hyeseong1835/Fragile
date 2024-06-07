@@ -2,10 +2,10 @@ using System;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public abstract class BaseEventNode<T> : EventUnit<T>
+public abstract class EventNode : EventUnit<int>
 {
     public GameObject target;
-    public Type MessageListenerType => GetType(); 
+    public Type MessageListenerType => GetType();
     protected override bool register => true;
     public abstract string eventName { get; }
 
@@ -20,15 +20,27 @@ public abstract class BaseEventNode<T> : EventUnit<T>
         target = reference.gameObject;
     }
 }
-public abstract class EventNode : BaseEventNode<int>
+public abstract class EventNode<T> : EventUnit<T>
 {
-
-}
-public abstract class EventNode<T> : BaseEventNode<T>
-{
+    public GameObject target;
+    public Type MessageListenerType => GetType();
+    protected override bool register => true;
+    public abstract string eventName { get; }
+    
     [DoNotSerialize] public ValueOutput OutValue;
-
     public virtual string argumentName { get { return typeof(T).Name; } }
+
+    public override EventHook GetHook(GraphReference reference)
+    {
+        if (target == null) SetTarget(reference);
+
+        return new EventHook(eventName, target);
+    }
+    protected virtual void SetTarget(GraphReference reference)
+    {
+        target = reference.gameObject;
+    }
+
 
     protected override void Definition()
     {

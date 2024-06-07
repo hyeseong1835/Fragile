@@ -14,11 +14,13 @@ public class AnimationRun : Node
 
         data = ValueInput<AnimationData>("Data", null);
     }
-    protected override void Act(Flow flow)
+    protected override ControlOutput Act(Flow flow)
     {
         if (grafic == null) grafic = flow.stack.gameObject.GetComponent<Grafic>();
 
         grafic.curAnimation = flow.GetValue<AnimationData>(data);
+
+        return Out;
     }
 }
 
@@ -34,10 +36,12 @@ public class AnimationCustomRun : AnimationRun
 
         lineOffset = ValueInput<int>("Offset", 0);
     }
-    protected override void Act(Flow flow)
+    protected override ControlOutput Act(Flow flow)
     {
         base.Act(flow);
 
         grafic.lineOffset = flow.GetValue<int>(lineOffset);
+
+        return Out;
     }
 }

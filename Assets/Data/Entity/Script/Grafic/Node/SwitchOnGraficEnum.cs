@@ -5,9 +5,11 @@ public abstract class ControllerSwichOn<TEnum> : CloseSwitchOnEnum<TEnum> where 
 {
     public Controller con;
 
-    protected override void Act(Flow flow)
+    protected override ControlOutput Act(Flow flow)
     {
         if(con == null) con = flow.stack.gameObject.GetComponent<Controller>();
+
+        return null;
     }
 }
 

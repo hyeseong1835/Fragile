@@ -19,26 +19,26 @@ public abstract class BaseEventNodeTrigger<T> : Node
     {
         target = flow.stack.gameObject;
     }
-    protected override void Act(Flow flow)
-    {
-        if (target == null) SetTarget(flow);
-    }
 }
 public abstract class EventNodeTrigger : BaseEventNodeTrigger<int>
 {
-    protected override void Act(Flow flow)
+    protected override ControlOutput Act(Flow flow)
     {
-        base.Act(flow);
+        if (target == null) SetTarget(flow);
 
         EventBus.Trigger(eventName, target, -1);
+
+        return Out;
     }
 }
 public abstract class EventNodeTrigger<T> : BaseEventNodeTrigger<T>
 {
-    protected override void Act(Flow flow)
+    protected override ControlOutput Act(Flow flow)
     {
-        base.Act(flow);
+        if (target == null) SetTarget(flow);
 
         EventBus.Trigger(eventName, target, flow.GetValue<T>(value));
+
+        return Out;
     }
 }

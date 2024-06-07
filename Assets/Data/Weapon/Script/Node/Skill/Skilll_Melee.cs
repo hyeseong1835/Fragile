@@ -44,7 +44,7 @@ public class Skill_Melee : CoroutineSkill
 
         triggerObj.transform.position = weapon.con.transform.position + (Vector3)weapon.con.ControllerData.center;//-|
 
-        float startRotateZ = Utility.Vector2ToDegree(weapon.con.targetDir);
+        float startRotateZ = Math.Vector2ToDegree(weapon.con.targetDir);
 
         #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
@@ -67,8 +67,8 @@ public class Skill_Melee : CoroutineSkill
             float rotateZ = startRotateZ + spread * 0.5f - t * spread - 90;
             triggerObj.transform.rotation = Quaternion.Euler(0, 0, rotateZ);
             triggerObj.transform.position = (Vector2)weapon.con.transform.position + weapon.con.ControllerData.center//-|
-              + Utility.Vector2TransformToEllipse(
-                  Utility.RadianToVector2((rotateZ + 90) * Mathf.Deg2Rad),
+              + Math.Vector2TransformToEllipse(
+                  Math.RadianToVector2((rotateZ + 90) * Mathf.Deg2Rad),
                     0.75f, 0.5f
                 ) * (startSpear + spear * t);
 

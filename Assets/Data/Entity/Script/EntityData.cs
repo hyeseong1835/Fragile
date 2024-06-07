@@ -1,6 +1,4 @@
 using Sirenix.OdinInspector;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class EntityData : ScriptableObject
@@ -14,8 +12,20 @@ public abstract class EntityData : ScriptableObject
     /// </summary>
     public const string entityResourceFolderPath = EntityData.entityFolderPath + "/Resources";
 
-    [LabelWidth(Editor.propertyLabelWidth)]
-    new public string name;
+    [HorizontalGroup("Name")]
+    #region Horizontal Name  - - - - - - - - - - -|  
+
+        [ReadOnly]
+        [LabelWidth(Editor.propertyLabelWidth)]//-|
+        new public string name;
+        
+        #if UNITY_EDITOR
+        [HorizontalGroup("Name", width: Editor.shortButtonWidth)]
+        [Button("Reset")]
+        public abstract void ResetName();
+        #endif
+    
+    #endregion - - - - - - - - - - - - - - - - - -|
 
     [LabelWidth(Editor.propertyLabelWidth)]
     public float maxHp = 1;

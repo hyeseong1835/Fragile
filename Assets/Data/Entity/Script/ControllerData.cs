@@ -1,8 +1,16 @@
 using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
 
 public abstract class ControllerData : EntityData
 {
+#if UNITY_EDITOR
+    public override void ResetName()
+    {
+        name = AssetDatabase.GetAssetPath(this).Split('/')[^2];
+    }
+#endif
+    
     /// <summary>
     /// 스크립트 폴더 경로
     /// </summary>

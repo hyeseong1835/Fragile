@@ -43,7 +43,7 @@ public class EnemyController : Controller
 
     void Awake()
     {
-        if (Editor.GetType(Editor.StateType.IsPlay))
+        if (Editor.GetApplicationType(Editor.StateType.IsPlay))
         {
             agent = gameObject.AddComponent<NavMeshAgent>();
             agent.speed = data.moveSpeed;
@@ -67,7 +67,7 @@ public class EnemyController : Controller
 
         targetPos = (Vector2)target.transform.position + target.ControllerData.center;
 
-        if (Editor.GetType(Editor.StateType.IsEditor))
+        if (Editor.GetApplicationType(Editor.StateType.IsEditor))
         {
             if (TryGetComponent<NavMeshAgent>(out agent))
             {

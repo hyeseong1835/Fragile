@@ -2,11 +2,8 @@ using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEditor;
-using UnityEditor.Timeline;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEngine.Windows;
 using static UnityEngine.Rendering.DebugUI;
 
 public struct ControllerSave
@@ -140,9 +137,9 @@ public abstract class Controller : Entity
             private set {
                 if (_lastMoveVector != value) 
                 {
-                    moveRotate = Utility.Vector2ToDegree(moveVector);
-                    moveRotate4 = Utility.Rotate4X(moveRotate4, moveRotate);//-|
-                    moveRotate8 = Utility.FloorRotateToInt(moveRotate, 45, 8);
+                    moveRotate = Math.Vector2ToDegree(moveVector);
+                    moveRotate4 = Math.Rotate4X(moveRotate4, moveRotate);//-|
+                    moveRotate8 = Math.FloorRotateToInt(moveRotate, 45, 8);
                     _lastMoveVector = value;
                 }
             } 
@@ -319,7 +316,7 @@ public abstract class Controller : Entity
                     //기본 무기 제거
                     if (defaultWeapon != null)
                     {
-                        Utility.AutoDestroy(defaultWeapon.gameObject);//-|
+                        defaultWeapon.gameObject.AutoDestroy();//-|
                     }
 
                     //인벤토리 무기 제거
@@ -327,7 +324,7 @@ public abstract class Controller : Entity
                     {
                         if (weapons[i] == null) continue;
 
-                        Utility.AutoDestroy(weapons[i].gameObject);
+                        weapons[i].gameObject.AutoDestroy();
                     }
 
                     defaultWeapon = null;
@@ -414,7 +411,7 @@ public abstract class Controller : Entity
         if (weapons.Count > ControllerData.inventorySize)
         {
             Debug.LogWarning("인벤토리가 꽉 참");
-            Utility.AutoDestroy(weapon.gameObject);
+            weapon.gameObject.AutoDestroy();
             return weapon;
         } //LogWarning: 인벤토리가 꽉 참 >> return
 
@@ -674,11 +671,13 @@ public abstract class Controller : Entity
 public class PreventAttackInput : Node
 {
     Weapon weapon;
-    protected override void Act(Flow flow)
+    protected override ControlOutput Act(Flow flow)
     {
         if (weapon == null) weapon = flow.stack.gameObject.GetComponent<Weapon>();
 
         weapon.con.readyPreventAttackInput = true;
+        
+        return Out;
     }
 }
 [UnitTitle("Allow Attack Input")]
@@ -686,12 +685,14 @@ public class PreventAttackInput : Node
 public class AllowAttackInput : Node
 {
     Weapon weapon;
-    protected override void Act(Flow flow)
+    protected override ControlOutput Act(Flow flow)
     {
         if (weapon == null) weapon = flow.stack.gameObject.GetComponent<Weapon>();
 
         weapon.con.readyPreventAttackInput = false;
         weapon.con.preventAttackInput = false;
+
+        return Out;
     }
 }
 [UnitTitle("Prevent Special Input")]
@@ -700,11 +701,13 @@ public class PreventSpecialInput : Node
 {
     Weapon weapon;
 
-    protected override void Act(Flow flow)
+    protected override ControlOutput Act(Flow flow)
     {
         if (weapon == null) weapon = flow.stack.gameObject.GetComponent<Weapon>();
 
         weapon.con.readyPreventSpecialInput = true;
+
+        return Out;
     }
 }
 [UnitTitle("Allow Special Input")]
@@ -712,11 +715,13 @@ public class PreventSpecialInput : Node
 public class AllowSpecialInput : Node
 {
     Weapon weapon;
-    protected override void Act(Flow flow)
+    protected override ControlOutput Act(Flow flow)
     {
         if (weapon == null) weapon = flow.stack.gameObject.GetComponent<Weapon>();
 
         weapon.con.readyPreventSpecialInput = false;
         weapon.con.preventSpecialInput = false;
+
+        return Out;
     }
 }

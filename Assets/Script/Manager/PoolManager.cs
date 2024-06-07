@@ -81,7 +81,7 @@ public class Pool
     {
         Debug.Log($"Pool({prefab.name}) ÆÄ±«µÊ");
         PoolManager.pools.Remove(this);
-        Utility.AutoDestroy(holder.gameObject);
+        holder.gameObject.AutoDestroy();
     }
 
     public GameObject Use()

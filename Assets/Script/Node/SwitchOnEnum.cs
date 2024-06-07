@@ -34,14 +34,16 @@ public abstract class CloseSwitchOnEnum<TEnum> : CloseNode where TEnum : Enum
         return default;
     }
 }
-public abstract class SwitchOnEnum<TEnum> : Node<TEnum> where TEnum : Enum
+public abstract class SwitchOnEnum<TEnum> : Node where TEnum : Enum 
 {
     public static TEnum[] types = (TEnum[])Enum.GetValues(typeof(TEnum));
     public ControlOutput[] typeOut = new ControlOutput[types.Length];
-
+    public ValueInputPort<TEnum> valueInputPort;
     protected override void Definition()
     {
         base.Definition();
+        
+        valueInputPort.Define();
 
         for (int i = 0; i < typeOut.Length; i++)
         {
@@ -52,10 +54,11 @@ public abstract class SwitchOnEnum<TEnum> : Node<TEnum> where TEnum : Enum
     {
         Act(flow);
 
-        TEnum type = flow.GetValue<TEnum>(value);
+        TEnum value = valueInputPort.GetValue(flow);
+
         for (int i = 0; i < typeOut.Length; i++)
         {
-            if (type.Equals(types[i])) return typeOut[i];
+            if (value.Equals(types[i])) return typeOut[i];
         }
 
         Debug.LogError("No type found");
