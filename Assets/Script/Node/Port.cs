@@ -1,120 +1,60 @@
 using System;
 using Unity.VisualScripting;
 
-public abstract class Port
-{
-    public Unit unit;
-    public string argumentName;
-    protected abstract void EnsureUnique(string key);
-    public abstract void Define();
-}
-public abstract class InputPort : Port
-{
-    protected override void EnsureUnique(string key)
-    {
-        if (unit.controlInputs.Contains(key) || unit.valueInputs.Contains(key) || unit.invalidInputs.Contains(key))
-        {
-            throw new ArgumentException($"Duplicate input for '{key}' in {GetType()}.");
-        }
-    }
-}
-public abstract class OutputPort : Port
-{
-    protected override void EnsureUnique(string key)
-    {
-        if (unit.controlOutputs.Contains(key) || unit.valueOutputs.Contains(key) || unit.invalidOutputs.Contains(key))
-        {
-            throw new ArgumentException($"Duplicate output for '{key}' in {GetType()}.");
-        }
-    }
-}
-
-public class ControlInputPort : InputPort
+public class ControlInputPort
 {
     public ControlInput port;
-    public Func<Flow, ControlOutput> action;
 
-    public ControlInputPort(Unit _unit, Func<Flow, ControlOutput> _action, string _argumentName = "In")
+    public void Define(Unit unit, Func<Flow, ControlOutput> action, string argumentName = "")
     {
-        unit = _unit;
-        action = _action;
-        argumentName = _argumentName;
-    }
-    public override void Define()
-    {
-        port = ControlInput(argumentName, action);
-    }
-    protected ControlInput ControlInput(string key, Func<Flow, ControlOutput> action)
-    {
-        EnsureUnique(key);
-        var port = new ControlInput(key, action);
+        if (unit.controlInputs.Contains(argumentName)) throw new ArgumentException($"Duplicate input for '{argumentName}' in {unit}.");
+
+        port = new ControlInput(argumentName, action);
         unit.controlInputs.Add(port);
-        return port;
     }
 }
 
-public class ValueInputPort<ValueT> : InputPort
+public class ControlOutputPort
+{
+    public ControlOutput port;
+
+    public void Define(Unit unit, string argumentName = "")
+    {
+        if (unit.controlInputs.Contains(argumentName)) throw new ArgumentException($"Duplicate input for '{argumentName}' in {unit}.");
+
+        port = new ControlOutput(argumentName);
+        unit.controlOutputs.Add(port);
+    }
+}
+public class ValueInputPort<ValueT>
 {
     public ValueInput port;
-    public bool showField;
-    public ValueT @default;
 
-    public ValueInputPort(Unit _unit, string _argumentName = "typeof(ValueT).Name", bool _showField = false, ValueT _default = default)
+    public void Define(Unit unit, string argumentName = "typeof(ValueT).Name", bool showField = true, ValueT @default = default)
     {
-        unit = _unit;
+        if (argumentName == "typeof(ValueT).Name") argumentName = typeof(ValueT).Name;
+        
+        if (unit.valueInputs.Contains(argumentName)) throw new ArgumentException($"Duplicate ValueInput for '{argumentName}' in {unit}.");
 
-        if (_argumentName == "typeof(ValueT).Name") argumentName = typeof(ValueT).Name;
-        else argumentName = _argumentName;
-
-        showField = _showField;
-        @default = _default;
-    }
-    public override void Define()
-    {
-        port = ValueInput(argumentName);
-    }
-    ValueInput ValueInput(string key)
-    {
-        EnsureUnique(key);
-        var port = new ValueInput(key, typeof(ValueT));
+        port = new ValueInput(argumentName, typeof(ValueT));
         unit.valueInputs.Add(port);
         if (showField) port.SetDefaultValue(@default);
-        return port;
     }
     public ValueT GetValue(Flow flow) => flow.GetValue<ValueT>(port);
 }
 
-
-public class ControlOutputPort : OutputPort
+public class ValueOutputPort<ValueT>
 {
-    public ControlOutput port;
+    public ValueOutput port; 
 
-    public override void Define()
+    public void Define(Unit unit, string argumentName = "typeof(ValueT).Name", Func<Flow, object> getValue = null)
     {
-        port = ControlOutput(argumentName);
-    }
-    protected ControlOutput ControlOutput(string key)
-    {
-        EnsureUnique(key);
-        var port = new ControlOutput(key);
-        unit.controlOutputs.Add(port);
-        return port;
-    }
-}
-public class ValueOutputPort<ValueT> : OutputPort
-{
-    public ValueOutput port;
+        if (argumentName == "typeof(ValueT).Name") argumentName = typeof(ValueT).Name;
 
-    public override void Define()
-    {
-        port = ValueOutput(argumentName);
-    }
-    protected ValueOutput ValueOutput(string key)
-    {
-        EnsureUnique(key);
-        var port = new ValueOutput(key, typeof(ValueT));
+        if (unit.valueOutputs.Contains(argumentName)) throw new ArgumentException($"Duplicate ValueInput for '{argumentName}' in {unit}.");
+
+        port = new ValueOutput(argumentName, typeof(ValueT), getValue);
         unit.valueOutputs.Add(port);
-        return port;
     }
     public void SetValue(Flow flow, ValueT value) => flow.SetValue(port, value);
 }   

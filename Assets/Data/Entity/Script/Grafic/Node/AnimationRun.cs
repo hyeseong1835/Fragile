@@ -2,46 +2,32 @@ using Unity.VisualScripting;
 
 [UnitTitle("Run Line")]
 [UnitCategory("Animation")]
-public class AnimationRun : Node
+public class AnimationRun : Unit
 {
     protected Grafic grafic;
 
-    public ValueInput data;
+    public ControlInputPort inputPort;
+    public ControlOutputPort outputPort;
+    public ValueInputPort<AnimationData> dataPort;
+    public ValueInputPort<ReadLineType> readType;
+    public ValueInputPort<int> lineOffsetPort;
 
     protected override void Definition()
     {
-        base.Definition();
-
-        data = ValueInput<AnimationData>("Data", null);
+        inputPort.Define(this, Act);
+        outputPort.Define(this);
+        dataPort.Define(this, "Data");
+        readType.Define(this, "Read");
+        lineOffsetPort.Define(this, "Offset");
     }
-    protected override ControlOutput Act(Flow flow)
+    ControlOutput Act(Flow flow)
     {
         if (grafic == null) grafic = flow.stack.gameObject.GetComponent<Grafic>();
 
-        grafic.curAnimation = flow.GetValue<AnimationData>(data);
+        grafic.curAnimation = dataPort.GetValue(flow);
+        
+        grafic.lineOffset = lineOffsetPort.GetValue(flow);
 
-        return Out;
-    }
-}
-
-[UnitTitle("Custom Run Line")]
-[UnitCategory("Animation")]
-public class AnimationCustomRun : AnimationRun
-{
-    public ValueInput lineOffset;
-
-    protected override void Definition()
-    {
-        base.Definition();
-
-        lineOffset = ValueInput<int>("Offset", 0);
-    }
-    protected override ControlOutput Act(Flow flow)
-    {
-        base.Act(flow);
-
-        grafic.lineOffset = flow.GetValue<int>(lineOffset);
-
-        return Out;
+        return outputPort.port;
     }
 }

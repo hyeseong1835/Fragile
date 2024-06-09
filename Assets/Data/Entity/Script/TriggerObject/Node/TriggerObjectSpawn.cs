@@ -3,30 +3,31 @@ using UnityEngine;
 
 [UnitTitle("TriggerObject Spawn")]
 [UnitCategory("Events/Weapon")]
-public class TriggerObjectSpawn : Node
+public class TriggerObjectSpawn : Unit
 {
-    public ValueInputPort<GameObject> prefabValueInputPort;
-    public ValueInputPort<string> IDValueInputPort;
+    public ControlInputPort inputPort;
+    public ControlOutputPort outPort;
+    public ValueInputPort<GameObject> prefabPort;
+    public ValueInputPort<string> IDPort;
 
-    [DoNotSerialize] public ValueOutput Ov_triggerObject;
+    [DoNotSerialize] public ValueOutputPort<TriggerObject> triggerObjectPort;
 
     protected override void Definition()
     {
-        base.Definition();
-        
-        prefabValueInputPort = new ValueInputPort<GameObject>(this, "Prefab", true);
+        inputPort.Define(this, Act);
+        prefabPort.Define(this, "Prefab");
 
-        Ov_triggerObject = ValueOutput<TriggerObject>("TriggerObject");
+        triggerObjectPort.Define(this);
     }
-    protected override ControlOutput Act(Flow flow)
+    ControlOutput Act(Flow flow)
     {
         TriggerObject triggerObject = GameObject.Instantiate(
-                    prefabValueInputPort.GetValue(flow),
+                    prefabPort.GetValue(flow),
                     flow.stack.gameObject.transform
                     ).AddComponent<TriggerObject>();
-        flow.SetValue(Ov_triggerObject, triggerObject);
-        triggerObject.Set(flow.stack.gameObject, IDValueInputPort.GetValue(flow));
+        triggerObjectPort.SetValue(flow, triggerObject);
+        triggerObject.Set(flow.stack.gameObject, IDPort.GetValue(flow));
 
-        return Out;
+        return outPort.port;
     }
 }

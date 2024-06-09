@@ -1,15 +1,15 @@
 using Unity.VisualScripting;
 using System;
 
-public abstract class ControllerSwichOn<TEnum> : CloseSwitchOnEnum<TEnum> where TEnum : Enum
+public abstract class ControllerSwichOn<TEnum> : SwitchOnEnum<TEnum> where TEnum : Enum
 {
-    public Controller con;
+    protected Controller con;
+    protected abstract TEnum Value { get; }
 
-    protected override ControlOutput Act(Flow flow)
+    protected override TEnum GetValue(Flow flow)
     {
-        if(con == null) con = flow.stack.gameObject.GetComponent<Controller>();
-
-        return null;
+        if (con == null) con = flow.stack.gameObject.GetComponent<Grafic>().con;
+        return Value;
     }
 }
 
@@ -17,19 +17,19 @@ public abstract class ControllerSwichOn<TEnum> : CloseSwitchOnEnum<TEnum> where 
 [UnitCategory("Animation/Control")]
 public class SwitchOnAnimationType : ControllerSwichOn<AnimationType>
 {
-    public override AnimationType Value => con.animationType;
+    protected override AnimationType Value => con.animationType;
 }
 
 [UnitTitle("Move")]
 [UnitCategory("Animation/Control")]
 public class SwitchOnMoveAnimationType : ControllerSwichOn<MoveAnimationType>
 {
-    public override MoveAnimationType Value => con.moveAnimationType;
+    protected override MoveAnimationType Value => con.moveAnimationType;
 }
 
 [UnitTitle("Skill")]
 [UnitCategory("Animation/Control")]
 public class SwitchOnSkillAnimationType : ControllerSwichOn<SkillAnimationType>
 {
-    public override SkillAnimationType Value => con.skillAnimationType;
+    protected override SkillAnimationType Value => con.skillAnimationType;
 }

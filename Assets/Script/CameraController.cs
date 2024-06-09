@@ -5,7 +5,6 @@ public enum CameraMove
 {
     Stop, Perfect, MoveTo
 }
-[ExecuteAlways]
 public class CameraController : MonoBehaviour
 {
     public static CameraController instance { get; private set; }
