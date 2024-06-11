@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -16,11 +13,12 @@ public abstract class SwitchOnEnum<TEnum> : Unit where TEnum : Enum
 
     protected override void Definition()
     {
-        inputPort.Define(this, Act);
+        inputPort = ControlInputPort.Define(this, "In", Act);
+
         typePort = new ControlOutputPort[types.Length];
         for (int i = 0; i < typePort.Length; i++)
         {
-            typePort[i].Define(this, Enum.GetName(typeof(TEnum), types[i]));
+            typePort[i] = ControlOutputPort.Define(this, Enum.GetName(typeof(TEnum), types[i]));
         }
     }
     ControlOutput Act(Flow flow)

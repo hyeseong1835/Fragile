@@ -1,6 +1,8 @@
 using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.XR;
 
@@ -11,18 +13,34 @@ public enum HandMode
 [ExecuteAlways]
 public class HandGrafic : MonoBehaviour
 {
+    [MenuItem("GameObject/Create Asset/HandGrafic", false, 0)]
+    static void Create(MenuCommand menuCommand)
+    {
+        GameObject parentGameObject = (GameObject)menuCommand.context;
+        HandGrafic hand = Instantiate(EditorResources.Load<GameObject>("Preset/HandGrafic.prefab"), parentGameObject.transform).GetComponent<HandGrafic>();
+        hand.gameObject.name = "New HandGrafic";
+        Controller con = parentGameObject.GetComponent<Controller>();
+        con.hand = hand;
+    }
+
     [HorizontalGroup("Horizontal")]
     
     #region Horizontal
 
-        [VerticalGroup("Horizontal/Vertical", PaddingTop = 25, PaddingBottom = 2)]
-        [ReadOnly]
+        [VerticalGroup("Horizontal/Vertical", PaddingTop = 5, PaddingBottom = 2)]
+        
         #region Vertical
 
+            [ReadOnly]
             [LabelText("Target")]
             public Transform targetTransform;
-            
-            [LabelText("Mode")]                      [VerticalGroup("Horizontal/Vertical")][ReadOnly]
+                                                                      [VerticalGroup("Horizontal/Vertical")]
+            [ReadOnly] 
+            [LabelText("Handle")]
+            public Transform handle;
+                                                                      [VerticalGroup("Horizontal/Vertical")]
+            [ReadOnly]
+            [LabelText("Mode")]
             public HandMode handMode = HandMode.NONE;     
 
         #endregion
@@ -32,7 +50,7 @@ public class HandGrafic : MonoBehaviour
         /// </summary>
         /// <param name="target"></param>
         /// <param name="_IK">제어권 [true: 무기, false: 손]</param>
-        [Button]                                                                                [HorizontalGroup("Horizontal")]
+        [Button(Expanded = true)]                                                                                [HorizontalGroup("Horizontal")]
         public void HandLink(Transform target, HandMode mode)
         {
             switch (mode)
@@ -58,8 +76,6 @@ public class HandGrafic : MonoBehaviour
 
     #endregion
 
-    [DisableInEditorMode] 
-    public Transform handle;
 
     void Awake()
     {
@@ -88,21 +104,21 @@ public class HandGrafic : MonoBehaviour
         switch (handMode)
         {
             case HandMode.ToHand:
-                if (targetTransform == null)
-                {
-                    Debug.LogError("{TargetTransform} is null");
-                    return;
-                }
+                if (targetTransform == null) { Debug.LogError("TargetTransform is null"); return; }
+                
+                handle = targetTransform.Find("Handle");
+                if(handle == null) { Debug.LogError("Handle is null"); return; }
+
                 targetTransform.position = transform.position - handle.localPosition;
                 targetTransform.rotation = transform.rotation;
                 break;
 
             case HandMode.ToTarget:
-                if (targetTransform == null)
-                {
-                    Debug.LogError("{TargetTransform} is null");
-                    return;
-                }
+                if (targetTransform == null) { Debug.LogError("TargetTransform is null"); return; }
+
+                handle = targetTransform.Find("Handle");
+                if (handle == null) { Debug.LogError("Handle is null"); return; }
+
                 transform.position = handle.position;
                 transform.rotation = targetTransform.rotation;
                 break;

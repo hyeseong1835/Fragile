@@ -40,6 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6485334858287594712}
+  - component: {fileID: 3654765765149382210}
   - component: {fileID: 4943526848913636800}
   m_Layer: 10
   m_Name: SwingWeapon
@@ -65,6 +66,21 @@ Transform:
   - {fileID: 4198816991923865746}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3654765765149382210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5063185619353247407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a18d6e18c94e5d40a8b1b1bc90228d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  returnObject: {fileID: 0}
+  returnObjectCon: {fileID: 0}
+  ID: 
 --- !u!61 &4943526848913636800
 BoxCollider2D:
   m_ObjectHideFlags: 0

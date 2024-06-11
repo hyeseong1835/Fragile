@@ -13,11 +13,11 @@ public class GraficInformation : Unit
 
     protected override void Definition()
     {
-        graficPort.Define(this, "Grafic", (flow) => { 
+        graficPort = ValueOutputPort<Grafic>.Define(this, "Grafic", (flow) => { 
             if (grafic == null) grafic = flow.stack.gameObject.GetComponent<Grafic>(); 
             return grafic; 
         });
-        controllerPort.Define(this, "Controller", (flow) => {
+        controllerPort = ValueOutputPort<Controller>.Define(this, "Controller", (flow) => {
             if (grafic == null) grafic = flow.stack.gameObject.GetComponent<Grafic>();
             return controller;
         });

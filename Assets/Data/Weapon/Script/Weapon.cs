@@ -146,7 +146,7 @@ using UnityEngine;
             if (hand_obj != null)
             {
                 hand_obj.gameObject.SetActive(true);
-                con.hand.HandLink(hand_obj, HandMode.ToHand);
+                con.hand.HandLink(hand_obj, HandMode.ToHand);   
             }
         }
         protected virtual void OnDeUse()

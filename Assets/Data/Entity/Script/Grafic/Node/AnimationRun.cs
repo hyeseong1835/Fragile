@@ -14,11 +14,11 @@ public class AnimationRun : Unit
 
     protected override void Definition()
     {
-        inputPort.Define(this, Act);
-        outputPort.Define(this);
-        dataPort.Define(this, "Data");
-        readType.Define(this, "Read");
-        lineOffsetPort.Define(this, "Offset");
+        inputPort = ControlInputPort.Define(this, "In", Act);
+        outputPort = ControlOutputPort.Define(this, "Out");
+        dataPort = ValueInputPort<AnimationData>.Define(this, "Data");
+        readType = ValueInputPort<ReadLineType>.Define(this, "Read");
+        lineOffsetPort = ValueInputPort<int>.Define(this, "Offset");
     }
     ControlOutput Act(Flow flow)
     {

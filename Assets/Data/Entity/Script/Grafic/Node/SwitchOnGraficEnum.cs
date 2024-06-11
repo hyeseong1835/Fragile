@@ -1,11 +1,12 @@
 using Unity.VisualScripting;
 using System;
+using UnityEngine;
+using UnityEditor;
 
 public abstract class ControllerSwichOn<TEnum> : SwitchOnEnum<TEnum> where TEnum : Enum
 {
     protected Controller con;
     protected abstract TEnum Value { get; }
-
     protected override TEnum GetValue(Flow flow)
     {
         if (con == null) con = flow.stack.gameObject.GetComponent<Grafic>().con;

@@ -26,7 +26,7 @@ public abstract class EventNodeTrigger<TArg> : ActNode
     {
         base.Definition();
 
-        valuePort.Define(this);
+        valuePort = ValueInputPort<TArg>.Define(this);
     }
     protected override void Act(Flow flow)
     {
