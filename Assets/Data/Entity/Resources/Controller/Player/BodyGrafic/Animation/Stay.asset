@@ -12,8 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff91caf40f2c3f544a996f5dbc8c6664, type: 3}
   m_Name: Stay
   m_EditorClassIdentifier: 
-  length: 1
-  count: 2
-  line: 0
-  repeat: 1
-  readLineType: 2
+  repeatLayer: 1
