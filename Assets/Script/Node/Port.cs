@@ -81,4 +81,4 @@ public class ValueOutputPort<ValueT>
         return valueOutputPort;
     }
     public void SetValue(Flow flow, ValueT value) => flow.SetValue(port, value);
-}   
+}

@@ -1,8 +1,5 @@
 using Sirenix.OdinInspector;
-using System;
 using UnityEngine;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine.UIElements;
 using UnityEngine.UI;
 using UnityEngine.Windows;
@@ -110,8 +107,6 @@ public class Grafic : MonoBehaviour
         }
         else time = 0;
 
-        int frameIndex = Mathf.FloorToInt(time * curAnimation.count);
-
         switch (curAnimation.readLineType)
         { 
             case ReadLineType.Custom:
@@ -123,7 +118,10 @@ public class Grafic : MonoBehaviour
                 lineOffset = con.moveRotate4;
                 break;
         }
-
-        renderer.sprite = data.sprites[frameIndex, curAnimation.line + lineOffset];
     }
+    public void Set(int x, int y)
+    {
+        renderer.sprite = data.sprites[x, y];
+    }
+    public int GetIndex(int count) => Mathf.FloorToInt(time * count);
 }

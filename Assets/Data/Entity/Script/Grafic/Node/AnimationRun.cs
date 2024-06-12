@@ -2,32 +2,44 @@ using Unity.VisualScripting;
 
 [UnitTitle("Run Line")]
 [UnitCategory("Animation")]
-public class AnimationRun : Unit
+public class AnimationRun : ActNode
 {
+    [Serialize, Inspectable ,UnitHeaderInspectable]
+    public ReadLineType readType;
+
     protected Grafic grafic;
 
-    public ControlInputPort inputPort;
-    public ControlOutputPort outputPort;
     public ValueInputPort<AnimationData> dataPort;
-    public ValueInputPort<ReadLineType> readType;
     public ValueInputPort<int> lineOffsetPort;
+    ValueOutputPort<int> indexOutputPort;
 
     protected override void Definition()
     {
-        inputPort = ControlInputPort.Define(this, "In", Act);
-        outputPort = ControlOutputPort.Define(this, "Out");
+        base.Definition();
+
         dataPort = ValueInputPort<AnimationData>.Define(this, "Data");
-        readType = ValueInputPort<ReadLineType>.Define(this, "Read");
         lineOffsetPort = ValueInputPort<int>.Define(this, "Offset");
+
+        if (readType == ReadLineType.Rotation4X)
+        {
+            indexOutputPort = ValueOutputPort<int>.Define(this, "Index");
+        }
     }
-    ControlOutput Act(Flow flow)
+    protected override void Act(Flow flow)
     {
         if (grafic == null) grafic = flow.stack.gameObject.GetComponent<Grafic>();
+        AnimationData data = dataPort.GetValue(flow);
+
 
         grafic.curAnimation = dataPort.GetValue(flow);
         
         grafic.lineOffset = lineOffsetPort.GetValue(flow);
 
-        return outputPort.port;
+        if (readType == ReadLineType.Rotation4X)
+        {
+            int index = grafic.GetIndex(data.count);
+            grafic.Set(index, data.line + grafic.con.moveRotate4);
+            indexOutputPort.SetValue(flow, index);
+        }
     }
 }

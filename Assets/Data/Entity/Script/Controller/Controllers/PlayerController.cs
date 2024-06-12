@@ -165,14 +165,16 @@ public class PlayerController : Controller
 
             transform.position += (Vector3)moveVector.normalized * Time.deltaTime * data.moveSpeed;
 
-            behaviorState = BehaviorState.Move;
+            animationType = AnimationType.Move;
+            moveAnimationType = MoveAnimationType.Walk;
         }
         //입력이 없을 때
         else
         {
             moveVector = Vector2.zero;
 
-            behaviorState = BehaviorState.Idle;
+            animationType = AnimationType.Move;
+            moveAnimationType = MoveAnimationType.Stay;
         }
     }
     void WheelSelect()
