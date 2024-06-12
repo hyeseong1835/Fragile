@@ -17,8 +17,8 @@ public class HandGrafic : MonoBehaviour
     static void Create(MenuCommand menuCommand)
     {
         GameObject parentGameObject = (GameObject)menuCommand.context;
-        HandGrafic hand = Instantiate(EditorResources.Load<GameObject>("Preset/HandGrafic.prefab"), parentGameObject.transform).GetComponent<HandGrafic>();
-        hand.gameObject.name = "New HandGrafic";
+        HandGrafic hand = new GameObject("New HandGrafic").AddComponent<HandGrafic>();
+        hand.transform.parent = parentGameObject.transform;
         Controller con = parentGameObject.GetComponent<Controller>();
         con.hand = hand;
     }

@@ -9,12 +9,12 @@ using System;
 public class EnemyController : Controller
 {
     public EnemyControllerData data;
-    public override ControllerData ControllerData { 
+    public override ControllerData ControllerData {
         get => data;
         set => data = (EnemyControllerData)value; 
     }
     public override Type DataType => typeof(EnemyControllerData);
-
+    public Controller target => PlayerController.instance;
     public enum BehaviorState
     {
         Move, Recoil,
@@ -22,22 +22,12 @@ public class EnemyController : Controller
     }
     public BehaviorState behaviorState;
 
-    [Space(Editor.overrideSpace)]
-    [BoxGroup("Object")]
-    #region Override Box Object  - - - - - - - - - - - - - - - - - - - - - - - - - -|
-    
-        [SerializeField] 
-        [LabelWidth(Editor.propertyLabelWidth)]
-        Controller target;
-
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    [FoldoutGroup("NavMeshAgent")]
+    //[FoldoutGroup("NavMeshAgent")]
     #region Foldout NavMeshAgent
 
         //public const int agentTypeID = 0;
 
-        NavMeshAgent agent;
+        //NavMeshAgent agent;
 
     #endregion
 
@@ -45,8 +35,8 @@ public class EnemyController : Controller
     {
         if (Editor.GetApplicationType(Editor.StateType.IsPlay))
         {
-            agent = gameObject.AddComponent<NavMeshAgent>();
-            agent.speed = data.moveSpeed;
+            //agent = gameObject.AddComponent<NavMeshAgent>();
+            //agent.speed = data.moveSpeed;
         }
     }
     void Start()
@@ -69,12 +59,14 @@ public class EnemyController : Controller
 
         if (Editor.GetApplicationType(Editor.StateType.IsEditor))
         {
+            /*
             if (TryGetComponent<NavMeshAgent>(out agent))
             {
                 Debug.LogWarning("\"NavMeshAgent\"는 플레이 시작 시 자동으로 추가됩니다");
                 DestroyImmediate(agent);
                 agent = null;
             }
+            */
         }
     }
     void Move()

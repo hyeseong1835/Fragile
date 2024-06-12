@@ -54,7 +54,8 @@ public abstract class Controller : Entity
         [ShowInInspector]
         [LabelText("Center")][LabelWidth(Editor.propertyLabelWidth)]
         Vector2 showCenter { 
-            get { 
+            get {
+                if (ControllerData == null) return default;
                 return ControllerData.center; 
             } 
             set { ControllerData.center = value; } 
@@ -306,7 +307,10 @@ public abstract class Controller : Entity
                 [ShowInInspector][DelayedProperty]
                 [HideLabel]
                 public int showInventorySize { 
-                    get { return ControllerData.inventorySize; } 
+                    get { 
+                        if (ControllerData == null) return default; 
+                        return ControllerData.inventorySize; 
+                    } 
                     set { ControllerData.inventorySize = value; } 
                 }
                                                                                                     [VerticalGroup("Weapon/Inventory/Horizontal/Manage")]

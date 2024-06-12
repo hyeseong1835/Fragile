@@ -48,21 +48,28 @@ public class Grafic : MonoBehaviour
         {
             string folderPath = $"{con.ControllerData.FolderPath}/{gameObject.name}";
 
-            if (Directory.Exists(folderPath))
+            if (Directory.Exists(folderPath) == false)
             {
-                Debug.LogError("Already Exist");
-                return;
+                AssetDatabase.CreateFolder(con.ControllerData.FolderPath, gameObject.name);
             }
-
-            AssetDatabase.CreateFolder(con.ControllerData.FolderPath, gameObject.name);
 
             string dataPath = $"{folderPath}/GraficData.asset";
 
+        if (Directory.Exists(dataPath))
+        {
+            data = AssetDatabase.LoadAssetAtPath<GraficData>(dataPath);
+        }
+        else
+        {
             data = ScriptableObject.CreateInstance<GraficData>();
             AssetDatabase.CreateAsset(data, dataPath);
+        }
 
+        if (Directory.Exists($"{folderPath}/Animation") == false)
+        {
             AssetDatabase.CreateFolder(folderPath, "Animation");
         }
+    }
 
     #endregion
 
