@@ -9,7 +9,7 @@ public abstract class ControllerSwichOn<TEnum> : SwitchOnEnum<TEnum> where TEnum
     protected abstract TEnum Value { get; }
     protected override TEnum GetValue(Flow flow)
     {
-        if (con == null) con = flow.stack.gameObject.GetComponent<Grafic>().con;
+        if (con == null) con = flow.stack.gameObject.GetComponent<Controller>();
         return Value;
     }
 }

@@ -6,6 +6,22 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using static UnityEngine.Rendering.DebugUI;
 
+public enum AnimationType
+{
+    Move, Attack, Special
+}
+public enum MoveAnimationType
+{
+    Stay, Walk, Jump, Dash, Charge
+}
+public enum SkillAnimationType
+{
+    Swing, Shoot, Throw, Cast, Summon
+}
+public enum ReadLineType
+{
+    Custom, One, Rotation4X
+}
 public struct ControllerSave
 {
     //ÁÂÇ¥
