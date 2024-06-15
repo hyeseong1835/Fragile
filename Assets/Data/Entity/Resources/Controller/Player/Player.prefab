@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4084366326265991935}
   - component: {fileID: 8411411461842612034}
-  - component: {fileID: 7795799424369816332}
   - component: {fileID: 2773192425330319606}
   - component: {fileID: 1176346603396232253}
   m_Layer: 0
@@ -76,22 +75,6 @@ MonoBehaviour:
   attackInput: 0
   attackInputAllowTime: 1
   nextWeapon: {fileID: 0}
---- !u!111 &7795799424369816332
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1677944023418363296}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 68ad7958de77dc345a17c7a61d770a7a, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: 68ad7958de77dc345a17c7a61d770a7a, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
 --- !u!114 &2773192425330319606
 MonoBehaviour:
   m_ObjectHideFlags: 0
