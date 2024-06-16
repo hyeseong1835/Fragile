@@ -11,7 +11,7 @@ public class AnimationPlayNode : GetComponentActNode<Animator>
     ValueInputPort<int> layerPort;
     ValueOutputPort<bool> IsNewAnimationPort;
 
-    AnimatorStateInfo stateInfo;
+    AnimatorClipInfo[] clipInfoArray;
 
     protected override void Definition()
     {
@@ -28,16 +28,24 @@ public class AnimationPlayNode : GetComponentActNode<Animator>
         string name = namePort.GetValue(flow);
         int layer = layerPort.GetValue(flow);
         
-        stateInfo = component.GetCurrentAnimatorStateInfo(layer);
+        clipInfoArray = component.GetCurrentAnimatorClipInfo(layer);
 
-        if (stateInfo.IsUnityNull()) { AnimationPlay(flow, name, layer); return; }
+        if (clipInfoArray.IsUnityNull()) { AnimationPlay(flow, name, layer); return; }
 
-        if (stateInfo.IsName(name) == false) { AnimationPlay(flow, name, layer, stateInfo.normalizedTime); return; }
+        foreach(AnimatorClipInfo info in clipInfoArray)
+        {
+            if (info.clip.name == name) 
+            {
+                AnimationPlay(flow, name, layer, info.); 
+                return; 
+            }
+        }
 
         IsNewAnimationPort.SetValue(flow, false);
     }
     void AnimationPlay(Flow flow, string name, int layer, float normalizeTime = 0)
     {
+        Debug.Log(normalizeTime);
         component.Play(name, layer, normalizeTime);
         IsNewAnimationPort.SetValue(flow, true);
     }
