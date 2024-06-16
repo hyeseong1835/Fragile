@@ -26,17 +26,17 @@ public abstract class ActNode : Unit
     protected abstract void Act(Flow flow);
     protected Flow NewFlow() => Flow.New(reference);
 }
-public abstract class WeaponNode : ActNode
+public abstract class GetComponentActNode<ComponentT> : ActNode
 {
-    protected Weapon weapon;
+    protected ComponentT component;
 
     protected override void Act(Flow flow)
     {
-        if (weapon == null) weapon = flow.stack.gameObject.GetComponent<Weapon>();
+        if (component == null) component = flow.stack.gameObject.GetComponent<ComponentT>();
     }
 }
 
-public abstract class CoroutineSkillNode : WeaponNode
+public abstract class CoroutineSkillNode : GetComponentActNode<Weapon>
 {
     [DoNotSerialize] protected ControlOutputPort updatePort;
     [DoNotSerialize] protected ControlOutputPort endPort;
@@ -52,7 +52,7 @@ public abstract class CoroutineSkillNode : WeaponNode
     {
         base.Act(flow);
 
-        weapon.StartCoroutine(UseCoroutine(flow));
+        component.StartCoroutine(UseCoroutine(flow));
     }
     protected abstract IEnumerator UseCoroutine(Flow flow);
     protected void Update() => updatePort.Run(reference);

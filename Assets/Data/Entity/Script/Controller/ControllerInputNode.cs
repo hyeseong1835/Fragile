@@ -2,47 +2,47 @@ using Unity.VisualScripting;
 
 [UnitTitle("Prevent Attack Input")]
 [UnitCategory("Events/Weapon/Action")]
-public class PreventAttackInput : WeaponNode
+public class PreventAttackInput : GetComponentActNode<Weapon>
 {
     protected override void Act(Flow flow)
     {
         base.Act(flow);
 
-        weapon.con.readyPreventAttackInput = true;
+        component.con.readyPreventAttackInput = true;
     }
 }
 [UnitTitle("Allow Attack Input")]
 [UnitCategory("Events/Weapon/Action")]
-public class AllowAttackInput : WeaponNode
+public class AllowAttackInput : GetComponentActNode<Weapon>
 {
     protected override void Act(Flow flow)
     {
         base.Act(flow);
 
-        weapon.con.readyPreventAttackInput = false;
-        weapon.con.preventAttackInput = false;
+        component.con.readyPreventAttackInput = false;
+        component.con.preventAttackInput = false;
     }
 }
 [UnitTitle("Prevent Special Input")]
 [UnitCategory("Events/Weapon/Action")]
-public class PreventSpecialInput : WeaponNode
+public class PreventSpecialInput : GetComponentActNode<Weapon>
 {
     protected override void Act(Flow flow)
     {
         base.Act(flow);
 
-        weapon.con.readyPreventSpecialInput = true;
+        component.con.readyPreventSpecialInput = true;
     }
 }
 [UnitTitle("Allow Special Input")]
 [UnitCategory("Events/Weapon/Action")]
-public class AllowSpecialInput : WeaponNode
+public class AllowSpecialInput : GetComponentActNode<Weapon>
 {
     protected override void Act(Flow flow)
     {
         base.Act(flow);
 
-        weapon.con.readyPreventSpecialInput = false;
-        weapon.con.preventSpecialInput = false;
+        component.con.readyPreventSpecialInput = false;
+        component.con.preventSpecialInput = false;
     }
 }

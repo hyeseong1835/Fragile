@@ -63,12 +63,16 @@ public class HandGrafic : MonoBehaviour
                     if (target == null) Debug.LogError("Parameter: {TargetTransform} is null");
                     targetTransform = target;
                     handle = target.Find("Handle");
+                    if (handle == null) { Debug.LogError("Handle is null"); return; }
+
                     break;
 
                 case HandMode.ToTarget:
                     if (target == null) Debug.LogError("Parameter: {TargetTransform} is null");
                     targetTransform = target;
                     handle = target.Find("Handle");
+                    if (handle == null) { Debug.LogError("Handle is null"); return; }
+                    
                     break;
             }
             handMode = mode;
@@ -79,7 +83,7 @@ public class HandGrafic : MonoBehaviour
 
     void Awake()
     {
-        handle = transform.Find("Handle");
+
     }
 
     void Update()
@@ -98,6 +102,7 @@ public class HandGrafic : MonoBehaviour
         handMode = HandMode.NONE;
 
         targetTransform = null;
+        handle = null;
     }
     public void Hand()
     {
@@ -106,9 +111,6 @@ public class HandGrafic : MonoBehaviour
             case HandMode.ToHand:
                 if (targetTransform == null) { Debug.LogError("TargetTransform is null"); return; }
                 
-                handle = targetTransform.Find("Handle");
-                if(handle == null) { Debug.LogError("Handle is null"); return; }
-
                 targetTransform.position = transform.position - handle.localPosition;
                 targetTransform.rotation = transform.rotation;
                 break;
@@ -116,8 +118,6 @@ public class HandGrafic : MonoBehaviour
             case HandMode.ToTarget:
                 if (targetTransform == null) { Debug.LogError("TargetTransform is null"); return; }
 
-                handle = targetTransform.Find("Handle");
-                if (handle == null) { Debug.LogError("Handle is null"); return; }
 
                 transform.position = handle.position;
                 transform.rotation = targetTransform.rotation;

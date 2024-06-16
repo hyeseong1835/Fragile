@@ -5,7 +5,7 @@ using UnityEngine;
 
 [UnitTitle("TriggerObject Set")]
 [UnitCategory("Weapon/TriggerObject")]
-public class TriggerObjectSet : WeaponNode
+public class TriggerObjectSet : GetComponentActNode<Weapon>
 {
     public enum SetType
     {
@@ -36,8 +36,8 @@ public class TriggerObjectSet : WeaponNode
 
             if (linkHandValueInputPort.GetValue(flow))
             {
-                weapon.hand_obj.gameObject.SetActive(false);
-                weapon.con.hand.HandLink(obj.transform, HandMode.ToTarget);
+                component.hand_obj.gameObject.SetActive(false);
+                component.con.hand.HandLink(obj.transform, HandMode.ToTarget);
             }
         }
         else
@@ -46,8 +46,8 @@ public class TriggerObjectSet : WeaponNode
 
             if (linkHandValueInputPort.GetValue(flow))
             {
-                weapon.hand_obj.gameObject.SetActive(true);
-                weapon.con.hand.HandLink(weapon.hand_obj, HandMode.ToTarget);
+                component.hand_obj.gameObject.SetActive(true);
+                component.con.hand.HandLink(component.hand_obj, HandMode.ToTarget);
             }
         }
         

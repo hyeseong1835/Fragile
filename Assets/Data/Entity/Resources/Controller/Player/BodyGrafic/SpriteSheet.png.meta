@@ -136,7 +136,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: SpriteSheet_0
+      name: Stay_0 [0]
       rect:
         serializedVersion: 2
         x: 0
@@ -157,7 +157,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_1
+      name: Stay_0 [1]
       rect:
         serializedVersion: 2
         x: 16
@@ -178,7 +178,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_2
+      name: Stay_1 [0]
       rect:
         serializedVersion: 2
         x: 0
@@ -199,7 +199,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_3
+      name: Stay_1 [1]
       rect:
         serializedVersion: 2
         x: 16
@@ -220,7 +220,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_4
+      name: Stay_2 [0]
       rect:
         serializedVersion: 2
         x: 0
@@ -241,7 +241,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_5
+      name: Stay_2 [1]
       rect:
         serializedVersion: 2
         x: 16
@@ -262,7 +262,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_6
+      name: Stay_3 [0]
       rect:
         serializedVersion: 2
         x: 0
@@ -283,7 +283,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_7
+      name: Stay_3 [1]
       rect:
         serializedVersion: 2
         x: 16
@@ -304,7 +304,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_8
+      name: Walk_0 [0]
       rect:
         serializedVersion: 2
         x: 0
@@ -325,7 +325,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_9
+      name: Walk_0 [1]
       rect:
         serializedVersion: 2
         x: 16
@@ -346,7 +346,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_10
+      name: Walk_0 [2]
       rect:
         serializedVersion: 2
         x: 32
@@ -367,7 +367,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_11
+      name: Walk_0 [3]
       rect:
         serializedVersion: 2
         x: 48
@@ -388,7 +388,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_12
+      name: Walk_1 [0]
       rect:
         serializedVersion: 2
         x: 0
@@ -409,7 +409,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_13
+      name: Walk_1 [1]
       rect:
         serializedVersion: 2
         x: 16
@@ -430,7 +430,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_14
+      name: Walk_1 [2]
       rect:
         serializedVersion: 2
         x: 32
@@ -451,7 +451,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_15
+      name: Walk_1 [3]
       rect:
         serializedVersion: 2
         x: 48
@@ -472,7 +472,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_16
+      name: Walk_2 [0]
       rect:
         serializedVersion: 2
         x: 0
@@ -493,7 +493,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_17
+      name: Walk_2 [1]
       rect:
         serializedVersion: 2
         x: 16
@@ -514,7 +514,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_18
+      name: Walk_2 [2]
       rect:
         serializedVersion: 2
         x: 32
@@ -535,7 +535,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_19
+      name: Walk_2 [3]
       rect:
         serializedVersion: 2
         x: 48
@@ -556,7 +556,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_20
+      name: Walk_3 [0]
       rect:
         serializedVersion: 2
         x: 0
@@ -577,7 +577,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_21
+      name: Walk_3 [1]
       rect:
         serializedVersion: 2
         x: 16
@@ -598,7 +598,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_22
+      name: Walk_3 [2]
       rect:
         serializedVersion: 2
         x: 32
@@ -619,7 +619,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpriteSheet_23
+      name: Walk_3 [3]
       rect:
         serializedVersion: 2
         x: 48
@@ -818,38 +818,38 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      SpriteSheet_0: -181368163
-      SpriteSheet_1: 1531881006
-      SpriteSheet_10: -41761760
-      SpriteSheet_11: -134555853
-      SpriteSheet_12: -1820842421
-      SpriteSheet_13: -537076273
-      SpriteSheet_14: 206559916
-      SpriteSheet_15: 1357437512
-      SpriteSheet_16: -1587097443
-      SpriteSheet_17: -1240739024
-      SpriteSheet_18: -1614157096
-      SpriteSheet_19: -213844322
-      SpriteSheet_2: 1524596868
-      SpriteSheet_20: -397765501
-      SpriteSheet_21: 653307126
-      SpriteSheet_22: -1916952332
-      SpriteSheet_23: -2115141005
       SpriteSheet_24: 1523478234
       SpriteSheet_25: -463003860
       SpriteSheet_26: 2065529785
       SpriteSheet_27: -330506716
       SpriteSheet_28: 860576416
       SpriteSheet_29: -1657757524
-      SpriteSheet_3: -1619991651
       SpriteSheet_30: 1000440297
       SpriteSheet_31: -540531979
-      SpriteSheet_4: 1733348235
-      SpriteSheet_5: -330906231
-      SpriteSheet_6: -923840996
-      SpriteSheet_7: 1482063102
-      SpriteSheet_8: -1345955856
-      SpriteSheet_9: 39774021
+      Stay_0 [0]: -181368163
+      Stay_0 [1]: 1531881006
+      Stay_1 [0]: 1524596868
+      Stay_1 [1]: -1619991651
+      Stay_2 [0]: 1733348235
+      Stay_2 [1]: -330906231
+      Stay_3 [0]: -923840996
+      Stay_3 [1]: 1482063102
+      Walk_0 [0]: -1345955856
+      Walk_0 [1]: 39774021
+      Walk_0 [2]: -41761760
+      Walk_0 [3]: -134555853
+      Walk_1 [0]: -1820842421
+      Walk_1 [1]: -537076273
+      Walk_1 [2]: 206559916
+      Walk_1 [3]: 1357437512
+      Walk_2 [0]: -1587097443
+      Walk_2 [1]: -1240739024
+      Walk_2 [2]: -1614157096
+      Walk_2 [3]: -213844322
+      Walk_3 [0]: -397765501
+      Walk_3 [1]: 653307126
+      Walk_3 [2]: -1916952332
+      Walk_3 [3]: -2115141005
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

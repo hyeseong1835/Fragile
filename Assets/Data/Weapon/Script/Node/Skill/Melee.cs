@@ -41,7 +41,7 @@ namespace Skill
             float spear = spearPort.GetValue(flow);
             SwingCurve curve = curvePort.GetValue(flow);
 
-            float startRotateZ = Math.Vector2ToDegree(weapon.con.targetDir);
+            float startRotateZ = Math.Vector2ToDegree(component.con.targetDir);
 
             float time = 0;
             float t = 0;
@@ -60,7 +60,7 @@ namespace Skill
 
                 float rotateZ = startRotateZ + spread * 0.5f - t * spread - 90;
                 obj.transform.rotation = Quaternion.Euler(0, 0, rotateZ);
-                obj.transform.position = (Vector2)weapon.con.transform.position + weapon.con.ControllerData.center//-|
+                obj.transform.position = (Vector2)component.con.transform.position + component.con.ControllerData.center//-|
                   + Math.Vector2TransformToEllipse(
                       Math.RadianToVector2((rotateZ + 90) * Mathf.Deg2Rad), 0.75f, 0.5f
                       ) * (startSpear + spear * t);
