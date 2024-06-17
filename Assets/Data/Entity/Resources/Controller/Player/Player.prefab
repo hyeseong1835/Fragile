@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4084366326265991935}
   - component: {fileID: 8411411461842612034}
+  - component: {fileID: 3260603743831104635}
   - component: {fileID: 2773192425330319606}
   - component: {fileID: 1176346603396232253}
   m_Layer: 0
@@ -75,6 +76,27 @@ MonoBehaviour:
   attackInput: 0
   attackInputAllowTime: 1
   nextWeapon: {fileID: 0}
+--- !u!95 &3260603743831104635
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1677944023418363296}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 1765bbe55d1e1a84c9388b404f1b9cbc, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &2773192425330319606
 MonoBehaviour:
   m_ObjectHideFlags: 0

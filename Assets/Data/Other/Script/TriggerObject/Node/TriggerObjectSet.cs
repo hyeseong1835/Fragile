@@ -47,7 +47,7 @@ public class TriggerObjectSet : GetComponentActNode<Weapon>
             if (linkHandValueInputPort.GetValue(flow))
             {
                 component.hand_obj.gameObject.SetActive(true);
-                component.con.hand.HandLink(component.hand_obj, HandMode.ToTarget);
+                component.con.hand.HandLink(component.hand_obj, HandMode.ToHand);
             }
         }
         

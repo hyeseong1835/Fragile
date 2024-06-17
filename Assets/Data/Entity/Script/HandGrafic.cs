@@ -104,23 +104,22 @@ public class HandGrafic : MonoBehaviour
         targetTransform = null;
         handle = null;
     }
-    public void Hand()
+    void Hand()
     {
         switch (handMode)
         {
             case HandMode.ToHand:
                 if (targetTransform == null) { Debug.LogError("TargetTransform is null"); return; }
                 
-                targetTransform.position = transform.position - handle.localPosition;
+                targetTransform.position = transform.position + (targetTransform.position - handle.position);
                 targetTransform.rotation = transform.rotation;
                 break;
 
             case HandMode.ToTarget:
                 if (targetTransform == null) { Debug.LogError("TargetTransform is null"); return; }
 
-
                 transform.position = handle.position;
-                transform.rotation = targetTransform.rotation;
+                transform.rotation = handle.rotation;
                 break;
         }
     }
