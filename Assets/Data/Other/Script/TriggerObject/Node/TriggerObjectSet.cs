@@ -50,6 +50,5 @@ public class TriggerObjectSet : GetComponentActNode<Weapon>
                 component.con.hand.HandLink(component.hand_obj, HandMode.ToHand);
             }
         }
-        
     }
 }

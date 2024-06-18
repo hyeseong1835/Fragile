@@ -14,26 +14,26 @@ public class TriggerObject : MonoBehaviour
     [ReadOnly] public GameObject returnObject;
     [ReadOnly] public Controller returnObjectCon;
     [ReadOnly] public string ID;
-    [ReadOnly] public bool eventTrigger = true;
+    //[ReadOnly] public bool eventTrigger = true;
 
-    public void Set(GameObject obj, string id, bool eventTrigger)
+    public void Set(GameObject obj, string id)
     {
         returnObject = obj;
         returnObjectCon = obj.GetComponent<Weapon>().con;
         ID = id;
-        this.eventTrigger = eventTrigger;
+        //this.eventTrigger = eventTrigger;
     }
     void OnTriggerEnter2D(Collider2D coll)
     {
-        if (eventTrigger) TriggerObjectEnterEvent.Trigger(returnObject, ID, GetTriggerType(coll));
+        TriggerObjectEnterEvent.Trigger(returnObject, ID, GetTriggerType(coll));
     }
     void OnTriggerStay2D(Collider2D coll)
     {
-        if (eventTrigger) TriggerObjectStayEvent.Trigger(returnObject, ID, GetTriggerType(coll));
+        TriggerObjectStayEvent.Trigger(returnObject, ID, GetTriggerType(coll));
     }
     void OnTriggerExit2D(Collider2D coll)
     {
-        if (eventTrigger) TriggerObjectExitEvent.Trigger(returnObject, ID, GetTriggerType(coll));
+        TriggerObjectExitEvent.Trigger(returnObject, ID, GetTriggerType(coll));
     }
     TriggerType GetTriggerType(Collider2D _coll)
     {

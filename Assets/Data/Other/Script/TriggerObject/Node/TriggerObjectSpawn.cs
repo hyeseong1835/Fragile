@@ -7,7 +7,7 @@ public class TriggerObjectSpawn : ActNode
 {
     public ValueInputPort<GameObject> prefabPort;
     public ValueInputPort<string> IDPort;
-    public ValueInputPort<bool> eventTriggerPort;
+    //public ValueInputPort<bool> eventTriggerPort;
 
     [DoNotSerialize] public ValueOutputPort<TriggerObject> triggerObjectPort;
 
@@ -17,7 +17,7 @@ public class TriggerObjectSpawn : ActNode
 
         prefabPort = ValueInputPort<GameObject>.Define(this, "Prefab");
         IDPort = ValueInputPort<string>.Define(this, "ID");
-        eventTriggerPort = ValueInputPort<bool>.Define(this, "Event Trigger");
+        //eventTriggerPort = ValueInputPort<bool>.Define(this, "Event Trigger");
 
         triggerObjectPort = ValueOutputPort<TriggerObject>.Define(this);
     }
@@ -26,7 +26,7 @@ public class TriggerObjectSpawn : ActNode
         GameObject gameObject = flow.stack.gameObject;
         GameObject prefab = prefabPort.GetValue(flow);
         string ID = IDPort.GetValue(flow);
-        bool eventTrigger = eventTriggerPort.GetValue(flow);
+        //bool eventTrigger = eventTriggerPort.GetValue(flow);
 
         TriggerObject triggerObject = GameObject.Instantiate(
                     prefab,
@@ -36,6 +36,6 @@ public class TriggerObjectSpawn : ActNode
         triggerObject.gameObject.SetActive(false);
 
         triggerObjectPort.SetValue(flow, triggerObject);
-        triggerObject.Set(gameObject, ID, eventTrigger);
+        triggerObject.Set(gameObject, ID);
     }
 }

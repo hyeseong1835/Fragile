@@ -86,7 +86,7 @@ public class HandGrafic : MonoBehaviour
 
     }
 
-    void Update()
+    void LateUpdate()
     {
         Hand();
     }

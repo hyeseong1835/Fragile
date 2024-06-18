@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using Unity.VisualScripting;
 
 public class ControlInputPort
@@ -19,35 +18,6 @@ public class ControlInputPort
         return controlInputPort;
     }
 }
-public class DetectedControlInputPort
-{
-    [DoNotSerialize]
-    public ControlInput port;
-
-    public bool isFlow;
-
-    public static DetectedControlInputPort Define(Unit unit, string argumentName, Func<Flow, ControlOutput> action)
-    {
-        DetectedControlInputPort port = new DetectedControlInputPort();
-
-        if (unit.controlInputs.Contains(argumentName)) throw new ArgumentException($"Duplicate input for '{argumentName}' in {unit}.");
-
-        port.port = new ControlInput(argumentName, (flow) => 
-        {
-            port.isFlow = true;
-
-            ControlOutput outPort = action(flow);
-            
-            port.isFlow = false;
-
-            return outPort; 
-        });
-        unit.controlInputs.Add(port.port);
-
-        return port;
-    }
-}
-
 public class ControlOutputPort
 {
     [DoNotSerialize]
