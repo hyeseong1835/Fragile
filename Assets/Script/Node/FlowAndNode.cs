@@ -7,8 +7,8 @@ using UnityEngine;
 [UnitCategory("Control")]
 public class FlowAndNode : Unit
 {
-    ControlInputPortHasBool inputPortA;
-    ControlInputPortHasBool inputPortB;
+    DetectedControlInputPort inputPortA;
+    DetectedControlInputPort inputPortB;
 
     ControlOutputPort truePort;
     ControlOutputPort outputPortA;
@@ -16,11 +16,21 @@ public class FlowAndNode : Unit
 
     protected override void Definition()
     {
-        inputPortA = ControlInputPortHasBool.Define(this, "In A", (flow) => { if (inputPortA.isFlow) truePort.Run(flow); return outputPortA.port; });
-        inputPortB = ControlInputPortHasBool.Define(this, "In B", (flow) => { if (inputPortB.isFlow) truePort.Run(flow); return outputPortB.port; });
+        inputPortA = DetectedControlInputPort.Define(this, "In A", (flow) => Act(flow, inputPortA, outputPortA));
+        inputPortB = DetectedControlInputPort.Define(this, "In B", (flow) => Act(flow, inputPortB, outputPortB));
 
         truePort = ControlOutputPort.Define(this, "True");
         outputPortA = ControlOutputPort.Define(this, "Out A");
         outputPortB = ControlOutputPort.Define(this, "Out B");
+
+        ControlOutput Act(Flow flow, DetectedControlInputPort input, ControlOutputPort output)
+        {
+            if (input.isFlow) 
+            { 
+                GraphReference reference = GraphReference.New(flow.stack.machine, true); 
+                truePort.Run(reference); 
+            }
+            return output.port;
+        }
     }
 }

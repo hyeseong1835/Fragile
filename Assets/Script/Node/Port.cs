@@ -19,31 +19,32 @@ public class ControlInputPort
         return controlInputPort;
     }
 }
-public class ControlInputPortHasBool
+public class DetectedControlInputPort
 {
     [DoNotSerialize]
     public ControlInput port;
 
     public bool isFlow;
 
-    public static ControlInputPortHasBool Define(Unit unit, string argumentName, Func<Flow, ControlOutput> action)
+    public static DetectedControlInputPort Define(Unit unit, string argumentName, Func<Flow, ControlOutput> action)
     {
-        ControlInputPortHasBool controlInputPort = new ControlInputPortHasBool();
+        DetectedControlInputPort port = new DetectedControlInputPort();
 
         if (unit.controlInputs.Contains(argumentName)) throw new ArgumentException($"Duplicate input for '{argumentName}' in {unit}.");
 
-        controlInputPort.port = new ControlInput(argumentName, (flow) => { controlInputPort.IsControlSet(); return action(flow); });
-        unit.controlInputs.Add(controlInputPort.port);
+        port.port = new ControlInput(argumentName, (flow) => 
+        {
+            port.isFlow = true;
 
-        return controlInputPort;
-    }
-    public IEnumerator IsControlSet()
-    {
-        isFlow = true;
+            ControlOutput outPort = action(flow);
+            
+            port.isFlow = false;
 
-        yield return null;
+            return outPort; 
+        });
+        unit.controlInputs.Add(port.port);
 
-        isFlow = false;
+        return port;
     }
 }
 

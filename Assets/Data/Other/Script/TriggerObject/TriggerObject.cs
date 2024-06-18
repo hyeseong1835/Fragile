@@ -14,13 +14,14 @@ public class TriggerObject : MonoBehaviour
     [ReadOnly] public GameObject returnObject;
     [ReadOnly] public Controller returnObjectCon;
     [ReadOnly] public string ID;
-    [ReadOnly] public bool eventTrigger;
+    [ReadOnly] public bool eventTrigger = true;
 
-    public void Set(GameObject obj, string id)
+    public void Set(GameObject obj, string id, bool eventTrigger)
     {
         returnObject = obj;
         returnObjectCon = obj.GetComponent<Weapon>().con;
         ID = id;
+        this.eventTrigger = eventTrigger;
     }
     void OnTriggerEnter2D(Collider2D coll)
     {
