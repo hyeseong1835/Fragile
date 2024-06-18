@@ -1,7 +1,7 @@
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
-
+using System.Collections;
 public abstract class EventNode : EventUnit<int>
 {
     public GameObject target;
@@ -27,7 +27,7 @@ public abstract class EventNode<T> : EventUnit<T>
     protected override bool register => true;
     public abstract string eventName { get; }
     
-    [DoNotSerialize] public ValueOutput OutValue;
+    protected ValueOutputPort<T> valueOutputPort;
     public virtual string argumentName { get { return typeof(T).Name; } }
 
     public override EventHook GetHook(GraphReference reference)
@@ -41,16 +41,15 @@ public abstract class EventNode<T> : EventUnit<T>
         target = reference.gameObject;
     }
 
-
     protected override void Definition()
     {
         base.Definition();
 
-        OutValue = ValueOutput<T>(argumentName);
+        valueOutputPort = ValueOutputPort<T>.Define(this, argumentName);
     }
-    protected override void AssignArguments(Flow flow, T args)
+    protected override void AssignArguments(Flow flow, T arg)
     {
-        flow.SetValue(OutValue, args);
+        valueOutputPort.SetValue(flow, arg);
     }
 }
 public abstract class DefiniteEventNode : EventNode
@@ -75,18 +74,16 @@ public abstract class DefiniteEventNode : EventNode
 }
 public abstract class DefiniteEventNode<T> : EventNode<T>
 {
-    [DoNotSerialize] public ValueInput Iv_id;
+    protected ValueInputPort<string> idPort;
 
     protected override void Definition()
     {
         base.Definition();
 
-        Iv_id = ValueInput<string>("ID");
+        idPort = ValueInputPort<string>.Define(this, "ID");
     }
     public override EventHook GetHook(GraphReference reference)
     {
-        return new EventHook(DefiniteEventNode.GetEventName(eventName, Flow.New(reference).GetValue<string>(Iv_id)), reference.gameObject);
+        return new EventHook(DefiniteEventNode.GetEventName(eventName, idPort.GetValue(Flow.New(reference))), reference.gameObject);
     }
 }
-
-

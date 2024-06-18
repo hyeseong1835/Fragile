@@ -1,5 +1,4 @@
 using UnityEngine;
-using System;
 using Sirenix.OdinInspector;
 
 public enum TriggerType
@@ -12,10 +11,10 @@ public class TriggerObject : MonoBehaviour
     public static implicit operator Transform(TriggerObject triggerObject) => triggerObject.transform;
     public static implicit operator string(TriggerObject triggerObject) => triggerObject.ID;
 
-
     [ReadOnly] public GameObject returnObject;
     [ReadOnly] public Controller returnObjectCon;
     [ReadOnly] public string ID;
+    [ReadOnly] public bool eventTrigger;
 
     public void Set(GameObject obj, string id)
     {
@@ -25,15 +24,15 @@ public class TriggerObject : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D coll)
     {
-        TriggerObjectEnterEvent.Trigger(returnObject, ID, GetTriggerType(coll));
+        if (eventTrigger) TriggerObjectEnterEvent.Trigger(returnObject, ID, GetTriggerType(coll));
     }
     void OnTriggerStay2D(Collider2D coll)
     {
-        TriggerObjectStayEvent.Trigger(returnObject, ID, GetTriggerType(coll));
+        if (eventTrigger) TriggerObjectStayEvent.Trigger(returnObject, ID, GetTriggerType(coll));
     }
     void OnTriggerExit2D(Collider2D coll)
     {
-        TriggerObjectExitEvent.Trigger(returnObject, ID, GetTriggerType(coll));
+        if (eventTrigger) TriggerObjectExitEvent.Trigger(returnObject, ID, GetTriggerType(coll));
     }
     TriggerType GetTriggerType(Collider2D _coll)
     {

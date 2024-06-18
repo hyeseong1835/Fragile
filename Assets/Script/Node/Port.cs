@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.VisualScripting;
 
 public class ControlInputPort
@@ -16,6 +17,33 @@ public class ControlInputPort
         unit.controlInputs.Add(controlInputPort.port);
 
         return controlInputPort;
+    }
+}
+public class ControlInputPortHasBool
+{
+    [DoNotSerialize]
+    public ControlInput port;
+
+    public bool isFlow;
+
+    public static ControlInputPortHasBool Define(Unit unit, string argumentName, Func<Flow, ControlOutput> action)
+    {
+        ControlInputPortHasBool controlInputPort = new ControlInputPortHasBool();
+
+        if (unit.controlInputs.Contains(argumentName)) throw new ArgumentException($"Duplicate input for '{argumentName}' in {unit}.");
+
+        controlInputPort.port = new ControlInput(argumentName, (flow) => { controlInputPort.IsControlSet(); return action(flow); });
+        unit.controlInputs.Add(controlInputPort.port);
+
+        return controlInputPort;
+    }
+    public IEnumerator IsControlSet()
+    {
+        isFlow = true;
+
+        yield return null;
+
+        isFlow = false;
     }
 }
 
