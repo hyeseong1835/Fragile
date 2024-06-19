@@ -21,7 +21,7 @@ public static class Editor
     
     public const float overrideSpace = 10;
     
-    public const float shortButtonWidth = 150;
+    public const float shortButtonWidth = 100;
 
     public const float shortPropertyWidth = 150;
 

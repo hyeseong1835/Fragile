@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 02c52386cb62548458ea52c3472ffa2a, type: 3}
-  m_Name: ControllerData
+  m_Name: PlayerControllerData
   m_EditorClassIdentifier: 
   name: Player
   maxHp: 1

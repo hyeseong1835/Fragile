@@ -7,7 +7,8 @@ using UnityEngine;
 public class PlayerController : Controller
 {
     public static PlayerController instance { get; private set; }
-
+    
+    [HideInInspector]
     public PlayerControllerData data;
     public override ControllerData ControllerData
     {

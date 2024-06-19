@@ -8,6 +8,7 @@ using System;
 
 public class EnemyController : Controller
 {
+    [HideInInspector]
     public EnemyControllerData data;
     public override ControllerData ControllerData {
         get => data;

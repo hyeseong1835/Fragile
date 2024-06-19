@@ -2,6 +2,7 @@ using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static UnityEngine.Rendering.DebugUI;
@@ -48,7 +49,6 @@ public struct ControllerSave
 }
 public abstract class Controller : Entity
 {
-    public abstract ControllerData ControllerData { get; set; }
     public override EntityData EntityData
     {
         get => ControllerData;
@@ -57,26 +57,69 @@ public abstract class Controller : Entity
     [BoxGroup("Object")]
     #region Foldout Object - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        [ReadOnly][Required][PropertyOrder(0)]
-        [LabelText("Hand")][LabelWidth(Editor.propertyLabelWidth)]//-|
-        public HandGrafic hand;
-                                                                                                                 [BoxGroup("Object")]    
-        [ReadOnly][Required][PropertyOrder(0)]
-        [LabelWidth(Editor.propertyLabelWidth)]
-        public Transform weaponHolder;
+        [HorizontalGroup("Object/ControllerData", Order = 0)]
+        #region Horizontal ControllerData
+        
+            [ShowInInspector]
+            [LabelWidth(Editor.propertyLabelWidth)]
+            public abstract ControllerData ControllerData { get; set; }
+    
+            #if UNITY_EDITOR
+            [HorizontalGroup("Object/ControllerData", Width = Editor.shortButtonWidth)]
+            [Button("Create")]
+            public void CreateData()
+            {
+                string currentPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(gameObject);
+                string path = $"{currentPath.Substring(0, currentPath.LastIndexOf('/'))}/{DataType.Name}.asset";
+                ControllerData dataInstance = (ControllerData)ScriptableObject.CreateInstance(DataType);
+                ControllerData = dataInstance;
+                AssetDatabase.CreateAsset(dataInstance, path);
+            }
+            #endif
 
-        #if UNITY_EDITOR
-                                                                                                                 [BoxGroup("Object")]    
-        [ShowInInspector]
-        [LabelText("Center")][LabelWidth(Editor.propertyLabelWidth)]
-        Vector2 showCenter { 
-            get {
-                if (ControllerData == null) return default;
-                return ControllerData.center; 
-            } 
-            set { ControllerData.center = value; } 
-        }
-        #endif
+        #endregion
+
+        [HorizontalGroup("Object/Hand", Order = 1)]
+        #region Horizontal Hand
+
+            [ReadOnly][PropertyOrder(0)]
+            [LabelText("Hand")][LabelWidth(Editor.propertyLabelWidth)]//-|
+            public HandGrafic hand;
+
+            #if UNITY_EDITOR
+            [HorizontalGroup("Object/Hand", Width = Editor.shortButtonWidth)]
+            [Button("Create")]
+            public void CreateHand()
+            {
+                HandGrafic hand = new GameObject("Hand").AddComponent<HandGrafic>();
+                hand.transform.parent = transform;
+
+                Controller con = gameObject.GetComponent<Controller>();
+                con.hand = hand;
+            }
+            #endif
+
+        #endregion
+
+        [HorizontalGroup("Object/WeaponHolder", Order = 2)]
+        #region Horizontal WeaponHolder
+
+            [ReadOnly][PropertyOrder(0)]
+            [LabelWidth(Editor.propertyLabelWidth)]
+            public Transform weaponHolder;
+
+            #if UNITY_EDITOR
+            [HorizontalGroup("Object/WeaponHolder", Width = Editor.shortButtonWidth)]
+            [Button("Create")]
+            public void CreateWeaponHolder()
+            {
+                weaponHolder = new GameObject("WeaponHolder").transform;
+                weaponHolder.parent = transform;
+                weaponHolder.localPosition = Vector3.zero;
+            }
+            #endif
+
+        #endregion
 
     #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
@@ -124,7 +167,7 @@ public abstract class Controller : Entity
                 }
             }
 
-#endif
+            #endif
 
     #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|    
 

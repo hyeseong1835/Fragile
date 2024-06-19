@@ -13,16 +13,6 @@ public enum HandMode
 [ExecuteAlways]
 public class HandGrafic : MonoBehaviour
 {
-    [MenuItem("GameObject/Create Asset/HandGrafic", false, 0)]
-    static void Create(MenuCommand menuCommand)
-    {
-        GameObject parentGameObject = (GameObject)menuCommand.context;
-        HandGrafic hand = new GameObject("New HandGrafic").AddComponent<HandGrafic>();
-        hand.transform.parent = parentGameObject.transform;
-        Controller con = parentGameObject.GetComponent<Controller>();
-        con.hand = hand;
-    }
-
     [HorizontalGroup("Horizontal")]
     
     #region Horizontal
