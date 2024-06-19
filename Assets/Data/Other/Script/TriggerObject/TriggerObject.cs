@@ -5,6 +5,17 @@ public enum TriggerType
 {
     Self, Friend, Enemy, Object
 }
+public struct TriggerInfo
+{
+    public Entity entity;
+    public TriggerType type;
+
+    public TriggerInfo(Entity entity, string id, TriggerType type)
+    {
+        this.entity = entity;
+        this.type = type;
+    }
+}
 public class TriggerObject : MonoBehaviour
 {
     public static implicit operator GameObject(TriggerObject triggerObject) => triggerObject.gameObject;

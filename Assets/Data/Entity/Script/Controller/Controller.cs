@@ -123,56 +123,6 @@ public abstract class Controller : Entity
 
     #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-    [FoldoutGroup("Stat")]
-    #region Foldout Stat - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|                                         
-
-        [HorizontalGroup("Stat/HP")]
-        #region Horizontal HP - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-            [LabelWidth(Editor.propertyLabelWidth)]
-            #if UNITY_EDITOR
-            [ProgressBar(0, nameof(_maxHp), ColorGetter = nameof(_hpColor))]
-            #endif
-            public float hp = 1;
-
-            #if UNITY_EDITOR
-                                                                                 [HorizontalGroup("Stat/HP", Width = Editor.shortNoLabelPropertyWidth)]
-            [ShowInInspector][HideLabel]
-            [DelayedProperty]
-            float _maxHp{
-                get { 
-                    if(ControllerData == null) return default;
-                    return ControllerData.maxHp; 
-                }
-                set {
-                    if (hp == ControllerData.maxHp || hp > value) hp = value;
-                    ControllerData.maxHp = value;
-                }
-            }
-
-//          HideInInspector_____________________________________________________|
-            Color _hpColor {
-                get {
-                    if(ControllerData == null) return default;
-                    
-                    Gradient gradient = new Gradient();
-                    gradient.SetKeys(
-                        new GradientColorKey[] {
-                            new GradientColorKey(Color.yellow, 0),
-                            new GradientColorKey(Color.red, 1)
-                        },
-                        new GradientAlphaKey[] { new GradientAlphaKey(1, 0) }//-|
-                    );
-                    return gradient.Evaluate(hp / ControllerData.maxHp);
-                }
-            }
-
-            #endif
-
-    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|    
-
-    #endregion - - - - - - - - - - - - - - - - - - - - -|
-
     [FoldoutGroup("Input")]
     #region Foldout Input  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
@@ -581,15 +531,6 @@ public abstract class Controller : Entity
 
     #endregion
 
-    public void TakeDamage(float damage)
-    {
-        hp -= damage;
-        if (hp <= 0) Die();
-    }
-    void Die()
-    {
-        Destroy(gameObject);
-    }
     protected void Update()
     {
         //Move
