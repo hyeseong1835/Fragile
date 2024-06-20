@@ -11500,9 +11500,33 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2105062104}
     - target: {fileID: 8411411461842612034, guid: 19aa0f522360f2e4495e82c0cf5011fe, type: 3}
+      propertyPath: entityLayer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8411411461842612034, guid: 19aa0f522360f2e4495e82c0cf5011fe, type: 3}
       propertyPath: defaultWeapon
       value: 
       objectReference: {fileID: 2105062104}
+    - target: {fileID: 8411411461842612034, guid: 19aa0f522360f2e4495e82c0cf5011fe, type: 3}
+      propertyPath: entityLayerType.array.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8411411461842612034, guid: 19aa0f522360f2e4495e82c0cf5011fe, type: 3}
+      propertyPath: entityLayerType.array.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8411411461842612034, guid: 19aa0f522360f2e4495e82c0cf5011fe, type: 3}
+      propertyPath: entityLayerType.array.Array.data[1]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8411411461842612034, guid: 19aa0f522360f2e4495e82c0cf5011fe, type: 3}
+      propertyPath: entityLayerType.array.Array.data[2]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8411411461842612034, guid: 19aa0f522360f2e4495e82c0cf5011fe, type: 3}
+      propertyPath: entityLayerType.array.Array.data[3]
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8875833314106789666, guid: 19aa0f522360f2e4495e82c0cf5011fe, type: 3}
       propertyPath: handle
       value: 
