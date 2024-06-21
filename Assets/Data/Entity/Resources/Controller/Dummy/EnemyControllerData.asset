@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20bbfef43cbc3bf449154364b420183b, type: 3}
   m_Name: EnemyControllerData
   m_EditorClassIdentifier: 
-  name: 
-  maxHp: 1
+  name: Dummy
+  maxHp: 50
   center: {x: 0, y: 0.5}
   moveSpeed: 1
   inventorySize: 0

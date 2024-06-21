@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityLayer: 0
-  hp: 1
+  hp: 50
   hand: {fileID: 3193290913503252291}
   weaponHolder: {fileID: 8551090733348069019}
   moveVector: {x: 0.5, y: 0}

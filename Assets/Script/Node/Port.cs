@@ -36,6 +36,7 @@ public class ControlOutputPort
     }
     public void Run(Flow flow) => flow.Run(port);
     public void Run(GraphReference reference) => Flow.New(reference).Run(port);
+    public void CoroutineRun(GraphReference reference) => Flow.New(reference).StartCoroutine(port);
 }
 public class ValueInputPort<ValueT>
 {

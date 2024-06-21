@@ -11586,10 +11586,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dummy
       objectReference: {fileID: 0}
-    - target: {fileID: 7670888167609638199, guid: b9ec60590c3e5b445a3b8d5f81161529, type: 3}
-      propertyPath: hp
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 8842529441387316736, guid: b9ec60590c3e5b445a3b8d5f81161529, type: 3}
       propertyPath: m_Color.b
       value: 0.56981134
@@ -12081,6 +12077,15 @@ PrefabInstance:
     - target: {fileID: 3864978287259340089, guid: c4c56f6825812e545acbb2190f93b80e, type: 3}
       propertyPath: m_Layer
       value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 4971956257908306255, guid: c4c56f6825812e545acbb2190f93b80e, type: 3}
+      propertyPath: _data._json
+      value: '{"declarations":{"Kind":"Object","collection":{"$content":[{"name":"SwingTriggerObject","value":null,"typeHandle":{"Identification":"TriggerObject,
+        Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null","$version":"A"},"$version":"A"}],"$version":"A"},"$version":"A"}}'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4971956257908306255, guid: c4c56f6825812e545acbb2190f93b80e, type: 3}
+      propertyPath: _data._objectReferences.Array.size
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6047407110815151530, guid: c4c56f6825812e545acbb2190f93b80e, type: 3}
       propertyPath: m_LocalPosition.x

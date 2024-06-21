@@ -38,6 +38,8 @@ public abstract class GetComponentActNode<ComponentT> : ActNode
 
 public abstract class CoroutineSkillNode : GetComponentActNode<Weapon>
 {
+    [Inspectable] public bool coroutine = true;
+
     [DoNotSerialize] protected ControlOutputPort updatePort;
     [DoNotSerialize] protected ControlOutputPort endPort;
 
@@ -55,6 +57,14 @@ public abstract class CoroutineSkillNode : GetComponentActNode<Weapon>
         component.StartCoroutine(UseCoroutine(flow));
     }
     protected abstract IEnumerator UseCoroutine(Flow flow);
-    protected void Update() => updatePort.Run(reference);
-    protected void End() => endPort.Run(reference);
+    protected void Update()
+    {
+        if(coroutine) updatePort.CoroutineRun(reference);
+        else updatePort.Run(reference);
+    }
+    protected void End()
+    {
+        if (coroutine) endPort.CoroutineRun(reference);
+        else endPort.Run(reference);
+    }
 }
