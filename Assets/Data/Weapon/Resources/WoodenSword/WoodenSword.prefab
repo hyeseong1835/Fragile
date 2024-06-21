@@ -167,23 +167,10 @@ MonoBehaviour:
   con: {fileID: 0}
   state: 2
   UISprite: {fileID: 0}
-  breakTexture: {fileID: 0}
   hand_obj: {fileID: 8244600696390822311}
   damage: 1
-  durability: 1
-  maxDurability: 1
-  attack:
-    frontDelay: 0
-    delay: 1
-    backDelay: 0
-    minDistance: 0
-    maxDistance: 1
-  special:
-    frontDelay: 0
-    delay: 1
-    backDelay: 0
-    minDistance: 0
-    maxDistance: 1
+  durability: 0
+  maxDurability: -1
 --- !u!114 &4971956257908306255
 MonoBehaviour:
   m_ObjectHideFlags: 0

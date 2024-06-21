@@ -82,7 +82,7 @@ public abstract class Controller : Entity
         [HorizontalGroup("Object/Hand", Order = 1)]
         #region Horizontal Hand
 
-            [ReadOnly][PropertyOrder(0)]
+            [PropertyOrder(0)]
             [LabelText("Hand")][LabelWidth(Editor.propertyLabelWidth)]//-|
             public HandGrafic hand;
 
@@ -104,7 +104,7 @@ public abstract class Controller : Entity
         [HorizontalGroup("Object/WeaponHolder", Order = 2)]
         #region Horizontal WeaponHolder
 
-            [ReadOnly][PropertyOrder(0)]
+            [PropertyOrder(0)]
             [LabelWidth(Editor.propertyLabelWidth)]
             public Transform weaponHolder;
 

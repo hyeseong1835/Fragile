@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using System;
+using System.Linq.Expressions;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -76,7 +77,6 @@ using UnityEngine;
         public WeaponState state = WeaponState.NULL;
 
         public Sprite UISprite;
-        public Texture2D breakTexture;
         [Required] public Transform hand_obj;
         
         public float damage = 1;
@@ -84,28 +84,11 @@ using UnityEngine;
         public int durability = 1;
         public int maxDurability = 1;
 
-        [ShowInInspector]
-        public ActiveSkill attack = new ActiveSkill();
-
-        [ShowInInspector]
-        public ActiveSkill special = new ActiveSkill();
-
         public string weaponName { get { return gameObject.name; } }
 
     void Awake()
     {
-            /*
-        #if UNITY_EDITOR
-            //최초 생성
-            if (con == null)
-            {
-                DropDown();
-            }
-            #else
-            if (con != null) state = WeaponState.Inventory;
-            //수정 필요
-        #endif
-            */
+
     }
     void Start()
     {
@@ -115,27 +98,6 @@ using UnityEngine;
     void Update()
     {
         UpdateEventNode.Trigger(gameObject, state);
-
-        /*
-        #if UNITY_EDITOR
-
-            if (Editor.GetObjectState(gameObject) == Editor.ObjectState.PrefabEdit)
-            {
-                if (state != WeaponState.Prefab) state = WeaponState.Prefab;
-            }
-            else
-            {
-                if (state == WeaponState.Prefab && transform.parent != null)
-                {
-                    transform.parent.position = transform.position;
-                    state = WeaponState.Item;
-                } //드롭다운 >> 부모 위치 수정(1회)
-                StateAffix();
-                AutoDebug();
-            }
-
-        #endif
-            */
     }
 
     #region 이벤트
@@ -156,14 +118,6 @@ using UnityEngine;
                 hand_obj.gameObject.SetActive(false);
                 con.hand.HandLink(null);
             }
-        }
-        protected virtual void Break(Vector2 breakPos)
-        {
-            BreakParticle breakParticle = new GameObject("BreakParticle").AddComponent<BreakParticle>();
-            breakParticle.AddComponent<ParticleSystem>();
-            breakParticle.transform.parent = transform;
-
-            WeaponDestroy();
         }
         public virtual void OnWeaponRemoved()
         {
@@ -211,14 +165,14 @@ using UnityEngine;
         }
     }
 
-        public void AddDurability(int add, Vector2 breakPos)
+        public bool AddDurability(int add)
         {
             durability += add;
             if (durability <= 0)
             {
-                Break(breakPos);
-                return;
+                return true;
             }
+            return false;
         }
         /// <summary>
         /// 무기를 파괴하는 함수
@@ -261,41 +215,4 @@ using UnityEngine;
         }
 
         #endregion
-
-        #if UNITY_EDITOR
-        #region 에디터 편의
-
-        void DropDown()
-        {
-            if (Editor.GetObjectState(gameObject) == Editor.ObjectState.PrefabEdit)
-            {
-                //state = WeaponState.Prefab;
-            }
-            else
-            {
-                //씬뷰에 플로팅 시작 >> 아이템화
-                if (transform.parent == null) ItemManager.WrapWeaponInItem(this);
-
-                //하이어라키에 드롭다운 >> Controller에 추가
-                else
-                {
-                    //위치 자동 수정-----------------------------------------------필요
-                    con = transform.parent.parent.GetComponent<Controller>();
-
-                    if (con.weapons.Count >= con.ControllerData.inventorySize)
-                    {
-                        Debug.LogWarning("인벤토리가 가득참.");
-
-                        gameObject.AutoDestroy();
-                    } //LogWarning: 인벤토리가 가득참. >> 제거
-
-                    con.AddWeapon(this);
-
-                    //parent = transform.parent;
-                    //prevChildIndex = transform.GetSiblingIndex();
-                }
-            }
-        }
-        #endregion
-        #endif
-    }
+}

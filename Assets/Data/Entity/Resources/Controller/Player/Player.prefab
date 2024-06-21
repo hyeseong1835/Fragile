@@ -50,8 +50,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityLayer: 72
-  entityLayerType:
-    array: 
   hp: 1
   hand: {fileID: 8875833314106789666}
   weaponHolder: {fileID: 5693669617377309124}

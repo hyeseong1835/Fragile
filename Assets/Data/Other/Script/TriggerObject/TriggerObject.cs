@@ -1,5 +1,6 @@
 using UnityEngine;
 using Sirenix.OdinInspector;
+using Unity.VisualScripting;
 
 public enum TriggerType
 {
@@ -10,7 +11,7 @@ public struct TriggerInfo
     public Entity entity;
     public TriggerType type;
 
-    public TriggerInfo(Entity entity, string id, TriggerType type)
+    public TriggerInfo(Entity entity, TriggerType type)
     {
         this.entity = entity;
         this.type = type;
@@ -36,15 +37,15 @@ public class TriggerObject : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D coll)
     {
-        TriggerObjectEnterEvent.Trigger(returnObject, ID, GetTriggerType(coll));
+        TriggerObjectEnterEvent.Trigger(returnObject, ID, new TriggerInfo(coll.GetComponent<Entity>(), GetTriggerType(coll)));
     }
     void OnTriggerStay2D(Collider2D coll)
     {
-        TriggerObjectStayEvent.Trigger(returnObject, ID, GetTriggerType(coll));
+        TriggerObjectStayEvent.Trigger(returnObject, ID, new TriggerInfo(coll.GetComponent<Entity>(), GetTriggerType(coll)));
     }
     void OnTriggerExit2D(Collider2D coll)
     {
-        TriggerObjectExitEvent.Trigger(returnObject, ID, GetTriggerType(coll));
+        TriggerObjectExitEvent.Trigger(returnObject, ID, new TriggerInfo(coll.GetComponent<Entity>(), GetTriggerType(coll)));
     }
     TriggerType GetTriggerType(Collider2D _coll)
     {

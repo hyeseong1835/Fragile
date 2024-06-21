@@ -2,16 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Xml.Linq;
-using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditor.Rendering;
 using UnityEngine;
 
 public class EnumArrayAttribute : PropertyAttribute
 {
-    public Type enumType;
+    public Type enumType { get; private set; }
 
     public EnumArrayAttribute(Type enumType)
     {
@@ -30,27 +26,26 @@ public class EnumArrayPropertyDrawer : PropertyDrawer
     }
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
-        FieldInfo underlyingField = property.GetUnderlyingField();
-        object[] array = (object[])underlyingField.GetValue(property.name);
-
         EnumArrayAttribute enumArrayAttribute = attribute as EnumArrayAttribute;
+        
         string[] enumNames = Enum.GetNames(enumArrayAttribute.enumType);
-
+        Array enumValues = Enum.GetValues(enumArrayAttribute.enumType);
         if (column == null) column = enumNames;
+
         Rect rect = new Rect(position.position, new Vector2(position.size.x, Editor.propertyHeight * column.Length + Editor.titleHeight));
 
         //Property
-        EditorGUI.BeginProperty(rect, GUIContent.none, property);
+        EditorGUI.BeginProperty(rect, GUIContent.none, property.serializedObject.FindProperty(property.name));
         {
             EditorGUI.LabelField(new Rect(rect.position, new Vector2(rect.size.x - Editor.shortButtonWidth, Editor.titleHeight)), label);
 
-            if (array.Length != column.Length || GUI.Button(new Rect(rect.position + new Vector2(rect.size.x - Editor.shortButtonWidth, 10), new Vector2(Editor.shortButtonWidth, Editor.propertyHeight)), "Remap"))
+            if (GUI.Button(new Rect(rect.position + new Vector2(rect.size.x - Editor.shortButtonWidth, 10), new Vector2(Editor.shortButtonWidth, Editor.propertyHeight)), "Remap"))
             {
                 ArrayRemap();
             }
-
+            /*
             Rect fieldRect = new Rect(rect.position.x, rect.position.y + Editor.titleHeight,
-                                      rect.size.x, Editor.propertyHeight * array.Length);
+                                      rect.size.x, Editor.propertyHeight * property.arraySize);
             for (int arrayIndex = 0; arrayIndex < column.Length; arrayIndex++)
             { 
                 //라벨
@@ -59,19 +54,21 @@ public class EnumArrayPropertyDrawer : PropertyDrawer
                         fieldRect.position.x, fieldRect.position.y + Editor.propertyHeight * arrayIndex,
                         Editor.propertyLabelWidth, Editor.propertyHeight
                     );
-                    Rect interactionArea = new Rect(
-                        fieldRect.position.x + Editor.propertyLabelWidth, fieldRect.position.y + Editor.propertyHeight * arrayIndex,
-                        fieldRect.size.x - Editor.propertyLabelWidth, Editor.propertyHeight
-                    );
+                    
                     GUI.Label(labelArea, column[arrayIndex]);
                 }
                 //필드
                 {
-                    object elementValue = array[arrayIndex];
+                    Rect interactionArea = new Rect(
+                        fieldRect.position.x + Editor.propertyLabelWidth, fieldRect.position.y + Editor.propertyHeight * arrayIndex,
+                        fieldRect.size.x - Editor.propertyLabelWidth, Editor.propertyHeight
+                    );
+                    object elementValue = property.GetArrayElementAtIndex(arrayIndex);
 
-                    //enumArrayAttribute.array[arrayIndex] = EditorGUI.ObjectField(interactionArea, );
+                    EditorGUI.EnumPopup(interactionArea, (Enum)enumValues.GetValue(property.enumValueIndex));
                 }
             }
+        */
         }
         EditorGUI.EndProperty();
 
@@ -80,8 +77,6 @@ public class EnumArrayPropertyDrawer : PropertyDrawer
         {
             List<string> columnList = column.ToList();
             IEnumerator columnListReadIt = columnList.GetEnumerator();
-
-            List<object> arrayList = array.ToList();
 
             for (int columnListReadIndex = 0; ;)
             {
@@ -112,7 +107,7 @@ public class EnumArrayPropertyDrawer : PropertyDrawer
                         {
                             columnList.MoveElement(currentColumn, columnListReadIndex);
 
-                            arrayList.MoveElement(currentColumn, columnListReadIndex);
+                            property.MoveArrayElement(compareIndex, columnListReadIndex);
 
                             columnListReadIndex++;
                             break;
@@ -124,7 +119,7 @@ public class EnumArrayPropertyDrawer : PropertyDrawer
                 else columnListReadIndex++;
             }
             column = columnList.ToArray();
-            array = arrayList.ToArray(column.Length);
+
         }
     }
 }

@@ -31,7 +31,7 @@ public class EnemyController : Controller
         //NavMeshAgent agent;
 
     #endregion
-
+    /*
     void Awake()
     {
         if (Editor.GetApplicationType(Editor.StateType.IsPlay))
@@ -42,6 +42,7 @@ public class EnemyController : Controller
     }
     void Start()
     {
+        return;
         if (target == null) return;
 
         if (curWeapon == null)
@@ -56,6 +57,8 @@ public class EnemyController : Controller
     {
         base.Update();
 
+        return;
+
         targetPos = (Vector2)target.transform.position + target.ControllerData.center;
 
         if (Editor.GetApplicationType(Editor.StateType.IsEditor))
@@ -67,7 +70,7 @@ public class EnemyController : Controller
                 DestroyImmediate(agent);
                 agent = null;
             }
-            */
+            //
         }
     }
     void Move()
@@ -149,7 +152,6 @@ public class EnemyController : Controller
 
         yield return new WaitForSeconds(curWeapon.attack.delay);
 
-        yield return new WaitForSeconds(curWeapon.attack.backDelay);
 
         Move();
     }
@@ -163,4 +165,5 @@ public class EnemyController : Controller
             Gizmos.DrawWireSphere(transform.position + (Vector3)data.center, curWeapon.attack.maxDistance);
         }
     }
+    */
 }

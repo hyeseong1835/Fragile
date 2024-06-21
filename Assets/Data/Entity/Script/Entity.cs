@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using Sirenix.OdinInspector;
 using UnityEngine.UIElements;
+using System.Reflection;
 
 public enum EntityLayer
 {
@@ -16,6 +17,7 @@ public abstract class Entity : MonoBehaviour
     public abstract EntityData EntityData { get; set; }
     public abstract Type DataType { get; }
 
+    public EntityLayer entityLayer;
 
     [FoldoutGroup("Stat")]
     #region Foldout Stat - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|                                         
@@ -65,13 +67,9 @@ public abstract class Entity : MonoBehaviour
 
         #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|    
 
-
     #endregion - - - - - - - - - - - - - - - - - - - - -|
 
-    public EntityLayer entityLayer;
-    [EnumArray(entityLayerType, typeof(EntityLayer))]
-    public EntityLayerInteraction[] entityLayerType;
-
+        
     public void TakeDamage(float damage)
     {
         hp -= damage;
