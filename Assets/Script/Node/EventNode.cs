@@ -4,25 +4,17 @@ using UnityEngine;
 using System.Collections;
 public abstract class EventNode : EventUnit<int>
 {
-    public GameObject target;
     public Type MessageListenerType => GetType();
     protected override bool register => true;
     public abstract string eventName { get; }
 
     public override EventHook GetHook(GraphReference reference)
     {
-        if (target == null) SetTarget(reference);
-
-        return new EventHook(eventName, target);
-    }
-    protected virtual void SetTarget(GraphReference reference)
-    {
-        target = reference.gameObject;
+        return new EventHook(eventName, reference.gameObject);
     }
 }
 public abstract class EventNode<T> : EventUnit<T>
 {
-    public GameObject target;
     public Type MessageListenerType => GetType();
     protected override bool register => true;
     public abstract string eventName { get; }
@@ -32,15 +24,8 @@ public abstract class EventNode<T> : EventUnit<T>
 
     public override EventHook GetHook(GraphReference reference)
     {
-        if (target == null) SetTarget(reference);
-
-        return new EventHook(eventName, target);
+        return new EventHook(eventName, reference.gameObject);
     }
-    protected virtual void SetTarget(GraphReference reference)
-    {
-        target = reference.gameObject;
-    }
-
     protected override void Definition()
     {
         base.Definition();
@@ -54,36 +39,27 @@ public abstract class EventNode<T> : EventUnit<T>
 }
 public abstract class DefiniteEventNode : EventNode
 {
-    public static string GetEventName(string eventName, string id)
-    {
-        return $"{eventName}({id})";
-    }
-    [DoNotSerialize] public ValueInput Iv_id;
-    public string id;
+    [Serialize, Inspectable] public string id;
 
-    protected override void Definition()
-    {
-        base.Definition();
+    /// <summary>
+    /// {eventName}({id})
+    /// </summary>
+    /// <param name="eventName"></param>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public static string GetEventName(string eventName, string id) => $"{eventName}({id})";
 
-        Iv_id = ValueInput<string>("ID");
-    }
     public override EventHook GetHook(GraphReference reference)
     {
-        return new EventHook(GetEventName(eventName, Flow.New(reference).GetValue<string>(Iv_id)), reference.gameObject);
+        return new EventHook(GetEventName(eventName, id), reference.gameObject);
     }
 }
 public abstract class DefiniteEventNode<T> : EventNode<T>
 {
-    protected ValueInputPort<string> idPort;
+    [Serialize, Inspectable] public string id;
 
-    protected override void Definition()
-    {
-        base.Definition();
-
-        idPort = ValueInputPort<string>.Define(this, "ID");
-    }
     public override EventHook GetHook(GraphReference reference)
     {
-        return new EventHook(DefiniteEventNode.GetEventName(eventName, idPort.GetValue(Flow.New(reference))), reference.gameObject);
+        return new EventHook(DefiniteEventNode.GetEventName(eventName, id), reference.gameObject);
     }
 }

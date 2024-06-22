@@ -13,6 +13,8 @@ public enum HandMode
 [ExecuteAlways]
 public class HandGrafic : MonoBehaviour
 {
+    [Required] public Controller con;
+
     [HorizontalGroup("Horizontal")]
     
     #region Horizontal
@@ -99,15 +101,28 @@ public class HandGrafic : MonoBehaviour
         switch (handMode)
         {
             case HandMode.ToHand:
-                if (targetTransform == null) { Debug.LogError("TargetTransform is null"); return; }
+                if (targetTransform == null) 
+                {
+                    targetTransform = con.curWeapon.hand_obj;
+                }
+                if (handle == null)
+                {
+                    handle = targetTransform.Find("Handle");
+                }
                 
                 targetTransform.position = transform.position + (targetTransform.position - handle.position);
                 targetTransform.rotation = transform.rotation;
                 break;
 
             case HandMode.ToTarget:
-                if (targetTransform == null) { Debug.LogError("TargetTransform is null"); return; }
-
+                if (targetTransform == null)
+                {
+                    targetTransform = con.curWeapon.hand_obj;
+                }
+                if (handle == null)
+                {
+                    handle = targetTransform.Find("Handle");
+                }
                 transform.position = handle.position;
                 transform.rotation = handle.rotation;
                 break;

@@ -126,20 +126,8 @@ public abstract class Controller : Entity
     [FoldoutGroup("Input")]
     #region Foldout Input  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-    [VerticalGroup("Input/Move")]
-    #region Vertical Move - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-        #if UNITY_EDITOR
-        [ShowInInspector]
-        [LabelText("Speed")][LabelWidth(Editor.propertyLabelWidth)]
-        float showMoveSpeed { 
-            get { 
-                if (ControllerData == null) return default;
-                return ControllerData.moveSpeed; 
-            } 
-            set { ControllerData.moveSpeed = value; } 
-        }
-        #endif
+        [VerticalGroup("Input/Move")]
+        #region Vertical Move - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
                                                                                                     [VerticalGroup("Input/Move")]
         [ShowInInspector]
         [LabelWidth(Editor.propertyLabelWidth)]
@@ -171,48 +159,49 @@ public abstract class Controller : Entity
 
     #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-    [VerticalGroup("Input/Target")]
-    #region Vertical Target  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+        [VerticalGroup("Input/Target")]
+        #region Vertical Target  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-        [LabelWidth(Editor.propertyLabelWidth)]
-        public Vector2 targetPos;
-                                                                                                    [VerticalGroup("Input/Target")]
-        [ShowInInspector]
-        [LabelWidth(Editor.propertyLabelWidth)]
-        public Vector2 targetDir{
-            get {
-                if (ControllerData == null) return default;
-                return (targetPos - ((Vector2)transform.position + ControllerData.center)).normalized; 
+            [LabelWidth(Editor.propertyLabelWidth)]
+            public Vector2 targetPos;
+                                                                                                        [VerticalGroup("Input/Target")]
+            [ShowInInspector]
+            [LabelWidth(Editor.propertyLabelWidth)]
+            public Vector2 targetDir{
+                get {
+                    if (ControllerData == null) return default;
+                    return (targetPos - ((Vector2)transform.position + ControllerData.center)).normalized; 
+                }
             }
-        }
 
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-    [VerticalGroup("Input/Attack")]
-    #region Vertical Attack - - - - - - - - - - - - - - - - -|
-
-        [HideInInspector] public bool attack = false;
-        [HideInInspector] public bool prevAttack = false;
-
-        [HideInInspector] float attackCharge;
-        [HideInInspector] public bool preventAttackInput = false;
-        [HideInInspector] public bool readyPreventAttackInput = false;
+        [VerticalGroup("Input/Attack")]
+        #region Vertical Attack - - - - - - - - - - - - - - - - -|
 
 
-    #endregion  - - - - - - - - - - - - - - - - - - - - - - -|
+            [ReadOnly] public bool attack = false;
+            [HideInInspector] public bool prevAttack = false;
 
-    [VerticalGroup("Input/Special")]
-    #region Vertical Special - - - - - - - - - - - - - - - - -|
+            [HideInInspector] float attackCharge;
+            [HideInInspector] public bool preventAttackInput = false;
+            [HideInInspector] public bool readyPreventAttackInput = false;
 
-        [HideInInspector] public bool special;
-        [HideInInspector] public bool prevSpecial = false;
 
-        [HideInInspector] float specialCharge;
-        [HideInInspector] public bool isSpecial { get; private set; } = false;
-        [HideInInspector] public bool preventSpecialInput = false;
-        [HideInInspector] public bool readyPreventSpecialInput = false;
+        #endregion  - - - - - - - - - - - - - - - - - - - - - - -|
 
-    #endregion  - - - - - - - - - - - - - - - - - - - - - - -|   
+        [VerticalGroup("Input/Special")]
+        #region Vertical Special - - - - - - - - - - - - - - - - -|
+
+            [ReadOnly] public bool special;
+            [HideInInspector] public bool prevSpecial = false;
+
+            [HideInInspector] float specialCharge;
+            [HideInInspector] public bool isSpecial { get; private set; } = false;
+            [HideInInspector] public bool preventSpecialInput = false;
+            [HideInInspector] public bool readyPreventSpecialInput = false;
+
+        #endregion  - - - - - - - - - - - - - - - - - - - - - - -|   
 
     #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
@@ -352,41 +341,41 @@ public abstract class Controller : Entity
             [HorizontalGroup("Weapon/Inventory/Manage")]
             #region Horizontal Manage  - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-            [Button(name: "Add")]
-            void AddWeaponInInspector(string name)
-            {
-                AddWeapon(Weapon.Spawn(name, weaponHolder));
-                if (defaultWeapon == null) SetDefaultWeapon(weaponHolder.childCount - 1);
-            }
-            [HorizontalGroup("Weapon/Inventory/Manage")]
-            [Button(name: "Destroy")]
-            void DestroyWeaponInInspector(int index)
-            {
-                if (index == -1)
+                [Button(name: "Add")]
+                void AddWeaponInInspector(string name)
                 {
-                    if (defaultWeapon == null) return;
-
-                    DestroyImmediate(defaultWeapon.gameObject);
-
-                    defaultWeapon = null;
+                    AddWeapon(Weapon.PrefabLinkSpawn(name, weaponHolder));
+                    if (defaultWeapon == null) SetDefaultWeapon(weaponHolder.childCount - 1);
                 }
-                else
+                [HorizontalGroup("Weapon/Inventory/Manage")]
+                [Button(name: "Destroy")]
+                void DestroyWeaponInInspector(int index)
                 {
-                    if (weapons[index] == null)
+                    if (index == -1)
                     {
-                        weapons.RemoveAt(index);
-                        return;
+                        if (defaultWeapon == null) return;
+
+                        DestroyImmediate(defaultWeapon.gameObject);
+
+                        defaultWeapon = null;
                     }
+                    else
+                    {
+                        if (weapons[index] == null)
+                        {
+                            weapons.RemoveAt(index);
+                            return;
+                        }
 
-                    weapons[index].WeaponDestroy();
+                        weapons[index].WeaponDestroy();
+                    }
                 }
-            }
 
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+            #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-#endif
+            #endif
 
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     #endregion
 
@@ -536,50 +525,66 @@ public abstract class Controller : Entity
         //Move
         if (moveVector != Vector2.zero) lastMoveVector = moveVector;
 
+    }
+    protected void InputEvent()
+    {
         //Attack
-        if (attack != prevAttack)
-        {
-            if (attack) //Down
-            {
-                AttackDownEventNode.Trigger(curWeapon.gameObject);
-            }
-            else //Up
-            {
-                AttackUpEventNode.Trigger(curWeapon.gameObject, attackCharge);
-                attackCharge = 0;
-                if (readyPreventAttackInput) preventAttackInput = true;
-                else preventAttackInput = false;
-            }
-            prevAttack = attack;
-        }
         if (attack)
         {
+            if (attack != prevAttack) //Down
+            {
+                AttackDownEventNode.Trigger(curWeapon.gameObject);
+
+                prevAttack = attack;
+            }
+
+            //Update
             AttackHoldEventNode.Trigger(curWeapon.gameObject, attackCharge);
             attackCharge += Time.deltaTime;
         }
+        else
+        {
+            if (attack != prevAttack) //Up
+            {
+                AttackUpEventNode.Trigger(curWeapon.gameObject, attackCharge);
+                attackCharge = 0;
+
+                if (readyPreventAttackInput) preventAttackInput = true;
+                else preventAttackInput = false;
+
+                prevAttack = attack;
+            }
+        }
 
         //Special
-        if (special != prevSpecial)
-        {
-            if (special)
-            {
-                SpecialDownEventNode.Trigger(curWeapon.gameObject);
-            }
-            else
-            {
-                SpecialUpEventNode.Trigger(curWeapon.gameObject, specialCharge);
-                specialCharge = 0;
-                if (readyPreventSpecialInput) preventSpecialInput = true;
-                else preventSpecialInput = false;
-            }
-            prevSpecial = special;
-        }
         if (special)
         {
+            if (special != prevSpecial) //Down
+            {
+                SpecialDownEventNode.Trigger(curWeapon.gameObject);
+
+                prevSpecial = special;
+            }
+
+            //Update
             SpecialHoldEventNode.Trigger(curWeapon.gameObject, specialCharge);
             specialCharge += Time.deltaTime;
         }
+        else
+        {
+            if (special != prevSpecial) //Up
+            {
+                SpecialUpEventNode.Trigger(curWeapon.gameObject, specialCharge);
+                specialCharge = 0;
+
+                if (readyPreventSpecialInput) preventSpecialInput = true;
+                else preventSpecialInput = false;
+
+                prevSpecial = special;
+            }
+        }
     }
+
     public void AutoDebug()
     {
         //개수 비교 >? 초기화

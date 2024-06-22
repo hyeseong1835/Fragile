@@ -4,14 +4,14 @@ using System;
 
 [UnitTitle("Update")]
 [UnitCategory("Events/Weapon")]
-public class UpdateEventNode : EventNode<WeaponState>
+public class UpdateEventNode : EventNode
 {
     public static string name = "Update";
     public override string eventName => name;
     
-    public static void Trigger(GameObject gameObject, WeaponState state)
+    public static void Trigger(GameObject gameObject)
     {
-        EventBus.Trigger(name, gameObject, state);
+        EventBus.Trigger(name, gameObject);
     }
 }
 

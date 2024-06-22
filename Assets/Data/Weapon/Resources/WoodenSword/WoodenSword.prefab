@@ -164,13 +164,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b8ae1c64c8dfbc49b1dd04209c2430e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  data: {fileID: 11400000, guid: 913621b783575ee49bc47869bd249d02, type: 2}
+  durability: 0
   con: {fileID: 0}
-  state: 2
+  state: 0
   UISprite: {fileID: 0}
   hand_obj: {fileID: 8244600696390822311}
-  damage: 1
-  durability: 0
-  maxDurability: -1
 --- !u!114 &4971956257908306255
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,7 +183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _data:
-    _json: '{"declarations":{"Kind":"Object","collection":{"$content":[{"name":"SwingWeaponPrefab","value":{"$content":0,"$type":"UnityEngine.Object"},"typeHandle":{"Identification":"UnityEngine.GameObject,
+    _json: '{"declarations":{"Kind":"Object","collection":{"$content":[{"name":"MeleePrefab","value":{"$content":0,"$type":"UnityEngine.Object"},"typeHandle":{"Identification":"UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null","$version":"A"},"$version":"A"},{"name":"AttackMeleeData","value":{"$content":1,"$type":"UnityEngine.Object"},"typeHandle":{"Identification":"MeleeData,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null","$version":"A"},"$version":"A"},{"name":"SpecialMeleeData","value":{"$content":2,"$type":"UnityEngine.Object"},"typeHandle":{"Identification":"MeleeData,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null","$version":"A"},"$version":"A"}],"$version":"A"},"$version":"A"}}'

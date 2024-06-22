@@ -29,7 +29,7 @@ public class UI_Inventory : MonoBehaviour
             durabillity.fillAmount = 0;
         }
         //내구도가 있을 때
-        else durabillity.fillAmount = ((float)pCon.curWeapon.durability) / pCon.curWeapon.maxDurability;
+        else durabillity.fillAmount = ((float)pCon.curWeapon.durability) / pCon.curWeapon.data.maxDurability;
 
         if (pCon.nextWeapon == null)
         {

@@ -31,86 +31,67 @@ public class PlayerController : Controller
     }
     public BehaviorState behaviorState;
 
-    [Space(Editor.overrideSpace)]
-    [FoldoutGroup("Input")]
-    #region Override Input  - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-        
-        [VerticalGroup("Input/Attack")]
-        #region Override Foldout Attack - - - - - - - - - - - - - - - - - - - -|
+    #region Mouse
 
-            [SerializeField][ReadOnly]
-            [LabelWidth(Editor.propertyLabelWidth)]
-            bool attackInput = false;
-                                                                                [VerticalGroup("Input/Attack")]      
-            [SerializeField] 
-            [LabelText("Allow Time")][LabelWidth(Editor.propertyLabelWidth)]//-|
-            float attackInputAllowTime = 1;
+        [HideInInspector]
+        public Vector2 mousePos { get { return camCon.cam.ScreenToWorldPoint(Input.mousePosition); } }
 
-            Coroutine curAttackInputCoroutine;
+        [HideInInspector]
+        public Vector2 playerToMouse { get { return mousePos - (Vector2)transform.position; } }
 
-    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+        [HideInInspector]
+        float viewRotateZ { get { return Mathf.Atan2(playerToMouse.y, playerToMouse.x) * Mathf.Rad2Deg; } }
 
-        #region Mouse
+        #region 좌클릭
 
-            [HideInInspector] 
-            public Vector2 mousePos { get { return camCon.cam.ScreenToWorldPoint(Input.mousePosition); } }
-    
-            [HideInInspector] 
-            public Vector2 playerToMouse { get { return mousePos - (Vector2)transform.position; } }
-    
-            [HideInInspector] 
-            float viewRotateZ { get { return Mathf.Atan2(playerToMouse.y, playerToMouse.x) * Mathf.Rad2Deg; } }
+            [HideInInspector]
+            bool mouse0Down { get { return UnityEngine.Input.GetMouseButtonDown(0); } }
 
-            #region 좌클릭
+            [ShowInInspector]
+            bool mouse0Stay { get { return UnityEngine.Input.GetMouseButton(0); } }
 
-                [HideInInspector] 
-                    bool mouse0Down { get { return UnityEngine.Input.GetMouseButtonDown(0); } }
-    
-                [ShowInInspector]
-                    bool mouse0Stay { get { return UnityEngine.Input.GetMouseButton(0); } }
-    
-                [HideInInspector] 
-                    bool mouse0Up { get { return UnityEngine.Input.GetMouseButtonUp(0); } }
-    
-            #endregion
-    
-            #region 우클릭
-
-                [HideInInspector] 
-                    public bool mouse1Down { get { return UnityEngine.Input.GetMouseButtonDown(1); } }
-    
-                [ShowInInspector]
-                    public bool mouse1Stay { get { return UnityEngine.Input.GetMouseButton(1); } }
-    
-                [HideInInspector] 
-                    public bool mouse1Up { get { return UnityEngine.Input.GetMouseButtonUp(1); } }
-    
-            #endregion
-    
-            #region 마우스 휠
-
-                [HideInInspector] 
-                public float mouseWheelScroll { get { return UnityEngine.Input.GetAxis("Mouse ScrollWheel"); } }
-    
-                [HideInInspector] 
-                public bool mouseWheelClickDown { get { return UnityEngine.Input.GetMouseButtonDown(2); } }
-    
-                [ShowInInspector]
-                public bool mouseWheelClick{ get { return UnityEngine.Input.GetMouseButtonUp(2); } }
-    
-                [HideInInspector] 
-                public bool mouseWheelClickUp { get { return UnityEngine.Input.GetMouseButtonDown(2); } }
-
-    #endregion
+            [HideInInspector]
+            bool mouse0Up { get { return UnityEngine.Input.GetMouseButtonUp(0); } }
 
         #endregion
 
-    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+        #region 우클릭
+
+            [HideInInspector]
+            public bool mouse1Down { get { return UnityEngine.Input.GetMouseButtonDown(1); } }
+
+            [ShowInInspector]
+            public bool mouse1Stay { get { return UnityEngine.Input.GetMouseButton(1); } }
+
+            [HideInInspector]
+            public bool mouse1Up { get { return UnityEngine.Input.GetMouseButtonUp(1); } }
+
+        #endregion
+
+        #region 마우스 휠
+
+            [HideInInspector]
+            public float mouseWheelScroll { get { return UnityEngine.Input.GetAxis("Mouse ScrollWheel"); } }
+
+            [HideInInspector]
+            public bool mouseWheelClickDown { get { return UnityEngine.Input.GetMouseButtonDown(2); } }
+
+            [ShowInInspector]
+            public bool mouseWheelClick { get { return UnityEngine.Input.GetMouseButtonUp(2); } }
+
+            [HideInInspector]
+            public bool mouseWheelClickUp { get { return UnityEngine.Input.GetMouseButtonDown(2); } }
+
+        #endregion
+
+    #endregion
 
     [HideInInspector]
     public Weapon nextWeapon;
 
     Weapon lastNotHandWeapon;
+
+    public GameObject dummyPrefab;
 
     void Awake()
     {
@@ -118,21 +99,21 @@ public class PlayerController : Controller
     }
     new void Update()
     {
-        //if (Editor.GetType(Editor.StateType.IsEditor)) return;
-
-        if (preventAttackInput) attack = false;
-        else attack = mouse0Stay;
-
-        if (preventSpecialInput) special = false;
-        else special = mouse1Stay;
-
         base.Update();
+        
+        if (preventAttackInput == false) attack = mouse0Stay;
+        else if (mouse0Stay == false) attack = false;
+
+        if (preventSpecialInput == false) special = mouse1Stay;
+        else if (mouse1Stay == false) special = false;
+
+        InputEvent();
         
         Mouse();
         Move();
 
         WheelSelect();
-        if (Input.GetKeyDown(KeyCode.P)) AddWeapon(Weapon.Spawn("WoodenSword"));
+        if (Input.GetKeyDown(KeyCode.P)) Instantiate(dummyPrefab);
 
         int curWeaponIndex = weapons.IndexOf(curWeapon);
 
@@ -222,26 +203,5 @@ public class PlayerController : Controller
             }
             else SelectWeapon(weapons[curWeaponIndex - 1]); // -1
         }
-    }
-    void Attack()
-    {
-        if (mouse0Down)
-        {
-            //CancelInvoke(nameof(AttackInputCancel));
-            //attackInput = true;
-            //Invoke(nameof(AttackInputCancel), attackInputAllowTime);
-        }
-
-        /*if ((attackInput) && isAttack == false)
-        {
-            attack = true;
-
-            attackInput = false;
-        }
-        else attack = false;*/
-    }
-    void AttackInputCancel()
-    {
-        attackInput = false;
     }
 }
