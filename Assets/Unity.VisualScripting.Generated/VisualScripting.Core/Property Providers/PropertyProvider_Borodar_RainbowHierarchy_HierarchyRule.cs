@@ -11,9 +11,10 @@
 namespace Unity.VisualScripting.Generated.PropertyProviders
 {
 	
-	
+	/*
 	[global::Unity.VisualScripting.SerializedPropertyProviderAttribute(typeof(global::Borodar.RainbowHierarchy.HierarchyRule))]
 	public class PropertyProvider_Borodar_RainbowHierarchy_HierarchyRule : Unity.VisualScripting.SerializedPropertyProvider<Borodar.RainbowHierarchy.HierarchyRule>
 	{
 	}
+	*/
 }

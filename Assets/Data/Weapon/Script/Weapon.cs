@@ -63,6 +63,7 @@ public class Weapon : MonoBehaviour
 
         return weapon;
     }
+#if UNITY_EDITOR
     public static Weapon PrefabLinkSpawn(string weaponName, Transform parent = null)//-|
     {
         GameObject weaponObj;
@@ -85,6 +86,7 @@ public class Weapon : MonoBehaviour
 
         return weapon;
     }
+#endif
     public static Weapon LoadWeapon(WeaponSaveData data)
     {
         Weapon weapon = Spawn(data.name);
