@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.XR;
 using static UnityEngine.Rendering.DebugUI;
 
 public enum AnimationType
@@ -49,35 +50,16 @@ public struct ControllerSave
 }
 public abstract class Controller : Entity
 {
+    public const string WEAPONHOLDER_NAME = "WeaponHolder";
     public override EntityData EntityData
     {
         get => ControllerData;
         set { ControllerData = (ControllerData)value; }
     }
+    public abstract ControllerData ControllerData { get; set; }
+
     [BoxGroup("Object")]
     #region Foldout Object - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-        [HorizontalGroup("Object/ControllerData", Order = 0)]
-        #region Horizontal ControllerData
-        
-            [ShowInInspector]
-            [LabelWidth(Editor.propertyLabelWidth)]
-            public abstract ControllerData ControllerData { get; set; }
-    
-            #if UNITY_EDITOR
-            [HorizontalGroup("Object/ControllerData", Width = Editor.shortButtonWidth)]
-            [Button("Create")]
-            public void CreateData()
-            {
-                string currentPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(gameObject);
-                string path = $"{currentPath.Substring(0, currentPath.LastIndexOf('/'))}/{DataType.Name}.asset";
-                ControllerData dataInstance = (ControllerData)ScriptableObject.CreateInstance(DataType);
-                ControllerData = dataInstance;
-                AssetDatabase.CreateAsset(dataInstance, path);
-            }
-            #endif
-
-        #endregion
 
         [HorizontalGroup("Object/Hand", Order = 1)]
         #region Horizontal Hand
@@ -89,14 +71,7 @@ public abstract class Controller : Entity
             #if UNITY_EDITOR
             [HorizontalGroup("Object/Hand", Width = Editor.shortButtonWidth)]
             [Button("Create")]
-            public void CreateHand()
-            {
-                HandGrafic hand = new GameObject("Hand").AddComponent<HandGrafic>();
-                hand.transform.parent = transform;
-
-                Controller con = gameObject.GetComponent<Controller>();
-                con.hand = hand;
-            }
+            public void CreateHand() => HandGrafic.SetHandGrafic(this);
             #endif
 
         #endregion
@@ -113,9 +88,45 @@ public abstract class Controller : Entity
             [Button("Create")]
             public void CreateWeaponHolder()
             {
+                if (weaponHolder != null)
+                {
+                    if (weaponHolder.gameObject.name != WEAPONHOLDER_NAME)
+                    {
+                        weaponHolder.gameObject.name = WEAPONHOLDER_NAME;
+                        Debug.LogWarning($"WeaponHolder name must be {WEAPONHOLDER_NAME}");
+                    }
+                    if (weaponHolder.transform.parent != transform)
+                    {
+                        weaponHolder.transform.parent = transform;
+                        Debug.LogWarning("WeaponHolder parent must be this");
+                    }
+                    if (weaponHolder.localPosition != Vector3.zero)
+                    {
+                        weaponHolder.localPosition = Vector3.zero;
+                        Debug.LogWarning("WeaponHolder localPosition must be zero");
+                    }
+                    return;
+                }
+                weaponHolder = transform.Find(WEAPONHOLDER_NAME);
+                if(weaponHolder != null)
+                {
+                    if (weaponHolder.transform.parent != transform)
+                    {
+                        weaponHolder.transform.parent = transform;
+                        Debug.LogWarning("WeaponHolder parent must be this");
+                    }
+                    if (weaponHolder.localPosition != Vector3.zero)
+                    {
+                        weaponHolder.localPosition = Vector3.zero;
+                        Debug.LogWarning("WeaponHolder localPosition must be zero");
+                    }
+                    Debug.Log("Set WeaponHolder");
+                    return;
+                }
                 weaponHolder = new GameObject("WeaponHolder").transform;
                 weaponHolder.parent = transform;
                 weaponHolder.localPosition = Vector3.zero;
+                Debug.Log("Create WeaponHolder");
             }
             #endif
 
@@ -524,9 +535,8 @@ public abstract class Controller : Entity
     {
         //Move
         if (moveVector != Vector2.zero) lastMoveVector = moveVector;
-
     }
-    protected void InputEvent()
+    protected void InputEventTrigger()
     {
         //Attack
         if (attack)
@@ -585,44 +595,6 @@ public abstract class Controller : Entity
         }
     }
 
-    public void AutoDebug()
-    {
-        //개수 비교 >? 초기화
-        if (weaponHolder.childCount != weapons.Count + Convert.ToInt32(defaultWeapon != null))
-        {
-            if (defaultWeapon != null) defaultWeapon.transform.SetAsFirstSibling();
-
-            weapons.Clear();
-            for (int i = Convert.ToInt32(defaultWeapon != null); i < weaponHolder.childCount; i++)
-            {
-                weapons.Add(weaponHolder.GetChild(i).GetComponent<Weapon>());
-            }
-            return;
-        }
-
-        //무기 검사
-        for (int weaponIndex = weapons.Count - 1; weaponIndex >= 0; weaponIndex--)
-        {
-            //공란 삭제
-            if (weapons[weaponIndex] == null) weapons.RemoveAt(weaponIndex);
-
-            //기본 무기 최상단
-            if (weapons[weaponIndex] == defaultWeapon) defaultWeapon.transform.SetAsFirstSibling();
-
-            //다르면 초기화
-            if (transform.GetSiblingIndex() != weaponIndex + Convert.ToInt32(defaultWeapon != null))
-            {
-                if (defaultWeapon != null) defaultWeapon.transform.SetAsFirstSibling();
-
-                weapons.Clear();
-                for (int i = Convert.ToInt32(defaultWeapon != null); i < weaponHolder.childCount; i++)
-                {
-                    weapons.Add(weaponHolder.GetChild(i).GetComponent<Weapon>());
-                }
-                return;
-            }
-        }
-    }
     public ControllerSave GetData()
     {
         WeaponSaveData[] weaponDatas = new WeaponSaveData[weapons.Count];

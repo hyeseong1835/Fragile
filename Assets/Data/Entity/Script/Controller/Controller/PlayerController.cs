@@ -13,10 +13,10 @@ public class PlayerController : Controller
     public override ControllerData ControllerData
     {
         get => data; 
-        set { data = (PlayerControllerData)value; }
+        set => data = (PlayerControllerData)value;
     }
     public override Type DataType => typeof(PlayerControllerData);
-    public CameraController camCon { get => CameraController.instance; }
+    public CameraController camCon => CameraController.instance;
 
     public enum BehaviorState
     {
@@ -33,71 +33,61 @@ public class PlayerController : Controller
 
     #region Mouse
 
-        [HideInInspector]
-        public Vector2 mousePos { get { return camCon.cam.ScreenToWorldPoint(Input.mousePosition); } }
+        public Vector2 mousePos => camCon.cam.ScreenToWorldPoint(Input.mousePosition);
 
-        [HideInInspector]
-        public Vector2 playerToMouse { get { return mousePos - (Vector2)transform.position; } }
+        public Vector2 playerToMouse => mousePos - (Vector2)transform.position; 
 
-        [HideInInspector]
-        float viewRotateZ { get { return Mathf.Atan2(playerToMouse.y, playerToMouse.x) * Mathf.Rad2Deg; } }
+        float viewRotateZ => Mathf.Atan2(playerToMouse.y, playerToMouse.x) * Mathf.Rad2Deg; 
 
         #region 좌클릭
 
-            [HideInInspector]
-            bool mouse0Down { get { return UnityEngine.Input.GetMouseButtonDown(0); } }
+            bool mouse0Down => UnityEngine.Input.GetMouseButtonDown(0); 
 
-            [ShowInInspector]
-            bool mouse0Stay { get { return UnityEngine.Input.GetMouseButton(0); } }
+            bool mouse0Stay => UnityEngine.Input.GetMouseButton(0);
 
-            [HideInInspector]
-            bool mouse0Up { get { return UnityEngine.Input.GetMouseButtonUp(0); } }
+            bool mouse0Up => UnityEngine.Input.GetMouseButtonUp(0);
 
         #endregion
 
         #region 우클릭
 
-            [HideInInspector]
-            public bool mouse1Down { get { return UnityEngine.Input.GetMouseButtonDown(1); } }
+            public bool mouse1Down => UnityEngine.Input.GetMouseButtonDown(1);
 
             [ShowInInspector]
-            public bool mouse1Stay { get { return UnityEngine.Input.GetMouseButton(1); } }
+            public bool mouse1Stay => UnityEngine.Input.GetMouseButton(1);
 
-            [HideInInspector]
-            public bool mouse1Up { get { return UnityEngine.Input.GetMouseButtonUp(1); } }
+            public bool mouse1Up => UnityEngine.Input.GetMouseButtonUp(1);
 
         #endregion
 
         #region 마우스 휠
 
-            [HideInInspector]
-            public float mouseWheelScroll { get { return UnityEngine.Input.GetAxis("Mouse ScrollWheel"); } }
+            public float mouseWheelScroll => UnityEngine.Input.GetAxis("Mouse ScrollWheel");
 
-            [HideInInspector]
-            public bool mouseWheelClickDown { get { return UnityEngine.Input.GetMouseButtonDown(2); } }
+            public bool mouseWheelClickDown=> UnityEngine.Input.GetMouseButtonDown(2);
 
             [ShowInInspector]
-            public bool mouseWheelClick { get { return UnityEngine.Input.GetMouseButtonUp(2); } }
+            public bool mouseWheelClick => UnityEngine.Input.GetMouseButtonUp(2);
 
-            [HideInInspector]
-            public bool mouseWheelClickUp { get { return UnityEngine.Input.GetMouseButtonDown(2); } }
+            public bool mouseWheelClickUp => UnityEngine.Input.GetMouseButtonDown(2);
 
         #endregion
 
     #endregion
 
-    [HideInInspector]
+    [NonSerialized]
     public Weapon nextWeapon;
 
-    Weapon lastNotHandWeapon;
+    [NonSerialized]
+    public Weapon lastNotHandWeapon;
 
     public GameObject dummyPrefab;
 
-    void Awake()
+    protected void Awake()
     {
         instance = this;
     }
-    new void Update()
+    new protected void Update()
     {
         base.Update();
         
@@ -107,7 +97,7 @@ public class PlayerController : Controller
         if (preventSpecialInput == false) special = mouse1Stay;
         else if (mouse1Stay == false) special = false;
 
-        InputEvent();
+        InputEventTrigger();
         
         Mouse();
         Move();

@@ -3,21 +3,76 @@ using System;
 using Sirenix.OdinInspector;
 using UnityEngine.UIElements;
 using System.Reflection;
+using UnityEditor;
+using UnityEngine.Windows;
+using static UnityEditor.LightingExplorerTableColumn;
+using System.Diagnostics.CodeAnalysis;
 
-public enum EntityLayer
-{
-    Player, Enemy, Obstacle
-}
-public enum EntityLayerInteraction
-{
-    None, Friend, Hostile, Neutral
-}
 public abstract class Entity : MonoBehaviour 
 {
-    public abstract EntityData EntityData { get; set; }
-    public abstract Type DataType { get; }
+    [ShowInInspector]
+    [HorizontalGroup("Object/Data", Order = 0)]
+    #region Horizontal ControllerData
 
-    public EntityLayer entityLayer;
+        [LabelText("Data")][LabelWidth(Editor.propertyLabelWidth)]
+        public abstract EntityData EntityData { get; set; }
+
+        #if UNITY_EDITOR
+        [HorizontalGroup("Object/Data", Width = Editor.shortButtonWidth)]
+        [Button("Create")]
+        public void CreateData()
+        {
+            string currentPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(gameObject);
+            int currentPathLastSlashIndex = currentPath.LastIndexOf('/');
+            if (currentPathLastSlashIndex < 0)
+            {
+                Debug.LogError($"currentPath is invalid\n"
+                    + $"gameObject: {gameObject.name}\n"
+                    + $"currentPath: {currentPath}\n"
+                    + $"currentPathLastSlashIndex: {currentPathLastSlashIndex}");
+                return;
+            }
+            string path = $"{currentPath.Substring(0, currentPathLastSlashIndex)}/{DataType.Name}.asset";
+
+            if (Directory.Exists(path))
+            {
+                try
+                {
+                    EntityData = AssetDatabase.LoadAssetAtPath<EntityData>(path);
+                }
+                catch
+                {
+                    Debug.LogError($"Failed Load ({path})");
+                    return;
+                }
+                Debug.Log($"Load ({path})");
+                return;
+            }
+            try
+            {
+                EntityData = (EntityData)ScriptableObject.CreateInstance(DataType);
+            }
+            catch
+            {
+                Debug.LogError($"Failed Create Instance ({DataType.Name})");
+                return;
+            }
+
+            try
+            {
+                AssetDatabase.CreateAsset(EntityData, path);
+            }
+            catch
+            {
+                Debug.LogError($"Failed Create ({path})");
+                return;
+            }
+            Debug.Log($"Create ({path})");
+    }
+#endif
+
+    #endregion
+    public abstract Type DataType { get; }
 
     [FoldoutGroup("Stat")]
     #region Foldout Stat - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|                                         
@@ -68,8 +123,7 @@ public abstract class Entity : MonoBehaviour
         #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|    
 
     #endregion - - - - - - - - - - - - - - - - - - - - -|
-
-        
+    
     public void TakeDamage(float damage)
     {
         hp -= damage;
