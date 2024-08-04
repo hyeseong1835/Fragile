@@ -36,10 +36,12 @@ public class CameraController : MonoBehaviour
     }
     void Start()
     {
-        target = PlayerController.instance.transform;
+        
     }
     void Update()
     {
+        target = PlayerController.instance.transform;
+
         if (target == null) return;
 
         switch (camMove)

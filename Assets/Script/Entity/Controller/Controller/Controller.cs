@@ -2,6 +2,7 @@ using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.XR;
@@ -50,49 +51,66 @@ public struct ControllerSave
 public abstract class Controller : Entity
 {
     public const string WEAPONHOLDER_NAME = "WeaponHolder";
+    public Weapon defaultWeapon;
 
-    [FoldoutGroup("Stat")]
-    #region Foldout Stat - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|                                         
-
-    [ShowInInspector]
-    [LabelWidth(Editor.labelWidth)]
-    public abstract Vector2 Center { get; set; }
-                                                                                        [FoldoutGroup("Stat")]
-    [ShowInInspector]
-    [LabelWidth(Editor.labelWidth)]
-    public abstract int InventorySize { get; set; }
-
-    #endregion
-
-    [BoxGroup("Object")]
-    #region Foldout Object - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+#if UNITY_EDITOR
+    [BoxGroup("Object", Order = 0)]
+    #region Box Object  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
         [HorizontalGroup("Object/Hand", Order = 1)]
         #region Horizontal Hand
 
-            [NonSerialized][ReadOnly][ShowInInspector][PropertyOrder(0)]
-            [LabelText("Hand")][LabelWidth(Editor.labelWidth)]//-|
-            public HandGrafic hand;
+            [ShowInInspector][PropertyOrder(0)]
+            [LabelText("Hand")][LabelWidth(Editor.labelWidth)]
+            public HandGrafic EDITOR_handGrafic { 
+                get {
+                    if (EditorApplication.isPlaying) return hand;
 
-            #if UNITY_EDITOR
-            [HorizontalGroup("Object/Hand", Width = Editor.shortButtonWidth)]
+                    if (_EDITOR_handGrafic == null)
+                    {
+                        _EDITOR_handGrafic = transform.Find(HandGrafic.HAND_NAME)//-|
+                                                   .GetComponent<HandGrafic>();
+                    }
+                    return _EDITOR_handGrafic;
+                }
+            } HandGrafic _EDITOR_handGrafic;
+                                                                                                            [HorizontalGroup("Object/Hand", 
+            Width = Editor.shortButtonWidth)]
+            [EnableIf(nameof(Enable_EDITOR_CreateHand))]        
             [Button("Create")]
-            public void CreateHand() => HandGrafic.SetHandGrafic(this);
-            #endif
+            public void EDITOR_CreateHand() => HandGrafic.SetHandGrafic(this);
+
+            
+            bool Enable_EDITOR_CreateHand =>
+                _EDITOR_handGrafic == null 
+                && !EditorApplication.isPlaying;
+            
 
         #endregion
 
         [HorizontalGroup("Object/WeaponHolder", Order = 2)]
-        #region Horizontal WeaponHolder
+        #region Horizontal WeaponHolder - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-            [NonSerialized][ReadOnly][ShowInInspector][PropertyOrder(0)]
-            [LabelWidth(Editor.labelWidth)]
-            public Transform weaponHolder;
+            [ShowInInspector][HideInPlayMode][PropertyOrder(0)]
+            [LabelText("Weapon Holder")][LabelWidth(Editor.labelWidth)]
+            Transform EDITOR_weaponHolder { 
+                get {
+                    if (_EDITOR_weaponHolder == null)
+                    {
+                        _EDITOR_weaponHolder = transform.Find(WEAPONHOLDER_NAME);
+                    }
+                    return _EDITOR_weaponHolder;
+                }
+            } Transform _EDITOR_weaponHolder;
 
-            #if UNITY_EDITOR
-            [HorizontalGroup("Object/WeaponHolder", Width = Editor.shortButtonWidth)]
+            bool Enable_EDITOR_CreateWeaponHolder =>
+                _EDITOR_weaponHolder == null 
+                && !EditorApplication.isPlaying;
+                                                                                                [HorizontalGroup("Object/WeaponHolder", 
+            Width = Editor.shortButtonWidth)]
+            [EnableIf(nameof(Enable_EDITOR_CreateWeaponHolder))] 
             [Button("Create")]
-            public void CreateWeaponHolder()
+            public void EDITOR_CreateWeaponHolder()
             {
                 Transform weaponHolder = transform.Find(WEAPONHOLDER_NAME);
                 if(weaponHolder != null)
@@ -105,7 +123,7 @@ public abstract class Controller : Entity
                     if (weaponHolder.localPosition != Vector3.zero)
                     {
                         weaponHolder.localPosition = Vector3.zero;
-                        Debug.LogWarning("WeaponHolder localPosition must be zero");
+                        Debug.LogWarning("WeaponHolder localPosition must be zero"); //-|
                     }
                     Debug.Log("Set WeaponHolder");
                     return;
@@ -115,88 +133,46 @@ public abstract class Controller : Entity
                 weaponHolder.localPosition = Vector3.zero;
                 Debug.Log("Create WeaponHolder");
             }
-            #endif
 
-        #endregion
+        #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    #endif
 
-    [FoldoutGroup("Input")]
-    #region Foldout Input  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    [FoldoutGroup("Stat", Order = 1)]
+    #region Foldout Stat - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|                                         
 
-    [VerticalGroup("Input/Move")]
-    #region Vertical Move - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    [ShowInInspector]
+    [LabelWidth(Editor.labelWidth)]
+    public abstract Vector2 Center { get; set; }
+                                                                                        [FoldoutGroup("Stat")]
+    [ShowInInspector]
+    [LabelWidth(Editor.labelWidth)]
+    public abstract int InventorySize { get; set; }
 
-        [ReadOnly][ShowInInspector]
-        [LabelWidth(Editor.labelWidth)]
-        public Vector2 lastMoveVector { get; private set; } = new Vector2(0.5f, 0);
-                                                                                                  [VerticalGroup("Input/Move")]
-        [NonSerialized]
-        public Vector2 moveVector = new Vector2(0.5f, 0);
+    #endregion
 
-        [ReadOnly][ShowInInspector]
-        [LabelWidth(Editor.labelWidth)]
-        public float moveRotate { get; private set; }
-
-        public int moveRotate4 { get; private set; }
-
-        public int moveRotate8 { get; private set; }
-
-    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-        [VerticalGroup("Input/Target")]
-        #region Vertical Target  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-            [NonSerialized]
-            [LabelWidth(Editor.labelWidth)]
-            public Vector2 targetPos;
-                                                                                                        [VerticalGroup("Input/Target")]
-            [ShowInInspector]
-            [LabelWidth(Editor.labelWidth)]
-            public Vector2 targetDir => targetPos - ((Vector2)transform.position + Center).normalized; 
-
-        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-        [VerticalGroup("Input/Attack")]
-        #region Vertical Attack - - - - - - - - - - - - - - - - -|
-
-
-            [ReadOnly] public bool attack = false;
-            [NonSerialized] public bool prevAttack = false;
-
-            [NonSerialized] float attackCharge;
-            [NonSerialized] public bool preventAttackInput = false;
-            [NonSerialized] public bool readyPreventAttackInput = false;
-
-
-        #endregion  - - - - - - - - - - - - - - - - - - - - - - -|
-
-        [VerticalGroup("Input/Special")]
-        #region Vertical Special - - - - - - - - - - - - - - - - -|
-
-            [ReadOnly] public bool special;
-            [NonSerialized] public bool prevSpecial = false;
-
-            [NonSerialized] float specialCharge;
-            [HideInInspector] public bool isSpecial { get; private set; } = false;
-            [NonSerialized] public bool preventSpecialInput = false;
-            [NonSerialized] public bool readyPreventSpecialInput = false;
-
-        #endregion  - - - - - - - - - - - - - - - - - - - - - - -|   
-
-    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-
-    [FoldoutGroup("Weapon")]
+    [FoldoutGroup("Weapon", Order = 2)]
     #region Foldout Weapon - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|     
 
         [VerticalGroup("Weapon/DefaultWeapon")]
         [HorizontalGroup("Weapon/DefaultWeapon/Horizontal")]
-        #region Horizontal DefaultWeapon - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+        #region Horizontal DefaultWeapon  - - - - - - - - - - - - - - - - - - - -|
 
-            [VerticalGroup("Weapon/DefaultWeapon/Horizontal/Vertical", PaddingBottom = 25)]//-|
-            [ShowInInspector][ReadOnly][NonSerialized]
+            [VerticalGroup("Weapon/DefaultWeapon/Horizontal/Vertical")]//-|
+            [ShowInInspector][ReadOnly]
             [LabelWidth(Editor.labelWidth)]
-            public Weapon defaultWeapon;
+            public Weapon EDITOR_defaultWeapon {
+                get {
+                    if (EditorApplication.isPlaying) return defaultWeapon;
+            
+                    if (_EDITOR_defaultWeapon == null && EDITOR_weaponHolder.childCount != 0)
+                    {
+                        _EDITOR_defaultWeapon = EDITOR_weaponHolder.GetChild(0).GetComponent<Weapon>();
+                    }
+                    return _EDITOR_defaultWeapon;
+                }
+            } Weapon _EDITOR_defaultWeapon;
 
             #if UNITY_EDITOR
                                                                                                     [HorizontalGroup("Weapon/DefaultWeapon/Horizontal", width: Editor.shortButtonWidth)]
@@ -237,7 +213,7 @@ public abstract class Controller : Entity
 
             #endif
 
-        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+        #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
         [HorizontalGroup("Weapon/CurWeapon")]
         #region Horizontal CurWeapon  - - - - - - - - - - - - - - - - - - - - -|
@@ -246,27 +222,6 @@ public abstract class Controller : Entity
             [ReadOnly][NonSerialized]
             [LabelWidth(Editor.labelWidth)]
             public Weapon curWeapon;
-
-            #if UNITY_EDITOR
-
-            [HorizontalGroup("Weapon/CurWeapon", width: Editor.shortButtonWidth)]
-            [DisableInEditorMode]
-            [Button(name: "Set", Expanded = true)]
-            void SetCurWeapon(int index)
-            {
-                //무기 없음
-                if (transform.childCount == 0) return;
-
-                //선택 해제
-                if (index == -1)
-                {
-                    curWeapon.state = WeaponState.Inventory;
-                    curWeapon = null;
-                }
-                else SelectWeapon(weaponHolder.GetChild(index).GetComponent<Weapon>());
-            }
-
-            #endif
 
         #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
@@ -323,49 +278,114 @@ public abstract class Controller : Entity
             [HorizontalGroup("Weapon/Inventory/Manage")]
             #region Horizontal Manage  - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-                [Button(name: "Add")]
-                void AddWeaponInInspector(string name)
+                [HideInPlayMode]
+                [Button(name: "Add", Expanded = true)]
+                void EDITOR_AddWeapon(string name)
                 {
                     AddWeapon(Weapon.PrefabLinkSpawn(name, weaponHolder));
-                    if (defaultWeapon == null) SetDefaultWeapon(weaponHolder.childCount - 1);
                 }
-                [HorizontalGroup("Weapon/Inventory/Manage")]
-                [Button(name: "Destroy")]
-                void DestroyWeaponInInspector(int index)
+                                                                                                                [HorizontalGroup("Weapon/Inventory/Manage")]
+                [HideInPlayMode]
+                [Button(name: "Destroy", Expanded = true)]
+                void EDITOR_DestroyWeapon(int index)
                 {
-                    if (index == -1)
+                    if (index == 0)
                     {
                         if (defaultWeapon == null) return;
 
-                        DestroyImmediate(defaultWeapon.gameObject);
-
+                        defaultWeapon.WeaponDestroy();
                         defaultWeapon = null;
                     }
                     else
                     {
-                        if (weaponList[index] == null)
+                        if (weaponList[index - 1] == null)
                         {
-                            weaponList.RemoveAt(index);
+                            weaponList.RemoveAt(index - 1);
                             return;
                         }
 
-                        weaponList[index].WeaponDestroy();
+                        weaponList[index - 1].WeaponDestroy();
                     }
                 }
 
-            #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-            #endif
+#endif
 
-        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     #endregion
 
-    [LabelWidth(Editor.labelWidth)]
-    public Vector2 view = new Vector2(0, 0);
+    [FoldoutGroup("Input", Order = 5)]
+    #region Foldout Input  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
-    [LabelWidth(Editor.labelWidth)]
-    public Vector2 bodyPos = new Vector2(0, 0);
+        [VerticalGroup("Input/Move")]
+        #region Vertical Move - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+        [ReadOnly][ShowInInspector]
+        [LabelWidth(Editor.labelWidth)]
+        public Vector2 lastMoveVector { get; private set; } = new Vector2(0.5f, 0);
+                                                                                                  [VerticalGroup("Input/Move")]
+        [NonSerialized]
+        public Vector2 moveVector = new Vector2(0.5f, 0);
+                                                                                                [VerticalGroup("Input/Move")]
+        [ReadOnly][ShowInInspector]
+        [LabelWidth(Editor.labelWidth)]
+        public float moveRotate { get; private set; }
+
+        public int moveRotate4 { get; private set; }
+
+        public int moveRotate8 { get; private set; }
+
+    #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+        [VerticalGroup("Input/Target")]
+        #region Vertical Target  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+            [NonSerialized]
+            [LabelWidth(Editor.labelWidth)]
+            public Vector2 targetPos;
+                                                                                                        [VerticalGroup("Input/Target")]
+            [ShowInInspector]
+            [LabelWidth(Editor.labelWidth)]
+            public Vector2 targetDir => targetPos - ((Vector2)transform.position + Center).normalized; 
+
+        #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+        [VerticalGroup("Input/Attack")]
+        #region Vertical Attack - - - - - - - - - - - - - - - - -|
+
+
+            [ReadOnly] public bool attack = false;
+            [NonSerialized] public bool prevAttack = false;
+
+            [NonSerialized] float attackCharge;
+            [NonSerialized] public bool preventAttackInput = false;
+            [NonSerialized] public bool readyPreventAttackInput = false;
+
+
+        #endregion  - - - - - - - - - - - - - - - - - - - - - - -|
+
+        [VerticalGroup("Input/Special")]
+        #region Vertical Special - - - - - - - - - - - - - - - - -|
+
+            [ReadOnly] public bool special;
+            [NonSerialized] public bool prevSpecial = false;
+
+            [NonSerialized] float specialCharge;
+            [HideInInspector] public bool isSpecial { get; private set; } = false;
+            [NonSerialized] public bool preventSpecialInput = false;
+            [NonSerialized] public bool readyPreventSpecialInput = false;
+
+        #endregion  - - - - - - - - - - - - - - - - - - - - - - -|   
+
+    #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
+
+    [NonSerialized]
+    public HandGrafic hand;
+
+    [NonSerialized]
+    public Transform weaponHolder;
 
     [NonSerialized] 
     public AnimationType animationType;

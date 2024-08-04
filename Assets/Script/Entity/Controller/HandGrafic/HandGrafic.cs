@@ -11,7 +11,6 @@ public enum HandMode
 {
     NONE, ToHand, ToTarget
 }
-[ExecuteAlways]
 public class HandGrafic : MonoBehaviour
 {
     public const string HAND_NAME = "Hand";

@@ -10,7 +10,7 @@ public abstract class Entity : MonoBehaviour
     public abstract float MaxHp { get; set; }
 
 
-    [FoldoutGroup("Stat")]
+    [FoldoutGroup("Stat", 1)]
     #region Foldout Stat - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|                                         
 
         [HorizontalGroup("Stat/HP")]

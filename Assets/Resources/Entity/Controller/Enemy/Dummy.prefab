@@ -166,28 +166,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
-  hand: {fileID: 5194683999501886560}
-  weaponHolder: {fileID: 8551090733348069019}
-  moveVector: {x: 0.5, y: 0}
-  targetPos: {x: 0, y: 0}
-  attack: 0
-  prevAttack: 0
-  preventAttackInput: 0
-  readyPreventAttackInput: 0
-  special: 0
-  prevSpecial: 0
-  preventSpecialInput: 0
-  readyPreventSpecialInput: 0
   defaultWeapon: {fileID: 0}
-  curWeapon: {fileID: 0}
-  weapons: []
-  view: {x: 0, y: 0}
-  bodyPos: {x: 0, y: 0}
-  animationType: 0
-  moveAnimationType: 0
-  skillAnimationType: 0
-  data: {fileID: 11400000, guid: 97c19d67e18b1124caf2d4433b98d2e3, type: 2}
+  weaponList: []
+  attack: 0
+  special: 0
   enemyType: 0
+  data: {fileID: 11400000, guid: 97c19d67e18b1124caf2d4433b98d2e3, type: 2}
 --- !u!50 &8909815014911058486
 Rigidbody2D:
   serializedVersion: 4

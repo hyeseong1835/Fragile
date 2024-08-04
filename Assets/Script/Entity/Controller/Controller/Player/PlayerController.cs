@@ -61,7 +61,6 @@ public class PlayerController : Controller
 
             public bool mouse1Down => UnityEngine.Input.GetMouseButtonDown(1);
 
-            [ShowInInspector]
             public bool mouse1Stay => UnityEngine.Input.GetMouseButton(1);
 
             public bool mouse1Up => UnityEngine.Input.GetMouseButtonUp(1);
@@ -74,7 +73,6 @@ public class PlayerController : Controller
 
             public bool mouseWheelClickDown=> UnityEngine.Input.GetMouseButtonDown(2);
 
-            [ShowInInspector]
             public bool mouseWheelClick => UnityEngine.Input.GetMouseButtonUp(2);
 
             public bool mouseWheelClickUp => UnityEngine.Input.GetMouseButtonDown(2);
@@ -98,12 +96,11 @@ public class PlayerController : Controller
     [SerializeField][HideInInspector]
     int inventorySize;
 
-    [FoldoutGroup("Stat")]
+    [FoldoutGroup("Stat", Order = 1)]
     #region Override Foldout Stat - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|                                         
 
-    [SerializeField]
     [LabelWidth(Editor.labelWidth)]
-    float moveSpeed;
+    public float moveSpeed;
 
     #endregion
 

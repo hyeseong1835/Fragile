@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class EnemySpawner : MonoBehaviour
+public class EnemySpawner : MonoBehaviour
 {
     public string enemyName;
     public string PrefabResourcePath => $"Entity/Controller/Enemy/{enemyName}";
@@ -19,7 +19,7 @@ public abstract class EnemySpawner : MonoBehaviour
         GameObject instance = Instantiate(
             prefab, 
             transform.position, 
-            Quaternion.identity
+            transform.rotation
         );
 
         EnemyController enemyController = instance.GetComponent<EnemyController>();

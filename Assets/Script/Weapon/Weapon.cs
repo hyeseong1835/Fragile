@@ -46,14 +46,14 @@ public class Weapon : MonoBehaviour
         if (parent != null)
         {
             weaponObj = Instantiate(
-            Resources.Load<GameObject>($"{weaponName}/{weaponName}"),
+            Resources.Load<GameObject>($"Weapon/{weaponName}"),
                 parent
             );
         }
         else
         {
             weaponObj = Instantiate(
-            Resources.Load<GameObject>($"{weaponName}/{weaponName}")
+            Resources.Load<GameObject>($"Weapon/{weaponName}")
             );
         }
         weaponObj.name = weaponName;
@@ -70,14 +70,14 @@ public class Weapon : MonoBehaviour
         if (parent != null)
         {
             weaponObj = (GameObject)PrefabUtility.InstantiatePrefab(
-                Resources.Load<UnityEngine.Object>($"{weaponName}/{weaponName}")
+                Resources.Load<GameObject>($"Weapon/{weaponName}")
                 , parent
             );
         }
         else
         {
             weaponObj = (GameObject)PrefabUtility.InstantiatePrefab(
-                Resources.Load<GameObject>($"{weaponName}/{weaponName}")
+                Resources.Load<GameObject>($"Weapon/{weaponName}")
             );
         }
         weaponObj.name = weaponName;

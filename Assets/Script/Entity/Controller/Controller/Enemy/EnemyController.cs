@@ -32,6 +32,7 @@ public abstract class EnemyController : Controller
 
     public Controller target => PlayerController.instance;
 
+    [BoxGroup("Object", Order = 0)]
     [HorizontalGroup("Object/Data", Order = 0)]
     #region Horizontal ControllerData
 
@@ -94,5 +95,6 @@ public abstract class EnemyController : Controller
     #endif
 
     #endregion
+
     public abstract Type DataType { get; }
 }

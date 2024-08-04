@@ -53,27 +53,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 5
-  moveVector: {x: 0.5, y: 0}
-  targetPos: {x: 0, y: 0}
-  attack: 0
-  prevAttack: 0
-  preventAttackInput: 0
-  readyPreventAttackInput: 0
-  special: 0
-  prevSpecial: 0
-  preventSpecialInput: 0
-  readyPreventSpecialInput: 0
   defaultWeapon: {fileID: 2314505795688714776}
-  curWeapon: {fileID: 2314505795688714776}
-  weapons: []
-  view: {x: 0, y: 0}
-  bodyPos: {x: 0, y: 0}
-  animationType: 0
-  moveAnimationType: 0
-  skillAnimationType: 0
-  behaviorState: 0
+  weaponList: []
+  attack: 0
+  special: 0
   maxHp: 1
-  center: {x: 0, y: 0}
+  center: {x: 0, y: 0.5}
   inventorySize: 0
   moveSpeed: 4
 --- !u!95 &297329310979567337
