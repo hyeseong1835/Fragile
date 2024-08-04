@@ -15,7 +15,7 @@ public static class Editor
 
     public const float titleHeight = 30;
 
-    public const float propertyLabelWidth = 125;
+    public const float labelWidth = 125;
 
     public const float shortNoLabelPropertyWidth = 50;
     

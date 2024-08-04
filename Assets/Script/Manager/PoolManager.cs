@@ -42,13 +42,13 @@ public class Pool
             #region Vertical - - - - - - - - - - - - -|
 
             [ReadOnly]
-            [LabelWidth(Editor.propertyLabelWidth)]//-|
+            [LabelWidth(Editor.labelWidth)]//-|
             public GameObject holder;
                                                        [VerticalGroup("Pool/Info/Vertical")]
-            [LabelWidth(Editor.propertyLabelWidth)]
+            [LabelWidth(Editor.labelWidth)]
             public float stayCount;
                                                        [VerticalGroup("Pool/Info/Vertical")]
-            [LabelWidth(Editor.propertyLabelWidth)]
+            [LabelWidth(Editor.labelWidth)]
             public float destroyDelay;
 
             #endregion - - - - - - - - - - - - - - - -|

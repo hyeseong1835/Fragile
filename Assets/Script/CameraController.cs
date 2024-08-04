@@ -9,17 +9,17 @@ public class CameraController : MonoBehaviour
 {
     public static CameraController instance { get; private set; }
 
-    [LabelWidth(Editor.propertyLabelWidth)]
+    [LabelWidth(Editor.labelWidth)]
     public Transform target;
     
     [Required]
-    [LabelWidth(Editor.propertyLabelWidth)]
+    [LabelWidth(Editor.labelWidth)]
     public Camera cam;
 
     [HorizontalGroup("Move")]
     #region Move  - - - - - - - - - - - - - - - - - - -| 
 
-        [LabelWidth(Editor.propertyLabelWidth)]
+        [LabelWidth(Editor.labelWidth)]
         public CameraMove camMove = CameraMove.Stop;//-|
                                                         [HorizontalGroup("Move", width: Editor.shortNoLabelPropertyWidth)]
         [HideLabel]
@@ -27,7 +27,7 @@ public class CameraController : MonoBehaviour
 
     #endregion  - - - - - - - - - - - - - - - - - - - -|
 
-    [LabelWidth(Editor.propertyLabelWidth)]
+    [LabelWidth(Editor.labelWidth)]
     public float posZ = -10;
 
     void Awake()
