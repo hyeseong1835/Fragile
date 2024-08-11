@@ -20,8 +20,6 @@ public class AddDurability : GetComponentActNode<Weapon>
     }
     protected override void Act(Flow flow)
     {
-        base.Act(flow);
-        
         int durability = durabilityIn.GetValue(flow);
 
         if (component.AddDurability(durability))

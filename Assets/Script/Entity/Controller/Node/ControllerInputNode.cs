@@ -6,8 +6,6 @@ public class PreventAttackInput : GetComponentActNode<Weapon>
 {
     protected override void Act(Flow flow)
     {
-        base.Act(flow);
-
         component.con.readyPreventAttackInput = true;
     }
 }
@@ -17,8 +15,6 @@ public class AllowAttackInput : GetComponentActNode<Weapon>
 {
     protected override void Act(Flow flow)
     {
-        base.Act(flow);
-
         component.con.readyPreventAttackInput = false;
         component.con.preventAttackInput = false;
     }
@@ -29,8 +25,6 @@ public class PreventSpecialInput : GetComponentActNode<Weapon>
 {
     protected override void Act(Flow flow)
     {
-        base.Act(flow);
-
         component.con.readyPreventSpecialInput = true;
     }
 }
@@ -40,8 +34,6 @@ public class AllowSpecialInput : GetComponentActNode<Weapon>
 {
     protected override void Act(Flow flow)
     {
-        base.Act(flow);
-
         component.con.readyPreventSpecialInput = false;
         component.con.preventSpecialInput = false;
     }

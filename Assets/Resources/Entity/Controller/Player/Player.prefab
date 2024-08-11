@@ -61,6 +61,7 @@ MonoBehaviour:
   center: {x: 0, y: 0.5}
   inventorySize: 0
   moveSpeed: 4
+  moveSpeedMagnify: 1
 --- !u!95 &297329310979567337
 Animator:
   serializedVersion: 5

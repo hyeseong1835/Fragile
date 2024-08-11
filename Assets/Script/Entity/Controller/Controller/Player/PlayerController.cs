@@ -102,6 +102,10 @@ public class PlayerController : Controller
     [LabelWidth(Editor.labelWidth)]
     public float moveSpeed;
 
+    [LabelWidth(Editor.labelWidth)]
+    public float moveSpeedMagnify = 1;
+
+
     #endregion
 
     new protected void Awake()
@@ -112,18 +116,19 @@ public class PlayerController : Controller
     }
     new protected void Update()
     {
-        base.Update();
-        
         if (preventAttackInput == false) attack = mouse0Stay;
         else if (mouse0Stay == false) attack = false;
 
         if (preventSpecialInput == false) special = mouse1Stay;
         else if (mouse1Stay == false) special = false;
 
-        InputEventTrigger();
+        base.Update();
         
         Mouse();
-        Move();
+        if (moveSpeedMagnify != 0)
+        {
+            Move();
+        }
 
         WheelSelect();
 
@@ -153,9 +158,9 @@ public class PlayerController : Controller
     void Move()
     {
         //입력이 있을 때
-        if (UnityEngine.Input.GetButton("Horizontal") || UnityEngine.Input.GetButton("Vertical"))
+        if (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
         {
-            moveVector = new Vector3(UnityEngine.Input.GetAxis("Horizontal"), UnityEngine.Input.GetAxis("Vertical"), 0);
+            moveVector = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
 
             transform.position += (Vector3)moveVector.normalized * Time.deltaTime * moveSpeed;
 
@@ -166,8 +171,6 @@ public class PlayerController : Controller
         else
         {
             moveVector = Vector2.zero;
-
-            animationType = AnimationType.Move;
             moveAnimationType = MoveAnimationType.Stay;
         }
     }

@@ -1,16 +1,14 @@
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEngine.XR;
 using static UnityEngine.Rendering.DebugUI;
 
 public enum AnimationType
 {
-    Move, Attack, Special
+    None, Move, Attack, Special
 }
 public enum MoveAnimationType
 {
@@ -137,7 +135,7 @@ public abstract class Controller : Entity
         #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
     #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
-    #endif
+#endif
 
     [FoldoutGroup("Stat", Order = 1)]
     #region Foldout Stat - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|                                         
@@ -335,8 +333,6 @@ public abstract class Controller : Entity
 
         public int moveRotate4 { get; private set; }
 
-        public int moveRotate8 { get; private set; }
-
     #endregion  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
         [VerticalGroup("Input/Target")]
@@ -349,6 +345,8 @@ public abstract class Controller : Entity
             [ShowInInspector]
             [LabelWidth(Editor.labelWidth)]
             public Vector2 targetDir => targetPos - ((Vector2)transform.position + Center).normalized; 
+
+            public float targetRotation => Math.Vector2ToDegree(targetDir);
 
         #endregion - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|
 
@@ -540,9 +538,9 @@ public abstract class Controller : Entity
         {
             moveRotate = Math.Vector2ToDegree(moveVector);
             moveRotate4 = Math.Rotate4X(moveRotate4, moveRotate);//-|
-            moveRotate8 = Math.FloorRotateToInt(moveRotate, 45, 8);
             lastMoveVector = moveVector;
         }
+        InputEventTrigger();
     }
     protected void LoadWeapon()
     {
@@ -651,6 +649,7 @@ public abstract class Controller : Entity
         }
         SelectWeapon(weaponList[data.curWeaponIndex]);
     }
+
     protected void OnDrawGizmosSelected()
     {
         //LastMoveVector

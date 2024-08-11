@@ -10,9 +10,6 @@ public static class Math
     }
     public static int Rotate4X(int prevRotate, float rotate)
     {
-        // 1 1 0
-        // 2 X 3
-        // 2 3 3
         if (rotate == 0) return 3;
         if (rotate == 180) return 2;
         if (rotate == 90)

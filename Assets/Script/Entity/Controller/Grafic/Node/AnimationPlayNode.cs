@@ -76,9 +76,10 @@ public abstract class AnimationPlayNodeBase : GetComponentActNode<Animator>
     protected AnimationInfo GetAnimationInfo(int animationLayer, int repeatLayer)
     {
         AnimationInfo info = new AnimationInfo();
-        info.stateInfo = component.GetCurrentAnimatorStateInfo(animationLayer);
-        info.repeatLayer = repeatLayer;
-
+        {
+            info.stateInfo = component.GetCurrentAnimatorStateInfo(animationLayer);
+            info.repeatLayer = repeatLayer;
+        }
         return info;
     }
 }
@@ -104,8 +105,6 @@ public class AnimationPlayNode : AnimationPlayNodeBase
     }
     protected override void Act(Flow flow)
     {
-        base.Act(flow);
-
         string name = namePort.GetValue(flow);
         int animationLayer = animationLayerPort.GetValue(flow);
         int repeatLayer = repeatLayerPort.GetValue(flow);
@@ -170,13 +169,10 @@ public class AnimationPlayWithStartTime : AnimationPlayNodeBase
 
     protected override void Act(Flow flow)
     {
-        base.Act(flow);
-
         string name = namePort.GetValue(flow);
         int animationLayer = animationLayerPort.GetValue(flow);
         int repeatLayer = repeatLayerPort.GetValue(flow);
         float startTime = startTimePort.GetValue(flow);
-
         
         if (animationInfo.IsName(name) == false)
         {
@@ -208,8 +204,6 @@ public class LinkedAnimationPlayNode : AnimationPlayNodeBase
     }
     protected override void Act(Flow flow)
     {
-        base.Act(flow);
-
         AnimationInfo info = infoPort.GetValue(flow);
         string name = namePort.GetValue(flow);
         int animationLayer = animationLayerPort.GetValue(flow);
@@ -233,8 +227,6 @@ public class EmptyAnimationPlayNode : GetComponentActNode<Animator>
     }
     protected override void Act(Flow flow)
     {
-        base.Act(flow); 
-
         int animationLayer = animationLayerPort.GetValue(flow);
 
         if (animationLayer == -1) 

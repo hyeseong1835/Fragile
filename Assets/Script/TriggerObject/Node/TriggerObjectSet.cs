@@ -26,8 +26,6 @@ public class TriggerObjectSet : GetComponentActNode<Weapon>
     }
     protected override void Act(Flow flow)
     {
-        base.Act(flow);
-
         TriggerObject obj = triggerObjectValueInputPort.GetValue(flow);
 
         if(setValueInput == SetType.Enable)
