@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
-using UnityEditor.Experimental;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,14 +11,6 @@ public static class RoomEditor
 {
     public static RoomEditorData data;
     public static RoomEditorSetting setting;
-
-    
-    [InitializeOnLoadMethod]
-    static void OnLoad()
-    {
-        data = (RoomEditorData)EditorGUIUtility.Load("RoomEditor/Data.asset");
-        setting = (RoomEditorSetting)EditorGUIUtility.Load("RoomEditor/Setting.asset");
-    }
 
     public static void OpenRoom(string directoryPath)
     {
@@ -54,7 +45,18 @@ public static class RoomEditor
         }
         RoomData roomData = ScriptableObject.CreateInstance<RoomData>();
         {
+            roomData.chunkArray = new ChunkData[room.chunckList.Count];
 
+            for (int i = 0; i < roomData.chunkArray.Length; i++)
+            {
+                for (int x = 0; x < 16; x++)
+                {
+                    for (int y = 0; y < 16; y++)
+                    {
+                        roomData.chunkArray[i].pos = room.chunckList[i];
+                    }
+                }
+            }
         }
         AssetDatabase.CreateAsset(roomData, $"{room.path}/Data.asset");
     }

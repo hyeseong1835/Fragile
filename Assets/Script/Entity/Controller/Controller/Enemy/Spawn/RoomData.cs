@@ -15,7 +15,13 @@ public struct PhaseData
         this.spawnArray = spawnArray;
     }
 }
+public struct ChunkData
+{
+    public Vector2Int pos;
+    
+}
 public class RoomData : ScriptableObject
 {
     public PhaseData[] phaseArray;
+    public ChunkData[] chunkArray;
 }
