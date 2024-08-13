@@ -52,6 +52,7 @@ public class EditorRoom : MonoBehaviour
 
     //
     float pixelPerUnit = 1;
+
     void OnEnable()
     {
         EditorSceneManager.sceneClosing += OnSceneClosing;
@@ -66,7 +67,11 @@ public class EditorRoom : MonoBehaviour
     {
         RoomEditor.SaveRoom(this);
     }
-
+    [Button("저장하기")]
+    void Save()
+    {
+        RoomEditor.SaveRoom(this);
+    }
     void Start()
     {
 
@@ -98,56 +103,55 @@ public class EditorRoom : MonoBehaviour
             grid.transform.rotation = Quaternion.identity;
         }
 
-        canAddChunckList.Clear();
-        if (chunckList.Count == 0)
-        {
-            canAddChunckList.Add(Vector2Int.zero);
-        }
-        else
-        {
-            foreach (Vector2Int pos in chunckList)
-            {
-                AddChunck(Vector2Int.up);
-                AddChunck(Vector2Int.down);
-                AddChunck(Vector2Int.right);
-                AddChunck(Vector2Int.left);
-
-                void AddChunck(Vector2Int offset)
-                {
-                    if (chunckList.Contains(pos + offset)) return;
-                    if (canAddChunckList.Contains(pos + offset)) return;
-
-                    canAddChunckList.Add(pos + offset);
-                }
-            }
-        }
+        RefreshCanAddChunckList();
     }
     void OnSceneGUI(SceneView view)
     {
         if (e.type == EventType.Repaint)
         {
             pixelPerUnit = (2 * view.camera.orthographicSize) / view.camera.pixelHeight;
+            onMouseChunck = ScreenToChunckPosInt(e.mousePosition);
         }
-
         if (e.type == EventType.MouseMove)
         {
-            onMouseChunck = new Vector2Int(int.MaxValue, int.MaxValue);
-            for (int i = 0; i < canAddChunckList.Count; i++)
+            Vector2Int onMouse = ScreenToChunckPosInt(e.mousePosition);
+            if (onMouseChunck != onMouse)
             {
-                Vector2Int pos = canAddChunckList[i];
-                Rect rect = GetChunckWorldRect(pos);
-
-                if (rect.Contains(ScreenToWorldPos(e.mousePosition)))
-                {
-                    onMouseChunck = pos;
-                    break;
-                }
+                onMouseChunck = onMouse;
+                SceneView.RepaintAll();
             }
         }
-        if (e.type == EventType.MouseDown && e.button == 0 && onMouseChunck.x != int.MaxValue)
+        if (e.type == EventType.MouseDown)
         {
-            chunckList.Add(onMouseChunck);
-            canAddChunckList.Remove(onMouseChunck);
+            if (e.button == 0)
+            {
+                if (canAddChunckList.Contains(onMouseChunck))
+                {
+                    chunckList.Add(onMouseChunck);
+                    canAddChunckList.Remove(onMouseChunck);
+
+                    AddChunck(Vector2Int.up);
+                    AddChunck(Vector2Int.down);
+                    AddChunck(Vector2Int.right);
+                    AddChunck(Vector2Int.left);
+
+                    void AddChunck(Vector2Int offset)
+                    {
+                        if (chunckList.Contains(onMouseChunck + offset)) return;
+                        if (canAddChunckList.Contains(onMouseChunck + offset)) return;
+
+                        canAddChunckList.Add(onMouseChunck + offset);
+                    }
+                }
+            }
+            else if (e.button == 1)
+            {
+                if (chunckList.Contains(onMouseChunck))
+                {
+                    chunckList.Remove(onMouseChunck);
+                    RefreshCanAddChunckList();
+                }
+            }
         }
         if (e.type == EventType.Repaint)
         {
@@ -176,14 +180,11 @@ public class EditorRoom : MonoBehaviour
             }
             foreach (Vector2Int pos in chunckList)
             {
-                if (e.type == EventType.Repaint)
-                {
-                    Handles.DrawSolidRectangleWithOutline(
-                        GetChunckWorldRect(pos),
-                        new Color(1, 1, 1, 0.1f),
-                        Color.clear
-                    );
-                }
+                Handles.DrawSolidRectangleWithOutline(
+                    GetChunckWorldRect(pos),
+                    new Color(1, 1, 1, 0.1f),
+                    Color.clear
+                );
             }
             Handles.color = Color.red;
             Handles.DrawWireDisc(
@@ -191,6 +192,32 @@ public class EditorRoom : MonoBehaviour
                 Vector3.forward,
                 0.25f
             );
+        }
+    }
+    void RefreshCanAddChunckList()
+    {
+        canAddChunckList.Clear();
+        if (chunckList.Count == 0)
+        {
+            canAddChunckList.Add(Vector2Int.zero);
+        }
+        else
+        {
+            foreach (Vector2Int pos in chunckList)
+            {
+                AddChunck(Vector2Int.up);
+                AddChunck(Vector2Int.down);
+                AddChunck(Vector2Int.right);
+                AddChunck(Vector2Int.left);
+
+                void AddChunck(Vector2Int offset)
+                {
+                    if (chunckList.Contains(pos + offset)) return;
+                    if (canAddChunckList.Contains(pos + offset)) return;
+
+                    canAddChunckList.Add(pos + offset);
+                }
+            }
         }
     }
     void OnDrawGizmos()
@@ -201,7 +228,7 @@ public class EditorRoom : MonoBehaviour
     {
         return pixelPerUnit * new Vector2(
             screenPos.x - 0.5f * Screen.width,
-            0.5f * Screen.height - screenPos.y
+            0.5f * Screen.height - screenPos.y - 25
         ) + (Vector2)SceneView.currentDrawingSceneView.camera.transform.position;
     }
     Rect GetChunckWorldRect(Vector2Int chunckPos)
@@ -213,8 +240,10 @@ public class EditorRoom : MonoBehaviour
     }
     Vector2Int ScreenToChunckPosInt(Vector2 screenPos)
     {
+        Vector2 worldPos = ScreenToWorldPos(screenPos);
         return new Vector2Int(
-            
+            Mathf.FloorToInt(worldPos.x / (grid.cellSize.x * 16)),
+            Mathf.FloorToInt(worldPos.y / (grid.cellSize.y * 16))
         );
     }
 }

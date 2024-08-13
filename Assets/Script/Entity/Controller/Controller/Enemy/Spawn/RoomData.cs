@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public interface IStageSpawn
 {
@@ -15,10 +17,11 @@ public struct PhaseData
         this.spawnArray = spawnArray;
     }
 }
+[Serializable]
 public struct ChunkData
 {
     public Vector2Int pos;
-    
+    public TileBase[] tiles;
 }
 public class RoomData : ScriptableObject
 {

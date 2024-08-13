@@ -16,6 +16,7 @@ public static class RoomEditor
     {
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
+        RoomData room = AssetDatabase.LoadAssetAtPath<RoomData>($"{directoryPath}/Data.asset");
         GameObject roomSettingObj = new GameObject("Room Setting");
         EditorRoom roomSetting = roomSettingObj.AddComponent<EditorRoom>();
         {
@@ -29,6 +30,22 @@ public static class RoomEditor
             {
                 tilemapObj.transform.parent = gridObj.transform;
                 roomSetting.tilemap = tilemapObj.AddComponent<Tilemap>();
+                {
+                    for (int chunckIndex = 0; chunckIndex < roomSetting.chunckList.Count; chunckIndex++)
+                    {
+                        Vector3Int chunckOriginPos = (Vector3Int)room.chunkArray[chunckIndex].pos * 16;
+                        for (int x = 0; x < 16; x++)
+                        {
+                            for (int y = 0; y < 16; y++)
+                            {
+                                roomSetting.tilemap.SetTile(
+                                    chunckOriginPos + new Vector3Int(x, y, 0),
+                                    room.chunkArray[chunckIndex].tiles[x + y * 16]
+                                );
+                            }
+                        }
+                    }
+                }
                 roomSetting.tilemapRenderer = tilemapObj.AddComponent<TilemapRenderer>();
             }
             SceneManager.MoveGameObjectToScene(gridObj, scene);
@@ -49,11 +66,13 @@ public static class RoomEditor
 
             for (int i = 0; i < roomData.chunkArray.Length; i++)
             {
+                roomData.chunkArray[i].pos = room.chunckList[i];
+                roomData.chunkArray[i].tiles = new TileBase[256];
                 for (int x = 0; x < 16; x++)
                 {
                     for (int y = 0; y < 16; y++)
                     {
-                        roomData.chunkArray[i].pos = room.chunckList[i];
+                        roomData.chunkArray[i].tiles[x + y * 16] = room.tilemap.GetTile(new Vector3Int(x, y, 0));
                     }
                 }
             }
