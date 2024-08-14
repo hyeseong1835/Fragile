@@ -9,6 +9,7 @@ using UnityEditor.SceneManagement;
 using Sirenix.OdinInspector;
 using System;
 using Unity.VisualScripting;
+using UnityEditor.EditorTools;
 
 [ExecuteInEditMode]
 public class EditorRoom : MonoBehaviour
@@ -19,7 +20,7 @@ public class EditorRoom : MonoBehaviour
     public string path = "";
 
     [Title("오브젝트")]
-    public List<EditorRoomLayer> layerList = new List<EditorRoomLayer>();
+    public List<RoomLayer> layerList = new List<RoomLayer>();
     public Transform scene;
 
     [Title("데이터")]
@@ -63,7 +64,7 @@ public class EditorRoom : MonoBehaviour
         layerList.Add(
             Instantiate(
                 RoomEditor.setting.layerPrefab
-            ).GetComponent<EditorRoomLayer>()
+            ).GetComponent<RoomLayer>()
         );
     }
     [Button("레이어 초기화하기")]
@@ -72,27 +73,29 @@ public class EditorRoom : MonoBehaviour
         layerList.Clear();
         for (int i = 0; i < scene.childCount; i++)
         {
-            layerList.Add(scene.GetChild(i).GetComponent<EditorRoomLayer>());
+            layerList.Add(scene.GetChild(i).GetComponent<RoomLayer>());
         }
     }
-    public EditorRoomLayer LoadLayer(TileLayer layerData)
+    public static EditorRoom Create(RoomData data, string savePath = "")
     {
-        EditorRoomLayer layer = new GameObject(
-            LayerMask.LayerToName(layerData.layer)
-        ).AddComponent<EditorRoomLayer>();
+        EditorRoom result = new GameObject("Room Setting").AddComponent<EditorRoom>();
         {
-            layer.transform.SetParent(scene);
-            layer.layer = layerData.layer;
-            layer.grid = layer.AddComponent<Grid>();
-            layer.tileMapModules = new List<EditorTileMapModule>();
+            result.path = savePath;
+            result.chunckList.AddRange(data.chunkArray);
+            result.RefreshCanAddChunckList();
+        }
+        result.scene = new GameObject("Scene").transform;
+        {
+            foreach (TileLayer layerData in data.tileLayerArray)
             {
-                foreach (TileMapModuleData moduleData in layerData.tileMapModuleData)
+                RoomLayer layer = RoomLayer.Create(result, layerData);
                 {
-                    layer.tileMapModules.Add(layer.LoadModule(moduleData));
+                    layer.transform.SetParent(result.scene);
                 }
+                result.layerList.Add(layer);
             }
         }
-        return layer;
+        return result;
     }
     void Start()
     {
@@ -255,7 +258,7 @@ public class EditorRoom : MonoBehaviour
             0.5f * Screen.height - screenPos.y - 25
         ) + (Vector2)SceneView.currentDrawingSceneView.camera.transform.position;
     }
-    Vector2 ChunckToWorldPos(Vector2Int chunckPos)
+    public Vector2 ChunckToWorldPos(Vector2Int chunckPos)
     {
         return (Vector2)chunckPos * Vector2.one * 16;
     }

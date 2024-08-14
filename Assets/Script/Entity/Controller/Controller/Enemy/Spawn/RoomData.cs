@@ -24,11 +24,6 @@ public struct TileInfo
     }
 #endif
 }
-public abstract class TileMapModule
-{
-    public abstract string Save();
-    public abstract TileMapModule Load(TileMapModuleData data);
-}
 [Serializable]
 public struct TileMapModuleData
 {
@@ -38,17 +33,17 @@ public struct TileMapModuleData
     public TilemapRenderer.Mode renderMode;
 
     public Type moduleType;
-    public string jsonData;
+    public string data;
 
 #if UNITY_EDITOR
-    public TileMapModuleData(EditorTileMapModule module)
+    public TileMapModuleData(TileMapModule module)
     {
         this.name = module.gameObject.name;
         this.tileArray = module.GetTileInfoArray();
         this.material = module.tilemapRenderer.material;
         this.renderMode = module.tilemapRenderer.mode;
         this.moduleType = module.GetType();
-        this.jsonData = module.Save();
+        this.data = module.Save();
     }
 #endif
 }
@@ -59,7 +54,7 @@ public struct TileLayer
     public TileMapModuleData[] tileMapModuleData;
 
 #if UNITY_EDITOR
-    public TileLayer(EditorRoomLayer layer)
+    public TileLayer(RoomLayer layer)
     {
         this.layer = layer.layer;
         this.tileMapModuleData = new TileMapModuleData[layer.tileMapModules.Count];

@@ -6,17 +6,39 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class EditorRoomLayer : MonoBehaviour
+public class RoomLayer : MonoBehaviour
 {
     public static string[] moduleNames;
     [LayerDropdown] public int layer;
 
     public Grid grid;
-    public List<EditorTileMapModule> tileMapModules;
 
-    public EditorTileMapModule LoadModule(TileMapModuleData moduleData)
+    public EditorRoom editorRoom;
+    public List<TileMapModule> tileMapModules;
+
+
+    public static RoomLayer Create(EditorRoom editorRoom, TileLayer layerData)
     {
-        EditorTileMapModule module = (EditorTileMapModule)(new GameObject(moduleData.name).AddComponent(moduleData.moduleType));
+        RoomLayer roomLayer = new GameObject(
+            LayerMask.LayerToName(layerData.layer)
+        ).AddComponent<RoomLayer>();
+        {
+            roomLayer.editorRoom = editorRoom;
+            roomLayer.layer = layerData.layer;
+            roomLayer.grid = roomLayer.AddComponent<Grid>();
+            roomLayer.tileMapModules = new List<TileMapModule>();
+            {
+                foreach (TileMapModuleData moduleData in layerData.tileMapModuleData)
+                {
+                    roomLayer.tileMapModules.Add(TileMapModule.Create(roomLayer).Load(moduleData));
+                }
+            }
+        }
+        return roomLayer;
+    }
+    public TileMapModule LoadModule(TileMapModuleData moduleData)
+    {
+        TileMapModule module = (TileMapModule)(new GameObject(moduleData.name).AddComponent(moduleData.moduleType));
         {
             module.tilemap = module.AddComponent<Tilemap>();
             {
@@ -35,6 +57,8 @@ public class EditorRoomLayer : MonoBehaviour
                 module.tilemapRenderer.mode = moduleData.renderMode;
                 module.tilemapRenderer.material = moduleData.material;
             }
+
+            module.Load(moduleData);
         }
         return module;
     }
@@ -52,6 +76,6 @@ public class EditorRoomLayer : MonoBehaviour
     [Button("모듈 다시 로드하기")]
     void RefreshModule()
     {
-        tileMapModules = GetComponentsInChildren<EditorTileMapModule>().ToList();
+        tileMapModules = GetComponentsInChildren<TileMapModule>().ToList();
     }
 }

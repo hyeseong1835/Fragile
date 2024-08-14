@@ -21,24 +21,9 @@ public static class RoomEditor
             //데이터 로드
             RoomData room = AssetDatabase.LoadAssetAtPath<RoomData>($"{directoryPath}/Data.asset");
 
-            //설정 오브젝트 생성
-            EditorRoom roomSetting = new GameObject("Room Setting").AddComponent<EditorRoom>();
-            {
-                roomSetting.path = directoryPath;
-                roomSetting.chunckList.AddRange(room.chunkArray);
-                roomSetting.RefreshCanAddChunckList();
-            }
-            SceneManager.MoveGameObjectToScene(roomSetting.gameObject, scene);
-
-            //신 생성
-            roomSetting.scene = new GameObject("Scene").transform;
-            {
-                foreach (TileLayer layerData in room.tileLayerArray)
-                {
-                    roomSetting.layerList.Add(roomSetting.LoadLayer(layerData));
-                }
-            }
-            SceneManager.MoveGameObjectToScene(roomSetting.scene.gameObject, scene);
+            EditorRoom editorRoom = EditorRoom.Create(room, directoryPath);
+            SceneManager.MoveGameObjectToScene(editorRoom.gameObject, scene);
+            SceneManager.MoveGameObjectToScene(editorRoom.scene.gameObject, scene);
         }
         SceneManager.SetActiveScene(scene);
     }
