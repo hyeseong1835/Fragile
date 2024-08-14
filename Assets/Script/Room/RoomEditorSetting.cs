@@ -6,6 +6,7 @@ using UnityEngine;
 public class RoomEditorSetting : ScriptableObject
 {
     public GameObject roomPrefab;
+    public GameObject layerPrefab;
 
     void OnEnable()
     {

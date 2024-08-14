@@ -8,30 +8,19 @@ using UnityEngine.Tilemaps;
 using UnityEditor.SceneManagement;
 using Sirenix.OdinInspector;
 using System;
+using Unity.VisualScripting;
 
-[Serializable]
-public class Layer
-{
-    public Tilemap tilemap;
-    public TilemapRenderer tilemapRenderer;
-
-    public Layer(Tilemap tilemap, TilemapRenderer tilemapRenderer)
-    {
-        this.tilemap = tilemap;
-        this.tilemapRenderer = tilemapRenderer;
-    }
-}
 [ExecuteInEditMode]
 public class EditorRoom : MonoBehaviour
 {
     Event e => Event.current;
 
     [Title("파일")]
-    public string path;
+    public string path = "";
 
     [Title("오브젝트")]
-    public Grid grid;
-    public List<Layer> layerList;
+    public List<EditorRoomLayer> layerList = new List<EditorRoomLayer>();
+    public Transform scene;
 
     [Title("데이터")]
     public List<Vector2Int> chunckList = new List<Vector2Int>();
@@ -40,14 +29,17 @@ public class EditorRoom : MonoBehaviour
 
     //
     float pixelPerUnit = 1;
-
     void OnEnable()
     {
+        if (path == "") return;
+        
         EditorSceneManager.sceneClosing += OnSceneClosing;
         SceneView.duringSceneGui += OnSceneGUI;
     }
     void OnDisable()
     {
+        if (path == "") return;
+
         EditorSceneManager.sceneClosing -= OnSceneClosing;
         SceneView.duringSceneGui -= OnSceneGUI;
     }
@@ -61,33 +53,46 @@ public class EditorRoom : MonoBehaviour
         RoomEditor.SaveRoom(this);
     }
     [Button("레이어 추가하기")]
-    void AddLayer()
+    void AddLayer(string name)
     {
-        GameObject layerObj = new GameObject("New Layer");
+        GameObject layerObj = new GameObject(name);
         {
-            layerObj.transform.parent = grid.transform;
+            layerObj.transform.parent = scene;
         }
         
         layerList.Add(
-            new Layer(
-                layerObj.AddComponent<Tilemap>(), 
-                layerObj.AddComponent<TilemapRenderer>()
-            )
+            Instantiate(
+                RoomEditor.setting.layerPrefab
+            ).GetComponent<EditorRoomLayer>()
         );
     }
     [Button("레이어 초기화하기")]
     void RefreshLayerList()
     {
         layerList.Clear();
-        for (int i = 0; i < grid.transform.childCount; i++)
+        for (int i = 0; i < scene.childCount; i++)
         {
-            layerList.Add(
-                new Layer(
-                    grid.transform.GetChild(i).GetComponent<Tilemap>(),
-                    grid.transform.GetChild(i).GetComponent<TilemapRenderer>()
-                )
-            );
+            layerList.Add(scene.GetChild(i).GetComponent<EditorRoomLayer>());
         }
+    }
+    public EditorRoomLayer LoadLayer(TileLayer layerData)
+    {
+        EditorRoomLayer layer = new GameObject(
+            LayerMask.LayerToName(layerData.layer)
+        ).AddComponent<EditorRoomLayer>();
+        {
+            layer.transform.SetParent(scene);
+            layer.layer = layerData.layer;
+            layer.grid = layer.AddComponent<Grid>();
+            layer.tileMapModules = new List<EditorTileMapModule>();
+            {
+                foreach (TileMapModuleData moduleData in layerData.tileMapModuleData)
+                {
+                    layer.tileMapModules.Add(layer.LoadModule(moduleData));
+                }
+            }
+        }
+        return layer;
     }
     void Start()
     {
@@ -99,14 +104,10 @@ public class EditorRoom : MonoBehaviour
     }
     void OnValidate()
     {
+        if (path == "") return;
+
         transform.position = Vector2.zero;
         transform.rotation = Quaternion.identity;
-
-        if (grid != null)
-        {
-            grid.transform.position = Vector2.zero;
-            grid.transform.rotation = Quaternion.identity;
-        }
 
         RefreshCanAddChunckList();
     }
@@ -240,7 +241,7 @@ public class EditorRoom : MonoBehaviour
             {
                 if (chunckList.Contains(chunck + offset) == false)
                 {
-                    Vector2 chunckCenterPos = ChunckToWorldPos(chunck) + 0.5f * (Vector2)grid.cellSize * 16;
+                    Vector2 chunckCenterPos = ChunckToWorldPos(chunck) + Vector2.one * 8;
                     Vector2 l = new Vector2(offset.y, offset.x) * 8;
                     Gizmos.DrawLine(chunckCenterPos + offset * 8 + l, chunckCenterPos - l + offset * 8);
                 }
@@ -256,21 +257,21 @@ public class EditorRoom : MonoBehaviour
     }
     Vector2 ChunckToWorldPos(Vector2Int chunckPos)
     {
-        return (Vector2)chunckPos * (Vector2)grid.cellSize * 16;
+        return (Vector2)chunckPos * Vector2.one * 16;
     }
     Rect GetChunckWorldRect(Vector2Int chunckPos)
     {
         return new Rect(
             ChunckToWorldPos(chunckPos),
-            grid.cellSize * 16
+            Vector2.one * 16
         );
     }
     Vector2Int ScreenToChunckPosInt(Vector2 screenPos)
     {
         Vector2 worldPos = ScreenToWorldPos(screenPos);
         return new Vector2Int(
-            Mathf.FloorToInt(worldPos.x / (grid.cellSize.x * 16)),
-            Mathf.FloorToInt(worldPos.y / (grid.cellSize.y * 16))
+            Mathf.FloorToInt(worldPos.x / 16),
+            Mathf.FloorToInt(worldPos.y / 16)
         );
     }
 }
