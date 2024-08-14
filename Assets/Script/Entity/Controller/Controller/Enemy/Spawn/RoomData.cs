@@ -4,27 +4,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public interface IStageSpawn
-{
-    public void Spawn();
-}
-public struct PhaseData
-{
-    public IStageSpawn[] spawnArray;
-
-    public PhaseData(IStageSpawn[] spawnArray)
-    {
-        this.spawnArray = spawnArray;
-    }
-}
 [Serializable]
-public struct ChunkData
+public struct TileInfo
 {
     public Vector2Int pos;
-    public TileBase[] tiles;
+    public TileBase tile;
+}
+[Serializable]
+public struct TileLayer
+{
+    public string name;
+    public TileInfo[] tileArray;
 }
 public class RoomData : ScriptableObject
 {
-    public PhaseData[] phaseArray;
-    public ChunkData[] chunkArray;
+    public Vector2Int[] chunkArray;
+    public TileLayer[] tileLayerArray;
 }

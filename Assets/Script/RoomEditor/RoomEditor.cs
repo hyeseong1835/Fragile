@@ -21,36 +21,41 @@ public static class RoomEditor
         EditorRoom roomSetting = roomSettingObj.AddComponent<EditorRoom>();
         {
             roomSetting.path = directoryPath;
-
-            GameObject gridObj = new GameObject("Grid");
-            {
-                roomSetting.grid = gridObj.AddComponent<Grid>();
-            }
-            GameObject tilemapObj = new GameObject("Tilemap");
-            {
-                tilemapObj.transform.parent = gridObj.transform;
-                roomSetting.tilemap = tilemapObj.AddComponent<Tilemap>();
-                {
-                    for (int chunckIndex = 0; chunckIndex < roomSetting.chunckList.Count; chunckIndex++)
-                    {
-                        Vector3Int chunckOriginPos = (Vector3Int)room.chunkArray[chunckIndex].pos * 16;
-                        for (int x = 0; x < 16; x++)
-                        {
-                            for (int y = 0; y < 16; y++)
-                            {
-                                roomSetting.tilemap.SetTile(
-                                    chunckOriginPos + new Vector3Int(x, y, 0),
-                                    room.chunkArray[chunckIndex].tiles[x + y * 16]
-                                );
-                            }
-                        }
-                    }
-                }
-                roomSetting.tilemapRenderer = tilemapObj.AddComponent<TilemapRenderer>();
-            }
-            SceneManager.MoveGameObjectToScene(gridObj, scene);
+            roomSetting.chunckList.AddRange(room.chunkArray);
+            roomSetting.RefreshCanAddChunckList();
         }
         SceneManager.MoveGameObjectToScene(roomSettingObj, scene);
+
+        GameObject gridObj = new GameObject("Grid");
+        {
+            roomSetting.grid = gridObj.AddComponent<Grid>();
+
+            roomSetting.layerList = new List<Layer>();
+            {
+                foreach (TileLayer tileLayer in room.tileLayerArray)
+                {
+                    GameObject layerObj = new GameObject(tileLayer.name);
+                    {
+                        layerObj.transform.parent = gridObj.transform;
+                    }
+                    Layer addLayer = new Layer(
+                        layerObj.AddComponent<Tilemap>(),
+                        layerObj.AddComponent<TilemapRenderer>()
+                    );
+                    {
+                        foreach (TileInfo tileInfo in tileLayer.tileArray)
+                        {
+                            addLayer.tilemap.SetTile(
+                                new Vector3Int(tileInfo.pos.x, tileInfo.pos.y, 0),
+                                tileInfo.tile
+                            );
+                        }
+                    }
+                    roomSetting.layerList.Add(addLayer);
+                }
+            }
+        }
+        SceneManager.MoveGameObjectToScene(gridObj, scene);
 
         SceneManager.SetActiveScene(scene);
     }
@@ -62,18 +67,37 @@ public static class RoomEditor
         }
         RoomData roomData = ScriptableObject.CreateInstance<RoomData>();
         {
-            roomData.chunkArray = new ChunkData[room.chunckList.Count];
+            roomData.chunkArray = room.chunckList.ToArray();
 
-            for (int i = 0; i < roomData.chunkArray.Length; i++)
+            roomData.tileLayerArray = new TileLayer[room.layerList.Count];
             {
-                roomData.chunkArray[i].pos = room.chunckList[i];
-                roomData.chunkArray[i].tiles = new TileBase[256];
-                for (int x = 0; x < 16; x++)
+                for (int i = 0; i < roomData.tileLayerArray.Length; i++)
                 {
-                    for (int y = 0; y < 16; y++)
+                    Tilemap tilemap = room.layerList[i].tilemap;
+
+                    roomData.tileLayerArray[i].name = tilemap.gameObject.name;
+
+                    List<TileInfo> tileInfos = new List<TileInfo>();
                     {
-                        roomData.chunkArray[i].tiles[x + y * 16] = room.tilemap.GetTile(new Vector3Int(x, y, 0));
+                        BoundsInt bounds = tilemap.cellBounds;
+                        for (int x = bounds.xMin; x <= bounds.xMax; x++)
+                        {
+                            for (int y = bounds.yMin; y <= bounds.yMax; y++)
+                            {
+                                Vector3Int pos = new Vector3Int(x, y, 0);
+                                TileBase tile = tilemap.GetTile(pos);
+                                if (tile != null)
+                                {
+                                    tileInfos.Add(new TileInfo
+                                    {
+                                        pos = new Vector2Int(x, y),
+                                        tile = tile
+                                    });
+                                }
+                            }
+                        }
                     }
+                    roomData.tileLayerArray[i].tileArray = tileInfos.ToArray();
                 }
             }
         }
