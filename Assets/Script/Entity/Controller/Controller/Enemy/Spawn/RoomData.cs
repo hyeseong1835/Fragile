@@ -6,62 +6,22 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 [Serializable]
-public struct TileInfo
-{
-    public Vector2Int pos;
-    public TileBase tile;
-
-#if UNITY_EDITOR
-    public TileInfo(Vector3Int pos, TileBase tile)
-    {
-        this.pos = new Vector2Int(pos.x, pos.y);
-        this.tile = tile;
-    }
-    public TileInfo(Vector2Int pos, TileBase tile)
-    {
-        this.pos = pos;
-        this.tile = tile;
-    }
-#endif
-}
-[Serializable]
-public struct TileMapModuleData
+public struct RoomLayerData
 {
     public string name;
-    public TileInfo[] tileArray;
-    public Material material;
-    public TilemapRenderer.Mode renderMode;
-
-    public Type moduleType;
-    public string data;
+    [SerializeReference] public RoomModuleDataBase[] moduleData;
+    [SerializeReference] public Dictionary<Type, RoomModuleLayerSaveDataBase> layerSaveData;
 
 #if UNITY_EDITOR
-    public TileMapModuleData(TileMapModule module)
+    public RoomLayerData(RoomLayer layer)
     {
-        this.name = module.gameObject.name;
-        this.tileArray = module.GetTileInfoArray();
-        this.material = module.tilemapRenderer.material;
-        this.renderMode = module.tilemapRenderer.mode;
-        this.moduleType = module.GetType();
-        this.data = module.Save();
-    }
-#endif
-}
-[Serializable]
-public struct TileLayer
-{
-    [LayerDropdown] public int layer;
-    public TileMapModuleData[] tileMapModuleData;
-
-#if UNITY_EDITOR
-    public TileLayer(RoomLayer layer)
-    {
-        this.layer = layer.layer;
-        this.tileMapModuleData = new TileMapModuleData[layer.tileMapModules.Count];
+        name = layer.gameObject.name;
+        this.layerSaveData = layer.layerSaveData;
+        this.moduleData = new RoomModuleDataBase[layer.roomModuleList.Count];
         {
-            for (int i = 0; i < this.tileMapModuleData.Length; i++)
+            for (int i = 0; i < this.moduleData.Length; i++)
             {
-                this.tileMapModuleData[i] = new TileMapModuleData(layer.tileMapModules[i]);
+                this.moduleData[i] = layer.roomModuleList[i].CreateModuleData();
             }
         }
     }
@@ -70,5 +30,5 @@ public struct TileLayer
 public class RoomData : ScriptableObject
 {
     public Vector2Int[] chunkArray;
-    public TileLayer[] tileLayerArray;
+    public RoomLayerData[] roomLayerDataArray;
 }

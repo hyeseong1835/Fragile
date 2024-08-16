@@ -1,13 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Tilemaps;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public static class RoomEditor
 {
@@ -37,13 +32,14 @@ public static class RoomEditor
         {
             roomData.chunkArray = room.chunckList.ToArray();
 
-            roomData.tileLayerArray = new TileLayer[room.layerList.Count];
+            roomData.roomLayerDataArray = new RoomLayerData[room.layerList.Count];
             {
-                for (int i = 0; i < roomData.tileLayerArray.Length; i++)
+                for (int i = 0; i < roomData.roomLayerDataArray.Length; i++)
                 {
-                    roomData.tileLayerArray[i] = new TileLayer(room.layerList[i]);
+                    roomData.roomLayerDataArray[i] = new RoomLayerData(room.layerList[i]);
                 }
             }
+
         }
         AssetDatabase.CreateAsset(roomData, $"{room.path}/Data.asset");
     }

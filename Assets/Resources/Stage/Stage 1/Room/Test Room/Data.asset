@@ -14,10 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chunkArray:
   - {x: 0, y: 0}
-  tileLayerArray:
-  - layer: 22
-    tileMapModuleData: []
-  - layer: 21
-    tileMapModuleData: []
-  - layer: 20
-    tileMapModuleData: []
+  - {x: 0, y: 1}
+  - {x: -1, y: 1}
+  - {x: -1, y: 0}
+  - {x: -1, y: -1}
+  - {x: 0, y: -1}
+  roomLayerDataArray:
+  - name: Layer 1
+  - name: Layer 2
+  - name: Layer 3

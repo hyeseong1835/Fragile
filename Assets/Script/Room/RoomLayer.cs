@@ -1,81 +1,57 @@
 using Sirenix.OdinInspector;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class RoomLayer : MonoBehaviour
 {
     public static string[] moduleNames;
-    [LayerDropdown] public int layer;
 
     public Grid grid;
 
+    /// <summary>
+    /// 에디터 룸에서 직접 할당
+    /// </summary>
     public EditorRoom editorRoom;
-    public List<TileMapModule> tileMapModules;
-
-
-    public static RoomLayer Create(EditorRoom editorRoom, TileLayer layerData)
+    public List<RoomModuleBase> roomModuleList;
+    public Dictionary<Type, RoomModuleLayerSaveDataBase> layerSaveData = new Dictionary<Type, RoomModuleLayerSaveDataBase>();
+    
+    public static RoomLayer Create(EditorRoom editorRoom, RoomLayerData layerData)
     {
-        RoomLayer roomLayer = new GameObject(
-            LayerMask.LayerToName(layerData.layer)
-        ).AddComponent<RoomLayer>();
+        GameObject roomLayerObj = new GameObject(layerData.name);
+        RoomLayer roomLayer = roomLayerObj.AddComponent<RoomLayer>();
         {
+            roomLayer.layerSaveData = layerData.layerSaveData;
+            roomLayer.grid = roomLayerObj.AddComponent<Grid>();
             roomLayer.editorRoom = editorRoom;
-            roomLayer.layer = layerData.layer;
-            roomLayer.grid = roomLayer.AddComponent<Grid>();
-            roomLayer.tileMapModules = new List<TileMapModule>();
+            roomLayer.roomModuleList = new List<RoomModuleBase>();
             {
-                foreach (TileMapModuleData moduleData in layerData.tileMapModuleData)
+                foreach (RoomModuleDataBase moduleData in layerData.moduleData)
                 {
-                    roomLayer.tileMapModules.Add(TileMapModule.Create(roomLayer).Load(moduleData));
+                    RoomModuleBase module = moduleData.CreateRoomModule(roomLayer);
+                    module.transform.SetParent(roomLayer.transform);
+                    roomLayer.roomModuleList.Add(module);
                 }
             }
         }
         return roomLayer;
     }
-    public TileMapModule LoadModule(TileMapModuleData moduleData)
+    public void Refresh()
     {
-        TileMapModule module = (TileMapModule)(new GameObject(moduleData.name).AddComponent(moduleData.moduleType));
-        {
-            module.tilemap = module.AddComponent<Tilemap>();
-            {
-                module.tilemap.transform.SetParent(transform);
-                foreach (TileInfo tileInfo in module.GetTileInfoArray())
-                {
-                    module.tilemap.SetTile(
-                        (Vector3Int)tileInfo.pos,
-                        tileInfo.tile
-                    );
-                }
-            }
-            module.tilemapRenderer = module.AddComponent<TilemapRenderer>();
-            {
-                module.tilemapRenderer.transform.SetParent(transform);
-                module.tilemapRenderer.mode = moduleData.renderMode;
-                module.tilemapRenderer.material = moduleData.material;
-            }
-
-            module.Load(moduleData);
-        }
-        return module;
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        grid = GetComponent<Grid>();
+        RefreshModule();
     }
     [Button("모듈 다시 로드하기")]
     void RefreshModule()
     {
-        tileMapModules = GetComponentsInChildren<TileMapModule>().ToList();
+        roomModuleList.Clear();
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            RoomModuleBase module = transform.GetChild(i).GetComponent<RoomModuleBase>();
+            module.Refresh();
+            roomModuleList.Add(module);
+        }
     }
 }

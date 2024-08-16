@@ -1,51 +1,50 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using Sirenix.OdinInspector.Editor.Modules;
+using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-[RequireComponent(typeof(Tilemap), typeof(TilemapRenderer))]
-public abstract class TileMapModule : MonoBehaviour
+[Serializable]
+public abstract class TilemapModuleLayerSaveData<TModule, TModuleData, TLayerSaveData> : RoomModuleLayerSaveData<TModule, TModuleData, TLayerSaveData>
+    where TModule : RoomModule<TModule, TModuleData, TLayerSaveData>
+    where TModuleData : RoomModuleData<TModule, TModuleData, TLayerSaveData>
+    where TLayerSaveData : TilemapModuleLayerSaveData<TModule, TModuleData, TLayerSaveData>, new()
 {
-    public RoomLayer roomLayer;
+    [LayerDropdown] public int sortingLayer;
+}
+[Serializable]
+public abstract class TilemapModuleData<TModule, TModuleData, TLayerSaveData> : RoomModuleData<TModule, TModuleData, TLayerSaveData>
+    where TModule : RoomModule<TModule, TModuleData, TLayerSaveData>
+    where TModuleData : RoomModuleData<TModule, TModuleData, TLayerSaveData>
+    where TLayerSaveData : TilemapModuleLayerSaveData<TModule, TModuleData, TLayerSaveData>, new()
+{
+    [Header("·»´õ·¯ ¼³Á¤")]
+    public int sortingOrder;
+    public Material material;
+    public TilemapRenderer.Mode renderMode;
+}
+public abstract class TilemapModule<TModule, TModuleData, TLayerSaveData> : RoomModule<TModule, TModuleData, TLayerSaveData>
+    where TModule : TilemapModule<TModule, TModuleData, TLayerSaveData>
+    where TModuleData : TilemapModuleData<TModule, TModuleData, TLayerSaveData>
+    where TLayerSaveData : TilemapModuleLayerSaveData<TModule, TModuleData, TLayerSaveData>, new()
+{
     public Tilemap tilemap;
     public TilemapRenderer tilemapRenderer;
 
-#if UNITY_EDITOR
-    public abstract string Save();
-#endif
-    public abstract TileMapModule Load(TileMapModuleData data);
+    protected abstract void Load(TModuleData moduleData, TLayerSaveData layerSaveData);
 
-    public static TileMapModule Create(RoomLayer roomLayer)
+    public override void Refresh()
     {
-        TileMapModule result = new GameObject().AddComponent<SpriteTilemapModule>();
+        TLayerSaveData layerSaveData = (TLayerSaveData)roomLayer.layerSaveData[GetType()];
+        
+        if (tilemap == null || tilemap.gameObject != gameObject)
         {
-            result.roomLayer = roomLayer;
-            result.tilemap = result.AddComponent<Tilemap>();
-            result.tilemapRenderer = result.AddComponent<TilemapRenderer>();
+            tilemap = GetComponent<Tilemap>();
         }
-        return result;
-    }
-    public TileInfo[] GetTileInfoArray()
-    {
-        List<TileInfo> result = new List<TileInfo>();
+        if (tilemapRenderer == null || tilemapRenderer.gameObject != gameObject)
         {
-            foreach (Vector2Int chunckPos in roomLayer.editorRoom.chunckList)
-            {
-                for (int x = 0; x < 16; x++)
-                {
-                    for (int y = 0; y < 16; y++)
-                    {
-                        Vector3Int pos = new Vector3Int(x, y, 0);
-                        TileBase tile = tilemap.GetTile(pos);
-                        if (tile != null)
-                        {
-                            result.Add(new TileInfo(pos, tile));
-                        }
-                    }
-                }
-            }
+            tilemapRenderer = GetComponent<TilemapRenderer>();
         }
-        return result.ToArray();
+
+        tilemapRenderer.sortingOrder = layerSaveData.sortingLayer;
     }
 }

@@ -67,13 +67,16 @@ public class EditorRoom : MonoBehaviour
             ).GetComponent<RoomLayer>()
         );
     }
-    [Button("레이어 초기화하기")]
-    void RefreshLayerList()
+    [Button("초기화")]
+    void Refresh()
     {
         layerList.Clear();
         for (int i = 0; i < scene.childCount; i++)
         {
-            layerList.Add(scene.GetChild(i).GetComponent<RoomLayer>());
+            RoomLayer layer = scene.GetChild(i).GetComponent<RoomLayer>();
+            layer.editorRoom = this;
+            layer.Refresh();
+            layerList.Add(layer);
         }
     }
     public static EditorRoom Create(RoomData data, string savePath = "")
@@ -86,7 +89,7 @@ public class EditorRoom : MonoBehaviour
         }
         result.scene = new GameObject("Scene").transform;
         {
-            foreach (TileLayer layerData in data.tileLayerArray)
+            foreach (RoomLayerData layerData in data.roomLayerDataArray)
             {
                 RoomLayer layer = RoomLayer.Create(result, layerData);
                 {
@@ -184,6 +187,8 @@ public class EditorRoom : MonoBehaviour
                                 AddChunck(Vector2Int.right);
                                 AddChunck(Vector2Int.left);
 
+                                e.Use();
+
                                 void AddChunck(Vector2Int offset)
                                 {
                                     if (chunckList.Contains(onMouseChunck + offset)) return;
@@ -198,6 +203,8 @@ public class EditorRoom : MonoBehaviour
                             {
                                 chunckList.Remove(onMouseChunck);
                                 RefreshCanAddChunckList();
+
+                                e.Use();
                             }
                             break;
                     }   
