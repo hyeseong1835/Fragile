@@ -10,13 +10,13 @@ public struct RoomLayerData
 {
     public string name;
     [SerializeReference] public RoomModuleDataBase[] moduleData;
-    [SerializeReference] public Dictionary<Type, RoomModuleLayerSaveDataBase> layerSaveData;
+    [SerializeReference] public RoomModuleLayerSaveDataBase[] layerSaveDataArray;
 
 #if UNITY_EDITOR
     public RoomLayerData(RoomLayer layer)
     {
         name = layer.gameObject.name;
-        this.layerSaveData = layer.layerSaveData;
+        this.layerSaveDataArray = layer.layerSaveDataList.ToArray();
         this.moduleData = new RoomModuleDataBase[layer.roomModuleList.Count];
         {
             for (int i = 0; i < this.moduleData.Length; i++)

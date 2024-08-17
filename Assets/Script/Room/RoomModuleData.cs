@@ -2,6 +2,7 @@
 using System;
 using UnityEngine;
 
+[Serializable]
 public abstract class RoomModuleDataBase
 {
     public string name;
@@ -30,15 +31,7 @@ public abstract class RoomModuleData<TModule, TModuleData, TLayerSaveData> : Roo
     where TModuleData : RoomModuleData<TModule, TModuleData, TLayerSaveData>
     where TLayerSaveData : RoomModuleLayerSaveData<TModule, TModuleData, TLayerSaveData>
 {
-    public override RoomModuleBase CreateRoomModule(RoomLayer roomLayer) => Load(roomLayer);
+    public override RoomModuleBase CreateRoomModule(RoomLayer roomLayer) => Load(roomLayer, (TLayerSaveData)roomLayer.layerSaveData[typeof(TLayerSaveData)]);
 
-    public virtual TModule Load(RoomLayer roomLayer)
-    {
-        GameObject obj = new GameObject();
-        TModule result = obj.AddComponent<TModule>();
-        {
-            result.roomLayer = roomLayer;
-        }
-        return result;
-    }
+    public abstract TModule Load(RoomLayer roomLayer, TLayerSaveData layerSaveData);
 }

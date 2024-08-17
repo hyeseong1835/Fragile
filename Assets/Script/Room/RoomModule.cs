@@ -26,7 +26,6 @@ public abstract class RoomModule<TModule, TModuleData, TLayerSaveData> : RoomMod
     where TLayerSaveData : RoomModuleLayerSaveData<TModule, TModuleData, TLayerSaveData>
 {
 #if UNITY_EDITOR
-    [Button("ÃÊ±âÈ­")]
     public override RoomModuleDataBase CreateModuleData() => Save();
     public abstract TModuleData Save();
 #endif

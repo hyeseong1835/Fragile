@@ -42,19 +42,18 @@ public class SpriteTilemapModuleData : TilemapModuleData<SpriteTilemapModule, Sp
             module.roomLayer.editorRoom.chunckList,
             (pos, tile) => tileInfoList.Add(new TileInfo(pos, tile))
         );
+        name = module.gameObject.name;
         tileArray = tileInfoList.ToArray();
 
         sortingOrder = module.tilemapRenderer.sortingOrder;
-        material = module.tilemapRenderer.material;
+        material = module.tilemapRenderer.sharedMaterial;
         renderMode = module.tilemapRenderer.mode;
     }
-    public override SpriteTilemapModule Load(RoomLayer roomLayer)
+    public override SpriteTilemapModule Load(RoomLayer roomLayer, SpriteTilemapLayerSaveData layerSaveData)
     {
         SpriteTilemapModule module = new GameObject(name).AddComponent<SpriteTilemapModule>();
         {
             module.transform.SetParent(roomLayer.transform);
-
-            SpriteTilemapLayerSaveData layerSaveData = (SpriteTilemapLayerSaveData)roomLayer.layerSaveData[module.GetType()];
 
             //≈∏¿œ∏ 
             foreach (TileInfo info in tileArray)

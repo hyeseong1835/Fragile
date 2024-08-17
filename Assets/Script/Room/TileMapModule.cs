@@ -22,6 +22,7 @@ public abstract class TilemapModuleData<TModule, TModuleData, TLayerSaveData> : 
     public Material material;
     public TilemapRenderer.Mode renderMode;
 }
+[Serializable]
 public abstract class TilemapModule<TModule, TModuleData, TLayerSaveData> : RoomModule<TModule, TModuleData, TLayerSaveData>
     where TModule : TilemapModule<TModule, TModuleData, TLayerSaveData>
     where TModuleData : TilemapModuleData<TModule, TModuleData, TLayerSaveData>
@@ -31,11 +32,12 @@ public abstract class TilemapModule<TModule, TModuleData, TLayerSaveData> : Room
     public TilemapRenderer tilemapRenderer;
 
     protected abstract void Load(TModuleData moduleData, TLayerSaveData layerSaveData);
-
+#if UNITY_EDITOR
     public override void Refresh()
     {
-        TLayerSaveData layerSaveData = (TLayerSaveData)roomLayer.layerSaveData[GetType()];
-        
+        TLayerSaveData layerSaveData = (TLayerSaveData)roomLayer.layerSaveDataList.Find(x => x.GetType() == typeof(TLayerSaveData));
+        if (layerSaveData == null) roomLayer.layerSaveDataList.Add(layerSaveData = new TLayerSaveData());
+
         if (tilemap == null || tilemap.gameObject != gameObject)
         {
             tilemap = GetComponent<Tilemap>();
@@ -47,4 +49,5 @@ public abstract class TilemapModule<TModule, TModuleData, TLayerSaveData> : Room
 
         tilemapRenderer.sortingOrder = layerSaveData.sortingLayer;
     }
+#endif
 }
