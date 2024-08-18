@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,13 +7,13 @@ public abstract class Controller : Entity
 {
     public Weapon curWeapon;
 
-    public Vector2 moveInput;
+    [NonSerialized] public Vector2 moveInput = Vector2.zero;
 
     protected void Update()
     {
         Move();
     }
-    public virtual void Move()
+    protected virtual void Move()
     { 
         transform.position += (Vector3)(moveInput.normalized * Time.deltaTime);
     }
