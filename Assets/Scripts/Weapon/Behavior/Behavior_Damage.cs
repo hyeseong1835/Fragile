@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Weapon Behavior", menuName = "Data/Weapon/Behavior")]
 public class BehaviorData_Damage : WeaponBehaviorData<Behavior_Damage, BehaviorData_Damage>
 {
-    public override WeaponBehaviorBase CreateWeaponBehaviorInstance(WeaponSkillBase skill)
+    public override WeaponBehaviorBase CreateWeaponBehaviorInstance(WeaponSkill skill)
         => new Behavior_Damage(this);
 }
 public class Behavior_Damage : WeaponBehavior<Behavior_Damage, BehaviorData_Damage>

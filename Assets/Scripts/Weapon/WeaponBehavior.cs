@@ -26,6 +26,6 @@ public abstract class WeaponBehavior<TBehavior, TBehaviorData> : WeaponBehaviorB
         set => weapon = value;
     }
     protected Weapon weapon;
-    protected WeaponSkillBase skill;
+    protected WeaponSkill skill;
 }
 

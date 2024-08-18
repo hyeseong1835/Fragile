@@ -7,25 +7,8 @@ public interface IWeaponEventHandler
 {
 
 }
-public abstract class Weapon : MonoBehaviour
+public class Weapon : MonoBehaviour
 {
-    public struct InputData
-    {
-        public InputType type;
-        public bool input;
-        public float holdTime;
-        public bool canUse;
-        public bool isUsing;
-
-        public InputData(InputType type, bool input = false, float holdTime = 0, bool canUse = true, bool isUsing = false)
-        {
-            this.type = type;
-            this.input = input;
-            this.holdTime = holdTime;
-            this.canUse = canUse;
-            this.isUsing = isUsing;
-        }
-    }
     [Header("µ•¿Ã≈Õ")]
     public WeaponData data;
     public WeaponRule rule;
@@ -42,12 +25,6 @@ public abstract class Weapon : MonoBehaviour
     void Awake()
     {
         gameObject.SetActive(false);
-
-        Initialize();
-    }
-    public virtual void Initialize()
-    {
-
     }
     void Update()
     {
