@@ -11,7 +11,6 @@ public class Weapon : MonoBehaviour
 {
     [Header("데이터")]
     public WeaponData data;
-    public WeaponRule rule;
 
     [Header("정보")]
     [NonSerialized] public Controller owner;

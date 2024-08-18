@@ -535,7 +535,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: cd133c9a97d61974fad44dcd370ced44, type: 2}
-  owner: {fileID: 1820242561}
 --- !u!1 &1820242558
 GameObject:
   m_ObjectHideFlags: 0
@@ -584,7 +583,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 0
-  curWeapon: {fileID: 1224710345}
+  curWeapon: {fileID: 0}
 --- !u!114 &1820242562
 MonoBehaviour:
   m_ObjectHideFlags: 0

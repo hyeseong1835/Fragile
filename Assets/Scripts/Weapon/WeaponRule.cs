@@ -8,8 +8,8 @@ public enum InputType
 public class WeaponRule : ScriptableObject
 {
     [Header("좌클릭 공격")]
-    [SerializeReference] public WeaponSkillData[] attackActiveSkill = new WeaponSkillData[0];
+    [SerializeReference] public WeaponSkillInvokerData attackInvoker = new WeaponSkillTriggerInvokerData();
 
     [Header("우클릭 공격")]
-    [SerializeReference] public WeaponSkillData[] specialActiveSkill = new WeaponSkillData[0];
+    [SerializeReference] public WeaponSkillInvokerData specialInvoker = new WeaponSkillTriggerInvokerData();
 }
