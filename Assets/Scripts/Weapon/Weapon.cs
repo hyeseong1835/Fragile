@@ -34,18 +34,10 @@ public abstract class Weapon : MonoBehaviour
     [NonSerialized] public Controller owner;
 
     //좌클릭 스킬
-    [NonSerialized] public WeaponSkillBase[] attackSkills;
-    [NonSerialized] public bool attackInput = false;
-    [NonSerialized] public float attackHoldTime = 0;
-    [NonSerialized] public bool canUseAttack = true;
-    [NonSerialized] public bool isUsingAttack = false;
+    [NonSerialized] public WeaponSkillInvoker attackSkillInvoker;
 
     //우클릭 스킬
-    [NonSerialized] public WeaponSkillBase[] specialSkills;
-    [NonSerialized] public bool specialInput = false;
-    [NonSerialized] public float specialHoldTime = 0;
-    [NonSerialized] bool canUseSpecial = true;
-    [NonSerialized] bool isUsingSpecial = false;
+    [NonSerialized] public WeaponSkillInvoker specialSkillInvoker;
 
     void Awake()
     {
@@ -59,50 +51,6 @@ public abstract class Weapon : MonoBehaviour
     }
     void Update()
     {
-        UpdateActiveSkill(ref attackSkills, ref attackInput, ref attackHoldTime, ref canUseAttack, ref isUsingAttack);
-        UpdateActiveSkill(ref specialSkills, ref specialInput, ref specialHoldTime, ref canUseSpecial, ref isUsingSpecial);
-    }
-    void UpdateActiveSkill(ref WeaponSkillBase[] activeSkills, ref bool input, ref float holdTime, ref bool canUse, ref bool isUsing)
-    {
-        if (input)
-        {
-            if (!isUsing && canUse)
-            {
-                foreach (WeaponSkillBase s in activeSkills)
-                {
-                    s.WeaponSkillExecute();
-                }
-                isUsing = true;
-                canUse = false;
-                holdTime = 0;
-            }
-        }
-        
-        if (isUsing)
-        {
-            foreach (WeaponSkillBase s in activeSkills)
-            {
-                s.Execute(holdTime);
-            }
-        }
 
-        if (!input)
-        {
-            if (isUsing)
-            {
-                foreach (WeaponSkillBase s in activeSkills)
-                {
-                    s.End(holdTime);
-                }
-                isUsing = false;
-                holdTime = -1;
-                canUse = true;//임시
-            }
-        }
-
-        if (isUsing)
-        {
-            holdTime += Time.deltaTime;
-        }
     }
 }

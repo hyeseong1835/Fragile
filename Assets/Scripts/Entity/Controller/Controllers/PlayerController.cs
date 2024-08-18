@@ -19,12 +19,12 @@ public class PlayerController : Controller
     {
         if (curWeapon == null) return;
 
-        curWeapon.attackInput = callback.ReadValueAsButton();
+        curWeapon.attackSkillInvoker.input = callback.ReadValueAsButton();
     }
     public void OnSpecialInput(InputAction.CallbackContext callback)
     {
         if (curWeapon == null) return;
 
-        curWeapon.specialInput = callback.ReadValueAsButton();
+        curWeapon.specialSkillInvoker.input = callback.ReadValueAsButton();
     }
 }

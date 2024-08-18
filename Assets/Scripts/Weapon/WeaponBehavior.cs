@@ -17,7 +17,7 @@ public abstract class WeaponBehavior<TBehavior, TBehaviorData> : WeaponBehaviorB
     public override WeaponBehaviorDataBase Data
     {
         get => data;
-        set => data = value;
+        set => data = (TBehaviorData)value;
     }
     protected TBehaviorData data;
     public override Weapon Weapon

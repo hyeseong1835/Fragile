@@ -1,14 +1,34 @@
-﻿using UnityEngine;
+﻿using System.Reflection;
+using UnityEngine;
+using UnityEngine.Windows;
 
 public class WeaponSkillTriggerInvoker : WeaponSkillInvoker
 {
-    [SerializeReference] public WeaponSkillDataBase[] onTrigger = new WeaponSkillDataBase[0];
+    [SerializeReference] public WeaponTriggerSkill[] onTrigger;
+    public bool canInvoke = true;
 
+    public WeaponSkillTriggerInvoker(WeaponSkillTriggerInvokerData data)
+    {
+
+    }
     public override void WeaponInvokeUpdate()
     {
-        foreach (var skill in onTrigger)
+        if (input)
         {
-            skill.CreateWeaponSkillInstance(null).TriggerSkill();
+            if (canInvoke)
+            {
+                foreach (WeaponTriggerSkill skill in onTrigger)
+                {
+                    skill.WeaponSkillExecute();
+                }
+                canInvoke = false;
+            }
         }
     }
+}
+public class WeaponSkillTriggerInvokerData : WeaponSkillInvokerData
+{
+    [SerializeReference] public WeaponTriggerSkillData[] onTrigger = new WeaponTriggerSkillData[0];
+
+    public override WeaponSkillInvoker CreateInvoker() => new WeaponSkillTriggerInvoker(this);
 }
