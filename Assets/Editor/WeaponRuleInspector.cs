@@ -9,26 +9,24 @@ public class WeaponRuleInspector : Editor
 {
     WeaponRule weaponRule;
 
-    SerializedProperty attackInvoker;
-    SerializedProperty specialInvoker;
-
     void OnEnable()
     {
         weaponRule = (WeaponRule)target;
-        
-        if (weaponRule.attackInvoker == null) weaponRule.attackInvoker = WeaponSkillInvokerData.Default;
-        attackInvoker = serializedObject.FindProperty("attackInvoker");
-
-        if (weaponRule.specialInvoker == null) weaponRule.specialInvoker = WeaponSkillInvokerData.Default;
-        specialInvoker = serializedObject.FindProperty("specialInvoker");
     }
     public override void OnInspectorGUI()
     {
-        serializedObject.Update();
+        CustomGUILayout.TitleHeaderLabel("기본 공격");
+        CustomGUILayout.BeginTab();
         {
-            EditorGUILayout.PropertyField(attackInvoker, label: new GUIContent("기본 공격"));
-            EditorGUILayout.PropertyField(specialInvoker, label: new GUIContent("특수 공격"));
+            weaponRule.attackInvoker.OnGUI();
         }
-        serializedObject.ApplyModifiedProperties();
+        CustomGUILayout.EndTab();
+
+        CustomGUILayout.TitleHeaderLabel("특수 공격");
+        CustomGUILayout.BeginTab();
+        {
+            weaponRule.specialInvoker.OnGUI();
+        }
+        CustomGUILayout.EndTab();
     }
 }

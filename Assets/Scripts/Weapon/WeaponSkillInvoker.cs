@@ -12,7 +12,10 @@ public abstract class WeaponSkillInvoker
 [Serializable]
 public abstract class WeaponSkillInvokerData
 {
+#if UNITY_EDITOR
     public static WeaponSkillInvokerData Default => new WeaponSkillTriggerInvokerData();
-
+#endif
     public abstract WeaponSkillInvoker CreateInvoker();
+
+    public abstract void OnGUI();
 }

@@ -13,17 +13,17 @@ MonoBehaviour:
   m_Name: Rule
   m_EditorClassIdentifier: 
   attackInvoker:
-    rid: 6026789790696079362
+    rid: 6026789804646858754
   specialInvoker:
-    rid: 6026789790696079363
+    rid: 6026789804646858755
   references:
     version: 2
     RefIds:
-    - rid: 6026789790696079362
+    - rid: 6026789804646858754
       type: {class: WeaponSkillTriggerInvokerData, ns: , asm: Assembly-CSharp}
       data:
-        attackActiveSkill: []
-    - rid: 6026789790696079363
+        onTrigger: []
+    - rid: 6026789804646858755
       type: {class: WeaponSkillTriggerInvokerData, ns: , asm: Assembly-CSharp}
       data:
-        attackActiveSkill: []
+        onTrigger: []

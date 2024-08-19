@@ -1,11 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class SkillData_Swing : WeaponTriggerSkillData
 {
     public override WeaponSkill CreateWeaponSkillInstance(Weapon weapon)
         => new Skill_Swing(this, weapon);
+#if UNITY_EDITOR
+    public override void OnGUI()
+    {
+        CustomGUILayout.TitleHeaderLabel("»÷µŒ∏£±‚");
+        
+        base.OnGUI();
+    }
+#endif
 }
 public class Skill_Swing : WeaponTriggerSkill
 {

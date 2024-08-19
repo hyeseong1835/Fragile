@@ -5,4 +5,5 @@ using UnityEngine;
 public abstract class WeaponSkillData
 {
     public abstract WeaponSkill CreateWeaponSkillInstance(Weapon weapon);
+    public abstract void OnGUI();
 }
