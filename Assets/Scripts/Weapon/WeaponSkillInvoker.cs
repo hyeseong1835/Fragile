@@ -1,12 +1,5 @@
 ﻿using System;
-using UnityEngine;
 
-[Serializable]
-public abstract class WeaponSkillInvokerData
-{
-    [SerializeReference] public WeaponSkillData[] attackActiveSkill = new WeaponSkillData[0];
-    public abstract WeaponSkillInvoker CreateInvoker();
-}
 
 public abstract class WeaponSkillInvoker
 {
@@ -14,4 +7,12 @@ public abstract class WeaponSkillInvoker
     public bool input = false;
 
     public abstract void WeaponInvokeUpdate();
+}
+
+[Serializable]
+public abstract class WeaponSkillInvokerData
+{
+    public static WeaponSkillInvokerData Default => new WeaponSkillTriggerInvokerData();
+
+    public abstract WeaponSkillInvoker CreateInvoker();
 }

@@ -1,6 +1,5 @@
-﻿using System.Reflection;
-using UnityEngine;
-using UnityEngine.Windows;
+﻿using UnityEngine;
+using System;
 
 public class WeaponSkillTriggerInvoker : WeaponSkillInvoker
 {
@@ -26,6 +25,7 @@ public class WeaponSkillTriggerInvoker : WeaponSkillInvoker
         }
     }
 }
+[Serializable]
 public class WeaponSkillTriggerInvokerData : WeaponSkillInvokerData
 {
     [SerializeReference] public WeaponTriggerSkillData[] onTrigger = new WeaponTriggerSkillData[0];

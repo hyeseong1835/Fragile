@@ -1,13 +1,16 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
-public class BehaviorData_Damage : WeaponBehaviorData<Behavior_Damage, BehaviorData_Damage>
+[Serializable]
+public class BehaviorData_Damage : WeaponBehaviorData
 {
-    public override WeaponBehaviorBase CreateWeaponBehaviorInstance(WeaponSkill skill)
+    public override WeaponBehavior CreateWeaponBehaviorInstance(WeaponSkill skill)
         => new Behavior_Damage(this);
 }
-public class Behavior_Damage : WeaponBehavior<Behavior_Damage, BehaviorData_Damage>
+public class Behavior_Damage : WeaponBehavior
 {
     public Behavior_Damage(BehaviorData_Damage data)
     { 

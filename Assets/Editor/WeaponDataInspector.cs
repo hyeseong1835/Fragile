@@ -1,64 +1,104 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 [CustomEditor(typeof(WeaponData))]
 public class WeaponDataInspector : Editor
 {
-    WeaponData weaponData = null;
+    const float labelHeight = 20;
+    const float textHeight = 25;
+
+    WeaponData weaponData;
+    SerializedProperty rule;
+    Editor ruleEditor;
 
     void OnEnable()
     {
         weaponData = (WeaponData)target;
+        rule = serializedObject.FindProperty("rule");
     }
     public override void OnInspectorGUI()
     {
-        EditorGUILayout.BeginVertical();
+        serializedObject.Update();
+
+        //EditorGUILayout.BeginVertical();
         {
             DrawDescription();
-        }
-        EditorGUILayout.EndVertical();
 
+            EditorGUILayout.Space(10);
+            EditorGUILayout.PropertyField(
+                rule, 
+                label: new GUIContent("규칙")
+            );
+            Editor.CreateCachedEditor(
+                rule.objectReferenceValue, 
+                null, 
+                ref ruleEditor
+            );
+            ruleEditor.OnInspectorGUI();
+        }
+        //EditorGUILayout.EndVertical();
+
+        serializedObject.ApplyModifiedProperties();
+
+        //===============================================================================================
 
         void DrawDescription()
         {
             EditorGUILayout.BeginHorizontal();
             {
-                EditorGUILayout.BeginVertical();
-                {
-                    /*
-                    Rect iconPreviewRect = GUILayoutUtility.GetAspectRect(1,
-                        GUILayout.MinWidth(100),
-                            GUILayout.MaxWidth(200),
-                            GUILayout.MinHeight(100),
-                            GUILayout.MaxHeight(200)
-                    );
-                    */
-                    weaponData.icon = (Sprite)EditorGUILayout.ObjectField(
-                        weaponData.icon, 
-                        typeof(Sprite), 
-                        false, 
-                        GUILayout.MinWidth(100),
-                            GUILayout.MaxWidth(200),
-                            GUILayout.MinHeight(100),
-                            GUILayout.MaxHeight(200)
-                    );
+                Rect iconPreviewRect = GUILayoutUtility.GetAspectRect(1,
+                    GUILayout.MinWidth(100),
+                        GUILayout.MaxWidth(200),
+                        GUILayout.MinHeight(100),
+                        GUILayout.MaxHeight(200)
+                );
 
-                    //Handles.color = Color.white;
-                    //Handles.DrawWireCube(iconPreviewRect.center, iconPreviewRect.size);
+                weaponData.icon = (Sprite)EditorGUI.ObjectField(
+                    iconPreviewRect,
+                    weaponData.icon,
+                    typeof(Sprite),
+                    false
+                );
+
+                if (Event.current.type == EventType.Repaint)
+                {
+                    Handles.color = Color.white;
+                    Handles.DrawWireCube(iconPreviewRect.center, iconPreviewRect.size);
                 }
-                EditorGUILayout.EndVertical();
 
                 EditorGUILayout.BeginVertical();
                 {
-                    weaponData.displayedWeaponName = EditorGUILayout.TextField("Name", weaponData.name);
-                    weaponData.description = EditorGUILayout.TextField("Description", weaponData.description);
+                    EditorGUILayout.LabelField(
+                        "무기 이름", 
+                        GUILayout.Height(labelHeight),
+                            GUILayout.ExpandHeight(false)
+                    );
+                    weaponData.displayedWeaponName = EditorGUILayout.TextField(
+                        weaponData.displayedWeaponName,
+                        GUILayout.Height(textHeight),
+                            GUILayout.ExpandHeight(false)
+                    );
+                    EditorGUILayout.LabelField(
+                        "무기 설명",
+                        GUILayout.Height(labelHeight),
+                            GUILayout.ExpandHeight(false)
+                    );
+                    weaponData.description = EditorGUI.TextArea(
+                        new Rect(
+                            iconPreviewRect.xMax + 3,
+                            iconPreviewRect.y + (2 * labelHeight + textHeight) + 6,
+                            EditorGUIUtility.currentViewWidth - iconPreviewRect.width - 25,
+                            iconPreviewRect.height - (2 * labelHeight + textHeight) - 2
+                        ),
+                        weaponData.description
+                    );
                 }
                 EditorGUILayout.EndVertical();
             }
+            EditorGUILayout.EndHorizontal();
         }
     }
-    
 }

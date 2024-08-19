@@ -1,15 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
+using System;
 using UnityEngine;
-using UnityEngine.Windows;
 
 public abstract class WeaponTriggerSkill : WeaponSkill
 {
-    public WeaponBehaviorBase[] executeBehaviors;
+    public WeaponBehavior[] executeBehaviors;
     
     public void WeaponSkillExecute()
     {
 
     }
+}
+
+[Serializable]
+public abstract class WeaponTriggerSkillData : WeaponSkillData
+{
+    [SerializeReference] public WeaponBehaviorData[] executeBehaviorData = new WeaponBehaviorData[0];
 }

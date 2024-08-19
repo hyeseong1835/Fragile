@@ -20,7 +20,7 @@ public class Skill_Swing : WeaponTriggerSkill
     {
         this.data = data;
         this.weapon = weapon;
-        this.executeBehaviors = new WeaponBehaviorBase[data.executeBehaviorData.Length];
+        this.executeBehaviors = new WeaponBehavior[data.executeBehaviorData.Length];
         {
             for (int i = 0; i < executeBehaviors.Length; i++)
             {

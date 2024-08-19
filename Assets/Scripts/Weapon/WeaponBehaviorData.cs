@@ -1,12 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
 
-public abstract class WeaponBehaviorDataBase
+[Serializable]
+public abstract class WeaponBehaviorData
 {
-    public abstract WeaponBehaviorBase CreateWeaponBehaviorInstance(WeaponSkill skill);
-}
-public abstract class WeaponBehaviorData<TBehavior, TBehaviorData> : WeaponBehaviorDataBase
-    where TBehavior : WeaponBehavior<TBehavior, TBehaviorData>
-    where TBehaviorData : WeaponBehaviorData<TBehavior, TBehaviorData>
-{
-
+    public abstract WeaponBehavior CreateWeaponBehaviorInstance(WeaponSkill skill);
 }
