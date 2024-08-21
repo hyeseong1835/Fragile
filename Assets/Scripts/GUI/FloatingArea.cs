@@ -18,15 +18,22 @@ public class FloatingAreaManager
     {
         SetRect(headerRect.position.AddY(headerRect.height), headerRect.width);
     }
-    public void EventListen(Event e)
+    public void EventListen()
     {
         if (area != null)
         {
-            area.EventListen(e);
+            area.EventListen();
 
-            if (e.isMouse && rect.Contains(e.mousePosition))
+            if (Event.current.type == EventType.MouseDown)
             {
-                e.Use();
+                if (rect.Contains(Event.current.mousePosition))
+                {
+                    Event.current.Use();
+                }
+                else
+                {
+                    Destroy();
+                }
             }
         }
     }
@@ -48,7 +55,10 @@ public class FloatingAreaManager
                 area.OnCreated();
                 created = false;
             }
-            area.CreateField();
+            if (Event.current.type == EventType.Repaint)
+            {
+                area.CreateField();
+            }
             area.Draw();
         }
     }
@@ -65,7 +75,7 @@ public abstract class FloatingArea
     
     public abstract float GetHeight();
 
-    public abstract void EventListen(Event e);
+    public abstract void EventListen();
 
     public abstract void Draw();
 
@@ -73,9 +83,6 @@ public abstract class FloatingArea
     {
         CustomGUI.DrawSquare(manager.rect, backGroundColor);
     }
-    public virtual void OnCreated()
-    {
-
-    }
+    public abstract void OnCreated();
 }
 #endif

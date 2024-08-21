@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using System;
+using UnityEngine.UIElements;
 
 public static class CustomGUI
 {
@@ -160,6 +161,25 @@ public static class CustomGUI
 
             Handles.DrawLine(p1, p2);
         }
+    }
+    public static void HorizontalLine(Vector2 pos, float width)
+    {
+        if (e.type != EventType.Repaint) return;
+
+        Vector3 p1 = new Vector3(pos.x, pos.y);
+        Vector3 p2 = new Vector3(pos.x + width, pos.y);
+        Handles.DrawLine(p1, p2);
+    }
+    public static void UnderBarTitleText(Rect rect, string label)
+    {
+        EditorGUI.LabelField(rect, label, EditorStyles.boldLabel);
+
+        HorizontalLine(rect.position.SetY(rect.yMax), rect.width);
+    }
+
+    public static void TitleHeaderLabel(Rect rect, string title)
+    {
+        CustomGUI.UnderBarTitleText(rect, title);
     }
     public static ObjectT InteractionObjectField<ObjectT>(Rect rect, ObjectT obj, Action interaction, bool allowSceneObject) where ObjectT : UnityEngine.Object
     {

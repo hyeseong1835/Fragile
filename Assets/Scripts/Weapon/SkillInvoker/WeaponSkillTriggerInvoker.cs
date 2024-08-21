@@ -32,6 +32,7 @@ public class WeaponSkillTriggerInvoker : WeaponSkillInvoker
     }
 }
 [Serializable]
+[InvokerDropdown("트리거")]
 public class WeaponSkillTriggerInvokerData : WeaponSkillInvokerData
 {
     [SerializeReference] public WeaponTriggerSkillData[] onTrigger = new WeaponTriggerSkillData[0];
@@ -39,9 +40,10 @@ public class WeaponSkillTriggerInvokerData : WeaponSkillInvokerData
     public override WeaponSkillInvoker CreateInvoker() => new WeaponSkillTriggerInvoker(this);
 
 #if UNITY_EDITOR
+
     public override void OnGUI()
     {
-        CustomGUILayout.TitleHeaderLabel("실행기 (트리거)");
+        base.OnGUI();
 
         EditorGUILayout.LabelField("트리거 시");
         CustomGUILayout.BeginTab();

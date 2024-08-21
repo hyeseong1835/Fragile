@@ -24,27 +24,30 @@ public abstract class WeaponTriggerSkillData : WeaponSkillData
     public override void OnGUI()
     {
         EditorGUILayout.LabelField("-즉시");
-        foreach (WeaponBehaviorData behaviorData in executeBehaviorData)
+        CustomGUILayout.BeginTab();
         {
-            behaviorData.OnGUI();
-        }
-        EditorGUILayout.BeginHorizontal();
-        {
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button("추가"))
+            foreach (WeaponBehaviorData behaviorData in executeBehaviorData)
             {
-                Array.Resize(ref executeBehaviorData, executeBehaviorData.Length + 1);
-                executeBehaviorData[executeBehaviorData.Length - 1] = WeaponBehaviorData.Default;
+                behaviorData.OnGUI();
             }
-            if (GUILayout.Button("삭제"))
+            EditorGUILayout.BeginHorizontal();
             {
-                if (executeBehaviorData.Length > 0)
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button("추가"))
                 {
-                    Array.Resize(ref executeBehaviorData, executeBehaviorData.Length - 1);
+                    Array.Resize(ref executeBehaviorData, executeBehaviorData.Length + 1);
+                    executeBehaviorData[executeBehaviorData.Length - 1] = WeaponBehaviorData.Default;
+                }
+                if (GUILayout.Button("삭제"))
+                {
+                    if (executeBehaviorData.Length > 0)
+                    {
+                        Array.Resize(ref executeBehaviorData, executeBehaviorData.Length - 1);
+                    }
                 }
             }
+            EditorGUILayout.EndHorizontal();
         }
-        EditorGUILayout.EndHorizontal();
-    }
+        CustomGUILayout.EndTab();}
 #endif
 }

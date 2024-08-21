@@ -12,6 +12,10 @@ public class BehaviorData_Damage : WeaponBehaviorData
 {
     public override WeaponBehavior CreateWeaponBehaviorInstance(WeaponSkill skill)
         => new Behavior_Damage(this);
+
+    public WeaponOperator<Entity> targetGetter;
+    public WeaponOperator<float> damageGetter;
+
 #if UNITY_EDITOR
     public override void OnGUI()
     {
@@ -21,9 +25,11 @@ public class BehaviorData_Damage : WeaponBehaviorData
 }
 public class Behavior_Damage : WeaponBehavior
 {
+    BehaviorData_Damage data;
+
     public Behavior_Damage(BehaviorData_Damage data)
     { 
-        
+        this.data = data;
     }
 
     protected override void Initialize()
@@ -32,6 +38,9 @@ public class Behavior_Damage : WeaponBehavior
     }
     public override void Invoke()
     {
-        Debug.Log("DamageBehavior");
+        Entity target = data.targetGetter.GetValue(this);
+        float damage = data.damageGetter.GetValue(this);
+
+        target.TakeDamage(damage);
     }
 }

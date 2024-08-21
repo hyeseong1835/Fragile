@@ -17,7 +17,11 @@ public class TextFloatingArea : FloatingArea
         this.applyEvent = applyEvent;
         this.title = title;
     }
-    public override void EventListen(Event e)
+    public override void OnCreated()
+    {
+
+    }
+    public override void EventListen()
     {
         if (EventUtility.KeyDown(KeyCode.Return) && GUI.GetNameOfFocusedControl() == "TextField")
         {

@@ -138,9 +138,13 @@ public static class RectUtility
 
         return result;
     }
-    public static void HorizontalSlice(this Rect rect, float x, out Rect r1, out Rect r2)
+    public static Rect HorizontalSlice(this Rect rect, float right, float width)
     {
-        r1 = rect.SetWidth(x, 0);
-        r2 = rect.SetWidth(rect.width - x, 1);
+        return new Rect(
+            rect.xMax - width,
+            rect.y,
+            width,
+            rect.height
+        );
     }
 }

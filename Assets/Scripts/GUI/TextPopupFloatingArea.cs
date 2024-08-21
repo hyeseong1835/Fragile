@@ -1,58 +1,81 @@
 #if UNITY_EDITOR
 using System;
+using UnityEditor;
 using UnityEngine;
 
 public class TextPopupFloatingArea : FloatingArea
 {
     string[] array;
-    Rect[] rects;
-    Action<int> selectEvent;
+    Func<int, bool> selectEvent;
+    int mouseOnIndex = -1;
+    float height;
+    float topSpace, bottomSpace, rightSpace, leftSpace;
 
-    public TextPopupFloatingArea(string[] array, Action<int> selectEvent)
+    public static GUIStyle labelStyle = new GUIStyle(EditorStyles.boldLabel);
+
+    public TextPopupFloatingArea(
+        string[] array,
+        Func<int, bool> selectEvent,
+        float height = 20,
+        float topSpace = 5,
+        float bottomSpace = 10,
+        float rightSpace = 1,
+        float leftSpace = 1
+    )
     {
         this.array = array;
         this.selectEvent = selectEvent;
-    }
+        this.height = height;
 
-    public override void EventListen(Event e)
+        this.topSpace = topSpace;
+        this.bottomSpace = bottomSpace;
+        this.rightSpace = rightSpace;
+        this.leftSpace = leftSpace;
+    }
+    public override void OnCreated()
     {
-        if (EventUtility.MouseDown(0))
+
+    }
+    public override void EventListen()
+    {
+        if (Event.current.type == EventType.MouseMove)
         {
-            for (int i = 0; rects != null && i < rects.Length; i++)
+            mouseOnIndex = Mathf.FloorToInt((Event.current.mousePosition.y - (manager.rect.y + topSpace)) / height);
+            if (mouseOnIndex < 0 || mouseOnIndex >= array.Length)
             {
-                if (rects[i].AddPos(manager.rect.position).Contains(e.mousePosition))
-                {
-                    selectEvent?.Invoke(i);
-                    e.Use();
-                    manager.area = null;
-                }
+                mouseOnIndex = -1;
+            }
+        }
+
+        if (Event.current.type == EventType.MouseDown)
+        {
+            Event.current.Use();
+            if (mouseOnIndex == -1 || selectEvent.Invoke(mouseOnIndex))
+            {
+                manager.Destroy();
             }
         }
     }
     public override void Draw()
     {
-        GUILayout.BeginArea(manager.rect);
+        for (int i = 0; i < array.Length; i++)
         {
-            if (Event.current.type == EventType.Repaint)
-            {
-                rects = new Rect[array.Length];
-            }
-            for (int i = 0; i < array.Length; i++)
-            {
-                GUILayout.Label(array[i], GUI.skin.label);
-                if (Event.current.type == EventType.Repaint)
-                {
-                    rects[i] = GUILayoutUtility.GetLastRect();
-                }
-            }
+            GUI.Label(
+                new Rect(
+                    manager.rect.x + leftSpace,
+                    manager.rect.y + height * i + topSpace,
+                    manager.rect.width - (rightSpace + leftSpace),
+                    height
+                ),
+                array[i],
+                labelStyle
+            );
         }
-        GUILayout.EndArea();
     }
-
 
     public override float GetHeight()
     {
-        return GUI.skin.label.lineHeight * array.Length + 20;
+        return height * array.Length + topSpace + bottomSpace;
     }
 }
 #endif

@@ -37,7 +37,7 @@ public class WeaponDataInspector : Editor
                 null, 
                 ref ruleEditor
             );
-            ruleEditor.OnInspectorGUI();
+            ruleEditor?.OnInspectorGUI();
         }
         //EditorGUILayout.EndVertical();
 

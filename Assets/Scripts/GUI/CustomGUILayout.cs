@@ -49,10 +49,15 @@ public static class CustomGUILayout
     public static void UnderBarTitleText(string label)
     {
         EditorGUILayout.LabelField(label, EditorStyles.boldLabel);
-        Rect labelRect = GUILayoutUtility.GetLastRect();
-        float lineY = labelRect.position.y + EditorStyles.boldLabel.lineHeight + 3;
-        Vector3 p1 = new Vector3(labelRect.x, lineY);
-        Vector3 p2 = new Vector3(labelRect.x + labelRect.width, lineY);
+        HorizontalLine();
+    }
+    public static void HorizontalLine()
+    {
+        if (e.type != EventType.Repaint) return;
+
+        Rect lastRect = GUILayoutUtility.GetLastRect();
+        Vector3 p1 = new Vector3(lastRect.x, lastRect.yMax);
+        Vector3 p2 = new Vector3(lastRect.x + lastRect.width, lastRect.yMax);
         Handles.DrawLine(p1, p2);
     }
     public static void WarningLabel(string message)
@@ -61,9 +66,9 @@ public static class CustomGUILayout
         EditorGUILayout.LabelField(message, EditorStyles.centeredGreyMiniLabel);
         EditorGUILayout.Space(10);
     }
-    public static void TitleHeaderLabel(string title)
+    public static void TitleHeaderLabel(string title, float space = 5)
     {
-        EditorGUILayout.Space(5);
+        EditorGUILayout.Space(space);
         CustomGUILayout.UnderBarTitleText(title);
     }
     public static void BeginTab(float space = 10)
@@ -72,9 +77,10 @@ public static class CustomGUILayout
         EditorGUILayout.Space(space, false);
         EditorGUILayout.BeginVertical();
     }
-    public static void EndTab()
+    public static void EndTab(float space = 5)
     {
         EditorGUILayout.EndVertical();
+        EditorGUILayout.Space(space, false);
         EditorGUILayout.EndHorizontal();
     }
 }
