@@ -9,21 +9,20 @@ public interface IWeaponEventHandler
 }
 public class Weapon : MonoBehaviour
 {
-    [Header("데이터")]
     public WeaponData data;
 
-    [Header("정보")]
     [NonSerialized] public Controller owner;
 
-    //좌클릭 스킬
-    [NonSerialized] public WeaponSkillInvoker attackSkillInvoker;
-
-    //우클릭 스킬
-    [NonSerialized] public WeaponSkillInvoker specialSkillInvoker;
+    [NonSerialized] public Controller[] controllerValueContainer;
+    [NonSerialized] public int[] intValueContainer;
+    [NonSerialized] public float[] floatValueContainer;
 
     void Awake()
     {
         gameObject.SetActive(false);
+        controllerValueContainer = new Controller[data.rule.controllerValueContainerLength];
+        intValueContainer = new int[data.rule.intValueContainerLength];
+        floatValueContainer = new float[data.rule.floatValueContainerLength];
     }
     void Update()
     {

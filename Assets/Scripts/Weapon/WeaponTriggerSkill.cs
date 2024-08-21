@@ -2,51 +2,45 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
+[Serializable]
 public abstract class WeaponTriggerSkill : WeaponSkill
 {
-    public WeaponBehavior[] executeBehaviors;
-    
-    public void WeaponSkillExecute()
-    {
-
-    }
-}
-
-[Serializable]
-public abstract class WeaponTriggerSkillData : WeaponSkillData
-{
-
-    [SerializeReference] public WeaponBehaviorData[] executeBehaviorData = new WeaponBehaviorData[0];
+    [SerializeReference] public WeaponBehavior[] executeBehavior = new WeaponBehavior[0];
 
 #if UNITY_EDITOR
-    public static WeaponTriggerSkillData Default => new SkillData_Swing();
+    public static WeaponTriggerSkill CreateDefault() => new Skill_Swing();
 
-    public override void OnGUI()
+    public override void OnGUI(SerializedProperty property)
     {
         EditorGUILayout.LabelField("-즉시");
+        SerializedProperty executeBehaviorArrayProperty
+            = property.FindPropertyRelative(nameof(executeBehavior));
         CustomGUILayout.BeginTab();
         {
-            foreach (WeaponBehaviorData behaviorData in executeBehaviorData)
-            {
-                behaviorData.OnGUI();
-            }
-            EditorGUILayout.BeginHorizontal();
-            {
-                GUILayout.FlexibleSpace();
-                if (GUILayout.Button("추가"))
-                {
-                    Array.Resize(ref executeBehaviorData, executeBehaviorData.Length + 1);
-                    executeBehaviorData[executeBehaviorData.Length - 1] = WeaponBehaviorData.Default;
-                }
-                if (GUILayout.Button("삭제"))
-                {
-                    if (executeBehaviorData.Length > 0)
+            CustomGUILayout.ArrayField(
+                ref executeBehavior, 
+                i => {
+                    if (executeBehavior == null)
                     {
-                        Array.Resize(ref executeBehaviorData, executeBehaviorData.Length - 1);
+                        Debug.LogError($"{i}: BehaviorArray is Null");
+                        return true;
                     }
-                }
-            }
-            EditorGUILayout.EndHorizontal();
+                    if (executeBehaviorArrayProperty == null)
+                    {
+                        Debug.LogError($"{i}: Serialized Property is Null");
+                        return true;
+                    }
+
+                    if (executeBehavior[i] == null)
+                    {
+                        EditorGUILayout.LabelField($"{i}: Behavior is null");
+                        return false;
+                    }
+                    executeBehavior[i].OnGUI(executeBehaviorArrayProperty.GetArrayElementAtIndex(i));
+                    return false;
+                }, 
+                WeaponBehavior.GetDefault
+            );
         }
         CustomGUILayout.EndTab();}
 #endif

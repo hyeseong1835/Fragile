@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public static class CustomGUILayout
 {
@@ -12,19 +11,38 @@ public static class CustomGUILayout
     public static float TitleHeaderLabelHeight => UnderBarTitleTextHeight + 5;
 
     static Event e => Event.current;
-    public static List<ObjectT> ListField<ObjectT>(
-        List<ObjectT> list,
-        ref int holdedIndex, ref float holdOffset,
-        float indexWidth = 25, float elementHeight = 25
-    ) where ObjectT : UnityEngine.Object
+    public static TElement[] ArrayField<TElement>(
+         TElement[] array, Func<int, bool> elementGUI, Func<TElement> defaultGetter
+     )
     {
-        Rect rect = GUILayoutUtility.GetRect(indexWidth, list.Count * elementHeight);
-
-        return CustomGUI.ListField(
-            rect, list, 
-            ref holdedIndex, ref holdOffset, 
-            indexWidth, elementHeight
-        );
+        ArrayField(ref array, elementGUI, defaultGetter);
+        return array;
+    }
+    public static void ArrayField<TElement>(
+         ref TElement[] array, Func<int, bool> elementGUI, Func<TElement> defaultGetter
+     )
+    {
+        for (int i = 0; i < array.Length; i++)
+        {
+            if (elementGUI(i)) break;
+        }
+        EditorGUILayout.BeginHorizontal();
+        {
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("추가"))
+            {
+                Array.Resize(ref array, array.Length + 1);
+                array[array.Length - 1] = defaultGetter();
+            }
+            if (GUILayout.Button("삭제"))
+            {
+                if (array.Length > 0)
+                {
+                    Array.Resize(ref array, array.Length - 1);
+                }
+            }
+        }
+        EditorGUILayout.EndHorizontal();
     }
     public static ObjectT InteractionObjectField<ObjectT>(ObjectT obj, Action<Rect> interaction, float width = -1, float height = -1) where ObjectT : UnityEngine.Object
     {

@@ -1,22 +1,29 @@
 ﻿using UnityEngine;
 using System;
-using JetBrains.Annotations;
-
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
+[Serializable]
+#if UNITY_EDITOR
+[InvokerInfo("트리거", "버튼을 누르는 즉시 단 한번 실행합니다.")]
+#endif
 public class WeaponSkillTriggerInvoker : WeaponSkillInvoker
 {
-    [SerializeReference] public WeaponTriggerSkill[] onTrigger;
+    [SerializeReference] public WeaponTriggerSkill[] onTrigger = new WeaponTriggerSkill[0];
     public bool canInvoke = true;
 
-    public WeaponSkillTriggerInvoker(WeaponSkillTriggerInvokerData data)
+    public WeaponSkillTriggerInvoker()
     {
-
+        Debug.Log("WeaponSkillTriggerInvoker is Created!");
     }
-    public override void WeaponInvokeUpdate()
+    ~WeaponSkillTriggerInvoker()
+    {
+        Debug.Log("WeaponSkillTriggerInvoker is Disposed!");
+    }
+
+    public override void OnWeaponUpdate()
     {
         if (input)
         {
@@ -24,51 +31,46 @@ public class WeaponSkillTriggerInvoker : WeaponSkillInvoker
             {
                 foreach (WeaponTriggerSkill skill in onTrigger)
                 {
-                    skill.WeaponSkillExecute();
+                    skill.Execute();
                 }
                 canInvoke = false;
             }
         }
     }
-}
-[Serializable]
-[InvokerDropdown("트리거")]
-public class WeaponSkillTriggerInvokerData : WeaponSkillInvokerData
-{
-    [SerializeReference] public WeaponTriggerSkillData[] onTrigger = new WeaponTriggerSkillData[0];
-
-    public override WeaponSkillInvoker CreateInvoker() => new WeaponSkillTriggerInvoker(this);
 
 #if UNITY_EDITOR
-
-    public override void OnGUI()
+    public override void OnGUI(SerializedProperty property)
     {
-        base.OnGUI();
-
         EditorGUILayout.LabelField("트리거 시");
         CustomGUILayout.BeginTab();
         {
-            foreach (WeaponTriggerSkillData skillData in onTrigger)
-            {
-                skillData.OnGUI();
-            }
-            EditorGUILayout.BeginHorizontal();
-            {
-                GUILayout.FlexibleSpace();
-                if (GUILayout.Button("추가"))
+            SerializedProperty onTriggerArrayProperty = property.FindPropertyRelative(nameof(onTrigger));
+            CustomGUILayout.ArrayField(
+                ref onTrigger,
+                i =>
                 {
-                    Array.Resize(ref onTrigger, onTrigger.Length + 1);
-                    onTrigger[onTrigger.Length - 1] = WeaponTriggerSkillData.Default;
-                }
-                if (GUILayout.Button("삭제"))
-                {
-                    if (onTrigger.Length > 0)
+                    if (onTrigger == null || onTriggerArrayProperty == null)
                     {
-                        Array.Resize(ref onTrigger, onTrigger.Length - 1);
+                        Debug.LogError($"{i}: Null!!");
+                        return true;
                     }
-                }
-            }
-            EditorGUILayout.EndHorizontal();
+                    if (onTrigger[i] == null)
+                    {
+                        EditorGUILayout.LabelField($"{i}: null");
+                        //onTrigger[i] = WeaponTriggerSkill.CreateDefault();
+                        //if (WeaponTriggerSkill.CreateDefault() == null) Debug.Log($"{i}: Null!!");
+                        return false;
+                    }
+                    if (i >= onTriggerArrayProperty.arraySize)
+                    {
+                        EditorGUILayout.LabelField($"{i}: 시리얼라이즈 프로퍼티 길이가 맞지 않음");
+                        return false;
+                    }
+                    onTrigger[i].OnGUI(onTriggerArrayProperty.GetArrayElementAtIndex(i));
+                    return false;
+                },
+                WeaponTriggerSkill.CreateDefault
+            );
         }
         CustomGUILayout.EndTab();
     }

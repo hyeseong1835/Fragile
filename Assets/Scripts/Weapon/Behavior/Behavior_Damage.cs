@@ -3,44 +3,40 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 [Serializable]
-public class BehaviorData_Damage : WeaponBehaviorData
-{
-    public override WeaponBehavior CreateWeaponBehaviorInstance(WeaponSkill skill)
-        => new Behavior_Damage(this);
-
-    public WeaponOperator<Entity> targetGetter;
-    public WeaponOperator<float> damageGetter;
-
-#if UNITY_EDITOR
-    public override void OnGUI()
-    {
-        CustomGUILayout.TitleHeaderLabel("데미지");
-    }
-#endif
-}
 public class Behavior_Damage : WeaponBehavior
 {
-    BehaviorData_Damage data;
+    public WeaponOperator<Entity> targetGetter = WeaponOperator<Entity>.GetDefault();
+    public WeaponOperator<float> damageGetter = WeaponOperator<float>.GetDefault();
 
-    public Behavior_Damage(BehaviorData_Damage data)
-    { 
-        this.data = data;
+    public Behavior_Damage()
+    {
+        Debug.Log("Behavior_Damage is Created!");
     }
-
+    ~Behavior_Damage()
+    {
+        Debug.Log("Behavior_Damage is Disposed!");
+    }
     protected override void Initialize()
     {
         Debug.Log("DamageBehavior");
     }
-    public override void Invoke()
+    public override void Execute()
     {
-        Entity target = data.targetGetter.GetValue(this);
-        float damage = data.damageGetter.GetValue(this);
+        Entity target = targetGetter.GetValue(this);
+        float damage = damageGetter.GetValue(this);
 
         target.TakeDamage(damage);
     }
+
+#if UNITY_EDITOR
+    public override void OnGUI(UnityEditor.SerializedProperty property)
+    {
+        CustomGUILayout.TitleHeaderLabel("타깃");
+        targetGetter.OnGUI(property.FindPropertyRelative(nameof(targetGetter)));
+        
+        CustomGUILayout.TitleHeaderLabel("데미지");
+        damageGetter.OnGUI(property.FindPropertyRelative(nameof(damageGetter)));
+    }
+#endif
 }

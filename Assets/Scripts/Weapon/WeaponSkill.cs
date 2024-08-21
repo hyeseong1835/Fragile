@@ -1,9 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
-public abstract class WeaponSkill : IWeaponEventHandler
+[Serializable]
+public abstract class WeaponSkill
 {
-    public abstract WeaponSkillData Data { get; set; }
     public Weapon weapon;
+
+    public abstract void Execute();
+
+#if UNITY_EDITOR
+    public abstract void OnGUI(UnityEditor.SerializedProperty arrayProperty);
+#endif
 }

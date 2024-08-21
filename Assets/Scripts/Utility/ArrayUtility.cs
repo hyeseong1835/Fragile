@@ -6,6 +6,19 @@ using UnityEngine.SearchService;
 
 public static class ArrayUtility
 {
+    public static void RemoveAt<TObj>(this TObj[] array, int index)
+    {
+        TObj[] newArray = new TObj[array.Length - 1];
+        int i;
+        for (i = 0; i < index; i++)
+        {
+            newArray[i] = array[i];
+        }
+        for (i = index; i < array.Length - 1; i++)
+        {
+            newArray[i] = array[i + 1];
+        }
+    }
     public static int IndexOf<ObjT>(this ObjT[] array, ObjT obj, int startIndex = 0)
     {
         for (int i = startIndex; i < array.Length; i++)

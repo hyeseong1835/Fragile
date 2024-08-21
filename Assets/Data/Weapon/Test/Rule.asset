@@ -12,18 +12,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87e15028e63a1fe47a4258d7b03859be, type: 3}
   m_Name: Rule
   m_EditorClassIdentifier: 
+  intValueContainerLength: 0
+  floatValueContainerLength: 0
+  controllerValueContainerLength: 0
   attackInvoker:
-    rid: 6026789804646858754
+    rid: 6026789847175004203
   specialInvoker:
-    rid: 6026789804646858755
+    rid: 6026789847175004204
   references:
     version: 2
     RefIds:
-    - rid: 6026789804646858754
-      type: {class: WeaponSkillTriggerInvokerData, ns: , asm: Assembly-CSharp}
+    - rid: 6026789847175004203
+      type: {class: WeaponSkillTriggerInvoker, ns: , asm: Assembly-CSharp}
       data:
-        onTrigger: []
-    - rid: 6026789804646858755
-      type: {class: WeaponSkillTriggerInvokerData, ns: , asm: Assembly-CSharp}
+        input: 0
+        onTrigger:
+        - rid: 6026789847175004205
+        canInvoke: 1
+    - rid: 6026789847175004204
+      type: {class: WeaponSkillTriggerInvoker, ns: , asm: Assembly-CSharp}
       data:
+        input: 0
         onTrigger: []
+        canInvoke: 1
+    - rid: 6026789847175004205
+      type: {class: Skill_Swing, ns: , asm: Assembly-CSharp}
+      data:
+        weapon: {fileID: 0}
+        executeBehavior:
+        - rid: 6026789847175004206
+    - rid: 6026789847175004206
+      type: {class: Behavior_Damage, ns: , asm: Assembly-CSharp}
+      data: 

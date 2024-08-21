@@ -38,13 +38,10 @@ public class TextPopupFloatingArea : FloatingArea
     }
     public override void EventListen()
     {
-        if (Event.current.type == EventType.MouseMove)
+        mouseOnIndex = Mathf.FloorToInt((Event.current.mousePosition.y - (manager.rect.y + topSpace)) / height);
+        if (mouseOnIndex < 0 || mouseOnIndex >= array.Length)
         {
-            mouseOnIndex = Mathf.FloorToInt((Event.current.mousePosition.y - (manager.rect.y + topSpace)) / height);
-            if (mouseOnIndex < 0 || mouseOnIndex >= array.Length)
-            {
-                mouseOnIndex = -1;
-            }
+            mouseOnIndex = -1;
         }
 
         if (Event.current.type == EventType.MouseDown)

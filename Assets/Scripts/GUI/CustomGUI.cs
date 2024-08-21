@@ -9,97 +9,8 @@ using UnityEngine.UIElements;
 public static class CustomGUI
 {
     static Event e => Event.current;
-
-    public static List<ObjectT> ListField<ObjectT>(
-        Rect rect, List<ObjectT> list, 
-        ref int holdedIndex, ref float holdOffset, 
-        float indexWidth, float elementHeight,
-        float buttonFontSize = 20, float buttonWidth = 40, float buttonHeight = 20
-    ) where ObjectT : UnityEngine.Object
-    {
-        switch (e.type)
-        {
-            case EventType.MouseDown:
-                for (int i = 0; i < list.Count; i++)
-                {
-                    Rect palleteIndexRect = new Rect(
-                        rect.x,
-                        rect.y + i * elementHeight,
-                        indexWidth, 
-                        elementHeight
-                    );
-                    if (palleteIndexRect.Contains(e.mousePosition))
-                    {
-                        holdedIndex = i;
-                        holdOffset = e.mousePosition.y - palleteIndexRect.y;
-                        break;
-                    }
-                }
-                break;
-            case EventType.MouseDrag:
-                if (holdedIndex != -1)
-                {
-                    int moveIndex = Mathf.RoundToInt((e.mousePosition.y - rect.y) / elementHeight);
-
-                    if (moveIndex != holdedIndex)
-                    {
-                        ObjectT obj = list[holdedIndex];
-                        list.RemoveAt(holdedIndex);
-                        list.Insert(moveIndex, obj);
-                        holdedIndex = moveIndex;
-                    }
-                }
-                break;
-            case EventType.MouseUp:
-                if (holdedIndex != -1)
-                {
-                    holdedIndex = -1;
-                }
-                break;
-        }
-        for (int i = 0; i < list.Count; i++)
-        {
-            if (i == holdedIndex)
-            {
-                EditorGUILayout.Space(elementHeight);
-                continue;
-            }
-            EditorGUILayout.BeginHorizontal();
-            {
-                EditorGUILayout.LabelField(i.ToString(), GUILayout.Width(25), GUILayout.Height(elementHeight));
-
-                list[i] = (ObjectT)EditorGUILayout.ObjectField(
-                    string.Empty, 
-                    list[i], 
-                    typeof(ObjectT), 
-                    true
-                );
-            }
-            EditorGUILayout.EndHorizontal();
-        }
-
-        EditorGUILayout.BeginHorizontal();
-        {
-            GUILayout.FlexibleSpace();
-
-            GUI.skin.button.alignment = TextAnchor.MiddleCenter;
-            GUI.skin.button.richText = true;
-            bool addButtonDown = GUILayout.Button(
-                "<size=20><b>+</b></size>",
-                GUILayout.Width(buttonWidth),
-                    GUILayout.Height(buttonHeight)
-            );
-            bool removeButtonDown = GUILayout.Button(
-                "<size=20><b>-</b></size>",
-                GUILayout.Width(buttonWidth),
-                    GUILayout.Height(buttonHeight)
-            );
-            GUI.skin.button.richText = false;
-            GUI.skin.button.alignment = TextAnchor.MiddleLeft;
-        }
-        EditorGUILayout.EndHorizontal();
-        return list;
-    }
+    public static GUIStyle underBarTitleTextStyle = new GUIStyle(EditorStyles.boldLabel);
+    
     public static void DrawSquare(Rect rect, SquareColor color)
     {
         Handles.DrawSolidRectangleWithOutline(rect, color.face, color.outline);
@@ -172,14 +83,14 @@ public static class CustomGUI
     }
     public static void UnderBarTitleText(Rect rect, string label)
     {
-        EditorGUI.LabelField(rect, label, EditorStyles.boldLabel);
+        EditorGUI.LabelField(rect, label, underBarTitleTextStyle);
 
         HorizontalLine(rect.position.SetY(rect.yMax), rect.width);
     }
 
     public static void TitleHeaderLabel(Rect rect, string title)
     {
-        CustomGUI.UnderBarTitleText(rect, title);
+        UnderBarTitleText(rect, title);
     }
     public static ObjectT InteractionObjectField<ObjectT>(Rect rect, ObjectT obj, Action interaction, bool allowSceneObject) where ObjectT : UnityEngine.Object
     {

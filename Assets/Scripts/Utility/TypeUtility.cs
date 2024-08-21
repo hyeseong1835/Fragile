@@ -24,7 +24,7 @@ public static class TypeUtility
         for (int i = 0; i < types.Length; i++)
         {
             Type type = types[i];
-            ClassT? instance = (ClassT?)Activator.CreateInstance(type);
+            ClassT instance = (ClassT)Activator.CreateInstance(type);
 
             if (instance == null)
             {
