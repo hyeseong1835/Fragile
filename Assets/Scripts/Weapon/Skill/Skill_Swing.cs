@@ -23,11 +23,11 @@ public class Skill_Swing : WeaponTriggerSkill
     }
 
 #if UNITY_EDITOR
-    public override void OnGUI(UnityEditor.SerializedProperty property)
+    public override void OnGUI(UnityEditor.SerializedObject ruleObject, string path)
     {
         CustomGUILayout.TitleHeaderLabel("»÷µŒ∏£±‚");
         
-        base.OnGUI(property);
+        base.OnGUI(ruleObject, path);
     }
 #endif
 }

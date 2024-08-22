@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public abstract class WeaponBehavior
+public abstract class WeaponBehavior : UnityEngine.Object
 {
     public WeaponSkill skill;
 
     protected abstract void Initialize();
     public abstract void Execute();
-    public abstract void OnGUI(UnityEditor.SerializedProperty property);
+    public abstract void OnGUI(UnityEditor.SerializedObject ruleObject, string path);
 
 
 #if UNITY_EDITOR

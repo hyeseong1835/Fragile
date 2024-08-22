@@ -30,13 +30,18 @@ public class Behavior_Damage : WeaponBehavior
     }
 
 #if UNITY_EDITOR
-    public override void OnGUI(UnityEditor.SerializedProperty property)
+    public override void OnGUI(UnityEditor.SerializedObject ruleObject, string path)
     {
-        CustomGUILayout.TitleHeaderLabel("Å¸±ê");
-        targetGetter.OnGUI(property.FindPropertyRelative(nameof(targetGetter)));
-        
         CustomGUILayout.TitleHeaderLabel("µ¥¹ÌÁö");
-        damageGetter.OnGUI(property.FindPropertyRelative(nameof(damageGetter)));
+        CustomGUILayout.BeginTab();
+        {
+            CustomGUILayout.TitleHeaderLabel("Å¸±ê");
+            targetGetter.OnGUI(ruleObject, $"{path}.{nameof(targetGetter)}");
+
+            CustomGUILayout.TitleHeaderLabel("°ª");
+            damageGetter.OnGUI(ruleObject, $"{path}.{nameof(damageGetter)}");
+        }
+        CustomGUILayout.EndTab();
     }
 #endif
 }

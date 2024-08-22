@@ -1,9 +1,6 @@
 ﻿using UnityEngine;
 using System;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 [Serializable]
 #if UNITY_EDITOR
@@ -39,39 +36,16 @@ public class WeaponSkillTriggerInvoker : WeaponSkillInvoker
     }
 
 #if UNITY_EDITOR
-    public override void OnGUI(SerializedProperty property)
+    public override void OnGUI(UnityEditor.SerializedObject ruleObject, string path)
     {
-        EditorGUILayout.LabelField("트리거 시");
+        UnityEditor.EditorGUILayout.LabelField("트리거 시");
         CustomGUILayout.BeginTab();
         {
-            SerializedProperty onTriggerArrayProperty = property.FindPropertyRelative(nameof(onTrigger));
             CustomGUILayout.ArrayField(
                 ref onTrigger, 
                 i =>
                 {
-                    if (onTrigger == null)
-                    {
-                        Debug.LogError($"{i}: onTrigger is Null!!");
-                        return true;
-                    }
-                    if (onTriggerArrayProperty == null)
-                    {
-                        Debug.LogError($"{i}: Serialized Array Property is Null");
-                        return true;
-                    }
-                    if (onTrigger[i] == null)
-                    {
-                        EditorGUILayout.LabelField($"{i}: null");
-                        //onTrigger[i] = WeaponTriggerSkill.CreateDefault();
-                        //if (WeaponTriggerSkill.CreateDefault() == null) Debug.Log($"{i}: Null!!");
-                        return false;
-                    }
-                    if (i >= onTriggerArrayProperty.arraySize)
-                    {
-                        EditorGUILayout.LabelField($"{i}: 시리얼라이즈 프로퍼티 길이가 맞지 않음");
-                        return false;
-                    }
-                    onTrigger[i].OnGUI(onTriggerArrayProperty.GetArrayElementAtIndex(i));
+                    onTrigger[i].OnGUI(ruleObject, $"{path}.{nameof(onTrigger)}.Array.data[{i}]");
                     return false;
                 },
                 WeaponTriggerSkill.CreateDefault

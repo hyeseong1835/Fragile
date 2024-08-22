@@ -23,11 +23,32 @@ public class Operator_AssignValue<TObject> : WeaponOperator<TObject>
     }
 
 #if UNITY_EDITOR
-    public override void OnGUI(UnityEditor.SerializedProperty property)
+    public override void OnGUI(UnityEditor.SerializedObject ruleObject, string path)
     {
-        UnityEditor.EditorGUILayout.PropertyField(
-            property.FindPropertyRelative(nameof(value))
-        );
+        if (typeof(TObject) == typeof(int))
+        {
+            value = (TObject)(object)UnityEditor.EditorGUILayout.IntField($"{path}.{nameof(value)}", (int)(object)value);
+        }
+        else if (typeof(TObject) == typeof(float))
+        {
+            value = (TObject)(object)UnityEditor.EditorGUILayout.FloatField($"{path}.{nameof(value)}", (float)(object)value);
+        }
+        else
+        {
+            value = (TObject)(object)UnityEditor.EditorGUILayout.ObjectField($"{path}.{nameof(value)}", (UnityEngine.Object)(object)value, typeof(TObject), true);
+        }
+
+        /*
+        UnityEditor.SerializedProperty property = ruleObject.FindProperty($"{path}.{nameof(value)}");
+        if (property == null)
+        {
+            UnityEditor.EditorGUILayout.LabelField($"{path}.{nameof(value)}");
+        }
+        else
+        {
+            UnityEditor.EditorGUILayout.PropertyField(property);
+        }
+        */
     }
 #endif
 }

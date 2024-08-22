@@ -3,10 +3,6 @@ using System.Reflection;
 using UnityEngine;
 
 #if UNITY_EDITOR
-using UnityEditor;
-#endif
-
-#if UNITY_EDITOR
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
 public class InvokerInfoAttribute : PropertyAttribute
 {
@@ -22,7 +18,7 @@ public class InvokerInfoAttribute : PropertyAttribute
 #endif
 
 [Serializable]
-public abstract class WeaponSkillInvoker
+public abstract class WeaponSkillInvoker : UnityEngine.Object
 {
     public static WeaponSkillInvoker CreateDefault() => new WeaponSkillTriggerInvoker();
 
@@ -36,7 +32,7 @@ public abstract class WeaponSkillInvoker
     public static string[] names;
     public static string[] descriptions;
 
-    [InitializeOnLoadMethod]
+    [UnityEditor.InitializeOnLoadMethod]
     static void OnLoad()
     {
         weaponSkillInvokerTypes = TypeUtility.LoadChildType<WeaponSkillInvoker>();
@@ -47,6 +43,6 @@ public abstract class WeaponSkillInvoker
             names[i] = attribute.name;
         }
     }
-    public abstract void OnGUI(SerializedProperty property);
+    public abstract void OnGUI(UnityEditor.SerializedObject ruleObject, string path);
 #endif
 }

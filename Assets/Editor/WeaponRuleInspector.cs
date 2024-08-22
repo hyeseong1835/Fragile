@@ -11,9 +11,6 @@ public class WeaponRuleInspector : Editor
     
     WeaponRule weaponRule;
 
-    SerializedProperty attackInvokerProperty;
-    SerializedProperty specialInvokerProperty;
-
     void OnEnable()
     {
         weaponRule = (WeaponRule)target;
@@ -26,21 +23,20 @@ public class WeaponRuleInspector : Editor
         {
             weaponRule.specialInvoker = WeaponSkillInvoker.CreateDefault();
         }
-        attackInvokerProperty = serializedObject.FindProperty("attackInvoker");
-        specialInvokerProperty = serializedObject.FindProperty("specialInvoker");
     }
     public override void OnInspectorGUI()
     {
-        if (attackInvokerProperty == null) attackInvokerProperty = serializedObject.FindProperty(nameof(weaponRule.attackInvoker));
-        if (specialInvokerProperty == null) specialInvokerProperty = serializedObject.FindProperty(nameof(weaponRule.specialInvoker));
-        
         floatingManager.EventListen();
+
+        weaponRule.controllerValueContainerLength = EditorGUILayout.IntField(weaponRule.controllerValueContainerLength);
+        weaponRule.intValueContainerLength = EditorGUILayout.IntField(weaponRule.intValueContainerLength);
+        weaponRule.floatValueContainerLength = EditorGUILayout.IntField(weaponRule.floatValueContainerLength);
 
         CustomGUILayout.TitleHeaderLabel("기본 공격");
         CustomGUILayout.BeginTab();
         {
             DrawInvokerHeader(OnClickedAttackInvokerDropdown, weaponRule.selectedAttackInvokerIndex);
-            weaponRule.attackInvoker.OnGUI(attackInvokerProperty);
+            weaponRule.attackInvoker.OnGUI(serializedObject, nameof(weaponRule.attackInvoker));
         }
         CustomGUILayout.EndTab();
 
@@ -48,7 +44,7 @@ public class WeaponRuleInspector : Editor
         CustomGUILayout.BeginTab();
         {
             DrawInvokerHeader(OnClickedSpecialInvokerDropdown, weaponRule.selectedSpecialInvokerIndex);
-            weaponRule.specialInvoker.OnGUI(specialInvokerProperty);
+            weaponRule.specialInvoker.OnGUI(serializedObject, nameof(weaponRule.specialInvoker));
         }
         CustomGUILayout.EndTab();
 

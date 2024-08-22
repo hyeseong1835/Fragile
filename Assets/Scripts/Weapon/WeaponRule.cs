@@ -16,7 +16,6 @@ public class WeaponRule : ScriptableObject
 
     [SerializeReference] public WeaponSkillInvoker specialInvoker = WeaponSkillInvoker.CreateDefault();
 
-
 #if UNITY_EDITOR
     [NonSerialized] public int selectedAttackInvokerIndex = 0;
     [NonSerialized] public int selectedSpecialInvokerIndex = 0;
