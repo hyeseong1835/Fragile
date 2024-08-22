@@ -119,9 +119,10 @@ public static class RectUtility
     }
 
     public static Rect AddHeight(this Rect rect, Rect add) => rect.AddHeight(add.height);
-    public static Rect AddHeight(this Rect rect, float height)
+    public static Rect AddHeight(this Rect rect, float height, float alignment = 0)
     {
         rect.height += height;
+        rect.position = rect.position.AddY(-height * alignment);
         return rect;
     }
 
@@ -137,14 +138,5 @@ public static class RectUtility
         }
 
         return result;
-    }
-    public static Rect HorizontalSlice(this Rect rect, float right, float width)
-    {
-        return new Rect(
-            rect.xMax - width,
-            rect.y,
-            width,
-            rect.height
-        );
     }
 }

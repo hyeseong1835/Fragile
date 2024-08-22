@@ -4,16 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
+#if UNITY_EDITOR
+[@ComponentInfo("»÷µŒ∏£±‚", "»÷µŒ∏®¥œ¥Ÿ.")]
+#endif
 public class Skill_Swing : WeaponTriggerSkill
 {
-    public Skill_Swing()
-    {
-        Debug.Log("Skill_Swing is Created!");
-    }
-    ~Skill_Swing()
-    {
-        Debug.Log("Skill_Swing is Disposed!");
-    }
     public override void Execute()
     {
         foreach (WeaponBehavior behavior in executeBehavior)
@@ -23,11 +18,6 @@ public class Skill_Swing : WeaponTriggerSkill
     }
 
 #if UNITY_EDITOR
-    public override void OnGUI(UnityEditor.SerializedObject ruleObject, string path)
-    {
-        CustomGUILayout.TitleHeaderLabel("»÷µŒ∏£±‚");
-        
-        base.OnGUI(ruleObject, path);
-    }
+    
 #endif
 }

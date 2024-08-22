@@ -16,31 +16,35 @@ MonoBehaviour:
   floatValueContainerLength: 0
   controllerValueContainerLength: 0
   attackInvoker:
-    rid: 6026789847175004203
+    rid: 6026789873087414292
   specialInvoker:
-    rid: 6026789847175004204
+    rid: 6026789873087414293
   references:
     version: 2
     RefIds:
-    - rid: 6026789847175004203
-      type: {class: WeaponSkillTriggerInvoker, ns: , asm: Assembly-CSharp}
+    - rid: 6026789873087414292
+      type: {class: Invoker_Trigger, ns: , asm: Assembly-CSharp}
       data:
         input: 0
         onTrigger:
-        - rid: 6026789847175004205
+        - rid: 6026789873087414294
         canInvoke: 1
-    - rid: 6026789847175004204
-      type: {class: WeaponSkillTriggerInvoker, ns: , asm: Assembly-CSharp}
+    - rid: 6026789873087414293
+      type: {class: Invoker_Trigger, ns: , asm: Assembly-CSharp}
       data:
         input: 0
         onTrigger: []
         canInvoke: 1
-    - rid: 6026789847175004205
+    - rid: 6026789873087414294
       type: {class: Skill_Swing, ns: , asm: Assembly-CSharp}
       data:
         weapon: {fileID: 0}
         executeBehavior:
-        - rid: 6026789847175004206
-    - rid: 6026789847175004206
+        - rid: 6026789873087414295
+        - rid: 6026789873087414296
+    - rid: 6026789873087414295
+      type: {class: Behavior_Damage, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6026789873087414296
       type: {class: Behavior_Damage, ns: , asm: Assembly-CSharp}
       data: 

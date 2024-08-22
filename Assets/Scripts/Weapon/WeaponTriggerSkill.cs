@@ -9,20 +9,16 @@ public abstract class WeaponTriggerSkill : WeaponSkill
 #if UNITY_EDITOR
     public static WeaponTriggerSkill CreateDefault() => new Skill_Swing();
 
-    public override void OnGUI(UnityEditor.SerializedObject ruleObject, string path)
+    protected override void DrawField()
     {
-        UnityEditor.EditorGUILayout.LabelField("-즉시");
-        CustomGUILayout.BeginTab();
-        {
-            CustomGUILayout.ArrayField(
-                ref executeBehavior, 
-                i => {
-                    executeBehavior[i].OnGUI(ruleObject, $"{path}.{nameof(executeBehavior)}.Array.data[{i}]");
-                    return false;
-                }, 
-                WeaponBehavior.GetDefault
-            );
-        }
-        CustomGUILayout.EndTab();}
+        CustomGUILayout.ArrayField(
+            ref executeBehavior,
+            i => {
+                executeBehavior[i].OnGUI(ref executeBehavior[i], "실행");
+                return false;
+            },
+            WeaponBehavior.GetDefault
+        );
+    }
 #endif
 }

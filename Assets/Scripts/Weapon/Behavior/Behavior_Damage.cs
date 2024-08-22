@@ -4,19 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
+#if UNITY_EDITOR
+[BehaviorInfo("데미지", "대상에게 피해를 가합니다")]
+#endif
 public class Behavior_Damage : WeaponBehavior
 {
     public WeaponOperator<Entity> targetGetter = WeaponOperator<Entity>.GetDefault();
     public WeaponOperator<float> damageGetter = WeaponOperator<float>.GetDefault();
 
-    public Behavior_Damage()
-    {
-        Debug.Log("Behavior_Damage is Created!");
-    }
-    ~Behavior_Damage()
-    {
-        Debug.Log("Behavior_Damage is Disposed!");
-    }
     protected override void Initialize()
     {
         Debug.Log("DamageBehavior");
@@ -30,16 +25,13 @@ public class Behavior_Damage : WeaponBehavior
     }
 
 #if UNITY_EDITOR
-    public override void OnGUI(UnityEditor.SerializedObject ruleObject, string path)
+    protected override void DrawField()
     {
-        CustomGUILayout.TitleHeaderLabel("데미지");
         CustomGUILayout.BeginTab();
         {
-            CustomGUILayout.TitleHeaderLabel("타깃");
-            targetGetter.OnGUI(ruleObject, $"{path}.{nameof(targetGetter)}");
+            targetGetter.OnGUI(ref targetGetter, "대상");
 
-            CustomGUILayout.TitleHeaderLabel("값");
-            damageGetter.OnGUI(ruleObject, $"{path}.{nameof(damageGetter)}");
+            damageGetter.OnGUI(ref damageGetter, "피해량");
         }
         CustomGUILayout.EndTab();
     }
