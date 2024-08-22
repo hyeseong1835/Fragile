@@ -27,13 +27,17 @@ public abstract class WeaponTriggerSkill : WeaponSkill
                     }
                     if (executeBehaviorArrayProperty == null)
                     {
-                        Debug.LogError($"{i}: Serialized Property is Null");
+                        Debug.LogError($"{i}: Serialized Array Property is Null");
                         return true;
                     }
-
                     if (executeBehavior[i] == null)
                     {
                         EditorGUILayout.LabelField($"{i}: Behavior is null");
+                        return false;
+                    }
+                    if (i >= executeBehaviorArrayProperty.arraySize)
+                    {
+                        EditorGUILayout.LabelField($"{i}: 시리얼라이즈 프로퍼티 길이가 맞지 않음");
                         return false;
                     }
                     executeBehavior[i].OnGUI(executeBehaviorArrayProperty.GetArrayElementAtIndex(i));

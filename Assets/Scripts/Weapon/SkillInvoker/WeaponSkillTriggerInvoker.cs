@@ -46,12 +46,17 @@ public class WeaponSkillTriggerInvoker : WeaponSkillInvoker
         {
             SerializedProperty onTriggerArrayProperty = property.FindPropertyRelative(nameof(onTrigger));
             CustomGUILayout.ArrayField(
-                ref onTrigger,
+                ref onTrigger, 
                 i =>
                 {
-                    if (onTrigger == null || onTriggerArrayProperty == null)
+                    if (onTrigger == null)
                     {
-                        Debug.LogError($"{i}: Null!!");
+                        Debug.LogError($"{i}: onTrigger is Null!!");
+                        return true;
+                    }
+                    if (onTriggerArrayProperty == null)
+                    {
+                        Debug.LogError($"{i}: Serialized Array Property is Null");
                         return true;
                     }
                     if (onTrigger[i] == null)
