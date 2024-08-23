@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Reflection;
 using System.Linq;
-using System.IO;
-using static UnityEngine.Rendering.VolumeComponent;
+
 
 
 #if UNITY_EDITOR
@@ -110,7 +109,7 @@ public abstract class WeaponComponent : IDisposable
 
 #if UNITY_EDITOR
     public static FloatingAreaManager floatingManager = new FloatingAreaManager();
-
+    protected static WeaponComponent usingFloatingManagerComponent = null;
     public static WeaponComponentInfoTree componentInfoTree;
 
     [InitializeOnLoadMethod]
@@ -172,13 +171,17 @@ public abstract class WeaponComponent : IDisposable
     }
     public static WeaponComponentInfo GetComponentInfo(Type type)
     {
-        IEnumerable<ComponentInfoAttribute> attributes = type.GetCustomAttributes<ComponentInfoAttribute>(true).Reverse();
+        IEnumerable<ComponentInfoAttribute> attributes = type.GetCustomAttributes<ComponentInfoAttribute>(true);
+
         List<string> path = new List<string>();
         foreach (ComponentInfoAttribute attribute in attributes)
         {
-            path.AddRange(attribute.path.Split('/'));
+            foreach (string s in attribute.path.Split('/'))
+            {
+                path.Insert(0, s);
+            }
         }
-        return GetComponentInfo(string.Join("/", path));
+        return GetComponentInfo(path);
     }
     public static WeaponComponentInfo GetComponentInfo(string path)
     {
@@ -186,6 +189,24 @@ public abstract class WeaponComponent : IDisposable
 
         WeaponComponentInfoTree open = componentInfoTree;
         for (int i = 0; i < split.Length - 1; i++)
+        {
+            open = open.GetChild(split[i]);
+        }
+        return open.GetValue(split[^1]);
+    }
+    public static WeaponComponentInfo GetComponentInfo(string[] split)
+    {
+        WeaponComponentInfoTree open = componentInfoTree;
+        for (int i = 0; i < split.Length - 1; i++)
+        {
+            open = open.GetChild(split[i]);
+        }
+        return open.GetValue(split[^1]);
+    }
+    public static WeaponComponentInfo GetComponentInfo(List<string> split)
+    {
+        WeaponComponentInfoTree open = componentInfoTree;
+        for (int i = 0; i < split.Count - 1; i++)
         {
             open = open.GetChild(split[i]);
         }
@@ -208,8 +229,7 @@ public abstract class WeaponComponent : IDisposable
 
     protected abstract Rect HeaderRect { get; }
 
-    public void CreateComponentSelectMenu<TComponent>(string treePath, Action<WeaponComponentInfo> selectEvent)
-        where TComponent : WeaponComponent
+    public void CreateComponentSelectMenu(string treePath, Action<WeaponComponentInfo> selectEvent)
     {
         WeaponComponentInfoTree tree = GetComponentInfoTree(treePath);
 
@@ -240,7 +260,10 @@ public abstract class WeaponComponent : IDisposable
 
         OnGUI(label);
 
-        floatingManager.SetRect(HeaderRect);
+        if (usingFloatingManagerComponent == this)
+        {
+            floatingManager.SetRect(HeaderRect);
+        }
 
         if (changeOrigin != "Null")
         {
@@ -263,14 +286,12 @@ public abstract class WeaponComponent : IDisposable
         menu.AddItem(
             new GUIContent("º¯°æ"),
             false,
-            () => CreateComponentSelectMenu<TComponent>(
+            () => CreateComponentSelectMenu(
                 typeof(TComponent).GetCustomAttributes<ComponentInfoAttribute>().First().path,
-                component => CreateComponentSelectMenu<TComponent>(
-                    component.path,
-                    info => changeOrigin = info.path
-                )
+                info => changeOrigin = info.path
             )
         );
+        usingFloatingManagerComponent = this;
     }
 #endif
 }

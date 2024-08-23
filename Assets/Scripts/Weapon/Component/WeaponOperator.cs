@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-[ComponentInfo("연산자", "무기의 연산자입니다.")]
 public abstract class WeaponOperator<ValueT> : WeaponComponent
 {
     public abstract ValueT GetValue(WeaponBehavior behavior);
@@ -51,6 +50,7 @@ public abstract class WeaponOperator<ValueT> : WeaponComponent
     }
 #endif
 }
+[ComponentInfo("연산자(Float)", "무기의 연산자입니다.")]
 public abstract class WeaponFloatOperator : WeaponOperator<float>
 {
 
@@ -58,6 +58,7 @@ public abstract class WeaponFloatOperator : WeaponOperator<float>
     public static WeaponFloatOperator GetDefault() => new Operator_AssignFloatValue();
 #endif
 }
+[ComponentInfo("연산자(Int)", "무기의 연산자입니다.")]
 public abstract class WeaponIntOperator : WeaponOperator<int>
 {
 
@@ -65,6 +66,7 @@ public abstract class WeaponIntOperator : WeaponOperator<int>
     public static WeaponIntOperator GetDefault() => new Operator_AssignIntValue();
 #endif
 }
+[ComponentInfo("연산자(Object)", "무기의 연산자입니다.")]
 public abstract class WeaponObjectOperator : WeaponOperator<UnityEngine.Object>
 {
 
@@ -72,6 +74,7 @@ public abstract class WeaponObjectOperator : WeaponOperator<UnityEngine.Object>
     public static WeaponObjectOperator GetDefault() => new Operator_AssignObjectValue();
 #endif
 }
+[ComponentInfo("연산자(Entity)", "무기의 연산자입니다.")]
 public abstract class WeaponEntityOperator : WeaponOperator<Entity>
 {
 

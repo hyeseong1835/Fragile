@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEditor;
 
 [CustomEditor(typeof(WeaponRule))]
@@ -26,9 +22,12 @@ public class WeaponRuleInspector : Editor
     {
         WeaponComponent.floatingManager.EventListen();
 
-        weaponRule.controllerValueContainerLength = EditorGUILayout.IntField(weaponRule.controllerValueContainerLength);
-        weaponRule.intValueContainerLength = EditorGUILayout.IntField(weaponRule.intValueContainerLength);
-        weaponRule.floatValueContainerLength = EditorGUILayout.IntField(weaponRule.floatValueContainerLength);
+        CustomGUILayout.TitleHeaderLabel("컨테이너");
+        weaponRule.controllerValueContainerLength = EditorGUILayout.IntField("Controller", weaponRule.controllerValueContainerLength);
+        weaponRule.intValueContainerLength = EditorGUILayout.IntField("Int", weaponRule.intValueContainerLength);
+        weaponRule.floatValueContainerLength = EditorGUILayout.IntField("Float", weaponRule.floatValueContainerLength);
+        
+        EditorGUILayout.Space(10);
 
         weaponRule.attackInvoker.WeaponComponentOnGUI(ref weaponRule.attackInvoker, "기본 공격");
         weaponRule.specialInvoker.WeaponComponentOnGUI(ref weaponRule.specialInvoker, "특수 공격");

@@ -102,7 +102,7 @@ public class CategoryTextPopupFloatingArea : FloatingArea
 
     public override float GetHeight()
     {
-        return height * category.Length + topSpace + bottomSpace;
+        return height * (category.Length + element.Length) + topSpace + bottomSpace;
     }
     public override void CreateField()
     {
