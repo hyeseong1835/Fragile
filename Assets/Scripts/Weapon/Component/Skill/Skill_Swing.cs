@@ -5,7 +5,7 @@ using UnityEngine;
 
 [Serializable]
 #if UNITY_EDITOR
-[@ComponentInfo("»÷µŒ∏£±‚", "»÷µŒ∏®¥œ¥Ÿ.")]
+[ComponentInfo("»÷µŒ∏£±‚", "»÷µŒ∏®¥œ¥Ÿ.")]
 #endif
 public class Skill_Swing : WeaponTriggerSkill
 {

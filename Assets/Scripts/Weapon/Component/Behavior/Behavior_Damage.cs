@@ -5,12 +5,12 @@ using UnityEngine;
 
 [Serializable]
 #if UNITY_EDITOR
-[BehaviorInfo("데미지", "대상에게 피해를 가합니다")]
+[ComponentInfo("데미지", "대상에게 피해를 가합니다")]
 #endif
 public class Behavior_Damage : WeaponBehavior
 {
-    public WeaponOperator<Entity> targetGetter = WeaponOperator<Entity>.GetDefault();
-    public WeaponOperator<float> damageGetter = WeaponOperator<float>.GetDefault();
+    public WeaponEntityOperator targetGetter = WeaponEntityOperator.GetDefault();
+    public WeaponFloatOperator damageGetter = WeaponFloatOperator.GetDefault();
 
     protected override void Initialize()
     {
@@ -29,9 +29,9 @@ public class Behavior_Damage : WeaponBehavior
     {
         CustomGUILayout.BeginTab();
         {
-            targetGetter.OnGUI(ref targetGetter, "대상");
+            targetGetter.WeaponComponentOnGUI(ref targetGetter, "대상");
 
-            damageGetter.OnGUI(ref damageGetter, "피해량");
+            damageGetter.WeaponComponentOnGUI(ref damageGetter, "피해량");
         }
         CustomGUILayout.EndTab();
     }

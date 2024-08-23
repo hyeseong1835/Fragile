@@ -4,7 +4,7 @@ using System;
 
 [Serializable]
 #if UNITY_EDITOR
-[@ComponentInfo("트리거", "버튼을 누르는 즉시 단 한번 실행합니다.")]
+[ComponentInfo("트리거", "버튼을 누르는 즉시 단 한번 실행합니다.")]
 #endif
 public class Invoker_Trigger : WeaponSkillInvoker
 {
@@ -35,7 +35,7 @@ public class Invoker_Trigger : WeaponSkillInvoker
                 ref onTrigger, 
                 i =>
                 {
-                    onTrigger[i].OnGUI(ref onTrigger[i], i.ToString());
+                    onTrigger[i].WeaponComponentOnGUI(ref onTrigger[i], i.ToString());
                     return false;
                 },
                 WeaponTriggerSkill.CreateDefault

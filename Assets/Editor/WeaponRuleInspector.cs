@@ -24,15 +24,15 @@ public class WeaponRuleInspector : Editor
     }
     public override void OnInspectorGUI()
     {
-        WeaponRuleComponent.floatingManager.EventListen();
+        WeaponComponent.floatingManager.EventListen();
 
         weaponRule.controllerValueContainerLength = EditorGUILayout.IntField(weaponRule.controllerValueContainerLength);
         weaponRule.intValueContainerLength = EditorGUILayout.IntField(weaponRule.intValueContainerLength);
         weaponRule.floatValueContainerLength = EditorGUILayout.IntField(weaponRule.floatValueContainerLength);
 
-        weaponRule.attackInvoker.OnGUI(ref weaponRule.attackInvoker, "기본 공격");
-        weaponRule.specialInvoker.OnGUI(ref weaponRule.specialInvoker, "특수 공격");
+        weaponRule.attackInvoker.WeaponComponentOnGUI(ref weaponRule.attackInvoker, "기본 공격");
+        weaponRule.specialInvoker.WeaponComponentOnGUI(ref weaponRule.specialInvoker, "특수 공격");
 
-        WeaponRuleComponent.floatingManager.Draw();
+        WeaponComponent.floatingManager.Draw();
     }
 }

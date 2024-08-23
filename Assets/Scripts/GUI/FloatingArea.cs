@@ -22,18 +22,22 @@ public class FloatingAreaManager
     {
         if (area != null)
         {
-            area.EventListen();
-
             if (Event.current.type == EventType.MouseDown)
             {
                 if (rect.Contains(Event.current.mousePosition))
                 {
-                    Event.current.Use();
+                    area.EventListen();
+
+                    if (Event.current.type != EventType.Used) Event.current.Use();
                 }
                 else
                 {
                     Destroy();
                 }
+            }
+            else
+            {
+                area.EventListen();
             }
         }
     }

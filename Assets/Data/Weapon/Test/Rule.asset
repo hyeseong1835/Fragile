@@ -16,35 +16,35 @@ MonoBehaviour:
   floatValueContainerLength: 0
   controllerValueContainerLength: 0
   attackInvoker:
-    rid: 6026789873087414292
+    rid: 6026789896973189128
   specialInvoker:
-    rid: 6026789873087414293
+    rid: 6026789896973189129
   references:
     version: 2
     RefIds:
-    - rid: 6026789873087414292
+    - rid: 6026789896973189128
       type: {class: Invoker_Trigger, ns: , asm: Assembly-CSharp}
       data:
         input: 0
         onTrigger:
-        - rid: 6026789873087414294
+        - rid: 6026789896973189130
         canInvoke: 1
-    - rid: 6026789873087414293
+    - rid: 6026789896973189129
       type: {class: Invoker_Trigger, ns: , asm: Assembly-CSharp}
       data:
         input: 0
         onTrigger: []
         canInvoke: 1
-    - rid: 6026789873087414294
+    - rid: 6026789896973189130
       type: {class: Skill_Swing, ns: , asm: Assembly-CSharp}
       data:
         weapon: {fileID: 0}
         executeBehavior:
-        - rid: 6026789873087414295
-        - rid: 6026789873087414296
-    - rid: 6026789873087414295
+        - rid: 6026789896973189131
+        - rid: 6026789896973189133
+    - rid: 6026789896973189131
       type: {class: Behavior_Damage, ns: , asm: Assembly-CSharp}
       data: 
-    - rid: 6026789873087414296
+    - rid: 6026789896973189133
       type: {class: Behavior_Damage, ns: , asm: Assembly-CSharp}
       data: 
