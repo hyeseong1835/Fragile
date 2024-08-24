@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Controller : Entity
+public abstract class Controller : Entity, IMaterialLink
 {
     public Weapon curWeapon;
 

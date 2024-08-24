@@ -7,25 +7,21 @@ public interface IWeaponEventHandler
 {
 
 }
-public class Weapon : MonoBehaviour
+public abstract class Weapon : MonoBehaviour
 {
-    public WeaponData data;
+    public WeaponMaterial[] materials;
 
     [NonSerialized] public Controller owner;
 
-    [NonSerialized] public Controller[] controllerValueContainer;
-    [NonSerialized] public int[] intValueContainer;
-    [NonSerialized] public float[] floatValueContainer;
-
-    void Awake()
+    protected void Awake()
     {
         gameObject.SetActive(false);
-        controllerValueContainer = new Controller[data.rule.controllerValueContainerLength];
-        intValueContainer = new int[data.rule.intValueContainerLength];
-        floatValueContainer = new float[data.rule.floatValueContainerLength];
     }
-    void Update()
+    protected void Update()
     {
-
+        foreach (WeaponMaterial mat in materials)
+        {
+            mat.Update();
+        }
     }
 }
