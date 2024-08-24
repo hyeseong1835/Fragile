@@ -6,37 +6,39 @@ public interface IMaterialLink
 {
 
 }
-public class WeaponMaterial : IMaterialLink
+public struct DurabilityRecovery
 {
-    public struct DurabilityRecovery
+    public float recovery;
+    public readonly float value;
+    public readonly float rate;
+
+    public DurabilityRecovery(float recovery, float value, float rate)
     {
-        public float recovery;
-        public readonly float value;
-        public readonly float rate;
-
-        public DurabilityRecovery(float recovery, float value, float rate)
-        {
-            this.recovery = recovery;
-            this.value = value;
-            this.rate = rate;
-        }
-
-        public bool Recovery(WeaponMaterial material)
-        {
-            float delta = recovery * rate + value;
-            recovery -= delta;
-
-            if (recovery < 0)
-            {
-                delta += recovery;
-                recovery = 0;
-            }
-
-            material.durability += delta;
-
-            return (recovery == 0);
-        }
+        this.recovery = recovery;
+        this.value = value;
+        this.rate = rate;
     }
+
+    public bool Recovery(WeaponMaterial material)
+    {
+        float delta = recovery * rate + value;
+        recovery -= delta;
+
+        if (recovery < 0)
+        {
+            delta += recovery;
+            recovery = 0;
+        }
+
+        material.durability += delta;
+
+        return (recovery == 0);
+    }
+}
+public class WeaponMaterial : IMaterialLink, IInventoryItem
+{
+    public Sprite Icon => data.icon;
+    public string DisplayedName => data.displayedName;
 
     public WeaponMaterialData data;
 
@@ -49,6 +51,10 @@ public class WeaponMaterial : IMaterialLink
     public float deltaHeat = 0;
     public float deltaHeatRate = 0.5f;
 
+    public WeaponMaterial(WeaponMaterialData data)
+    {
+        this.data = data;
+    }
     public void Update()
     {
         deltaHeat *= deltaHeatRate;

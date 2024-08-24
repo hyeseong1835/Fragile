@@ -10,6 +10,4 @@ public class WeaponMaterialData : ScriptableObject
     public string description;
 
     public float maxDurability = 100;
-
-    public AnimationCurve heatDamage;
 }

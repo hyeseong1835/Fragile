@@ -9,13 +9,13 @@ public interface IWeaponEventHandler
 }
 public abstract class Weapon : MonoBehaviour
 {
-    public WeaponMaterial[] materials;
+    [NonSerialized] public WeaponMaterial[] materials;
 
     [NonSerialized] public Controller owner;
 
     protected void Awake()
     {
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
     }
     protected void Update()
     {
