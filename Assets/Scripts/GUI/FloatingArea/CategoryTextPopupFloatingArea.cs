@@ -51,8 +51,7 @@ public class CategoryTextPopupFloatingArea : FloatingArea
     public override void EventListen()
     {
         mouseOnIndex = Mathf.FloorToInt((Event.current.mousePosition.y - (manager.rect.y + topSpace)) / height);
-
-        if (Event.current.type == EventType.MouseDown)
+        if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
         {
             Event.current.Use();
             if (0 <= mouseOnIndex && mouseOnIndex < category.Length)
@@ -98,6 +97,7 @@ public class CategoryTextPopupFloatingArea : FloatingArea
                 elementStyle
             );
         }
+        //GUI.Label(new Rect(Event.current.mousePosition, new Vector2(50, 20)), $"{mouseOnIndex}");
     }
 
     public override float GetHeight()

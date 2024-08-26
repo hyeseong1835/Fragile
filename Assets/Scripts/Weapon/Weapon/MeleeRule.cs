@@ -18,32 +18,39 @@ namespace WeaponSystem
             CustomGUILayout.TitleHeaderLabel("실행 효과");
             CustomGUILayout.BeginTab();
             {
-                CustomGUILayout.ArrayField(
-                    ref executeBehaviors,
-                    i =>
-                    {
-                        ref WeaponBehavior behavior = ref executeBehaviors[i];
-                        behavior.WeaponComponentOnGUI(ref behavior, $"{i}");
-                        return false;
-                    },
-                    WeaponBehavior.GetDefault
-                );
+                if (executeBehaviors != null)
+                {
+                    CustomGUILayout.ArrayField(
+                        ref executeBehaviors,
+                        i =>
+                        {
+                            ref WeaponBehavior behavior = ref executeBehaviors[i];
+                            behavior.WeaponComponentOnGUI(ref behavior, $"{i}");
+                            return false;
+                        },
+                        WeaponBehavior.GetDefault
+                    );
+                }
             }
             CustomGUILayout.EndTab();
 
             CustomGUILayout.TitleHeaderLabel("적중시 효과");
             CustomGUILayout.BeginTab();
             {
-                CustomGUILayout.ArrayField(
-                    ref hitBehavior,
-                    i =>
-                    {
-                        ref WeaponBehavior behavior = ref hitBehavior[i];
-                        behavior.WeaponComponentOnGUI(ref behavior, $"{i}");
-                        return false;
-                    },
-                    WeaponBehavior.GetDefault
-                );
+                if (hitBehavior != null)
+                {
+                    CustomGUILayout.ArrayField(
+                         ref hitBehavior,
+                         i =>
+                         {
+                             ref WeaponBehavior behavior = ref hitBehavior[i];
+                             behavior.WeaponComponentOnGUI(ref behavior, $"{i}");
+                             return false;
+                         },
+                         WeaponBehavior.GetDefault
+                    );
+                }
+                
             }
             CustomGUILayout.EndTab();
         }

@@ -69,6 +69,11 @@ namespace WeaponSystem.Component.Operator
         public static WeaponIntOperator GetDefault() => new Operator_AssignIntValue();
 #endif
     }
+    [ComponentInfo("연산자(String)", "무기의 연산자입니다.")]
+    public abstract class WeaponStringOperator : WeaponOperator<string>
+    {
+        public static WeaponStringOperator GetDefault() => new Operator_AssignStringValue();
+    }
     [ComponentInfo("연산자(Object)", "무기의 연산자입니다.")]
     public abstract class WeaponObjectOperator : WeaponOperator<UnityEngine.Object>
     {

@@ -14,8 +14,6 @@ public class WeaponRuleInspector : Editor
     }
     public override void OnInspectorGUI()
     {
-        WeaponComponent.floatingManager.EventListen();
-
         CustomGUILayout.TitleHeaderLabel("컨테이너");
         weaponRule.controllerValueContainerLength = EditorGUILayout.IntField("Controller", weaponRule.controllerValueContainerLength);
         weaponRule.intValueContainerLength = EditorGUILayout.IntField("Int", weaponRule.intValueContainerLength);
@@ -24,7 +22,5 @@ public class WeaponRuleInspector : Editor
         EditorGUILayout.Space(10);
 
         weaponRule.OnGUI();
-
-        WeaponComponent.floatingManager.Draw();
     }
 }

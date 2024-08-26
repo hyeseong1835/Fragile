@@ -249,6 +249,7 @@ namespace WeaponSystem.Component
                     i =>
                     {
                         selectEvent(tree.value[i]);
+                        Debug.Log(tree.value[i]);
                         return true;
                     }
                 )
@@ -262,24 +263,30 @@ namespace WeaponSystem.Component
                 info = GetComponentInfo(GetType());
             }
 
+            floatingManager.EventListen();
+            
             OnGUI(label);
-
-            if (usingFloatingManagerComponent == this)
-            {
-                floatingManager.SetRect(HeaderRect);
-            }
-
-            if (changeOrigin != "Null")
-            {
-                Dispose();
-
-                origin = (TComponent)GetComponentInfo(changeOrigin).CreateComponent();
-            }
+            
             if (Event.current.type == EventType.MouseDown && Event.current.button == 1 && HeaderRect.Contains(Event.current.mousePosition))
             {
                 GenericMenu menu = new GenericMenu();
                 SetMenu<TComponent>(menu);
                 menu.ShowAsContext();
+            }
+
+            if (usingFloatingManagerComponent == this)
+            {
+                if (HeaderRect.width > 10) floatingManager.SetRect(HeaderRect);
+            }
+            
+            floatingManager.Draw();
+
+            if (changeOrigin != "Null")
+            {
+                Dispose();
+
+                Debug.Log(changeOrigin);
+                origin = (TComponent)GetComponentInfo(changeOrigin).CreateComponent();
             }
         }
 

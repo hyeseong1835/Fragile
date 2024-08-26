@@ -44,7 +44,26 @@ namespace WeaponSystem.Component.Operator
         }
 #endif
     }
+    [Serializable]
+#if UNITY_EDITOR
+    [ComponentInfo("할당", "기본적인 연산자입니다.")]
+#endif
+    public class Operator_AssignStringValue : WeaponStringOperator
+    {
+        public string value;
 
+        public override string GetValue(WeaponBehavior context)
+        {
+            return value;
+        }
+
+#if UNITY_EDITOR
+        protected override void DrawHeaderProperty(Rect rect)
+        {
+            value = UnityEditor.EditorGUI.TextField(rect, value);
+        }
+#endif
+    }
     [Serializable]
 #if UNITY_EDITOR
     [ComponentInfo("할당", "기본적인 연산자입니다.")]

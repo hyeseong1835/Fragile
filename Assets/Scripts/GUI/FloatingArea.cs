@@ -16,7 +16,7 @@ public class FloatingAreaManager
     }
     public void SetRect(Rect headerRect)
     {
-        SetRect(headerRect.position.AddY(headerRect.height), headerRect.width);
+        SetRect(headerRect.position.SetY(headerRect.yMax), headerRect.width);
     }
     public void EventListen()
     {

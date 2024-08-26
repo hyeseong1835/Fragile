@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 0}
   displayedWeaponName: "\uAC80"
-  description: "\uADF8\uB0E5 \uAC80."
+  description: "\uAC80\uC774\uB2E4."
   rule: {fileID: 11400000, guid: ea1389a19b935564e9acf574bcc9c8cb, type: 2}

@@ -1298,7 +1298,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fa16f80ffbcc874fba949a053aaecd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvas: {fileID: 1032582411}
+  canvas: {fileID: 1032582413}
   content: {fileID: 177462443}
   slotPrefab: {fileID: 3412866010031115498, guid: 8a738f57428ecb6438e4f77fac33915c, type: 3}
   summary: {fileID: 1296845379}
@@ -1959,24 +1959,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 1820242561}
-  material:
-  - data: {fileID: 11400000, guid: 8b97dfcd7e2efd140b44ca732008ecbe, type: 2}
-    heat: 30315000
-    deltaHeat: 0
-    mass: 1000
-  - data: {fileID: 11400000, guid: 8b97dfcd7e2efd140b44ca732008ecbe, type: 2}
-    heat: 33315000
-    deltaHeat: 0
-    mass: 1000
-  linkInfo:
-  - aMaterialIndex: 0
-    bMaterialIndex: 1
-    durability: 5
-    recovery: []
-  - aMaterialIndex: 1
-    bMaterialIndex: 0
-    durability: 5
-    recovery: []
+  data: {fileID: 11400000, guid: 800533ce064286246b7ed4077d6d7731, type: 2}
+  handle:
+    mass: 100
+  blade: []
 --- !u!1 &1296845377
 GameObject:
   m_ObjectHideFlags: 0
@@ -2550,7 +2536,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   curWeapon: {fileID: 1224710345}
-  heatConductivity: 0.1
 --- !u!114 &1820242562
 MonoBehaviour:
   m_ObjectHideFlags: 0
