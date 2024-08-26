@@ -16,3 +16,5 @@ MonoBehaviour:
   displayedName: "\uB098\uBB34"
   description: "\uB098\uBB34\uC785\uB2C8\uB2E4."
   maxDurability: 100
+  heatConductivity: 0.1
+  deltaHeatRate: 0.5

@@ -7,9 +7,13 @@ public class PlayerController : Controller
     {
 
     }
-    new protected void Update()
+    protected void Update()
     {
-        base.Update();
+        Move();
+    }
+    void Move()
+    {
+        transform.position += (Vector3)(moveInput.normalized * Time.deltaTime);
     }
     public void OnMoveInput(InputAction.CallbackContext callback)
     {

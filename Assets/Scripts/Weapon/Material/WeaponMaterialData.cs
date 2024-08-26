@@ -10,4 +10,9 @@ public class WeaponMaterialData : ScriptableObject
     public string description;
 
     public float maxDurability = 100;
+    public float heatConductivity = 0.25f;
+    public float deltaHeatRate = 0.5f;
+    //public float specificHeat;
+
+    [SerializeReference] public MaterialUsage[] usage;
 }

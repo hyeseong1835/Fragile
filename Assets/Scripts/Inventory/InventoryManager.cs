@@ -14,7 +14,7 @@ public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager instance;
 
-    public Canvas canvas;
+    public InventoryCanvas canvas;
     public Transform content;
     public GameObject slotPrefab;
     public TextMeshProUGUI summary;

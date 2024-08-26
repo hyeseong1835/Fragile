@@ -5,16 +5,27 @@ using UnityEngine;
 
 public abstract class Controller : Entity, IMaterialLink
 {
+    public int Temperature => 30315;
+
     public Weapon curWeapon;
 
     [NonSerialized] public Vector2 moveInput = Vector2.zero;
+    public float heatConductivity = 0.1f;
 
-    protected void Update()
+    public void ConductHeat(IMaterialLink material)
     {
-        Move();
+        int delta = Mathf.RoundToInt((Temperature - material.Temperature) * heatConductivity);
+        material.Heat(delta);
+        Heat(-delta);
     }
-    protected virtual void Move()
-    { 
-        transform.position += (Vector3)(moveInput.normalized * Time.deltaTime);
+    public void Heat(int intensity)
+    {
+        if (intensity > 0) Debug.Log($"뜨거워요 {intensity}");
+        else if (intensity < 0) Debug.Log($"차가워요 {intensity}");
+    }
+
+    public void Damage(float intensity, DurabilityRecovery recovery)
+    {
+        Debug.Log($"아파요 {intensity} [{recovery.recovery}, {recovery.value}, {recovery.rate}]");
     }
 }
