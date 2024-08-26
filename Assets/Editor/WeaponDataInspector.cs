@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using WeaponSystem;
 
 [CustomEditor(typeof(WeaponData))]
 public class WeaponDataInspector : Editor

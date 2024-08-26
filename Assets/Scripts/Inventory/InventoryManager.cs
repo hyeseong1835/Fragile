@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using Sirenix.OdinInspector;
 using System;
 using TMPro;
+using WeaponSystem.Material;
+
 public interface IInventoryItem
 {
     public Sprite Icon { get; }
@@ -33,7 +35,7 @@ public class InventoryManager : MonoBehaviour
     [Button("무기 재료 추가")]
     void AddItem(WeaponMaterialData data) 
     {
-        AddItem(new WeaponMaterial(data));
+        //AddItem(new WeaponMaterial(data));
     }
     public void AddItem(IInventoryItem item)
     {

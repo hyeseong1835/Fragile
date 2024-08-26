@@ -1,6 +1,8 @@
 using UnityEditor;
+using WeaponSystem;
+using WeaponSystem.Component;
 
-[CustomEditor(typeof(WeaponRule))]
+[CustomEditor(typeof(WeaponRule), true)]
 public class WeaponRuleInspector : Editor
 {
     WeaponRule weaponRule;
@@ -9,14 +11,6 @@ public class WeaponRuleInspector : Editor
     {
         weaponRule = (WeaponRule)target;
 
-        if (weaponRule.attackInvoker == null)
-        {
-            weaponRule.attackInvoker = WeaponSkillInvoker.CreateDefault();
-        }
-        if (weaponRule.specialInvoker == null)
-        {
-            weaponRule.specialInvoker = WeaponSkillInvoker.CreateDefault();
-        }
     }
     public override void OnInspectorGUI()
     {
@@ -29,8 +23,7 @@ public class WeaponRuleInspector : Editor
         
         EditorGUILayout.Space(10);
 
-        weaponRule.attackInvoker.WeaponComponentOnGUI(ref weaponRule.attackInvoker, "기본 공격");
-        weaponRule.specialInvoker.WeaponComponentOnGUI(ref weaponRule.specialInvoker, "특수 공격");
+        weaponRule.OnGUI();
 
         WeaponComponent.floatingManager.Draw();
     }

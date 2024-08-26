@@ -2,38 +2,42 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using WeaponSystem.Component.Operator;
 
-[Serializable]
-#if UNITY_EDITOR
-[ComponentInfo("데미지", "대상에게 피해를 가합니다")]
-#endif
-public class Behavior_Damage : WeaponBehavior
+namespace WeaponSystem.Component.Behavior
 {
-    public WeaponEntityOperator targetGetter = WeaponEntityOperator.GetDefault();
-    public WeaponFloatOperator damageGetter = WeaponFloatOperator.GetDefault();
-
-    protected override void Initialize()
+    [Serializable]
+#if UNITY_EDITOR
+    [ComponentInfo("데미지", "대상에게 피해를 가합니다")]
+#endif
+    public class Behavior_Damage : WeaponBehavior
     {
-        Debug.Log("DamageBehavior");
-    }
-    public override void Execute()
-    {
-        Entity target = targetGetter.GetValue(this);
-        float damage = damageGetter.GetValue(this);
+        public WeaponEntityOperator targetGetter = WeaponEntityOperator.GetDefault();
+        public WeaponFloatOperator damageGetter = WeaponFloatOperator.GetDefault();
 
-        target.TakeDamage(damage);
-    }
+        protected override void Initialize()
+        {
+            Debug.Log("DamageBehavior");
+        }
+        public override void Execute(Weapon weapon)
+        {
+            Entity target = targetGetter.GetValue(this);
+            float damage = damageGetter.GetValue(this);
+
+            target.TakeDamage(damage);
+        }
 
 #if UNITY_EDITOR
-    protected override void DrawField()
-    {
-        CustomGUILayout.BeginTab();
+        protected override void DrawField()
         {
-            targetGetter.WeaponComponentOnGUI(ref targetGetter, "대상");
+            CustomGUILayout.BeginTab();
+            {
+                targetGetter.WeaponComponentOnGUI(ref targetGetter, "대상");
 
-            damageGetter.WeaponComponentOnGUI(ref damageGetter, "피해량");
+                damageGetter.WeaponComponentOnGUI(ref damageGetter, "피해량");
+            }
+            CustomGUILayout.EndTab();
         }
-        CustomGUILayout.EndTab();
-    }
 #endif
+    }
 }

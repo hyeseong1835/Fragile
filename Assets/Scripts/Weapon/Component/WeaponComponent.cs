@@ -11,287 +11,292 @@ using System.Linq;
 using UnityEditor;
 #endif
 
+namespace WeaponSystem.Component
+{
 #if UNITY_EDITOR
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-public class ComponentInfoAttribute : Attribute
-{
-    public string path;
-    public string description;
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
+    public class ComponentInfoAttribute : Attribute
+    {
+        public string path;
+        public string description;
 
-    public ComponentInfoAttribute(string path, string description)
-    {
-        this.path = path;
-        this.description = description;
+        public ComponentInfoAttribute(string path, string description)
+        {
+            this.path = path;
+            this.description = description;
+        }
     }
-}
-public class WeaponComponentInfoTree
-{
-    public string path;
-    public string name;
-    public List<WeaponComponentInfo> value = new List<WeaponComponentInfo>();
-    public List<WeaponComponentInfoTree> children = new List<WeaponComponentInfoTree>();
+    public class WeaponComponentInfoTree
+    {
+        public string path;
+        public string name;
+        public List<WeaponComponentInfo> value = new List<WeaponComponentInfo>();
+        public List<WeaponComponentInfoTree> children = new List<WeaponComponentInfoTree>();
 
-    public WeaponComponentInfoTree(string path, string name)
-    {
-        this.path = path;
-        this.name = name;
-    }
-    public bool Contain(string name)
-    {
-        foreach (WeaponComponentInfoTree tree in children)
+        public WeaponComponentInfoTree(string path, string name)
         {
-            if (tree.name == name) return true;
+            this.path = path;
+            this.name = name;
         }
-        return false;
-    }
-    public WeaponComponentInfoTree GetChild(string name)
-    {
-        foreach (WeaponComponentInfoTree tree in children)
+        public bool Contain(string name)
         {
-            if (tree.name == name) return tree;
+            foreach (WeaponComponentInfoTree tree in children)
+            {
+                if (tree.name == name) return true;
+            }
+            return false;
         }
-        Debug.LogError($"Not Found: {name}");
-        return null;
-    }
-    public WeaponComponentInfo GetValue(string name)
-    {
-        foreach (WeaponComponentInfo v in value)
+        public WeaponComponentInfoTree GetChild(string name)
         {
-            if (v.name == name) return v;
+            foreach (WeaponComponentInfoTree tree in children)
+            {
+                if (tree.name == name) return tree;
+            }
+            Debug.LogError($"Not Found: {name}");
+            return null;
         }
-        Debug.LogError($"Not Found: {name}");
-        return default;
-    }
-    public WeaponComponentInfoTree GetOrAdd(string path)
-    {
-        string name = path.Split('/').Last();
-        foreach (WeaponComponentInfoTree tree in children)
+        public WeaponComponentInfo GetValue(string name)
         {
-            if (tree.name == name) return tree;
+            foreach (WeaponComponentInfo v in value)
+            {
+                if (v.name == name) return v;
+            }
+            Debug.LogError($"Not Found: {name}");
+            return default;
         }
-        WeaponComponentInfoTree result = new WeaponComponentInfoTree(path, name);
-        children.Add(result);
-        return result;
+        public WeaponComponentInfoTree GetOrAdd(string path)
+        {
+            string name = path.Split('/').Last();
+            foreach (WeaponComponentInfoTree tree in children)
+            {
+                if (tree.name == name) return tree;
+            }
+            WeaponComponentInfoTree result = new WeaponComponentInfoTree(path, name);
+            children.Add(result);
+            return result;
+        }
     }
-}
-public struct WeaponComponentInfo
-{
-    public Type type;
-    public string path;
-    public string name;
-    public string description;
+    public struct WeaponComponentInfo
+    {
+        public Type type;
+        public string path;
+        public string name;
+        public string description;
 
-    public WeaponComponentInfo(Type type, string path, string name, string description)
-    {
-        this.type = type;
-        this.path = path;
-        this.name = name;
-        this.description = description;
-    }
-    public override string ToString()
-    {
-        return $"[{type}] \"{name}\" : ({description}) \n\"{path}\"";
-    }
-    public WeaponComponent CreateComponent()
-    {
-        WeaponComponent component = (WeaponComponent)Activator.CreateInstance(type);
+        public WeaponComponentInfo(Type type, string path, string name, string description)
         {
-            component.info = this;
+            this.type = type;
+            this.path = path;
+            this.name = name;
+            this.description = description;
         }
-        return component;
+        public override string ToString()
+        {
+            return $"[{type}] \"{name}\" : ({description}) \n\"{path}\"";
+        }
+        public WeaponComponent CreateComponent()
+        {
+            WeaponComponent component = (WeaponComponent)Activator.CreateInstance(type);
+            {
+                component.info = this;
+            }
+            return component;
+        }
     }
-}
 #endif
 
-public abstract class WeaponComponent : IDisposable
-{
-    public abstract void Dispose();
+    public abstract class WeaponComponent : IDisposable
+    {
+        public abstract void Dispose();
 
 #if UNITY_EDITOR
-    public static FloatingAreaManager floatingManager = new FloatingAreaManager();
-    protected static WeaponComponent usingFloatingManagerComponent = null;
-    public static WeaponComponentInfoTree componentInfoTree;
+        public static FloatingAreaManager floatingManager = new FloatingAreaManager();
+        protected static WeaponComponent usingFloatingManagerComponent = null;
+        public static WeaponComponentInfoTree componentInfoTree;
 
-    [InitializeOnLoadMethod]
-    static void LoadComponentInfo()
-    {
-        componentInfoTree = new WeaponComponentInfoTree("Component", "Component");
-        Type componentType = typeof(WeaponComponent);
-        foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
+        [InitializeOnLoadMethod]
+        static void LoadComponentInfo()
         {
-            if (type.IsClass && type.IsAbstract == false && componentType.IsAssignableFrom(type))
+            componentInfoTree = new WeaponComponentInfoTree("Component", "Component");
+            Type componentType = typeof(WeaponComponent);
+            foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
             {
-                IEnumerable<ComponentInfoAttribute> attributes = type.GetCustomAttributes<ComponentInfoAttribute>(true).Reverse();
-                List<string> path = new List<string>();
-                foreach(ComponentInfoAttribute attribute in attributes)
+                if (type.IsClass && type.IsAbstract == false && componentType.IsAssignableFrom(type))
                 {
-                    path.AddRange(attribute.path.Split('/'));
-                    AddComponentInfo(componentInfoTree, 0);
-
-                    void AddComponentInfo(WeaponComponentInfoTree tree, int index)
+                    IEnumerable<ComponentInfoAttribute> attributes = type.GetCustomAttributes<ComponentInfoAttribute>(true).Reverse();
+                    List<string> path = new List<string>();
+                    foreach (ComponentInfoAttribute attribute in attributes)
                     {
-                        if (index == path.Count - 1)
+                        path.AddRange(attribute.path.Split('/'));
+                        AddComponentInfo(componentInfoTree, 0);
+
+                        void AddComponentInfo(WeaponComponentInfoTree tree, int index)
                         {
-                            tree.value.Add(
-                                new WeaponComponentInfo(
-                                    type, 
-                                    string.Join("/", path), 
-                                    path[^1], 
-                                    attribute.description
-                                )
-                            );
-                            return;
+                            if (index == path.Count - 1)
+                            {
+                                tree.value.Add(
+                                    new WeaponComponentInfo(
+                                        type,
+                                        string.Join("/", path),
+                                        path[^1],
+                                        attribute.description
+                                    )
+                                );
+                                return;
+                            }
+                            WeaponComponentInfoTree child = tree.GetOrAdd(string.Join("/", path.Take(++index)));
+                            AddComponentInfo(child, index);
                         }
-                        WeaponComponentInfoTree child = tree.GetOrAdd(string.Join("/", path.Take(++index)));
-                        AddComponentInfo(child, index);
                     }
                 }
             }
         }
-    }
 
-    [MenuItem("Tools/컴포넌트 구조 확인")]
-    static void DebugComponentInfo()
-    {
-        Log(componentInfoTree);
-
-        void Log(WeaponComponentInfoTree tree)
+        [MenuItem("Tools/컴포넌트 구조 확인")]
+        static void DebugComponentInfo()
         {
-            Debug.Log($"\"{tree.name}\"====================\n {tree.path}");
+            Log(componentInfoTree);
 
-            foreach (WeaponComponentInfo info in tree.value)
+            void Log(WeaponComponentInfoTree tree)
             {
-                Debug.Log(info);
-            }
-            foreach (WeaponComponentInfoTree t in tree.children)
-            {
-                Log(t);
-            }
-        }
-    }
-    public static WeaponComponentInfo GetComponentInfo(Type type)
-    {
-        IEnumerable<ComponentInfoAttribute> attributes = type.GetCustomAttributes<ComponentInfoAttribute>(true);
+                Debug.Log($"\"{tree.name}\"====================\n {tree.path}");
 
-        List<string> path = new List<string>();
-        foreach (ComponentInfoAttribute attribute in attributes)
-        {
-            foreach (string s in attribute.path.Split('/'))
-            {
-                path.Insert(0, s);
-            }
-        }
-        return GetComponentInfo(path);
-    }
-    public static WeaponComponentInfo GetComponentInfo(string path)
-    {
-        string[] split = path.Split('/');
-
-        WeaponComponentInfoTree open = componentInfoTree;
-        for (int i = 0; i < split.Length - 1; i++)
-        {
-            open = open.GetChild(split[i]);
-        }
-        return open.GetValue(split[^1]);
-    }
-    public static WeaponComponentInfo GetComponentInfo(string[] split)
-    {
-        WeaponComponentInfoTree open = componentInfoTree;
-        for (int i = 0; i < split.Length - 1; i++)
-        {
-            open = open.GetChild(split[i]);
-        }
-        return open.GetValue(split[^1]);
-    }
-    public static WeaponComponentInfo GetComponentInfo(List<string> split)
-    {
-        WeaponComponentInfoTree open = componentInfoTree;
-        for (int i = 0; i < split.Count - 1; i++)
-        {
-            open = open.GetChild(split[i]);
-        }
-        return open.GetValue(split[^1]);
-    }
-    public static WeaponComponentInfoTree GetComponentInfoTree(string path)
-    {
-        string[] split = path.Split('/');
-
-        WeaponComponentInfoTree open = componentInfoTree;
-        for (int i = 0; i < split.Length; i++)
-        {
-            open = open.GetChild(split[i]);
-        }
-        return open;
-    }
-
-    public WeaponComponentInfo info = new WeaponComponentInfo(null, "Null", "Null", "Null");
-    protected string changeOrigin = "Null";
-
-    protected abstract Rect HeaderRect { get; }
-
-    public void CreateComponentSelectMenu(string treePath, Action<WeaponComponentInfo> selectEvent)
-    {
-        WeaponComponentInfoTree tree = GetComponentInfoTree(treePath);
-
-        floatingManager.Create(
-            new CategoryTextPopupFloatingArea(
-                tree.children.Select(x => x.name).ToArray(),
-                tree.value.Select(x => x.name).ToArray(),
-                (floating, i) => {
-                    tree = tree.children[i];
-                    treePath += $"/{tree.name}";
-                    floating.category = tree.children.Select(x => x.name).ToArray();
-                    floating.element = tree.value.Select(x => x.name).ToArray();
-                },
-                i => {
-                    selectEvent(tree.value[i]);
-                    return true;
+                foreach (WeaponComponentInfo info in tree.value)
+                {
+                    Debug.Log(info);
                 }
-            )
-        );
-    }
-    public void WeaponComponentOnGUI<TComponent>(ref TComponent origin, string label)
-        where TComponent : WeaponComponent
-    {
-        if (info.type == null)
+                foreach (WeaponComponentInfoTree t in tree.children)
+                {
+                    Log(t);
+                }
+            }
+        }
+        public static WeaponComponentInfo GetComponentInfo(Type type)
         {
-            info = GetComponentInfo (GetType());
+            IEnumerable<ComponentInfoAttribute> attributes = type.GetCustomAttributes<ComponentInfoAttribute>(true);
+
+            List<string> path = new List<string>();
+            foreach (ComponentInfoAttribute attribute in attributes)
+            {
+                foreach (string s in attribute.path.Split('/'))
+                {
+                    path.Insert(0, s);
+                }
+            }
+            return GetComponentInfo(path);
+        }
+        public static WeaponComponentInfo GetComponentInfo(string path)
+        {
+            string[] split = path.Split('/');
+
+            WeaponComponentInfoTree open = componentInfoTree;
+            for (int i = 0; i < split.Length - 1; i++)
+            {
+                open = open.GetChild(split[i]);
+            }
+            return open.GetValue(split[^1]);
+        }
+        public static WeaponComponentInfo GetComponentInfo(string[] split)
+        {
+            WeaponComponentInfoTree open = componentInfoTree;
+            for (int i = 0; i < split.Length - 1; i++)
+            {
+                open = open.GetChild(split[i]);
+            }
+            return open.GetValue(split[^1]);
+        }
+        public static WeaponComponentInfo GetComponentInfo(List<string> split)
+        {
+            WeaponComponentInfoTree open = componentInfoTree;
+            for (int i = 0; i < split.Count - 1; i++)
+            {
+                open = open.GetChild(split[i]);
+            }
+            return open.GetValue(split[^1]);
+        }
+        public static WeaponComponentInfoTree GetComponentInfoTree(string path)
+        {
+            string[] split = path.Split('/');
+
+            WeaponComponentInfoTree open = componentInfoTree;
+            for (int i = 0; i < split.Length; i++)
+            {
+                open = open.GetChild(split[i]);
+            }
+            return open;
         }
 
-        OnGUI(label);
+        public WeaponComponentInfo info = new WeaponComponentInfo(null, "Null", "Null", "Null");
+        protected string changeOrigin = "Null";
 
-        if (usingFloatingManagerComponent == this)
+        protected abstract Rect HeaderRect { get; }
+
+        public void CreateComponentSelectMenu(string treePath, Action<WeaponComponentInfo> selectEvent)
         {
-            floatingManager.SetRect(HeaderRect);
+            WeaponComponentInfoTree tree = GetComponentInfoTree(treePath);
+
+            floatingManager.Create(
+                new CategoryTextPopupFloatingArea(
+                    tree.children.Select(x => x.name).ToArray(),
+                    tree.value.Select(x => x.name).ToArray(),
+                    (floating, i) =>
+                    {
+                        tree = tree.children[i];
+                        treePath += $"/{tree.name}";
+                        floating.category = tree.children.Select(x => x.name).ToArray();
+                        floating.element = tree.value.Select(x => x.name).ToArray();
+                    },
+                    i =>
+                    {
+                        selectEvent(tree.value[i]);
+                        return true;
+                    }
+                )
+            );
+        }
+        public void WeaponComponentOnGUI<TComponent>(ref TComponent origin, string label)
+            where TComponent : WeaponComponent
+        {
+            if (info.type == null)
+            {
+                info = GetComponentInfo(GetType());
+            }
+
+            OnGUI(label);
+
+            if (usingFloatingManagerComponent == this)
+            {
+                floatingManager.SetRect(HeaderRect);
+            }
+
+            if (changeOrigin != "Null")
+            {
+                Dispose();
+
+                origin = (TComponent)GetComponentInfo(changeOrigin).CreateComponent();
+            }
+            if (Event.current.type == EventType.MouseDown && Event.current.button == 1 && HeaderRect.Contains(Event.current.mousePosition))
+            {
+                GenericMenu menu = new GenericMenu();
+                SetMenu<TComponent>(menu);
+                menu.ShowAsContext();
+            }
         }
 
-        if (changeOrigin != "Null")
+        protected abstract void OnGUI(string label);
+        protected virtual void SetMenu<TComponent>(GenericMenu menu)
+            where TComponent : WeaponComponent
         {
-            Dispose();
-
-            origin = (TComponent)GetComponentInfo(changeOrigin).CreateComponent();
+            menu.AddItem(
+                new GUIContent("변경"),
+                false,
+                () => CreateComponentSelectMenu(
+                    typeof(TComponent).GetCustomAttributes<ComponentInfoAttribute>().First().path,
+                    info => changeOrigin = info.path
+                )
+            );
+            usingFloatingManagerComponent = this;
         }
-        if (Event.current.type == EventType.MouseDown && Event.current.button == 1 && HeaderRect.Contains(Event.current.mousePosition))
-        {
-            GenericMenu menu = new GenericMenu();
-            SetMenu<TComponent>(menu);
-            menu.ShowAsContext();
-        }
-    }
-
-    protected abstract void OnGUI(string label);
-    protected virtual void SetMenu<TComponent>(GenericMenu menu)
-        where TComponent : WeaponComponent
-    {
-        menu.AddItem(
-            new GUIContent("변경"),
-            false,
-            () => CreateComponentSelectMenu(
-                typeof(TComponent).GetCustomAttributes<ComponentInfoAttribute>().First().path,
-                info => changeOrigin = info.path
-            )
-        );
-        usingFloatingManagerComponent = this;
-    }
 #endif
+    }
 }
