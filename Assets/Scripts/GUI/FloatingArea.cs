@@ -20,26 +20,11 @@ public class FloatingAreaManager
     }
     public void EventListen()
     {
-        if (area != null)
-        {
-            if (Event.current.type == EventType.MouseDown)
-            {
-                if (rect.Contains(Event.current.mousePosition))
-                {
-                    area.EventListen();
+        if (area == null) return;
+        
+        rect = new Rect(position, new Vector2(width, area.GetHeight()));
 
-                    if (Event.current.type != EventType.Used) Event.current.Use();
-                }
-                else
-                {
-                    Destroy();
-                }
-            }
-            else
-            {
-                area.EventListen();
-            }
-        }
+        area.EventListen();
     }
     public void Create(FloatingArea area)
     {
@@ -50,21 +35,20 @@ public class FloatingAreaManager
     }
     public void Draw()
     {
-        if (area != null)
-        {
-            rect = new Rect(position, new Vector2(width, area.GetHeight()));
+        if (area == null) return;
 
-            if (created)
-            {
-                area.OnCreated();
-                created = false;
-            }
-            if (Event.current.type == EventType.Repaint)
-            {
-                area.CreateField();
-            }
-            area.Draw();
+        rect = new Rect(position, new Vector2(width, area.GetHeight()));
+
+        if (created)
+        {
+            area.OnCreated();
+            created = false;
         }
+        if (Event.current.type == EventType.Repaint)
+        {
+            area.CreateField();
+        }
+        area.Draw();
     }
     public void Destroy()
     {

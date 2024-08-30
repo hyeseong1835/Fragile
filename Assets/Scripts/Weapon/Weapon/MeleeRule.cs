@@ -9,48 +9,32 @@ namespace WeaponSystem
     [CreateAssetMenu(fileName = "WeaponRule", menuName = "Data/무기/근접 무기/규칙")]
     public class MeleeRule : WeaponRule
     {
-        [SerializeReference] public WeaponBehavior[] executeBehaviors;
-        [SerializeReference] public WeaponBehavior[] hitBehavior;
+        [SerializeReference] public WeaponBehavior[] attackExecuteBehaviors;
+        [SerializeReference] public WeaponBehavior[] attackHitBehavior;
+        [SerializeReference] public WeaponBehavior[] attackRechargeBehaviors;
+
+        [SerializeReference] public WeaponBehavior[] specialExecuteBehaviors;
+        [SerializeReference] public WeaponBehavior[] specialHitBehavior;
+        [SerializeReference] public WeaponBehavior[] specialRechargeBehaviors;
 
 #if UNITY_EDITOR
         public override void OnGUI()
         {
-            CustomGUILayout.TitleHeaderLabel("실행 효과");
+            CustomGUILayout.TitleHeaderLabel("기본 공격");
             CustomGUILayout.BeginTab();
             {
-                if (executeBehaviors != null)
-                {
-                    CustomGUILayout.ArrayField(
-                        ref executeBehaviors,
-                        i =>
-                        {
-                            ref WeaponBehavior behavior = ref executeBehaviors[i];
-                            behavior.WeaponComponentOnGUI(ref behavior, $"{i}");
-                            return false;
-                        },
-                        WeaponBehavior.GetDefault
-                    );
-                }
+                CustomGUILayout.WeaponBehaviorArrayField(ref attackExecuteBehaviors, "실행 효과");
+                CustomGUILayout.WeaponBehaviorArrayField(ref attackHitBehavior, "적중시 효과");
+                CustomGUILayout.WeaponBehaviorArrayField(ref attackRechargeBehaviors, "재충전 효과");
             }
             CustomGUILayout.EndTab();
 
-            CustomGUILayout.TitleHeaderLabel("적중시 효과");
+            CustomGUILayout.TitleHeaderLabel("기본 공격");
             CustomGUILayout.BeginTab();
             {
-                if (hitBehavior != null)
-                {
-                    CustomGUILayout.ArrayField(
-                         ref hitBehavior,
-                         i =>
-                         {
-                             ref WeaponBehavior behavior = ref hitBehavior[i];
-                             behavior.WeaponComponentOnGUI(ref behavior, $"{i}");
-                             return false;
-                         },
-                         WeaponBehavior.GetDefault
-                    );
-                }
-                
+                CustomGUILayout.WeaponBehaviorArrayField(ref specialExecuteBehaviors, "실행 효과");
+                CustomGUILayout.WeaponBehaviorArrayField(ref specialHitBehavior, "적중시 효과");
+                CustomGUILayout.WeaponBehaviorArrayField(ref specialRechargeBehaviors, "재충전 효과");
             }
             CustomGUILayout.EndTab();
         }

@@ -3,6 +3,12 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : Controller
 {
+    public override bool AttackInput => attackInput;
+    public override bool SpecialInput => specialInput;
+
+    bool attackInput = false;
+    bool specialInput = false;
+    
     protected void OnEnable()
     {
 
@@ -23,12 +29,12 @@ public class PlayerController : Controller
     {
         if (curWeapon == null) return;
 
-        curWeapon.input = callback.ReadValueAsButton();
+        attackInput = callback.ReadValueAsButton();
     }
     public void OnSpecialInput(InputAction.CallbackContext callback)
     {
         if (curWeapon == null) return;
 
-        curWeapon.input = callback.ReadValueAsButton();
+        specialInput = callback.ReadValueAsButton();
     }
 }

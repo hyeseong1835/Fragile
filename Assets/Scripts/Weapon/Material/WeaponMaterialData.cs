@@ -1,7 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using WeaponSystem.Material.Usage;
 
 namespace WeaponSystem.Material
 {
@@ -12,6 +13,35 @@ namespace WeaponSystem.Material
         public string displayedName;
         public string description;
 
-        [SerializeReference] public WeaponMaterialUsage[] usage;
+        [SerializeReference] public WeaponMaterialUsage[] usages = new WeaponMaterialUsage[0];
+
+#if UNITY_EDITOR
+        public int IndexOfUsage(Type usageType)
+        {
+            for (int i = 0; i < usages.Length; i++)
+            {
+                if(usages[i].GetType().Equals(usageType))
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        public void AddUsage(WeaponMaterialUsageInfo info)
+        {
+            WeaponMaterialUsage usage = (WeaponMaterialUsage)Activator.CreateInstance(info.type);
+
+            for (int i = 0; i < info.need.Length; i++)
+            {
+                ref Type needType = ref info.need[i];
+
+                int index = IndexOfUsage(needType);
+                if (index == -1)
+                {
+                    AddUsage(new WeaponMaterialUsageInfo(needType));
+                }
+            }
+        }
+#endif
     }
 }

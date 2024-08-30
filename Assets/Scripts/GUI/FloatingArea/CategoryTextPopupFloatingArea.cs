@@ -97,7 +97,7 @@ public class CategoryTextPopupFloatingArea : FloatingArea
                 elementStyle
             );
         }
-        //GUI.Label(new Rect(Event.current.mousePosition, new Vector2(50, 20)), $"{mouseOnIndex}");
+        GUI.Label(new Rect(Event.current.mousePosition, new Vector2(50, 20)), $"{mouseOnIndex}");
     }
 
     public override float GetHeight()

@@ -1961,8 +1961,13 @@ MonoBehaviour:
   owner: {fileID: 1820242561}
   data: {fileID: 11400000, guid: 800533ce064286246b7ed4077d6d7731, type: 2}
   handle:
+    data: {fileID: 11400000, guid: 8b97dfcd7e2efd140b44ca732008ecbe, type: 2}
     mass: 100
-  blade: []
+  blade:
+  - data: {fileID: 11400000, guid: 8b97dfcd7e2efd140b44ca732008ecbe, type: 2}
+    mass: 100
+  attackDelay: 0.5
+  specialDelay: 1
 --- !u!1 &1296845377
 GameObject:
   m_ObjectHideFlags: 0

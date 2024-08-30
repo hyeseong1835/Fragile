@@ -7,8 +7,9 @@ using Sirenix.OdinInspector;
 namespace WeaponSystem.Material
 {
     [Serializable]
-    public abstract class WeaponMaterial
+    public class WeaponMaterial
     {
+        public WeaponMaterialData data;
         /// <summary>
         /// [g]
         /// </summary>

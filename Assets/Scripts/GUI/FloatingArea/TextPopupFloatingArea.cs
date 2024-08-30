@@ -38,18 +38,22 @@ public class TextPopupFloatingArea : FloatingArea
     }
     public override void EventListen()
     {
-        mouseOnIndex = Mathf.FloorToInt((Event.current.mousePosition.y - (manager.rect.y + topSpace)) / height);
-        if (mouseOnIndex < 0 || mouseOnIndex >= array.Length)
+        if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
         {
-            mouseOnIndex = -1;
-        }
+            Debug.Log($"{mouseOnIndex}\n{manager.rect}\n{Event.current.mousePosition}");
+            mouseOnIndex = Mathf.FloorToInt((Event.current.mousePosition.y - (manager.rect.y + topSpace)) / height);
 
-        if (Event.current.type == EventType.MouseDown)
-        {
-            Event.current.Use();
-            if (mouseOnIndex == -1 || selectEvent.Invoke(mouseOnIndex))
+            Debug.Log(mouseOnIndex);
+            if (0 <= mouseOnIndex && mouseOnIndex < array.Length)
             {
-                manager.Destroy();
+                if(selectEvent.Invoke(mouseOnIndex))
+                {
+                    manager.Destroy();
+                    Event.current.Use();
+                    return;
+                }
+                Event.current.Use();
+                return;
             }
         }
     }
@@ -68,6 +72,8 @@ public class TextPopupFloatingArea : FloatingArea
                 labelStyle
             );
         }
+        
+        GUI.Label(new Rect(Event.current.mousePosition, new Vector2(50, 20)), $"{mouseOnIndex}");
     }
 
     public override float GetHeight()

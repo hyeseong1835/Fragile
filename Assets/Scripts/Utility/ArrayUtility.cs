@@ -1,12 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SearchService;
 
 public static class ArrayUtility
 {
-    public static void RemoveAt<TObj>(this TObj[] array, int index)
+    public static TObj[] RemoveAt<TObj>(this TObj[] array, int index)
     {
         TObj[] newArray = new TObj[array.Length - 1];
         int i;
@@ -18,6 +16,7 @@ public static class ArrayUtility
         {
             newArray[i] = array[i + 1];
         }
+        return newArray;
     }
     public static int IndexOf<ObjT>(this ObjT[] array, ObjT obj, int startIndex = 0)
     {

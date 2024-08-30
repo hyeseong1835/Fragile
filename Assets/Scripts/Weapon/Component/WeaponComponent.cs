@@ -104,7 +104,6 @@ namespace WeaponSystem.Component
         }
     }
 #endif
-
     public abstract class WeaponComponent : IDisposable
     {
         public abstract void Dispose();
@@ -289,7 +288,6 @@ namespace WeaponSystem.Component
                 origin = (TComponent)GetComponentInfo(changeOrigin).CreateComponent();
             }
         }
-
         protected abstract void OnGUI(string label);
         protected virtual void SetMenu<TComponent>(GenericMenu menu)
             where TComponent : WeaponComponent

@@ -1,6 +1,5 @@
 using UnityEditor;
 using WeaponSystem;
-using WeaponSystem.Component;
 
 [CustomEditor(typeof(WeaponRule), true)]
 public class WeaponRuleInspector : Editor

@@ -2,7 +2,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
+using WeaponSystem.Component;
+using WeaponSystem.Component.Behavior;
 
 public static class CustomGUILayout
 {
@@ -29,12 +32,12 @@ public static class CustomGUILayout
         EditorGUILayout.BeginHorizontal();
         {
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("추가"))
+            if (GUILayout.Button(EditorGUIUtility.IconContent("d_Toolbar Plus")))
             {
                 Array.Resize(ref array, array.Length + 1);
                 array[array.Length - 1] = defaultGetter();
             }
-            if (GUILayout.Button("삭제"))
+            if (GUILayout.Button(EditorGUIUtility.IconContent("d_Toolbar Minus")))
             {
                 if (array.Length > 0)
                 {
@@ -44,6 +47,28 @@ public static class CustomGUILayout
         }
         EditorGUILayout.EndHorizontal();
     }
+    public static void WeaponBehaviorArrayField(ref WeaponBehavior[] origin, string label)
+    {
+        if (origin == null) origin = new WeaponBehavior[0];
+
+        WeaponBehavior[] temp = origin;
+        CustomGUILayout.TitleHeaderLabel(label);
+        CustomGUILayout.BeginTab();
+        {
+            CustomGUILayout.ArrayField(
+                ref origin,
+                i =>
+                {
+                    ref WeaponBehavior behavior = ref temp[i];
+                    behavior.WeaponComponentOnGUI(ref behavior, $"{i}");
+                    return false;
+                },
+                WeaponBehavior.GetDefault
+            );
+        }
+        CustomGUILayout.EndTab();
+        
+    }   
     public static ObjectT InteractionObjectField<ObjectT>(ObjectT obj, Action<Rect> interaction, float width = -1, float height = -1) where ObjectT : UnityEngine.Object
     {
         if (width == -1) width = GUILayoutUtility.GetLastRect().width;

@@ -14,12 +14,35 @@ namespace WeaponSystem
     {
         public MeleeData data;
 
-        public BodyMaterial handle;
-        public BodyMaterial[] blade;
+        public WeaponMaterial handle;
+        public WeaponMaterial[] blade;
 
-        [NonSerialized]
-        [ShowInInspector]
-        bool canInvoke = true;
+        [FoldoutGroup("Input")]
+        #region Input  - - - - - - - - - - - - - - - - - - - - - -|
+
+            [HorizontalGroup("Input/Attack")]
+            #region Attack  - - - - - - - - - - - - - - - - -|    :
+
+                [SerializeField] float attackDelay = 0.5f;//-|
+                                                              [HorizontalGroup("Input/Attack", width: InspectorLayout.noLabelCheckBoxWidth)]
+                [NonSerialized][ShowInInspector][ReadOnly]
+                [HideLabel]
+                bool canInvokeAttack = true;
+
+            #endregion - - - - - - - - - - - - - - - - - - - -|   :
+
+            [HorizontalGroup("Input/Special")]
+            #region Special  - - - - - - - - - - - - - - - - -|   :
+
+                [SerializeField] float specialDelay = 1.0f;//-|
+                                                               [HorizontalGroup("Input/Special", width: InspectorLayout.noLabelCheckBoxWidth)]
+                [NonSerialized][ShowInInspector][ReadOnly]
+                [HideLabel]
+                bool canInvokeSpecial = true;
+
+            #endregion - - - - - - - - - - - - - - - - - - - -|   :
+
+        #endregion - - - - - - - - - - - - - - - - - - - - - - - -|
 
         protected void Awake()
         {
@@ -31,22 +54,47 @@ namespace WeaponSystem
         }
         protected void Update()
         {
-            if (input)
+            if (canInvokeAttack && owner.AttackInput)
             {
-                if (canInvoke)
-                {
-                    Execute();
-                    canInvoke = false;
-                }
+                Attack();
+                StartCoroutine(AttackDelay(attackDelay));
+            }
+            if (canInvokeSpecial && owner.SpecialInput)
+            {
+                Special();
+                StartCoroutine(SpecialDelay(specialDelay));
             }
         }
-        void Execute()
+        IEnumerator AttackDelay(float delay)
         {
-            foreach (WeaponBehavior behavior in data.rule.executeBehaviors)
+            canInvokeAttack = false;
+            yield return new WaitForSeconds(delay);
+            canInvokeAttack = true;
+        }
+        IEnumerator SpecialDelay(float delay)
+        {
+            canInvokeSpecial = false;
+            yield return new WaitForSeconds(delay);
+            canInvokeSpecial = true;
+        }
+        void Attack()
+        {
+            StartCoroutine(AttackCoroutine());
+            foreach (WeaponBehavior behavior in data.rule.attackExecuteBehaviors)
             {
                 behavior.Execute(this);
             }
-            Debug.Log("»÷µŒ∏ß!");
+        }
+        IEnumerator AttackCoroutine()
+        {
+            yield return new WaitForSeconds(1);
+        }
+        void Special()
+        {
+            foreach (WeaponBehavior behavior in data.rule.specialExecuteBehaviors)
+            {
+                behavior.Execute(this);
+            }
         }
     }
 }

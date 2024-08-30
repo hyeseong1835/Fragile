@@ -33,9 +33,14 @@ namespace WeaponSystem.Component.Operator
             DrawHeader(label);
             DrawField();
         }
+        protected virtual void DrawSingleLineGUI(Rect headerRect, float titleLabelWidth)
+        {
+            DrawSingleLineHeaderProperty(headerRect.AddHeight(-1).AddWidth(-titleLabelWidth, 1));
+        }
+
         protected virtual void DrawHeader(string label)
         {
-            titleRect = GUILayoutUtility.GetRect(
+             titleRect = GUILayoutUtility.GetRect(
                 0,
                 HeaderHeight,
                 GUILayout.ExpandHeight(false)
@@ -43,14 +48,9 @@ namespace WeaponSystem.Component.Operator
             GUI.Label(titleRect, $"{label} ({info.name})");
             DrawHeaderProperty(titleRect.AddHeight(-1).AddWidth(-HeaderLabelWidth, 1));
         }
-        protected virtual void DrawHeaderProperty(Rect rect)
-        {
-
-        }
-        protected virtual void DrawField()
-        {
-
-        }
+        protected virtual void DrawHeaderProperty(Rect rect) { } 
+        protected virtual void DrawSingleLineHeaderProperty(Rect rect) { }
+        protected virtual void DrawField() { }
 #endif
     }
     [ComponentInfo("연산자(Float)", "무기의 연산자입니다.")]

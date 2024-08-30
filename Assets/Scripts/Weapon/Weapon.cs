@@ -11,9 +11,5 @@ namespace WeaponSystem
     {
         [ShowInInspector]
         public Controller owner;
-
-        [NonSerialized]
-        [ShowInInspector]
-        public bool input = false;
     }
 }
